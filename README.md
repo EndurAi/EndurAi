@@ -38,3 +38,6 @@ plans.
 workout tracking using locally stored data without needing to sync with the cloud. It
 means that user should be able to use the computer vision part of the app, the
 running companion as well as consulting his/her progression offline
+
+# Figma 
+We have a Figma project for the app design and navigation. Here is the [link](https://www.figma.com/design/rZgylXKE9PmQgKigHpzMtr/Sport-Companion?node-id=0-1&m=dev&t=RZbHJEZFt2Uhlm2P-1) to the project.
