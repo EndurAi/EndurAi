@@ -1,4 +1,4 @@
-package com.android.sample.ui.mainscreen
+package com.android.sample.ui.video
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,10 +11,10 @@ import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
 @Composable
-fun MainScreen(navigationActions: NavigationActions) {
+fun VideoScreen(navigationActions: NavigationActions) {
   Scaffold(
-      modifier = Modifier.testTag("mainScreen"),
-      content = { padding -> Text("Main Screen", modifier = Modifier.padding(padding)) },
+      modifier = Modifier.testTag("videoScreen"),
+      content = { padding -> Text("Video Screen", modifier = Modifier.padding(padding)) },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },

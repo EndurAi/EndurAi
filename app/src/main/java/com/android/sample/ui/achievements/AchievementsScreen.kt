@@ -1,4 +1,4 @@
-package com.android.sample.ui.mainscreen
+package com.android.sample.ui.achievements
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,10 +11,10 @@ import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
 @Composable
-fun MainScreen(navigationActions: NavigationActions) {
+fun AchievementsScreen(navigationActions: NavigationActions) {
   Scaffold(
-      modifier = Modifier.testTag("mainScreen"),
-      content = { padding -> Text("Main Screen", modifier = Modifier.padding(padding)) },
+      modifier = Modifier.testTag("achievementsScreen"),
+      content = { padding -> Text("Achievements Screen", modifier = Modifier.padding(padding)) },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },

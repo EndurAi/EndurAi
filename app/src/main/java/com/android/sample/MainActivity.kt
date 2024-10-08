@@ -12,8 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
 import com.android.sample.resources.C
+import com.android.sample.ui.achievements.AchievementsScreen
+import com.android.sample.ui.mainscreen.MainScreen
+import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.video.VideoScreen
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +34,7 @@ class MainActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              Greeting("Android")
+              MainApp()
             }
       }
     }
@@ -40,4 +50,34 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
   SampleAppTheme { Greeting("Android") }
+}
+
+@Composable
+fun MainApp() {
+  val navController = rememberNavController()
+  val navigationActions = NavigationActions(navController)
+  NavHost(navController = navController, startDestination = Route.MAIN) {
+
+    // Auth Screen
+    navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
+      composable(Screen.AUTH) {
+        Greeting("Auth Screen") // TODO Placeholder, replace it with the sign in screen
+      }
+    }
+
+    // Main Screen
+    navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
+      composable(Screen.MAIN) { MainScreen(navigationActions) }
+    }
+
+    // Video Screen
+    navigation(startDestination = Screen.VIDEO, route = Route.VIDEO) {
+      composable(Screen.VIDEO) { VideoScreen(navigationActions) }
+    }
+
+    // Achievements Screen
+    navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
+      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions) }
+    }
+  }
 }
