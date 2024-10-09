@@ -1,4 +1,4 @@
-// portions of this code were done with the help of ChatGPT
+// portions of this code were done with the help of ChatGPT and GitHub Copilot
 package com.android.sample.model.video
 
 import android.net.Uri
