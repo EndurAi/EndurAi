@@ -91,15 +91,14 @@ jobs:
           ./gradlew check --parallel --build-cache
 
       # Run connected tests on the emulator
-      - name: run instrumental tests
+      - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
-          avd-name: github
-          force-avd-creation: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1080x1920
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
