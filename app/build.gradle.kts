@@ -160,14 +160,15 @@ dependencies {
     testImplementation(libs.robolectric)
 
     // --------- Moshi dependencies ----------
-    implementation("com.squareup.moshi:moshi:1.14.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
 
 
     //----------- Test dependencies ---------------
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockk)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
 
