@@ -36,7 +36,7 @@ class MainScreenTest {
 
   @Test
   fun hasNavigationDestinations() {
-    composeTestRule.onNodeWithTag("Main").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("MainNOPE").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Video").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Achievements").assertIsDisplayed()
   }
