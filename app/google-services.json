@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "113999553191",
+    "project_id": "endurai-92811",
+    "storage_bucket": "endurai-92811.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:113999553191:android:f13e1780b30cc6c022f182",
+        "android_client_info": {
+          "package_name": "com.android.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "113999553191-nvop5p0i96up8g7ir99lsmbbu8npfj7k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.sample",
+            "certificate_hash": "106c101958985de533d641b6a3c990ee4ddd93d1"
+          }
+        },
+        {
+          "client_id": "113999553191-cgun9jumvou53d89es0301i3ecq4tu06.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD46k68TnxskD44tacFfZRhy0wcDmjr6kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "113999553191-cgun9jumvou53d89es0301i3ecq4tu06.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
