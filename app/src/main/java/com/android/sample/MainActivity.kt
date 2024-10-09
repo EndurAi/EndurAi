@@ -12,20 +12,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.sample.model.preferences.PreferencesRepositoryFirestore
+import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.resources.C
+import com.android.sample.ui.preferences.PreferencesScreen
 import com.android.sample.ui.theme.SampleAppTheme
+import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+      val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
+      val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+
+
     setContent {
       SampleAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
-            color = MaterialTheme.colorScheme.background) {
-              Greeting("Android")
-            }
+            color = MaterialTheme.colorScheme.background) { PreferencesScreen(preferencesViewModel) }
       }
     }
   }
