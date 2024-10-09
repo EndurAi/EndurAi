@@ -10,20 +10,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.Check
 import com.android.sample.model.preferences.Preferences
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitySystem
 import com.android.sample.model.preferences.WeightUnit
+import com.android.sample.ui.composables.SaveButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesScreen(preferencesViewModel: PreferencesViewModel) {
     val preferences = preferencesViewModel.preferences.collectAsState().value
-        ?: return Text(text = "No ToDo selected. Should not happen", color = Color.Red)
+        ?: return Text(text = "No Preferences registred. Should not happen", color = Color.Red)
 
     var distanceSystem by remember { mutableStateOf(preferences.unity) }
     var weightUnit by remember { mutableStateOf(preferences.weight) }
@@ -40,18 +41,15 @@ fun PreferencesScreen(preferencesViewModel: PreferencesViewModel) {
                         )
                     }
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+                modifier = Modifier.testTag("preferencesTopBar")
             )
         },
         bottomBar = {
-            SaveButton {
-
+            SaveButton(onSaveClick = {
                 val newPreferences = Preferences(distanceSystem,weightUnit)
                 preferencesViewModel.updatePreferences(newPreferences)
-
-
-
-            }
+            }, testTag = "preferencesSaveButton")
         }
     ) { paddingValues ->
         PreferencesContent(
@@ -83,14 +81,16 @@ fun PreferencesContent(
             title = "Distance system",
             currentValue = distanceSystem,
             onValueChange = { onDistanceChange(it) },
-            options = UnitySystem.values().toList()
+            options = UnitySystem.values().toList(),
+            testTag = "distanceSystem"
         )
 
         PreferenceItem(
             title = "Weight unit",
             currentValue = weightUnit,
             onValueChange = { onWeightChange(it) },
-            options = WeightUnit.values().toList()
+            options = WeightUnit.values().toList(),
+            testTag = "weightUnit"
         )
     }
 }
@@ -100,7 +100,8 @@ fun <T> PreferenceItem(
     title: String,
     currentValue: T,
     onValueChange: (T) -> Unit,
-    options: List<T>
+    options: List<T>,
+    testTag: String
 ) {
     Surface(
         modifier = Modifier
@@ -112,13 +113,14 @@ fun <T> PreferenceItem(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .testTag(testTag + "Menu"),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.testTag(testTag + "MenuText"))
 
-            DropdownMenuItem(currentValue = currentValue, onValueChange = onValueChange, options = options)
+            DropdownMenuItem(currentValue = currentValue, onValueChange = onValueChange, options = options, testTag = testTag)
         }
     }
 }
@@ -127,7 +129,8 @@ fun <T> PreferenceItem(
 fun <T> DropdownMenuItem(
     currentValue: T,
     onValueChange: (T) -> Unit,
-    options: List<T>
+    options: List<T>,
+    testTag: String
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -135,7 +138,8 @@ fun <T> DropdownMenuItem(
         Button(
             onClick = { expanded = true },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.testTag(testTag + "Button")
         ) {
             Text(text = currentValue.toString(), color = Color.White)
         }
@@ -150,29 +154,11 @@ fun <T> DropdownMenuItem(
                     onClick = {
                         onValueChange(option)
                         expanded = false
-                    }
+                    },
+                    modifier = Modifier.testTag(testTag + option.toString())
                 )
             }
         }
     }
 }
 
-@Composable
-fun SaveButton(onSaveClick: () -> Unit) {
-    Button(
-        onClick = onSaveClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Check,
-            contentDescription = "Save",
-            tint = Color.White
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("Save", color = Color.White)
-    }
-}
