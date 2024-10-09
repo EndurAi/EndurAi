@@ -1,67 +1,83 @@
 package com.android.sample
 
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.widget.MediaController
-import android.widget.Toast
-import android.widget.VideoView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
-import com.android.sample.model.video.VideoViewModel
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
+import com.android.sample.resources.C
+import com.android.sample.ui.achievements.AchievementsScreen
+import com.android.sample.ui.mainscreen.MainScreen
+import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.video.VideoScreen
 
-
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var videoViewModel: VideoViewModel
-    private lateinit var player: ExoPlayer
-    private lateinit var playerView: PlayerView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        playerView = findViewById(R.id.playerView)
-
-        // Initialize ViewModel using the companion object factory
-        videoViewModel = ViewModelProvider(this, VideoViewModel.Factory).get(VideoViewModel::class.java)
-
-        // Observe the video URLs
-        videoViewModel.videoUrls.observe(this) { videoUrls ->
-            if (videoUrls.isNotEmpty()) {
-                playVideo(videoUrls[0])  // Play the first (and only) video URL
+class MainActivity : ComponentActivity() {
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      SampleAppTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(
+            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
+            color = MaterialTheme.colorScheme.background) {
+              MainApp()
             }
-        }
+      }
+    }
+  }
+}
 
-        // Observe upload success
-        videoViewModel.uploadSuccess.observe(this) { downloadUrl ->
-            Toast.makeText(this, "Upload successful: $downloadUrl", Toast.LENGTH_SHORT).show()
-        }
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+  Text(text = "Hello $name!", modifier = modifier.semantics { testTag = C.Tag.greeting })
+}
 
-        // Observe error messages
-        videoViewModel.error.observe(this) { errorMessage ->
-            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
-        }
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+  SampleAppTheme { Greeting("Android") }
+}
 
-        // Load the single video URL
-        videoViewModel.loadVideos()
+@Composable
+fun MainApp() {
+  val navController = rememberNavController()
+  val navigationActions = NavigationActions(navController)
+  NavHost(navController = navController, startDestination = Route.MAIN) {
+
+    // Auth Screen
+    navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
+      composable(Screen.AUTH) {
+        Greeting("Auth Screen") // TODO Placeholder, replace it with the sign in screen
+      }
     }
 
-    private fun playVideo(url: String) {
-        player = ExoPlayer.Builder(this).build()
-        playerView.player = player
-
-        val mediaItem = MediaItem.fromUri(url)
-        player.setMediaItem(mediaItem)
-
-        // Prepare and play the video
-        player.prepare()
-        player.playWhenReady = true
+    // Main Screen
+    navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
+      composable(Screen.MAIN) { MainScreen(navigationActions) }
     }
+
+    // Video Screen
+    navigation(startDestination = Screen.VIDEO, route = Route.VIDEO) {
+      composable(Screen.VIDEO) { VideoScreen(navigationActions) }
+    }
+
+    // Achievements Screen
+    navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
+      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions) }
+    }
+  }
 }
