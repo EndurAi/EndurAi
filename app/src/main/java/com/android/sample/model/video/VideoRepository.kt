@@ -5,8 +5,7 @@ import android.net.Uri
 
 interface VideoRepository {
 
-    fun uploadVideo(videoUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
+  fun uploadVideo(videoUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
 
-    fun getVideoUrls(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
-
+  fun getVideoUrls(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
 }
