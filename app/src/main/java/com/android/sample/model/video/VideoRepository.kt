@@ -1,4 +1,12 @@
-package com.android.sample.model.video;
+// portions of this code were done with the help of ChatGPT
+package com.android.sample.model.video
 
-public interface VideoRepository {
+import android.net.Uri
+
+interface VideoRepository {
+
+    fun uploadVideo(videoUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
+
+    fun getVideoUrls(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
+
 }

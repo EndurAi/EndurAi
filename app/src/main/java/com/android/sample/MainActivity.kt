@@ -1,122 +1,67 @@
-//package com.android.videoView.setVideoURI
-//
-//import com.android.sample.R
-//
-//import android.net.Uri
-//import android.os.Bundle
-//import android.util.Log
-//import android.widget.MediaController
-//import android.widget.VideoView
-//import androidx.appcompat.app.AppCompatActivity
-//import com.google.firebase.ktx.Firebase
-//import com.google.firebase.storage.ktx.storage
-//
-//class MainActivity : AppCompatActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-////        super.onCreate(savedInstanceState)
-////        setContentView(R.layout.activity_main)
-////
-////        // Reference to the VideoView in your layout
-////        val videoView = findViewById<VideoView>(R.id.videoView)
-////        if (videoView == null) {
-////            Log.e("MainActivity", "VideoView not found")
-////            return
-////        } else {
-////            Log.d("MainActivity", "VideoView found")
-////        }
-////
-////        // MediaController to control play/pause/seek
-////        val mediaController = MediaController(this)
-////        mediaController.setAnchorView(videoView)
-////        videoView.setMediaController(mediaController)
-////
-////        // Initialize Firebase Storage
-////        val storage = Firebase.storage
-////        val storageRef = storage.reference
-////
-////        // Reference to the video file in Google Cloud Storage
-////        val videoRef = storageRef.child("my_video.mp4")
-////
-////        // Get the download URL
-////
-////        videoRef.downloadUrl.addOnSuccessListener { uri ->
-////            // Log the download URL
-////            Log.d("MainActivity", "Download URL: $uri")
-////
-////            // Load video using the retrieved URL
-////            videoView.setVideoURI(uri)
-////            videoView.requestFocus()
-////
-////            // Log VideoView state
-////            videoView.setOnPreparedListener {
-////                Log.d("MainActivity", "VideoView is prepared")
-////                videoView.start() // Start video when prepared
-////            }
-////        }.addOnFailureListener { exception ->
-////            // Handle errors
-////            Log.e("MainActivity", "Error getting download URL", exception)
-////        }
-////
-////        // Error handling for video playback issues
-////        videoView.setOnErrorListener { _, what, extra ->
-////            Log.e("MainActivity", "Error occurred: what=$what, extra=$extra")
-////            true
-////        }
-//
-//    }
-//}
-
-
-
 package com.android.sample
 
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.MediaController
+import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
+import com.android.sample.model.video.VideoViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var videoViewModel: VideoViewModel
+    private lateinit var player: ExoPlayer
+    private lateinit var playerView: PlayerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Reference to the VideoView in your layout
-        val videoView = findViewById<VideoView>(R.id.videoView)
-        if (videoView == null) {
-            Log.e("MainActivity", "VideoView not found")
-            return
-        } else {
-            Log.d("MainActivity", "VideoView found")
+        playerView = findViewById(R.id.playerView)
+
+        // Initialize ViewModel using the companion object factory
+        videoViewModel = ViewModelProvider(this, VideoViewModel.Factory).get(VideoViewModel::class.java)
+
+        // Observe the video URLs
+        videoViewModel.videoUrls.observe(this) { videoUrls ->
+            if (videoUrls.isNotEmpty()) {
+                playVideo(videoUrls[0])  // Play the first (and only) video URL
+            }
         }
 
-        // MediaController to control play/pause/seek
-        val mediaController = MediaController(this)
-        mediaController.setAnchorView(videoView)
-        videoView.setMediaController(mediaController)
-
-        // Load the video from the res/raw folder
-        val videoUri = Uri.parse("android.resource://" + packageName + "/" + R.raw.my_video)
-
-        // Log the video URI
-        Log.d("MainActivity", "Local Video URI: $videoUri")
-
-        // Set the video URI to the VideoView
-        videoView.setVideoURI(videoUri)
-        videoView.requestFocus()
-
-        // Log VideoView state and start video playback when ready
-        videoView.setOnPreparedListener {
-            Log.d("MainActivity", "VideoView is prepared")
-            videoView.start() // Start video when prepared
+        // Observe upload success
+        videoViewModel.uploadSuccess.observe(this) { downloadUrl ->
+            Toast.makeText(this, "Upload successful: $downloadUrl", Toast.LENGTH_SHORT).show()
         }
 
-        // Error handling for video playback issues
-        videoView.setOnErrorListener { _, what, extra ->
-            Log.e("MainActivity", "Error occurred: what=$what, extra=$extra")
-            true
+        // Observe error messages
+        videoViewModel.error.observe(this) { errorMessage ->
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
         }
+
+        // Load the single video URL
+        videoViewModel.loadVideos()
+    }
+
+    private fun playVideo(url: String) {
+        player = ExoPlayer.Builder(this).build()
+        playerView.player = player
+
+        val mediaItem = MediaItem.fromUri(url)
+        player.setMediaItem(mediaItem)
+
+        // Prepare and play the video
+        player.prepare()
+        player.playWhenReady = true
     }
 }
-
