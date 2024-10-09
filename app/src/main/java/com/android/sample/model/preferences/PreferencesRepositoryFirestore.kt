@@ -89,28 +89,18 @@ class PreferencesRepositoryFirestore(private val db : FirebaseFirestore) : Prefe
             val prefs = preferencesAdapter.fromJson(json)
 
 
-            return prefs?: throw IllegalArgumentException("Erreur de conversion du document en ToDo")
+            return prefs?: throw IllegalArgumentException("Conversion error in Preferences")
 
         } catch (e: JsonDataException) {
-            Log.e("Moshi", "Erreur de données JSON : ${e.message}")
-            throw e  // Gère l'erreur de données JSON
+            Log.e("Moshi", "Data error JSON : ${e.message}")
+            throw e
         } catch (e: JsonEncodingException) {
-            Log.e("Moshi", "Erreur d'encodage JSON : ${e.message}")
-            throw e  // Gère les erreurs d'encodage JSON
+            Log.e("Moshi", "Encoding error JSON : ${e.message}")
+            throw e
         } catch (e: Exception) {
-            Log.e("Moshi", "Erreur inattendue lors de la conversion : ${e.message}")
-            throw e  // Gère les erreurs inattendues
+            Log.e("Moshi", "Conversion error : ${e.message}")
+            throw e
         }
-
-
-
-
-
-
-
-
-
-
 
     }
 
