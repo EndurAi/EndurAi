@@ -19,7 +19,15 @@ class PreferencesRepositoryFirestore(private val db : FirebaseFirestore) : Prefe
     val preferencesAdapter = moshi.adapter(Preferences::class.java)
 
 
-    private val collectionPath = "preferences"
+    private val collectionPath: String
+        get() {
+            val uid = Firebase.auth.currentUser?.uid
+            return if (uid != null) {
+                "$uid"
+            } else {
+                throw IllegalStateException("The user is not registered")
+            }
+        }
 
     private val documentName = "preferences"
 
