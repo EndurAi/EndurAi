@@ -17,7 +17,8 @@ interface VideoRepository {
   /**
    * Retrieves video URLs from the repository.
    *
-   * @param onSuccess Callback function to be invoked with a list of video URLs on successful retrieval.
+   * @param onSuccess Callback function to be invoked with a list of video URLs on successful
+   *   retrieval.
    * @param onFailure Callback function to be invoked with an exception if the retrieval fails.
    */
   fun getVideoUrls(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)

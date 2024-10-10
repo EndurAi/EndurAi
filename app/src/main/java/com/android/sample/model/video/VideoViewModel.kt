@@ -31,11 +31,11 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
   val error: StateFlow<String?>
     get() = _error.asStateFlow()
 
-    /**
-     * Uploads a video and updates the state.
-     *
-     * @param videoUri The URI of the video to upload.
-     */
+  /**
+   * Uploads a video and updates the state.
+   *
+   * @param videoUri The URI of the video to upload.
+   */
   fun uploadVideo(videoUri: Uri) {
     videoRepository.uploadVideo(
         videoUri,
@@ -43,9 +43,7 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
         { exception -> _error.value = "Upload failed: ${exception.message}" })
   }
 
-    /**
-     * Loads the video URLs and updates the state.
-     */
+  /** Loads the video URLs and updates the state. */
   suspend fun loadVideos() {
     withContext(Dispatchers.IO) {
       videoRepository.getVideoUrls(
