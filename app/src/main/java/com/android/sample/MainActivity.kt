@@ -16,18 +16,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.sample.model.preferences.PreferencesRepositoryFirestore
+import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.preferences.PreferencesScreen
 import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoScreen
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
     setContent {
       SampleAppTheme {
         // A surface container using the 'background' color from the theme
@@ -56,6 +62,8 @@ fun GreetingPreview() {
 fun MainApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
+  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
   NavHost(navController = navController, startDestination = Route.MAIN) {
 
     // Auth Screen
@@ -78,6 +86,10 @@ fun MainApp() {
     // Achievements Screen
     navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
       composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions) }
+    }
+    // Preferences Screen
+    navigation(startDestination = Screen.PREFERENCES, route = Route.PREFERENCES) {
+      composable(Screen.ACHIEVEMENTS) { PreferencesScreen(navigationActions, preferencesViewModel) }
     }
   }
 }
