@@ -19,21 +19,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SaveButton(onSaveClick: () -> Unit, testTag: String) {
-    Button(
-        onClick = onSaveClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(testTag)
-            .padding(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Check,
-            contentDescription = "Save",
-            tint = Color.White
-        )
+  Button(
+      onClick = onSaveClick,
+      modifier = Modifier.fillMaxWidth().testTag(testTag).padding(16.dp),
+      colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+      shape = RoundedCornerShape(8.dp)) {
+        Icon(imageVector = Icons.Default.Check, contentDescription = "Save", tint = Color.White)
         Spacer(modifier = Modifier.width(8.dp))
         Text("Save", color = Color.White)
-    }
+      }
 }

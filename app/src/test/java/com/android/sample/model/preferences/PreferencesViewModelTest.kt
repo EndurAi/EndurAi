@@ -14,54 +14,51 @@ import org.mockito.kotlin.eq
 
 class PreferencesViewModelTest {
 
-    private lateinit var repository: PreferencesRepository
-    private lateinit var preferencesViewModel: PreferencesViewModel
+  private lateinit var repository: PreferencesRepository
+  private lateinit var preferencesViewModel: PreferencesViewModel
 
-    val defaultPreferences = Preferences(unity = UnitySystem.METRIC, weight = WeightUnit.KG)
-    val updatedPreferences = Preferences(unity = UnitySystem.IMPERIAL, weight = WeightUnit.LBS)
+  val defaultPreferences = Preferences(unity = UnitySystem.METRIC, weight = WeightUnit.KG)
+  val updatedPreferences = Preferences(unity = UnitySystem.IMPERIAL, weight = WeightUnit.LBS)
 
-    @Before
-    fun setUp() {
-        repository = mock(PreferencesRepository::class.java)
-        preferencesViewModel = PreferencesViewModel(repository)
+  @Before
+  fun setUp() {
+    repository = mock(PreferencesRepository::class.java)
+    preferencesViewModel = PreferencesViewModel(repository)
+  }
+
+  @Test
+  fun preferencesFlowShouldStartWithDefaultValues() = runBlocking {
+    val preferences = preferencesViewModel.preferences.first()
+    assertThat(preferences, `is`(defaultPreferences))
+  }
+
+  @Test
+  fun getPreferencesCallsRepository() {
+    preferencesViewModel.getPreferences()
+    verify(repository).getPreferences(any(), any())
+  }
+
+  @Test
+  fun updatePreferencesCallsRepository() {
+    preferencesViewModel.updatePreferences(updatedPreferences)
+    verify(repository).updatePreferences(eq(updatedPreferences), any(), any())
+  }
+
+  @Test
+  fun deletePreferencesCallsRepository() {
+    preferencesViewModel.deletePreferences()
+    verify(repository).deletePreferences(any(), any())
+  }
+
+  @Test
+  fun preferencesFlowShouldUpdateAfterGetPreferences() = runBlocking {
+    `when`(repository.getPreferences(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as (Preferences) -> Unit
+      onSuccess(updatedPreferences)
     }
 
-    @Test
-    fun preferencesFlowShouldStartWithDefaultValues() = runBlocking {
-        val preferences = preferencesViewModel.preferences.first()
-        assertThat(preferences, `is`(defaultPreferences))
-    }
-
-    @Test
-    fun getPreferencesCallsRepository() {
-        preferencesViewModel.getPreferences()
-        verify(repository).getPreferences(any(), any())
-    }
-
-    @Test
-    fun updatePreferencesCallsRepository() {
-        preferencesViewModel.updatePreferences(updatedPreferences)
-        verify(repository).updatePreferences(eq(updatedPreferences), any(), any())
-    }
-
-    @Test
-    fun deletePreferencesCallsRepository() {
-        preferencesViewModel.deletePreferences()
-        verify(repository).deletePreferences(any(), any())
-    }
-
-
-    @Test
-    fun preferencesFlowShouldUpdateAfterGetPreferences() = runBlocking {
-        `when`(repository.getPreferences(any(), any())).thenAnswer {
-            val onSuccess = it.arguments[0] as (Preferences) -> Unit
-            onSuccess(updatedPreferences)
-        }
-
-        preferencesViewModel.getPreferences()
-        val preferences = preferencesViewModel.preferences.first()
-        assertThat(preferences, `is`(updatedPreferences))
-    }
+    preferencesViewModel.getPreferences()
+    val preferences = preferencesViewModel.preferences.first()
+    assertThat(preferences, `is`(updatedPreferences))
+  }
 }
-
-

@@ -6,34 +6,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class PreferencesViewModel( private val repository: PreferencesRepository) : ViewModel() {
+class PreferencesViewModel(private val repository: PreferencesRepository) : ViewModel() {
 
-    private val defaultPreferences = Preferences(unity = UnitySystem.METRIC, weight = WeightUnit.KG)
+  private val defaultPreferences = Preferences(unity = UnitySystem.METRIC, weight = WeightUnit.KG)
 
-    private val preferences_ = MutableStateFlow<Preferences?>(defaultPreferences)
-    open val preferences: StateFlow<Preferences?> = preferences_.asStateFlow()
+  private val preferences_ = MutableStateFlow<Preferences?>(defaultPreferences)
+  open val preferences: StateFlow<Preferences?> = preferences_.asStateFlow()
 
-    init {
-        repository.init { getPreferences() }
-    }
+  init {
+    repository.init { getPreferences() }
+  }
 
-    fun updatePreferences(prefs: Preferences) {
-        repository.updatePreferences(prefs, onSuccess = { getPreferences() }, onFailure = {})
-    }
-    fun getPreferences() {
-        repository.getPreferences(
-            onSuccess = { prefs -> preferences_.value = prefs },
-            onFailure = { e -> Log.e("DEB", "Error occurred while getting preferences: $e") })
-    }
+  fun updatePreferences(prefs: Preferences) {
+    repository.updatePreferences(prefs, onSuccess = { getPreferences() }, onFailure = {})
+  }
 
-    fun deletePreferences() {
-        repository.deletePreferences(onSuccess = { getPreferences() }, onFailure = {})
-    }
+  fun getPreferences() {
+    repository.getPreferences(
+        onSuccess = { prefs -> preferences_.value = prefs },
+        onFailure = { e -> Log.e("DEB", "Error occurred while getting preferences: $e") })
+  }
 
-
-
-
-
-
-
+  fun deletePreferences() {
+    repository.deletePreferences(onSuccess = { getPreferences() }, onFailure = {})
+  }
 }
