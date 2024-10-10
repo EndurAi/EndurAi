@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.preferences.PreferencesRepository
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.preferences.PreferencesScreen
 import org.junit.Before
 import org.junit.Rule
@@ -16,6 +17,7 @@ import org.mockito.Mockito.mock
 class PreferencesScreenTest {
   private lateinit var mockPreferencesRepository: PreferencesRepository
   private lateinit var preferencesViewModel: PreferencesViewModel
+  private lateinit var mockNavHostController: NavigationActions
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -24,12 +26,13 @@ class PreferencesScreenTest {
 
     // Mock the ViewModel and Preferences
     mockPreferencesRepository = mock(PreferencesRepository::class.java)
+    mockNavHostController = mock(NavigationActions::class.java)
     preferencesViewModel = PreferencesViewModel(mockPreferencesRepository)
   }
 
   @Test
   fun displayAllComponents() {
-    composeTestRule.setContent { PreferencesScreen(preferencesViewModel) }
+    composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
 
     composeTestRule.onNodeWithTag("preferencesTopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("preferencesSaveButton").assertIsDisplayed()
@@ -43,7 +46,7 @@ class PreferencesScreenTest {
 
   @Test
   fun testDropdownMenuSelectionTextUpdate() {
-    composeTestRule.setContent { PreferencesScreen(preferencesViewModel) }
+    composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
 
     composeTestRule.onNodeWithTag("distanceSystemButton").assertTextEquals("METRIC")
     composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
