@@ -17,8 +17,8 @@ class PreferencesViewModelTest {
   private lateinit var repository: PreferencesRepository
   private lateinit var preferencesViewModel: PreferencesViewModel
 
-  val defaultPreferences = Preferences(unity = UnitySystem.METRIC, weight = WeightUnit.KG)
-  val updatedPreferences = Preferences(unity = UnitySystem.IMPERIAL, weight = WeightUnit.LBS)
+  val defaultPreferences = Preferences(unity = UnitsSystem.METRIC, weight = WeightUnit.KG)
+  val updatedPreferences = Preferences(unity = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
 
   @Before
   fun setUp() {

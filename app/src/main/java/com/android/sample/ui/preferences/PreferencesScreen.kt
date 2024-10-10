@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.model.preferences.Preferences
 import com.android.sample.model.preferences.PreferencesViewModel
-import com.android.sample.model.preferences.UnitySystem
+import com.android.sample.model.preferences.UnitsSystem
 import com.android.sample.model.preferences.WeightUnit
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
@@ -31,7 +31,7 @@ fun PreferencesScreen(
       preferencesViewModel.preferences.collectAsState().value
           ?: return Text(text = "No Preferences registred. Should not happen", color = Color.Red)
 
-  var distanceSystem by remember { mutableStateOf(preferences.unity) }
+  var unitsSystem by remember { mutableStateOf(preferences.unity) }
   var weightUnit by remember { mutableStateOf(preferences.weight) }
 
   Scaffold(
@@ -49,7 +49,7 @@ fun PreferencesScreen(
       bottomBar = {
         SaveButton(
             onSaveClick = {
-              val newPreferences = Preferences(distanceSystem, weightUnit)
+              val newPreferences = Preferences(unitsSystem, weightUnit)
               preferencesViewModel.updatePreferences(newPreferences)
               navigationActions.goBack()
             },
@@ -57,8 +57,8 @@ fun PreferencesScreen(
       }) { paddingValues ->
         PreferencesContent(
             modifier = Modifier.padding(paddingValues),
-            distanceSystem = distanceSystem,
-            onDistanceChange = { distanceSystem = it },
+            distanceSystem = unitsSystem,
+            onDistanceChange = { unitsSystem = it },
             weightUnit = weightUnit,
             onWeightChange = { weightUnit = it })
       }
@@ -67,8 +67,8 @@ fun PreferencesScreen(
 @Composable
 fun PreferencesContent(
     modifier: Modifier = Modifier,
-    distanceSystem: UnitySystem,
-    onDistanceChange: (UnitySystem) -> Unit,
+    distanceSystem: UnitsSystem,
+    onDistanceChange: (UnitsSystem) -> Unit,
     weightUnit: WeightUnit,
     onWeightChange: (WeightUnit) -> Unit
 ) {
@@ -77,11 +77,11 @@ fun PreferencesContent(
       verticalArrangement = Arrangement.spacedBy(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally) {
         PreferenceItem(
-            title = "Distance system",
+            title = "System of units",
             currentValue = distanceSystem,
             onValueChange = { onDistanceChange(it) },
-            options = UnitySystem.values().toList(),
-            testTag = "distanceSystem")
+            options = UnitsSystem.values().toList(),
+            testTag = "unitsSystem")
 
         PreferenceItem(
             title = "Weight unit",

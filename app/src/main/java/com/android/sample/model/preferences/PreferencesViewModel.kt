@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class PreferencesViewModel(private val repository: PreferencesRepository) : ViewModel() {
 
-  private val defaultPreferences = Preferences(unity = UnitySystem.METRIC, weight = WeightUnit.KG)
+  private val defaultPreferences = Preferences(unity = UnitsSystem.METRIC, weight = WeightUnit.KG)
 
   private val preferences_ = MutableStateFlow<Preferences?>(defaultPreferences)
   open val preferences: StateFlow<Preferences?> = preferences_.asStateFlow()

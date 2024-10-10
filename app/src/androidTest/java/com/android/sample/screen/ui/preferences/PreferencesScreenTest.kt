@@ -37,8 +37,8 @@ class PreferencesScreenTest {
     composeTestRule.onNodeWithTag("preferencesTopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("preferencesSaveButton").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("distanceSystemMenu").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("distanceSystemMenuText").assertTextEquals("Distance system")
+    composeTestRule.onNodeWithTag("unitsSystemMenu").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("unitsSystemMenuText").assertTextEquals("System of units")
     composeTestRule.onNodeWithTag("weightUnitMenu").assertIsDisplayed()
     composeTestRule.onNodeWithTag("weightUnitMenuText").assertTextEquals("Weight unit")
     composeTestRule.onNodeWithTag("preferencesSaveButton").assertIsDisplayed()
@@ -48,18 +48,18 @@ class PreferencesScreenTest {
   fun testDropdownMenuSelectionTextUpdate() {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
 
-    composeTestRule.onNodeWithTag("distanceSystemButton").assertTextEquals("METRIC")
+    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
     composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
 
     // Simulate user changing the distance system and weight unit
-    composeTestRule.onNodeWithTag("distanceSystemButton").performClick()
-    composeTestRule.onNodeWithTag("distanceSystemIMPERIAL").performClick()
+    composeTestRule.onNodeWithTag("unitsSystemButton").performClick()
+    composeTestRule.onNodeWithTag("unitsSystemIMPERIAL").performClick()
 
     composeTestRule.onNodeWithTag("weightUnitButton").performClick()
     composeTestRule.onNodeWithTag("weightUnitLBS").performClick()
 
     // Verify that the selections were updated
-    composeTestRule.onNodeWithTag("distanceSystemButton").assertTextEquals("IMPERIAL")
+    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
     composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
   }
 }

@@ -3,9 +3,9 @@ package com.android.sample.model.preferences
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class Preferences(val unity: UnitySystem, val weight: WeightUnit)
+data class Preferences(val unity: UnitsSystem, val weight: WeightUnit)
 
-enum class UnitySystem {
+enum class UnitsSystem {
   METRIC,
   IMPERIAL
 }
