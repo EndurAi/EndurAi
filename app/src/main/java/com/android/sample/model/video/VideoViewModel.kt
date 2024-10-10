@@ -12,6 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
+/**
+ * ViewModel for managing video-related operations.
+ *
+ * @property videoRepository The repository for video operations.
+ */
 class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel() {
 
   private val _videoUrls = MutableStateFlow<List<String>>(emptyList())
@@ -26,7 +31,11 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
   val error: StateFlow<String?>
     get() = _error.asStateFlow()
 
-  // Calls repository to upload video and updates the state
+    /**
+     * Uploads a video and updates the state.
+     *
+     * @param videoUri The URI of the video to upload.
+     */
   fun uploadVideo(videoUri: Uri) {
     videoRepository.uploadVideo(
         videoUri,
@@ -34,7 +43,9 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
         { exception -> _error.value = "Upload failed: ${exception.message}" })
   }
 
-  // Calls repository to fetch all video URLs and updates the state
+    /**
+     * Loads the video URLs and updates the state.
+     */
   suspend fun loadVideos() {
     withContext(Dispatchers.IO) {
       videoRepository.getVideoUrls(
