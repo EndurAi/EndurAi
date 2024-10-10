@@ -34,16 +34,13 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
-    val preferencesViewModel = PreferencesViewModel(preferenceRepository)
-
     setContent {
       SampleAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              PreferencesScreen(preferencesViewModel)
+              MainApp()
             }
       }
     }
@@ -65,6 +62,8 @@ fun GreetingPreview() {
 fun MainApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
+  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
   NavHost(navController = navController, startDestination = Route.MAIN) {
 
     // Auth Screen
@@ -87,6 +86,10 @@ fun MainApp() {
     // Achievements Screen
     navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
       composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions) }
+    }
+    // Preferences Screen
+    navigation(startDestination = Screen.PREFERENCES, route = Route.PREFERENCES) {
+      composable(Screen.ACHIEVEMENTS) { PreferencesScreen(navigationActions, preferencesViewModel) }
     }
   }
 }

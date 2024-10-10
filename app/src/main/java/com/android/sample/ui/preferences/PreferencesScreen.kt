@@ -19,10 +19,14 @@ import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitySystem
 import com.android.sample.model.preferences.WeightUnit
 import com.android.sample.ui.composables.SaveButton
+import com.android.sample.ui.navigation.NavigationActions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreferencesScreen(preferencesViewModel: PreferencesViewModel) {
+fun PreferencesScreen(
+    navigationActions: NavigationActions,
+    preferencesViewModel: PreferencesViewModel
+) {
   val preferences =
       preferencesViewModel.preferences.collectAsState().value
           ?: return Text(text = "No Preferences registred. Should not happen", color = Color.Red)
@@ -35,7 +39,7 @@ fun PreferencesScreen(preferencesViewModel: PreferencesViewModel) {
         TopAppBar(
             title = { Text("Modify preferences", fontSize = 20.sp, fontWeight = FontWeight.Bold) },
             navigationIcon = {
-              IconButton(onClick = {}) {
+              IconButton(onClick = { navigationActions.goBack() }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
               }
             },
@@ -47,6 +51,7 @@ fun PreferencesScreen(preferencesViewModel: PreferencesViewModel) {
             onSaveClick = {
               val newPreferences = Preferences(distanceSystem, weightUnit)
               preferencesViewModel.updatePreferences(newPreferences)
+              navigationActions.goBack()
             },
             testTag = "preferencesSaveButton")
       }) { paddingValues ->
