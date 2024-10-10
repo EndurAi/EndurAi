@@ -12,6 +12,7 @@ object Route {
   const val AUTH = "Auth"
   const val VIDEO = "Video"
   const val ACHIEVEMENTS = "Achievements"
+  const val SETTINGS = "Settings"
 }
 
 object Screen {
@@ -19,6 +20,7 @@ object Screen {
   const val AUTH = "Auth Screen"
   const val VIDEO = "Video Screen"
   const val ACHIEVEMENTS = "Achievements Screen"
+  const val SETTINGS = "Settings Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
