@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +57,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
 
               // Preferences button
               Button(
-                  onClick = { /* TODO: Handle Preferences */},
+                  onClick = { navigationActions.navigateTo(Screen.PREFERENCES)},
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(60.dp)
