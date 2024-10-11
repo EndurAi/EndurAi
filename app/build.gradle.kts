@@ -1,3 +1,4 @@
+
 plugins {
     jacoco
     alias(libs.plugins.androidApplication)
@@ -133,7 +134,9 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.espresso.intents)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
 
