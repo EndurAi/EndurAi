@@ -38,9 +38,10 @@ class PreferencesRepositoryFirestore(private val db: FirebaseFirestore) : Prefer
 
   override fun getPreferences(onSuccess: (Preferences) -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(collectionPath)
+        .document(documentName)
         .get()
         .addOnSuccessListener { documents ->
-          val preferences = documents.map { d -> documentSnapshotToPreferences(d) }[0]
+          val preferences = documentSnapshotToPreferences(documents)
           onSuccess(preferences)
         }
         .addOnFailureListener { e -> onFailure(e) }

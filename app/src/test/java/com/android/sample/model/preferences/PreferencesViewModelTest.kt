@@ -17,8 +17,8 @@ class PreferencesViewModelTest {
   private lateinit var repository: PreferencesRepository
   private lateinit var preferencesViewModel: PreferencesViewModel
 
-  val defaultPreferences = Preferences(unity = UnitsSystem.METRIC, weight = WeightUnit.KG)
-  val updatedPreferences = Preferences(unity = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
+  val defaultPreferences = Preferences(unitsSystem = UnitsSystem.METRIC, weight = WeightUnit.KG)
+  val updatedPreferences = Preferences(unitsSystem = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
 
   @Before
   fun setUp() {
@@ -56,6 +56,9 @@ class PreferencesViewModelTest {
       val onSuccess = it.arguments[0] as (Preferences) -> Unit
       onSuccess(updatedPreferences)
     }
+
+    val initialPreferences = preferencesViewModel.preferences.first()
+    assertThat(initialPreferences, `is`(defaultPreferences))
 
     preferencesViewModel.getPreferences()
     val preferences = preferencesViewModel.preferences.first()

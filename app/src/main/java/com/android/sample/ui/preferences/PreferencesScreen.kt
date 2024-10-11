@@ -1,5 +1,6 @@
 package com.android.sample.ui.preferences
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,11 +29,13 @@ fun PreferencesScreen(
     navigationActions: NavigationActions,
     preferencesViewModel: PreferencesViewModel
 ) {
+  val context = LocalContext.current
+
   val preferences =
       preferencesViewModel.preferences.collectAsState().value
-          ?: return Text(text = "No Preferences registred. Should not happen", color = Color.Red)
+          ?: run { throw IllegalStateException("Preferences should not be null.") }
 
-  var unitsSystem by remember { mutableStateOf(preferences.unity) }
+  var unitsSystem by remember { mutableStateOf(preferences.unitsSystem) }
   var weightUnit by remember { mutableStateOf(preferences.weight) }
 
   Scaffold(
@@ -51,6 +55,10 @@ fun PreferencesScreen(
             onSaveClick = {
               val newPreferences = Preferences(unitsSystem, weightUnit)
               preferencesViewModel.updatePreferences(newPreferences)
+
+              // Show a toast to confirm success
+              Toast.makeText(context, "Changes successful", Toast.LENGTH_SHORT).show()
+
               navigationActions.goBack()
             },
             testTag = "preferencesSaveButton")

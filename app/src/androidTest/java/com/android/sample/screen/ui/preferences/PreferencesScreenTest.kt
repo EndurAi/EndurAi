@@ -1,5 +1,6 @@
 package com.android.sample.screen.ui.preferences
 
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -36,26 +37,32 @@ class PreferencesScreenTest {
 
     composeTestRule.onNodeWithTag("preferencesTopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("preferencesSaveButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("preferencesSaveButton").assertHasClickAction()
 
     composeTestRule.onNodeWithTag("unitsSystemMenu").assertIsDisplayed()
     composeTestRule.onNodeWithTag("unitsSystemMenuText").assertTextEquals("System of units")
     composeTestRule.onNodeWithTag("weightUnitMenu").assertIsDisplayed()
     composeTestRule.onNodeWithTag("weightUnitMenuText").assertTextEquals("Weight unit")
-    composeTestRule.onNodeWithTag("preferencesSaveButton").assertIsDisplayed()
   }
 
   @Test
   fun testDropdownMenuSelectionTextUpdate() {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
 
+    composeTestRule.onNodeWithTag("unitsSystemButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
+    composeTestRule.onNodeWithTag("weightUnitButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
 
-    // Simulate user changing the distance system and weight unit
+    // Simulate user changing the system of units and weight unit
     composeTestRule.onNodeWithTag("unitsSystemButton").performClick()
+    composeTestRule.onNodeWithTag("unitsSystemIMPERIAL").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("unitsSystemMETRIC").assertIsDisplayed()
     composeTestRule.onNodeWithTag("unitsSystemIMPERIAL").performClick()
 
     composeTestRule.onNodeWithTag("weightUnitButton").performClick()
+    composeTestRule.onNodeWithTag("weightUnitLBS").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("weightUnitKG").assertIsDisplayed()
     composeTestRule.onNodeWithTag("weightUnitLBS").performClick()
 
     // Verify that the selections were updated

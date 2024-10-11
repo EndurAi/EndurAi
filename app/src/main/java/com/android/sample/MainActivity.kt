@@ -64,7 +64,7 @@ fun MainApp() {
   val navigationActions = NavigationActions(navController)
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
-  NavHost(navController = navController, startDestination = Route.MAIN) {
+  NavHost(navController = navController, startDestination = Route.PREFERENCES) {
 
     // Auth Screen
     navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
@@ -89,7 +89,7 @@ fun MainApp() {
     }
     // Preferences Screen
     navigation(startDestination = Screen.PREFERENCES, route = Route.PREFERENCES) {
-      composable(Screen.ACHIEVEMENTS) { PreferencesScreen(navigationActions, preferencesViewModel) }
+      composable(Screen.PREFERENCES) { PreferencesScreen(navigationActions, preferencesViewModel) }
     }
   }
 }

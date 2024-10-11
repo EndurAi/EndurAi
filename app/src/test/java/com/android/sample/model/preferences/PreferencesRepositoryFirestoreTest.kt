@@ -39,7 +39,7 @@ class PreferencesRepositoryFirestoreTest {
 
   private lateinit var preferencesRepositoryFirestore: PreferencesRepositoryFirestore
 
-  private val preferences = Preferences(unity = UnitsSystem.METRIC, weight = WeightUnit.KG)
+  private val preferences = Preferences(unitsSystem = UnitsSystem.METRIC, weight = WeightUnit.KG)
 
   @Before
   fun setUp() {
