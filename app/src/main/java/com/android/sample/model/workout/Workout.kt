@@ -8,6 +8,7 @@ open class Workout(
 
 // Detail of the exercise based on its type
 sealed class ExerciseDetail {
-    data class TimeBased(val durationInSeconds: Int, val sets: Int) : ExerciseDetail()
-    data class RepetitionBased(val repetitions: Int) : ExerciseDetail()
+  data class TimeBased(val durationInSeconds: Int, val sets: Int) : ExerciseDetail()
+
+  data class RepetitionBased(val repetitions: Int) : ExerciseDetail()
 }
