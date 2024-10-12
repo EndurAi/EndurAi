@@ -1,4 +1,4 @@
-package com.android.sample.userAccount
+package com.android.sample.model.userAccount
 
 import java.util.Date
 
