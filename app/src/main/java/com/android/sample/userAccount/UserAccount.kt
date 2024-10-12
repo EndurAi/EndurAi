@@ -2,8 +2,6 @@ package com.android.sample.userAccount
 
 import java.util.Date
 
-
-
 // Data class to represent a user Account
 data class UserAccount(
     val firstName: String,
@@ -19,15 +17,19 @@ data class UserAccount(
 
 // Enum for height units
 enum class HeightUnit {
-    CM, METER, INCHES
+  CM,
+  METER,
+  INCHES
 }
 
 // Enum for weight units
 enum class WeightUnit {
-    KG, LBS
+  KG,
+  LBS
 }
 
 // Enum for gender
 enum class Gender {
-    MALE, FEMALE
+  MALE,
+  FEMALE
 }
