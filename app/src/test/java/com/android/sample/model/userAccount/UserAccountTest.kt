@@ -26,7 +26,7 @@ class UserAccountTest {
             profileImageUrl = "https://firebase.storage/user123/profile.jpg")
 
     // Assert: Check that the values are correctly stored
-      assertEquals("001", user.userId)
+    assertEquals("001", user.userId)
     assertEquals("John", user.firstName)
     assertEquals("Doe", user.lastName)
     assertEquals(180f, user.height)
