@@ -23,7 +23,7 @@ class BodyWeightWorkoutTest {
   }
 
   @Test
-  fun testAddExercise() {
+  fun testAddBodyWeightExercise() {
     val workout =
         BodyWeightWorkout(
             workoutId = WORKOUT_ID,
@@ -41,7 +41,7 @@ class BodyWeightWorkoutTest {
   }
 
   @Test
-  fun testDeleteExerciseById() {
+  fun testDeleteBodyWeightExercise() {
     val workout =
         BodyWeightWorkout(
             workoutId = WORKOUT_ID,
