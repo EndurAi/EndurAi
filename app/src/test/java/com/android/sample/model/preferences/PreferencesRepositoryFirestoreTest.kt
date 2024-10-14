@@ -8,8 +8,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import junit.framework.TestCase.fail
 import org.junit.After
 import org.junit.Before
@@ -17,8 +17,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockedStatic
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.mockStatic
-import org.mockito.Mockito.timeout
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
@@ -32,7 +32,6 @@ class PreferencesRepositoryFirestoreTest {
   @Mock private lateinit var mockFirestore: FirebaseFirestore
   @Mock private lateinit var mockCollectionReference: CollectionReference
   @Mock private lateinit var mockDocumentReference: DocumentReference
-  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
   @Mock private lateinit var mockUser: FirebaseUser
   @Mock private lateinit var mockAuth: FirebaseAuth
   private lateinit var firebaseAuthMock: MockedStatic<FirebaseAuth>
@@ -90,14 +89,15 @@ class PreferencesRepositoryFirestoreTest {
    */
   @Test
   fun getPreferences_callsDocuments() {
-    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
-    `when`(mockQuerySnapshot.documents).thenReturn(listOf())
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
 
     preferencesRepositoryFirestore.getPreferences(
         onSuccess = {}, onFailure = { fail("Failure callback should not be called") })
 
-    verify(timeout(100)) { (mockQuerySnapshot).documents }
+    verify(mockDocumentReference).get()
   }
 
   /**
