@@ -2,9 +2,7 @@ name: APK-Generator
 
 # Run the workflow when commits are pushed on main or when a PR is modified
 on:
-  push:
-    branches:
-      - "MS1/-Workflow-for-generating-the-APK"
+  workflow_dispatch:
 
 
 jobs:
