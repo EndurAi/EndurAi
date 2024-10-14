@@ -23,7 +23,7 @@ jobs:
 
 
       # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
-      - name: Enable KVM group perms
+      - name: Enable KVM group  perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -69,9 +69,11 @@ jobs:
         env:
           GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+          SIGN_IN_KEY: ${{ secrets.SIGN_IN_KEY }}
         run: |
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
+          echo "SIGN_IN_KEY" | base64 --decode > ./EndurAi.jks
 
 
       - name: Grant execute permission for gradlew
@@ -107,20 +109,26 @@ jobs:
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
-      #Generates the APK
-      - name: Generate APK
-        run: |
-          ./gradlew build
+      - name: Build APK
+        run: ./gradlew assembleDebug
 
-      #produce the artifact
-      - name : Upload the artifact
+      # Sign the APK
+      - name: Sign APK
+        run: |
+          apksigner sign \
+            --ks ./EndurAi.jks \
+            --ks-key-alias EndurAiKeyStore \
+            --ks-pass pass:EndurAi \
+            --key-pass pass:EndurAi \
+            --out ./EndurAi.apk \
+            /app/build/outputs/apk/debug/app-debug.apk
+
+      # Upload the signed APK as an artifact
+      - name: Upload the signed artifact
         uses: actions/upload-artifact@v4
         with:
           name: EndurAI APK file
-          path: /app/build/outputs/apk/debug/app-debug.apk
-
-
-        
+          path: ./EndurAi.apk
 
 
 
