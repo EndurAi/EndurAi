@@ -1,4 +1,4 @@
-package com.android.sample.screen.ui.preferences
+package com.android.sample.screen
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
