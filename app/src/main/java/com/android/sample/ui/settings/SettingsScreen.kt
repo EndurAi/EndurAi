@@ -57,7 +57,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
 
               // Preferences button
               Button(
-                  onClick = { navigationActions.navigateTo(Screen.PREFERENCES)},
+                  onClick = { navigationActions.navigateTo(Screen.PREFERENCES) },
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(60.dp)
