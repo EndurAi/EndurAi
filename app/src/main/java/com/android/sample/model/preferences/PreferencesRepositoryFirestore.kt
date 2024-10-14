@@ -75,7 +75,7 @@ class PreferencesRepositoryFirestore(private val db: FirebaseFirestore) : Prefer
   private fun documentSnapshotToPreferences(doc: DocumentSnapshot): Preferences {
     if (!doc.exists()) {
       Log.e("DEB", "The document does not exist")
-      throw Exception()
+      return PreferencesViewModel.defaultPreferences
     }
     try {
 
