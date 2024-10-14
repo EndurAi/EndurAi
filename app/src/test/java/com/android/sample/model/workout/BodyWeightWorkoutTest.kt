@@ -6,6 +6,8 @@ import org.junit.Test
 class BodyWeightWorkoutTest {
   val WORKOUT_ID = "001"
   val EX_ID = "ExoId"
+  val USER_ID_1 = "UID1"
+  val USER_ID_2 = "UID2"
 
   @Test
   fun testBodyWeightWorkoutCreation() {
@@ -14,12 +16,14 @@ class BodyWeightWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Bodyweight Strength",
             description = "A workout focused on bodyweight exercises.",
-            warmup = true)
+            warmup = true,
+            userIdSet = mutableSetOf(USER_ID_1))
     assertEquals(WORKOUT_ID, workout.workoutId)
     assertEquals("Bodyweight Strength", workout.name)
     assertEquals("A workout focused on bodyweight exercises.", workout.description)
     assertEquals(true, workout.warmup)
     assertEquals(0, workout.exercises.size) // Initially, exercises should be empty
+    assertEquals(mutableSetOf(USER_ID_1), workout.userIdSet)
   }
 
   @Test
@@ -63,5 +67,38 @@ class BodyWeightWorkoutTest {
     workout.removeExerciseById("001") // Removing pushUps1 by its Id
     assertEquals(1, workout.exercises.size) // Now should have 2 exercises
     assertEquals(pushUps2, workout.exercises[0]) // Check if the exercise is correctly removed
+  }
+
+  @Test
+  fun testAddUserIdIntoBodyWeightWorkout() {
+    val workout =
+        BodyWeightWorkout(
+            workoutId = WORKOUT_ID,
+            name = "Bodyweight Strength",
+            description = "A workout focused on bodyweight exercises.",
+            warmup = true) // UserId Set is initially empty
+
+    workout.addUserById(USER_ID_1)
+    assertEquals(1, workout.userIdSet.size)
+    workout.addUserById(USER_ID_2)
+    assertEquals(2, workout.userIdSet.size)
+    assertEquals(mutableSetOf(USER_ID_1, USER_ID_2), workout.userIdSet)
+  }
+
+  @Test
+  fun testRemoveUserIdFromBodyWeightWorkout() {
+    val workout =
+        BodyWeightWorkout(
+            workoutId = WORKOUT_ID,
+            name = "Bodyweight Strength",
+            description = "A workout focused on bodyweight exercises.",
+            warmup = true,
+            userIdSet = mutableSetOf(USER_ID_1, USER_ID_2)) // UserId Set is initially empty
+
+    workout.removeUserById(USER_ID_1)
+    assertEquals(1, workout.userIdSet.size)
+    workout.removeUserById(USER_ID_2)
+    assertEquals(0, workout.userIdSet.size)
+    assertEquals(mutableSetOf<String>(), workout.userIdSet)
   }
 }
