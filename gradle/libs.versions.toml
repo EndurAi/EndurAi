@@ -22,6 +22,8 @@ mockitoKotlinVersion = "4.0.0"
 robolectric = "4.11.1"
 sonar = "4.4.1.3373"
 gms = "4.4.2"
+mockk = "1.13.5"
+moshi = "1.14.0"
 
 # Firebase
 firebaseAuth = "23.0.0"
@@ -60,6 +62,11 @@ compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifes
 kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", version.ref = "kaspresso" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
+moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-core-v400 = { module = "org.mockito:mockito-core", version.ref = "mockitoCoreVersion" }

@@ -12,6 +12,7 @@ object Route {
   const val AUTH = "Auth"
   const val VIDEO = "Video"
   const val ACHIEVEMENTS = "Achievements"
+  const val PREFERENCES = "Preferences"
   const val SETTINGS = "Settings"
 }
 
@@ -20,6 +21,7 @@ object Screen {
   const val AUTH = "Auth Screen"
   const val VIDEO = "Video Screen"
   const val ACHIEVEMENTS = "Achievements Screen"
+  const val PREFERENCES = "Preferences Screen"
   const val SETTINGS = "Settings Screen"
 }
 

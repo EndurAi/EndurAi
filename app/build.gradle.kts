@@ -167,10 +167,16 @@ dependencies {
     // ----------       Robolectric     ------------
     testImplementation(libs.robolectric)
 
+    // --------- Moshi dependencies ----------
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+
+
     //----------- Test dependencies ---------------
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockk)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
 
