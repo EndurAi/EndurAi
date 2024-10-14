@@ -28,7 +28,7 @@ class NavigationActionsTest {
 
   @Test
   fun navigateToCallsController() {
-    navigationActions.navigateTo(TopLevelDestinations.MAIN) // htht
+    navigationActions.navigateTo(TopLevelDestinations.MAIN) 
     verify(navHostController).navigate(eq(Route.MAIN), any<NavOptionsBuilder.() -> Unit>())
 
     navigationActions.navigateTo(Screen.VIDEO)
