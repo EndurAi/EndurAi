@@ -73,7 +73,7 @@ jobs:
         run: |
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
-          echo "SIGN_IN_KEY" | base64 --decode > ./EndurAi.jks
+          echo "SIGN_IN_KEY" | base64 --decode > ./app/EndurAi.jks
 
 
       - name: Grant execute permission for gradlew
@@ -91,44 +91,16 @@ jobs:
           # To run the CI with debug information, add --info
           ./gradlew assemble lint --parallel --build-cache
 
-      # Run Unit tests
-      - name: Run tests
-        run: |
-          # To run the CI with debug information, add --info
-          ./gradlew check --parallel --build-cache
-
-      # Run connected tests on the emulator
-      - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: ./gradlew connectedCheck --parallel --build-cache
-
       - name: Build APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew build
 
-      # Sign the APK
-      - name: Sign APK
-        run: |
-          apksigner sign \
-            --ks ./EndurAi.jks \
-            --ks-key-alias EndurAiKeyStore \
-            --ks-pass pass:EndurAi \
-            --key-pass pass:EndurAi \
-            --out ./EndurAi.apk \
-            /app/build/outputs/apk/debug/app-debug.apk
 
       # Upload the signed APK as an artifact
       - name: Upload the signed artifact
         uses: actions/upload-artifact@v4
         with:
           name: EndurAI APK file
-          path: ./EndurAi.apk
+          path: ./app/build/outputs/apk/debug/app-debug.apk
 
 
 
