@@ -1,6 +1,7 @@
 package com.android.sample.model.workout
 
 open class Workout(
+    val workoutId: String, // Uniquely identifies the workout among all others
     val name: String,
     val description: String,
     val warmup: Boolean // Whether the user want to do a warmup

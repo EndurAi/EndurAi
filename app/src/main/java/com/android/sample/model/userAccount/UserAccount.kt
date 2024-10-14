@@ -4,6 +4,7 @@ import java.util.Date
 
 // Data class to represent a user Account
 data class UserAccount(
+    val userId: String,
     val firstName: String,
     val lastName: String,
     val height: Float,
