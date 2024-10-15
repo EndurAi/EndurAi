@@ -1,5 +1,7 @@
 package com.android.sample.model.workout
 
+import com.squareup.moshi.JsonClass
+
 /**
  * Represents a bodyweight workout session which includes a list of bodyweight exercises.
  *
@@ -10,6 +12,7 @@ package com.android.sample.model.workout
  * @param userIdSet Set of user IDs associated with this workout (defaults to an empty set).
  * @param exercises List of exercises included in the workout (defaults to an empty list).
  */
+@JsonClass(generateAdapter = true)
 class BodyWeightWorkout(
     workoutId: String,
     name: String,
@@ -54,6 +57,8 @@ class BodyWeightWorkout(
   fun removeUserById(id: String) {
     userIdSet.removeAll { it == id }
   }
+
+  override val documentName: String = "bodyWeightWorkout"
 }
 
 /** Enum class representing various types of bodyweight exercises. */
