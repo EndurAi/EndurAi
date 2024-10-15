@@ -16,6 +16,9 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.WorkoutRepositoryFirestore
+import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.SignInScreen
@@ -53,6 +56,11 @@ fun MainApp() {
   val navigationActions = NavigationActions(navController)
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+  val bodyweightWorkoutRepository =
+      WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
+  val YogaWorkoutRepository =
+      WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
+
   NavHost(navController = navController, startDestination = Route.AUTH) {
 
     // Auth Screen
