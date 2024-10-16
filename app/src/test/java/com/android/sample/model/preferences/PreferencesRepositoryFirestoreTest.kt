@@ -118,7 +118,7 @@ class PreferencesRepositoryFirestoreTest {
   }
 
   @Test
-  fun documentSnapshotToPreferences_ReturnsDefaultPreferencesIfNotFoundOnFIreStore() {
+  fun documentSnapshotToPreferences_ReturnsDefaultPreferencesIfNotFoundOnFireStore() {
     val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
     `when`(mockDocumentSnapshot.exists()).thenReturn(false)
 
