@@ -9,13 +9,27 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dev.zacsweers.moshix.sealed.reflect.MoshiSealedJsonAdapterFactory
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
 
 class WorkoutRepositoryFirestore<T : Workout>(
     private val db: FirebaseFirestore,
     private val clazz: Class<T>
 ) : WorkoutRepository<T> {
 
-  private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    fun getDocumentName(): String {
+        val companionObject = clazz.kotlin.companionObjectInstance
+        val documentNameProperty = clazz.kotlin.companionObject?.members?.find { it.name == "DOCUMENT_NAME" }
+        return documentNameProperty?.call(companionObject) as? String
+            ?: throw IllegalStateException("DOCUMENT_NAME not found for class ${clazz.simpleName}")
+    }
+
+  private val moshi = Moshi.Builder()
+      .add(MoshiSealedJsonAdapterFactory())
+      .add(KotlinJsonAdapterFactory())
+      .build()
+
   private val adapter = moshi.adapter(clazz)
 
   private val collectionPath: String
@@ -26,10 +40,13 @@ class WorkoutRepositoryFirestore<T : Workout>(
 
   private val documentToCollectionName: String = "workout"
 
-  private val documentName: String = clazz.getDeclaredConstructor().newInstance().documentName
+  private val documentName: String = getDocumentName()
 
   override fun getNewUid(): String {
-    return db.collection(collectionPath).document().id
+    return db
+        .collection(collectionPath)
+        .document(documentToCollectionName)
+        .collection(documentName).document().id
   }
 
   override fun init(onSuccess: () -> Unit) {
