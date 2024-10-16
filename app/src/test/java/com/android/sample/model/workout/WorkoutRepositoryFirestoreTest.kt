@@ -48,8 +48,8 @@ class WorkoutRepositoryFirestoreTest {
 
     private val yogaWorkout = YogaWorkout(
         workoutId = "workout-2",
-        name = "Evening Yoga",
-        description = "A relaxing way to end your day!",
+        name = "Workout after Bugnion lesson",
+        description = "A great way to change my mind!",
         warmup = false
     )
 
