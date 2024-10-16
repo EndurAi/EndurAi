@@ -125,6 +125,10 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation(libs.firebase.storage.ktx)
 
+
+    // Coil Compose (for async image loading in Jetpack Compose)
+    implementation(libs.coil.compose)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
