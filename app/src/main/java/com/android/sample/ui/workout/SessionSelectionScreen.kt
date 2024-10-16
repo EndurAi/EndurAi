@@ -32,9 +32,11 @@ fun SessionSelectionScreen(navigationActions: NavigationActions) {
         TopAppBar(
             title = { Text("New session") },
             navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }, modifier = Modifier.testTag("sessionSelectionScreenBackButton")) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-              }
+              IconButton(
+                  onClick = { navigationActions.goBack() },
+                  modifier = Modifier.testTag("sessionSelectionScreenBackButton")) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                  }
             })
       },
       content = { padding ->
