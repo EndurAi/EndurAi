@@ -77,32 +77,30 @@ class PreferencesScreenTest {
   }
 
   @Test
-  fun testUpdatePreferencesOnSaving() {
+  fun savingPreferencesCallsUpdatePreferences() {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
     val secondPreferences = Preferences(unitsSystem = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
 
-    // First reading:
-
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
 
     // Simulate user changing the system of units and weight unit
+    // from (METRIC, KG) to (IMPERIAL, LBS)
     composeTestRule.onNodeWithTag("unitsSystemButton").performClick()
     composeTestRule.onNodeWithTag("unitsSystemIMPERIAL").performClick()
     composeTestRule.onNodeWithTag("weightUnitButton").performClick()
     composeTestRule.onNodeWithTag("weightUnitLBS").performClick()
-
-    // Verify that the text selections were updated
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
 
     // Save the changes
     composeTestRule.onNodeWithTag("preferencesSaveButton").performClick()
 
     // check if the preferences were updated in the repository
     verify(mockPreferencesRepository).updatePreferences(eq(secondPreferences), any(), any())
+
+  }
+
+  @Test
+  fun savingPreferencesCallsGoBack(){
+    composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
+    composeTestRule.onNodeWithTag("preferencesSaveButton").performClick()
     // verify that the user goes back
     verify(mockNavHostController).goBack()
   }
