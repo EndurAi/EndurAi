@@ -27,6 +27,7 @@ import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.EditAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.mainscreen.MainScreen
+import com.android.sample.ui.mainscreen.OverviewScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -83,7 +84,7 @@ fun MainApp() {
 
     // Main Screen
     navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
-      composable(Screen.MAIN) { MainScreen(navigationActions) }
+      composable(Screen.MAIN) { OverviewScreen(navigationActions) }
     }
 
     // Video Screen
