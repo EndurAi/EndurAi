@@ -81,7 +81,6 @@ class PreferencesScreenTest {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
     val secondPreferences = Preferences(unitsSystem = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
 
-
     // Simulate user changing the system of units and weight unit
     // from (METRIC, KG) to (IMPERIAL, LBS)
     composeTestRule.onNodeWithTag("unitsSystemButton").performClick()
@@ -94,11 +93,10 @@ class PreferencesScreenTest {
 
     // check if the preferences were updated in the repository
     verify(mockPreferencesRepository).updatePreferences(eq(secondPreferences), any(), any())
-
   }
 
   @Test
-  fun savingPreferencesCallsGoBack(){
+  fun savingPreferencesCallsGoBack() {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
     composeTestRule.onNodeWithTag("preferencesSaveButton").performClick()
     // verify that the user goes back
