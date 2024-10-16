@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - fix/Complete-Tests
 
   pull_request:
     types:
