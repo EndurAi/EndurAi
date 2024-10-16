@@ -16,8 +16,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.workout.BodyWeightExercise
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
+import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
@@ -30,6 +32,8 @@ import com.android.sample.ui.preferences.PreferencesScreen
 import com.android.sample.ui.settings.SettingsScreen
 import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoScreen
+import com.android.sample.ui.workout.ImportOrCreateScreen
+import com.android.sample.ui.workout.SessionSelectionScreen
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -58,8 +62,11 @@ fun MainApp() {
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
   val bodyweightWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
-  val YogaWorkoutRepository =
+  val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository)
+  val yogaWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
+  val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
+
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
 
@@ -91,6 +98,16 @@ fun MainApp() {
     // Settings Screen
     navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+    }
+
+    // Session Selection Screen
+    navigation(startDestination = Screen.SESSIONSELECTION, route = Route.SESSIONSELECTION) {
+      composable(Screen.SESSIONSELECTION) { SessionSelectionScreen(navigationActions) }
+    }
+
+    // Import or Create Screen
+    navigation(startDestination = Screen.IMPORTORCREATE, route = Route.IMPORTORCREATE) {
+      composable(Screen.IMPORTORCREATE) { ImportOrCreateScreen(navigationActions) }
     }
   }
 }
