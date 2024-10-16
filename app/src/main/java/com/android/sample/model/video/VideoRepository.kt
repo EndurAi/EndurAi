@@ -12,7 +12,7 @@ interface VideoRepository {
    * @param onSuccess Callback function to be invoked with the download URL on successful upload.
    * @param onFailure Callback function to be invoked with an exception if the upload fails.
    */
-  fun uploadVideo(videoUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
+  fun uploadVideo(video: Video, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Retrieves video URLs from the repository.
@@ -21,5 +21,5 @@ interface VideoRepository {
    *   retrieval.
    * @param onFailure Callback function to be invoked with an exception if the retrieval fails.
    */
-  fun getVideoUrls(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
+  fun getVideos(onSuccess: (List<Video>) -> Unit, onFailure: (Exception) -> Unit)
 }
