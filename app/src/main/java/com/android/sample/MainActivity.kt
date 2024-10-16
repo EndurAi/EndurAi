@@ -10,12 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.video.VideoViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.SignInScreen
@@ -54,6 +56,8 @@ fun MainApp() {
   val navigationActions = NavigationActions(navController)
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+
+  val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   NavHost(navController = navController, startDestination = Route.AUTH) {
 
     // Auth Screen
@@ -68,8 +72,8 @@ fun MainApp() {
 
     // Video Screen
     navigation(startDestination = Screen.VIDEO_LIBRARY, route = Route.VIDEO_LIBRARY) {
-      composable(Screen.VIDEO_LIBRARY) { VideoLibraryScreen(navigationActions) }
-      composable(Screen.VIDEO) { VideoScreen(navigationActions) }
+      composable(Screen.VIDEO_LIBRARY) { VideoLibraryScreen(navigationActions, videoViewModel) }
+      composable(Screen.VIDEO) { VideoScreen(navigationActions, videoViewModel) }
     }
 
     // Achievements Screen
