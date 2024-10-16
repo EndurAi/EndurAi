@@ -26,6 +26,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.preferences.PreferencesScreen
 import com.android.sample.ui.settings.SettingsScreen
 import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.video.VideoLibraryScreen
 import com.android.sample.ui.video.VideoScreen
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -66,7 +67,8 @@ fun MainApp() {
     }
 
     // Video Screen
-    navigation(startDestination = Screen.VIDEO, route = Route.VIDEO) {
+    navigation(startDestination = Screen.VIDEO_LIBRARY, route = Route.VIDEO_LIBRARY) {
+      composable(Screen.VIDEO_LIBRARY) { VideoLibraryScreen(navigationActions) }
       composable(Screen.VIDEO) { VideoScreen(navigationActions) }
     }
 

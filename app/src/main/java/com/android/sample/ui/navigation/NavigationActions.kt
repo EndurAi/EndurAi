@@ -6,10 +6,12 @@ import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
+import com.android.sample.model.video.Video
 
 object Route {
   const val MAIN = "Main"
   const val AUTH = "Auth"
+  const val VIDEO_LIBRARY = "VideoLibrary"
   const val VIDEO = "Video"
   const val ACHIEVEMENTS = "Achievements"
   const val PREFERENCES = "Preferences"
@@ -19,6 +21,7 @@ object Route {
 object Screen {
   const val MAIN = "Main Screen"
   const val AUTH = "Auth Screen"
+  const val VIDEO_LIBRARY = "Video Library Screen"
   const val VIDEO = "Video Screen"
   const val ACHIEVEMENTS = "Achievements Screen"
   const val PREFERENCES = "Preferences Screen"
@@ -29,7 +32,7 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 
 object TopLevelDestinations {
   val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
-  val VIDEO = TopLevelDestination(Route.VIDEO, Icons.Filled.PlayArrow, textId = "Video")
+  val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
   val ACHIEVEMENTS =
       TopLevelDestination(Route.ACHIEVEMENTS, Icons.Outlined.DateRange, textId = "Achievements")
 }
