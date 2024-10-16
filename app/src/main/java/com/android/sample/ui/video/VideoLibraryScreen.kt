@@ -1,4 +1,5 @@
 package com.android.sample.ui.video
+import android.util.Log
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -65,12 +66,9 @@ import com.android.sample.ui.navigation.Screen
 @Composable
 fun VideoLibraryScreen(
     navigationActions: NavigationActions,
-    videoViewModel: VideoViewModel =
-        viewModel(factory = VideoViewModel.Factory)
-){
-
+    videoViewModel: VideoViewModel
+) {
     val videoList by videoViewModel.videos.collectAsState(initial = emptyList())
-    // Trigger loadVideos() when this Composable is first composed
     LaunchedEffect(Unit) { videoViewModel.loadVideos() }
 
     var searchQuery by remember { mutableStateOf("") }
@@ -92,13 +90,22 @@ fun VideoLibraryScreen(
         content = { padding ->
             Box(modifier = Modifier.padding(padding).fillMaxSize()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Search bar
-                    SearchBar(searchQuery) { searchQuery = it }
+                    // Row to align Search bar and Tag dropdown
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        SearchBar(
+                            query = searchQuery,
+                            onQueryChange = { searchQuery = it },
+                            modifier = Modifier.weight(1f) // Takes up available space
+                        )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
-                    // Tag filter dropdown
-                    TagDropdown(selectedTag) { selectedTag = it }
+                        TagDropdown(
+                            selectedTag = selectedTag,
+                            onTagSelected = { selectedTag = it },
+                            modifier = Modifier.width(100.dp) // Fixes width for the dropdown
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,9 +115,13 @@ fun VideoLibraryScreen(
                             (selectedTag == "All" || video.tag == selectedTag) &&
                                     video.title.contains(searchQuery, ignoreCase = true)
                         }) { video ->
-                            VideoListItem(video = video, onClick = {
-                                navigationActions.navigateTo(Screen.VIDEO)
-                            })
+                            VideoListItem(
+                                video = video,
+                                onClick = {
+                                    videoViewModel.selectVideo(video)
+                                    navigationActions.navigateTo(Screen.VIDEO)
+                                }
+                            )
                         }
                     }
                 }
@@ -120,10 +131,9 @@ fun VideoLibraryScreen(
 }
 
 @Composable
-fun SearchBar(query: String, onQueryChange: (String) -> Unit) {
+fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .clip(RoundedCornerShape(24.dp))
             .background(Color(0xFFF0F0F0))
             .padding(8.dp)
@@ -143,13 +153,12 @@ fun SearchBar(query: String, onQueryChange: (String) -> Unit) {
 }
 
 @Composable
-fun TagDropdown(selectedTag: String, onTagSelected: (String) -> Unit) {
+fun TagDropdown(selectedTag: String, onTagSelected: (String) -> Unit, modifier: Modifier = Modifier) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(modifier = modifier) {
         Button(
             onClick = { expanded = true },
-            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF0F0F0))
         ) {
@@ -175,7 +184,7 @@ fun TagDropdown(selectedTag: String, onTagSelected: (String) -> Unit) {
 
 @Composable
 fun VideoListItem(video: Video, onClick: () -> Unit) {
-    // Improved card styling with a nice layout
+    // Modified card with thumbnail on the right and larger size
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,23 +197,10 @@ fun VideoListItem(video: Video, onClick: () -> Unit) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Thumbnail image on the right
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(video.thumbnailUrl) // Placeholder image
-                    .build(),
-                contentDescription = "Video Thumbnail",
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, Color.LightGray, CircleShape),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Video title and tag on the left
-            Column {
+            // Title and Tag on the left
+            Column(
+                modifier = Modifier.weight(1f) // Take up available space
+            ) {
                 Text(
                     text = video.title,
                     style = MaterialTheme.typography.titleMedium,
@@ -223,11 +219,25 @@ fun VideoListItem(video: Video, onClick: () -> Unit) {
                     fontSize = 12.sp
                 )
             }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Larger thumbnail on the right
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(video.thumbnailUrl)
+                    .build(),
+                contentDescription = "Video Thumbnail",
+                modifier = Modifier
+                    .size(80.dp) // Increased size
+                    .clip(RoundedCornerShape(8.dp))
+                    .border(2.dp, Color.LightGray, RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
         }
     }
 }
 
-// Helper function for tag background colors
 fun tagColor(tag: String): Color {
     return when (tag) {
         "Body-Weight" -> Color.Red
@@ -236,5 +246,6 @@ fun tagColor(tag: String): Color {
         else -> Color.Gray
     }
 }
+
 
 

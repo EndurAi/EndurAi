@@ -28,6 +28,9 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
     val error: StateFlow<String?>
         get() = _error.asStateFlow()
 
+    private val selectedVideo_ = MutableStateFlow<Video?>(null)
+    open val selectedVideo: StateFlow<Video?> = selectedVideo_.asStateFlow()
+
     // Loads videos and updates the state
     suspend fun loadVideos() {
         withContext(Dispatchers.IO) {
@@ -43,6 +46,10 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
         _videos.update { videos ->
             if (tag == "All") videos else videos.filter { it.tag == tag }
         }
+    }
+
+    fun selectVideo(video: Video) {
+        selectedVideo_.value = video
     }
 
     companion object {

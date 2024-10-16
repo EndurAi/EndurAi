@@ -59,7 +59,7 @@ class VideoRepositoryStorage(
         videosCollection.get()
             .addOnSuccessListener { result ->
                 val videoList = result.documents.mapNotNull { doc ->
-                    doc.toObject(Video::class.java)
+                    doc.toObject(Video::class.java) // Deserializing to Video class
                 }
                 onSuccess(videoList)
             }
@@ -67,4 +67,5 @@ class VideoRepositoryStorage(
                 onFailure(exception)
             }
     }
+
 }

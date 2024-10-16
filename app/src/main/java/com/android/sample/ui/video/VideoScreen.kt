@@ -1,7 +1,9 @@
 // portions of this code were done with the help of ChatGPT and GitHub Copilot
 package com.android.sample.ui.video
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,13 +31,12 @@ import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoScreen(
     navigationActions: NavigationActions,
-    video: Video,
-    videoViewModel: VideoViewModel =
-        viewModel(factory = VideoViewModel.Factory) // Using ViewModel in Compose
+    videoViewModel: VideoViewModel // Using ViewModel in Compose
 ) {
 
     val context = LocalContext.current
@@ -59,13 +60,7 @@ fun VideoScreen(
                 Modifier.padding(padding)
                     .fillMaxSize() // Ensure the video player takes the full screen size
             ) {
-//                if (video.isNotEmpty()) {
-//                    // Call the Composable that hosts ExoPlayer
-//                    VideoPlayer(url = videoUrls[0], context = context)
-//                } else {
-//                    Text("Loading video...", modifier = Modifier.padding(16.dp))
-//                }
-                VideoPlayer(url = video.url, context = context)
+                videoViewModel.selectedVideo.value?.let { VideoPlayer(url = it.url, context = context) }
             }
         },
     )
