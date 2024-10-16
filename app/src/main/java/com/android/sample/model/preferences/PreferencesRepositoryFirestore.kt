@@ -5,12 +5,11 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.JsonEncodingException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-class PreferencesRepositoryFirestore(private val db: FirebaseFirestore) : PreferencesRepository {
+open class PreferencesRepositoryFirestore(private val db: FirebaseFirestore) :
+    PreferencesRepository {
 
   val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
@@ -72,7 +71,7 @@ class PreferencesRepositoryFirestore(private val db: FirebaseFirestore) : Prefer
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-  private fun documentSnapshotToPreferences(doc: DocumentSnapshot): Preferences {
+  open fun documentSnapshotToPreferences(doc: DocumentSnapshot): Preferences {
     if (!doc.exists()) {
       Log.e("DEB", "The document does not exist")
       return PreferencesViewModel.defaultPreferences
@@ -84,14 +83,8 @@ class PreferencesRepositoryFirestore(private val db: FirebaseFirestore) : Prefer
       val prefs = preferencesAdapter.fromJson(json)
 
       return prefs ?: throw IllegalArgumentException("Conversion error in Preferences")
-    } catch (e: JsonDataException) {
-      Log.e("Moshi", "Data error JSON : ${e.message}")
-      throw e
-    } catch (e: JsonEncodingException) {
-      Log.e("Moshi", "Encoding error JSON : ${e.message}")
-      throw e
-    } catch (e: Exception) {
-      Log.e("Moshi", "Conversion error : ${e.message}")
+    } catch (e: Error) {
+      Log.e("Moshi", "Moshi error : ${e.message}")
       throw e
     }
   }

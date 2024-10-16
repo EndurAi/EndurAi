@@ -6,14 +6,20 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.sample.model.preferences.Preferences
 import com.android.sample.model.preferences.PreferencesRepository
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.preferences.UnitsSystem
+import com.android.sample.model.preferences.WeightUnit
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.preferences.PreferencesScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 
 class PreferencesScreenTest {
   private lateinit var mockPreferencesRepository: PreferencesRepository
@@ -68,5 +74,36 @@ class PreferencesScreenTest {
     // Verify that the selections were updated
     composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
     composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
+  }
+
+  @Test
+  fun testUpdatePreferencesOnSaving() {
+    composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
+    val secondPreferences = Preferences(unitsSystem = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
+
+    // First reading:
+
+    composeTestRule.onNodeWithTag("unitsSystemButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
+    composeTestRule.onNodeWithTag("weightUnitButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
+
+    // Simulate user changing the system of units and weight unit
+    composeTestRule.onNodeWithTag("unitsSystemButton").performClick()
+    composeTestRule.onNodeWithTag("unitsSystemIMPERIAL").performClick()
+    composeTestRule.onNodeWithTag("weightUnitButton").performClick()
+    composeTestRule.onNodeWithTag("weightUnitLBS").performClick()
+
+    // Verify that the text selections were updated
+    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
+    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
+
+    // Save the changes
+    composeTestRule.onNodeWithTag("preferencesSaveButton").performClick()
+
+    // check if the preferences were updated in the repository
+    verify(mockPreferencesRepository).updatePreferences(eq(secondPreferences), any(), any())
+    // verify that the user goes back
+    verify(mockNavHostController).goBack()
   }
 }

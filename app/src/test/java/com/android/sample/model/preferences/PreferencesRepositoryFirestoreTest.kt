@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import junit.framework.TestCase.fail
 import org.junit.After
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -114,5 +115,28 @@ class PreferencesRepositoryFirestoreTest {
 
     // Verify that the document reference's delete method was called
     verify(mockDocumentReference).delete()
+  }
+
+  @Test
+  fun documentSnapshotToPreferences_ReturnsDefaultPreferencesIfNotFoundOnFIreStore() {
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    `when`(mockDocumentSnapshot.exists()).thenReturn(false)
+
+    val result = preferencesRepositoryFirestore.documentSnapshotToPreferences(mockDocumentSnapshot)
+
+    assert(result == PreferencesViewModel.defaultPreferences)
+  }
+
+  @Test
+  fun documentSnapshotToPreferences_throwsErrorIfPrefsIsNull() {
+    // Arrange
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    `when`(mockDocumentSnapshot.exists()).thenReturn(true)
+    `when`(mockDocumentSnapshot.data).thenReturn(null) // Simulate null data
+
+    // Act & Assert
+    assertThrows(IllegalArgumentException::class.java) {
+      preferencesRepositoryFirestore.documentSnapshotToPreferences(mockDocumentSnapshot)
+    }
   }
 }
