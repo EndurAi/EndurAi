@@ -19,6 +19,8 @@ mockitoCoreVersion = "4.0.0"
 mockitoInline = "4.0.0"
 mockitoKotlin = "5.4.0"
 mockitoKotlinVersion = "4.0.0"
+moshiSealedReflect = "0.28.0"
+moshiSealedRuntime = "0.28.0"
 robolectric = "4.11.1"
 sonar = "4.4.1.3373"
 gms = "4.4.2"
@@ -73,6 +75,8 @@ mockito-core-v400 = { module = "org.mockito:mockito-core", version.ref = "mockit
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockito-kotlin-v400 = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlinVersion" }
+moshi-sealed-reflect = { module = "dev.zacsweers.moshix:moshi-sealed-reflect", version.ref = "moshiSealedReflect" }
+moshi-sealed-runtime = { module = "dev.zacsweers.moshix:moshi-sealed-runtime", version.ref = "moshiSealedRuntime" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 # Firebase Libraries

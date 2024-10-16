@@ -170,6 +170,8 @@ dependencies {
     // --------- Moshi dependencies ----------
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
+    implementation (libs.moshi.sealed.runtime)
+    implementation (libs.moshi.sealed.reflect)
 
 
     //----------- Test dependencies ---------------
