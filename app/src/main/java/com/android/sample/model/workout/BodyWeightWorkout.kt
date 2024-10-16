@@ -22,6 +22,10 @@ class BodyWeightWorkout(
     val exercises: MutableList<BodyWeightExercise> = mutableListOf() // Default to an empty list
 ) : Workout(workoutId, name, description, warmup, userIdSet) {
 
+    companion object {
+        const val DOCUMENT_NAME = "bodyweightWorkout"
+    }
+
   /**
    * Adds a [BodyWeightExercise] to the list of exercises in the workout.
    *
@@ -57,8 +61,6 @@ class BodyWeightWorkout(
   fun removeUserById(id: String) {
     userIdSet.removeAll { it == id }
   }
-
-  override val documentName: String = "bodyWeightWorkout"
 }
 
 /** Enum class representing various types of bodyweight exercises. */
