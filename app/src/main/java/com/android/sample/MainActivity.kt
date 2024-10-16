@@ -16,7 +16,6 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
-import com.android.sample.model.workout.BodyWeightExercise
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
 import com.android.sample.model.workout.WorkoutViewModel
@@ -66,7 +65,6 @@ fun MainApp() {
   val yogaWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
   val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
-
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
 

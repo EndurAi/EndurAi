@@ -37,33 +37,27 @@ fun MainScreen(navigationActions: NavigationActions) {
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
             contentAlignment = Alignment.Center) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "New Workout Plan",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                Button(
-                    onClick = {
-                        navigationActions.navigateTo(Screen.SESSIONSELECTION)
-                    },
-                    modifier = Modifier.size(width = 200.dp, height = 100.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "New Workout",
-                        modifier = Modifier.size(48.dp),
-                        tint = Color.White
-                    )
-                }
+              Column(
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement = Arrangement.Center) {
+                    Text(
+                        text = "New Workout Plan",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.padding(bottom = 16.dp))
+                    Button(
+                        onClick = { navigationActions.navigateTo(Screen.SESSIONSELECTION) },
+                        modifier = Modifier.size(width = 200.dp, height = 100.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary)) {
+                          Icon(
+                              imageVector = Icons.Default.Add,
+                              contentDescription = "New Workout",
+                              modifier = Modifier.size(48.dp),
+                              tint = Color.White)
+                        }
+                  }
             }
-        }
       },
       bottomBar = {
         BottomNavigationMenu(

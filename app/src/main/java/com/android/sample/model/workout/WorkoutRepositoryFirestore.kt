@@ -18,17 +18,16 @@ class WorkoutRepositoryFirestore<T : Workout>(
     private val clazz: Class<T>
 ) : WorkoutRepository<T> {
 
-    fun getDocumentName(): String {
-        val companionObject = clazz.kotlin.companionObjectInstance
-        val documentNameProperty = clazz.kotlin.companionObject?.members?.find { it.name == "DOCUMENT_NAME" }
-        return documentNameProperty?.call(companionObject) as? String
-            ?: throw IllegalStateException("DOCUMENT_NAME not found for class ${clazz.simpleName}")
-    }
+  fun getDocumentName(): String {
+    val companionObject = clazz.kotlin.companionObjectInstance
+    val documentNameProperty =
+        clazz.kotlin.companionObject?.members?.find { it.name == "DOCUMENT_NAME" }
+    return documentNameProperty?.call(companionObject) as? String
+        ?: throw IllegalStateException("DOCUMENT_NAME not found for class ${clazz.simpleName}")
+  }
 
-  private val moshi = Moshi.Builder()
-      .add(MoshiSealedJsonAdapterFactory())
-      .add(KotlinJsonAdapterFactory())
-      .build()
+  private val moshi =
+      Moshi.Builder().add(MoshiSealedJsonAdapterFactory()).add(KotlinJsonAdapterFactory()).build()
 
   private val adapter = moshi.adapter(clazz)
 
@@ -43,10 +42,11 @@ class WorkoutRepositoryFirestore<T : Workout>(
   private val documentName: String = getDocumentName()
 
   override fun getNewUid(): String {
-    return db
-        .collection(collectionPath)
+    return db.collection(collectionPath)
         .document(documentToCollectionName)
-        .collection(documentName).document().id
+        .collection(documentName)
+        .document()
+        .id
   }
 
   override fun init(onSuccess: () -> Unit) {

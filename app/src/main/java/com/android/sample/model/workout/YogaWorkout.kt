@@ -22,9 +22,9 @@ class YogaWorkout(
     val exercises: MutableList<YogaExercise> = mutableListOf() // Default to an empty list
 ) : Workout(workoutId, name, description, warmup, userIdSet) {
 
-    companion object {
-        const val DOCUMENT_NAME = "yogaWorkout"
-    }
+  companion object {
+    const val DOCUMENT_NAME = "yogaWorkout"
+  }
 
   /**
    * Adds a [YogaExercise] to the list of exercises in the workout.
