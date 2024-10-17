@@ -14,6 +14,9 @@ object Route {
   const val ACHIEVEMENTS = "Achievements"
   const val PREFERENCES = "Preferences"
   const val SETTINGS = "Settings"
+  const val SESSIONSELECTION = "Session Selection"
+  const val IMPORTORCREATE = "Import Or Create"
+  const val TEST = "Test"
 }
 
 object Screen {
@@ -23,6 +26,9 @@ object Screen {
   const val ACHIEVEMENTS = "Achievements Screen"
   const val PREFERENCES = "Preferences Screen"
   const val SETTINGS = "Settings Screen"
+  const val SESSIONSELECTION = "Session Selection Screen"
+  const val IMPORTORCREATE = "Import Or Create Screen"
+  const val TEST = "Test Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)

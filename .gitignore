@@ -8,3 +8,5 @@
 .cxx
 local.properties
 app/google-services.json
+/app/EndurAi.jks
+/base64_KEY.txt
