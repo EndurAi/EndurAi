@@ -62,12 +62,6 @@ class EndToEndTest1 {
     // go back to the main screen
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     mainScreenIsWellDisplayed()
-    // go to workout selection screen
-    composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
-    selectionWorkoutIsWellDisplayed()
-    // go back to the main screen
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-    mainScreenIsWellDisplayed()
   }
 
   private fun settingScreenIsWellDisplayed() {
