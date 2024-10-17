@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -37,7 +38,6 @@ import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.GreyLight
 import com.google.firebase.Timestamp
-import java.util.Date
 
 /**
  * Main composable function that sets up the main screen layout.
