@@ -44,7 +44,6 @@ import java.util.Date
  *
  * @param navigationActions Actions for navigating between screens.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navigationActions: NavigationActions) {
   // Temp until got real account repository
@@ -264,7 +263,7 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
+                .clickable { /*Navigate to screen to choose type of workout*/}
                 .padding(vertical = 16.dp, horizontal = 16.dp)
                 .height(48.dp)
                 .background(Grey, RoundedCornerShape(24.dp))
