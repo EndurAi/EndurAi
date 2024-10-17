@@ -44,6 +44,7 @@ import java.util.Date
  *
  * @param navigationActions Actions for navigating between screens.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navigationActions: NavigationActions) {
   // Temp until got real account repository
@@ -86,20 +87,7 @@ fun MainScreen(navigationActions: NavigationActions) {
 
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
-      topBar = {
-        TopAppBar(
-            title = { Text("Main Screen") },
-            actions = {
-              IconButton(
-                  onClick = { navigationActions.navigateTo("Settings Screen") },
-                  modifier = Modifier.testTag("SettingsButton")) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = "Settings",
-                        tint = Color.Black)
-                  }
-            })
-      },
+      topBar = { TopAppBar(title = { Text("Main Screen") }, actions = {}) },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -263,7 +251,7 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .clickable { /*Navigate to screen to choose type of workout*/}
+                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
                 .padding(vertical = 16.dp, horizontal = 16.dp)
                 .height(48.dp)
                 .background(Grey, RoundedCornerShape(24.dp))
