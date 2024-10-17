@@ -18,6 +18,7 @@ import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
+import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.resources.C
@@ -33,6 +34,7 @@ import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
+import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -103,9 +105,35 @@ fun MainApp() {
       composable(Screen.SESSIONSELECTION) { SessionSelectionScreen(navigationActions) }
     }
 
-    // Import or Create Screen
-    navigation(startDestination = Screen.IMPORTORCREATE, route = Route.IMPORTORCREATE) {
-      composable(Screen.IMPORTORCREATE) { ImportOrCreateScreen(navigationActions) }
+    // Import or Create Screen for body weight workout
+    navigation(
+        startDestination = Screen.IMPORTORCREATE_BODY_WEIGHT,
+        route = Route.IMPORTORCREATE_BODY_WEIGHT) {
+          composable(Screen.IMPORTORCREATE_BODY_WEIGHT) {
+            ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+          }
+        }
+
+    // Import or Create Screen for yoga workout
+    navigation(startDestination = Screen.IMPORTORCREATE_YOGA, route = Route.IMPORTORCREATE_YOGA) {
+      composable(Screen.IMPORTORCREATE_YOGA) {
+        ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.YOGA)
+      }
+    }
+
+    // Body Weight Creation Screen
+    navigation(startDestination = Screen.BODY_WEIGHT_CREATION, route = Route.BODY_WEIGHT_CREATION) {
+      composable(Screen.BODY_WEIGHT_CREATION) {
+        WorkoutCreationScreen(
+            navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, false)
+      }
+    }
+
+    // Yoga Creation Screen
+    navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
+      composable(Screen.YOGA_CREATION) {
+        WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+      }
     }
   }
 }
