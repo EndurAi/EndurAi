@@ -20,6 +20,7 @@ class PreferencesViewModel(private val repository: PreferencesRepository) : View
   }
 
   fun updatePreferences(prefs: Preferences) {
+    if (prefs == preferences_.value) return
     repository.updatePreferences(prefs, onSuccess = { getPreferences() }, onFailure = {})
   }
 

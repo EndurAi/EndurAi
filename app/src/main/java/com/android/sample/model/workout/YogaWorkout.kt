@@ -1,5 +1,7 @@
 package com.android.sample.model.workout
 
+import com.squareup.moshi.JsonClass
+
 /**
  * Represents a Yoga workout session which includes a list of yoga exercises.
  *
@@ -10,6 +12,7 @@ package com.android.sample.model.workout
  * @param userIdSet Set of user IDs associated with this workout (defaults to an empty set).
  * @param exercises List of exercises included in the workout (defaults to an empty list).
  */
+@JsonClass(generateAdapter = true)
 class YogaWorkout(
     workoutId: String,
     name: String,
@@ -18,6 +21,10 @@ class YogaWorkout(
     userIdSet: MutableSet<String> = mutableSetOf(),
     val exercises: MutableList<YogaExercise> = mutableListOf() // Default to an empty list
 ) : Workout(workoutId, name, description, warmup, userIdSet) {
+
+  companion object {
+    const val DOCUMENT_NAME = "yogaWorkout"
+  }
 
   /**
    * Adds a [YogaExercise] to the list of exercises in the workout.

@@ -74,9 +74,12 @@ jobs:
         env:
           GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+          SIGN_IN_KEY: ${{ secrets.SIGN_IN_KEY }}
         run: |
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
+          echo "$SIGN_IN_KEY" | base64 --decode > ./app/EndurAi.jks
+
 
 
       - name: Grant execute permission for gradlew

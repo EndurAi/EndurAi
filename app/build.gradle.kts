@@ -25,7 +25,21 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            // You need to specify either an absolute path or include the
+            // keystore file in the same directory as the build.gradle file.
+            storeFile = file("EndurAi.jks")
+            storePassword = "EndurAi"
+            keyAlias = "EndurAiKeyStore"
+            keyPassword = "EndurAi"
+        }
+    }
+
     buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -174,6 +188,8 @@ dependencies {
     // --------- Moshi dependencies ----------
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
+    implementation (libs.moshi.sealed.runtime)
+    implementation (libs.moshi.sealed.reflect)
 
 
     //----------- Test dependencies ---------------
