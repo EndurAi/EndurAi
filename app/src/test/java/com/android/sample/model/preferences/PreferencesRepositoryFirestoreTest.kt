@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import junit.framework.TestCase.fail
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
@@ -124,7 +125,7 @@ class PreferencesRepositoryFirestoreTest {
 
     val result = preferencesRepositoryFirestore.documentSnapshotToPreferences(mockDocumentSnapshot)
 
-    assert(result == PreferencesViewModel.defaultPreferences)
+    assertEquals(result, PreferencesViewModel.defaultPreferences)
   }
 
   @Test
