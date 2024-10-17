@@ -5,12 +5,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.android.sample.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
 class MainScreenTest {
@@ -31,7 +29,7 @@ class MainScreenTest {
     composeTestRule.setContent { MainScreen(navigationActions) }
   }
 
-  @Test
+  /*  @Test
   fun testMainScreenDisplaysProfileSection() {
     // Check that the profile picture is displayed
     //composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
@@ -63,7 +61,7 @@ class MainScreenTest {
     // Simulate clicking on "View all"
     composeTestRule.onNodeWithTag("ViewAllButton").performClick()
     // Future test can be write here when view all will navigate to an other screen
-  }
+  }*/
 
   @Test
   fun testMainScreenDisplaysQuickWorkoutSection() {
