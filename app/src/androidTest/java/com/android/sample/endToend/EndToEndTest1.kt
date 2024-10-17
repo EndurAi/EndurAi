@@ -62,13 +62,12 @@ class EndToEndTest1 {
     // go back to the main screen
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     mainScreenIsWellDisplayed()
-    //go to workout selection screen
+    // go to workout selection screen
     composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
     selectionWorkoutIsWellDisplayed()
-    //go back to the main screen
+    // go back to the main screen
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     mainScreenIsWellDisplayed()
-
   }
 
   private fun settingScreenIsWellDisplayed() {
@@ -129,7 +128,7 @@ class EndToEndTest1 {
     composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
   }
 
-  private fun selectionWorkoutIsWellDisplayed(){
+  private fun selectionWorkoutIsWellDisplayed() {
 
     composeTestRule.onNodeWithTag("sessionSelectionScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("sessionCard_Body weight").assertIsDisplayed()
