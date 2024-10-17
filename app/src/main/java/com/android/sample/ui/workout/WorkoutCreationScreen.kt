@@ -325,14 +325,3 @@ fun WorkoutCreationScreen(
         })
   }
 }
-
-@Preview
-@Composable
-fun PreviewWorkoutCreationScreen() {
-  val navigationActions = NavigationActions(rememberNavController())
-  val bodyweightWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
-  val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository)
-  WorkoutCreationScreen(
-      navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, false)
-}
