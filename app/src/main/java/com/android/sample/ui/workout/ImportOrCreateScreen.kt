@@ -2,7 +2,6 @@ package com.android.sample.ui.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -23,12 +23,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
   Scaffold(
       topBar = {
         TopAppBar(
-            title = { Text(workoutType.toString()) },
-            navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-              }
-            })
+            title = { Text("New Session") }, navigationIcon = { ArrowBack(navigationActions) })
       }) { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
@@ -42,7 +37,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
 
               // Import Button
               Button(
-                  onClick = {},
+                  onClick = { /* Handle import */},
                   shape = RoundedCornerShape(12.dp),
                   colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
                   modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {

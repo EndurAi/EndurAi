@@ -44,6 +44,7 @@ import java.util.Date
  *
  * @param navigationActions Actions for navigating between screens.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navigationActions: NavigationActions) {
   // Temp until got real account repository
@@ -86,6 +87,21 @@ fun MainScreen(navigationActions: NavigationActions) {
 
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
+      topBar = {
+        TopAppBar(
+            title = { Text("Main Screen") },
+            actions = {
+              IconButton(
+                  onClick = { navigationActions.navigateTo(Screen.SETTINGS) },
+                  modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton")) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp))
+                  }
+            })
+      },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -146,7 +162,7 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
         // Settings Icon
         IconButton(
             onClick = { navigationActions.navigateTo(Screen.SETTINGS) },
-            modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton")) {
+            modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton2")) {
               Icon(
                   imageVector = Icons.Outlined.Settings,
                   contentDescription = "Settings",
