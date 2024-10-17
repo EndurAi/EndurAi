@@ -85,7 +85,7 @@ fun MainScreen(navigationActions: NavigationActions) {
       )
 
   Scaffold(
-      modifier = Modifier.testTag("MainScreen"),
+      modifier = Modifier.testTag("mainScreen"),
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
