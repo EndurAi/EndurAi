@@ -6,7 +6,6 @@ import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
-import com.android.sample.model.video.Video
 
 object Route {
   const val MAIN = "Main"

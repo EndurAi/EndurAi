@@ -1,23 +1,17 @@
-import android.net.Uri
 import com.android.sample.model.video.Video
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.android.sample.model.video.VideoRepositoryStorage
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.StorageReference
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
-import org.mockito.kotlin.capture
-import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import com.google.firebase.firestore.CollectionReference
 
 class VideoRepositoryStorageTest {
 
@@ -26,7 +20,6 @@ class VideoRepositoryStorageTest {
   private lateinit var mockFirestore: FirebaseFirestore
   private lateinit var mockQuerySnapshot: QuerySnapshot
   private lateinit var mockVideoRef: StorageReference
-
 
   @Before
   fun setup() {
@@ -42,7 +35,6 @@ class VideoRepositoryStorageTest {
     videoRepository = VideoRepositoryStorage(mockStorageReference, mockFirestore)
   }
 
-
   @Test
   fun `getVideos should return list of videos from Firestore`() {
     // Arrange
@@ -56,13 +48,12 @@ class VideoRepositoryStorageTest {
 
     // Act & Assert
     videoRepository.getVideos(
-      onSuccess = { videos ->
-        assertEquals(2, videos.size)
-        assertTrue(videos.contains(mockVideo1))
-        assertTrue(videos.contains(mockVideo2))
-      },
-      onFailure = { fail("Should not fail") }
-    )
+        onSuccess = { videos ->
+          assertEquals(2, videos.size)
+          assertTrue(videos.contains(mockVideo1))
+          assertTrue(videos.contains(mockVideo2))
+        },
+        onFailure = { fail("Should not fail") })
   }
 
   @Test
@@ -73,8 +64,7 @@ class VideoRepositoryStorageTest {
 
     // Act & Assert
     videoRepository.getVideos(
-      onSuccess = { fail("Should not succeed") },
-      onFailure = { exception -> assertTrue(exception is Exception) }
-    )
+        onSuccess = { fail("Should not succeed") },
+        onFailure = { exception -> assertTrue(exception is Exception) })
   }
 }

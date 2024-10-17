@@ -1,7 +1,6 @@
 // portions of this code were done with the help of ChatGPT and GitHub Copilot
 package com.android.sample.model.video
 
-
 interface VideoRepository {
 
   /**
