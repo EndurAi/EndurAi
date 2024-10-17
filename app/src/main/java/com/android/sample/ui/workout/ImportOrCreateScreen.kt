@@ -13,6 +13,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,9 +24,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions) {
         TopAppBar(
             title = { Text("New Session") },
             navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-              }
+                ArrowBack(navigationActions)
             })
       }) { paddingValues ->
         Column(

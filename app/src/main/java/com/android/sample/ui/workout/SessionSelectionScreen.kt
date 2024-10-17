@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
@@ -32,11 +33,7 @@ fun SessionSelectionScreen(navigationActions: NavigationActions) {
         TopAppBar(
             title = { Text("New session") },
             navigationIcon = {
-              IconButton(
-                  onClick = { navigationActions.goBack() },
-                  modifier = Modifier.testTag("sessionSelectionScreenBackButton")) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                  }
+                ArrowBack(navigationActions)
             })
       },
       content = { padding ->
