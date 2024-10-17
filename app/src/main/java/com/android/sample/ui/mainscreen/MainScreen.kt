@@ -38,6 +38,7 @@ import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.GreyLight
 import com.google.firebase.Timestamp
+import java.util.Date
 
 /**
  * Main composable function that sets up the main screen layout.
