@@ -1,16 +1,9 @@
-name: CI - Test Runner
+name: APK-Generator
 
 # Run the workflow when commits are pushed on main or when a PR is modified
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
 
 jobs:
   ci:
@@ -28,7 +21,7 @@ jobs:
 
 
       # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
-      - name: Enable KVM group perms
+      - name: Enable KVM group  perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -81,7 +74,6 @@ jobs:
           echo "$SIGN_IN_KEY" | base64 --decode > ./app/EndurAi.jks
 
 
-
       - name: Grant execute permission for gradlew
         run: |
           chmod +x ./gradlew
@@ -97,32 +89,16 @@ jobs:
           # To run the CI with debug information, add --info
           ./gradlew assemble lint --parallel --build-cache
 
-      # Run Unit tests
-      - name: Run tests
-        run: |
-          # To run the CI with debug information, add --info
-          ./gradlew check --parallel --build-cache
+      - name: Build APK
+        run: ./gradlew build
 
-      # Run connected tests on the emulator
-      - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
+
+      # Upload the signed APK as an artifact
+      - name: Upload the signed artifact
+        uses: actions/upload-artifact@v4
         with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: ./gradlew connectedCheck --parallel --build-cache
+          name: EndurAI APK file
+          path: ./app/build/outputs/apk/release/app-release.apk
 
-      # This step generates the coverage report which will be uploaded to sonar
-      - name: Generate Coverage Report
-        run: |
-          ./gradlew jacocoTestReport
 
-      # Upload the various reports to sonar
-      - name: Upload report to SonarCloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --parallel --build-cache
+
