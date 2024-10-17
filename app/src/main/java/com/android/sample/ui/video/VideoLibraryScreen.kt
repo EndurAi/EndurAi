@@ -62,6 +62,9 @@ import com.android.sample.model.video.VideoViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
+/**
+ * Screen to display the video library.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoLibraryScreen(
@@ -130,6 +133,13 @@ fun VideoLibraryScreen(
     )
 }
 
+/**
+ * Composable function for a search bar.
+ *
+ * @param query The current query in the search bar.
+ * @param onQueryChange Callback function to handle query changes.
+ * @param modifier Modifier to be applied to the search bar.
+ */
 @Composable
 fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
     Box(
@@ -151,6 +161,14 @@ fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier
         )
     }
 }
+
+
+ /**
+ Composable function for a tag dropdown menu.
+ @param selectedTag The currently selected tag.
+ @param onTagSelected Callback function to handle tag selection.
+ @param modifier Modifier to be applied to the dropdown menu.
+  */
 
 @Composable
 fun TagDropdown(selectedTag: String, onTagSelected: (String) -> Unit, modifier: Modifier = Modifier) {
@@ -181,7 +199,12 @@ fun TagDropdown(selectedTag: String, onTagSelected: (String) -> Unit, modifier: 
         }
     }
 }
-
+/**
+ * Composable function for displaying a video list item.
+ *
+ * @param video The video data to display.
+ * @param onClick Callback function to handle click events on the video item.
+ */
 @Composable
 fun VideoListItem(video: Video, onClick: () -> Unit) {
     // Modified card with thumbnail on the right and larger size
@@ -237,6 +260,9 @@ fun VideoListItem(video: Video, onClick: () -> Unit) {
         }
     }
 }
+/**
+ * Function to determine the color of the tag based on the tag type.
+ */
 
 fun tagColor(tag: String): Color {
     return when (tag) {

@@ -1,6 +1,24 @@
+// portions of this code were done with the help of ChatGPT and GitHub Copilot
 package com.android.sample.model.video
 
-// Updated Video data class
+/**
+ * Data class for Video
+ *
+ * @param title Title of the video
+ * @param url URL of the video
+ * @param tag Tag of the video
+ * @param thumbnailUrl Thumbnail URL of the video
+ * @param duration Duration of the video
+ * @param description Description of the video
+ * @param isLiked Liked status of the video
+ * @param isSaved Saved status of the video
+ * @param isViewed Viewed status of the video
+ * @param isDownloaded Downloaded status of the video
+ * @param isShared Shared status of the video
+ * @param isReported Reported status of the video
+ * @param isSubscribed Subscribed status of the video
+ * @param isPremium Premium status of the video
+ */
 data class Video(
     val title: String = "",          // Default value for title
     val url: String = "",            // Default value for url
@@ -17,7 +35,7 @@ data class Video(
     val isSubscribed: Boolean = false, // Default value for isSubscribed
     val isPremium: Boolean = false   // Default value for isPremium
 ) {
-    // No-argument constructor for Firestore
+    // Constructor for firebase
     constructor() : this(
         title = "",
         url = "",

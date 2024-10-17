@@ -31,14 +31,17 @@ import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
+/**
+ * Composable function to display the video screen.
+ */
+
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoScreen(
     navigationActions: NavigationActions,
-    videoViewModel: VideoViewModel // Using ViewModel in Compose
+    videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
 ) {
-
     val context = LocalContext.current
     Scaffold(
         modifier = Modifier.testTag("videoScreen"),
@@ -48,30 +51,38 @@ fun VideoScreen(
                 navigationIcon = {
                     IconButton(onClick = {
                         navigationActions.goBack()
-                    }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }, modifier = Modifier.testTag("backButton")) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 }
             )
         },
         content = { padding ->
             Box(
-                modifier =
-                Modifier.padding(padding)
-                    .fillMaxSize() // Ensure the video player takes the full screen size
+                modifier = Modifier.padding(padding).fillMaxSize().testTag("videoContentBox")
             ) {
-                videoViewModel.selectedVideo.value?.let { VideoPlayer(url = it.url, context = context) }
+                videoViewModel.selectedVideo.value?.let {
+                    VideoPlayer(url = it.url, context = context)
+                }
             }
-        },
+        }
     )
 }
 
+/**
+ * Composable function to display a video player using ExoPlayer.
+ *
+ * @param url The URL of the video to be played.
+ * @param context The context used to create the ExoPlayer instance.
+ */
+
 @Composable
 fun VideoPlayer(url: String, context: Context) {
-    // Create and manage the ExoPlayer instance using remember
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            // Load the media item using the provided URL
             val mediaItem = MediaItem.fromUri(url)
             setMediaItem(mediaItem)
             prepare()
@@ -79,11 +90,12 @@ fun VideoPlayer(url: String, context: Context) {
         }
     }
 
-    // Use DisposableEffect to release the player when the Composable is removed from the UI
     DisposableEffect(
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { PlayerView(context).apply { player = exoPlayer } })) {
+            modifier = Modifier.fillMaxSize().testTag("playerView"),
+            factory = { PlayerView(context).apply { player = exoPlayer } }
+        )
+    ) {
         onDispose { exoPlayer.release() }
     }
 }

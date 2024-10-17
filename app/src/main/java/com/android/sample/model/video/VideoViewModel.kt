@@ -31,7 +31,9 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
     private val selectedVideo_ = MutableStateFlow<Video?>(null)
     open val selectedVideo: StateFlow<Video?> = selectedVideo_.asStateFlow()
 
-    // Loads videos and updates the state
+    /**
+     * Load videos from the repository.
+     */
     suspend fun loadVideos() {
         withContext(Dispatchers.IO) {
             videoRepository.getVideos(
@@ -41,17 +43,23 @@ class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel()
         }
     }
 
-    // Filter videos by tag
-    fun filterVideosByTag(tag: String) {
-        _videos.update { videos ->
-            if (tag == "All") videos else videos.filter { it.tag == tag }
-        }
-    }
+    /**
+     * Select a video.
+     *
+     * @param video The video to select.
+     */
 
     fun selectVideo(video: Video) {
         selectedVideo_.value = video
     }
 
+
+    /**
+     * Factory for creating instances of [VideoViewModel].
+     *
+     * This factory method is used to create a new instance of [VideoViewModel] with a
+     * [VideoRepositoryStorage] as the repository.
+     */
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

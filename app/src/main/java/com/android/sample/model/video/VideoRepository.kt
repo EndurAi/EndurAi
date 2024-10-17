@@ -1,7 +1,6 @@
 // portions of this code were done with the help of ChatGPT and GitHub Copilot
 package com.android.sample.model.video
 
-import android.net.Uri
 
 interface VideoRepository {
 
@@ -15,7 +14,7 @@ interface VideoRepository {
   fun uploadVideo(video: Video, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
-   * Retrieves video URLs from the repository.
+   * Retrieves the list of Videos from the repository.
    *
    * @param onSuccess Callback function to be invoked with a list of video URLs on successful
    *   retrieval.

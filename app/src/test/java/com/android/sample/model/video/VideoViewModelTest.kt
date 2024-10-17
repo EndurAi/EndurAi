@@ -1,6 +1,5 @@
 package com.android.sample.model.video
 
-import android.net.Uri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -9,101 +8,69 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class VideoViewModelTest {
 
-  private lateinit var videoViewModel: VideoViewModel
-  private lateinit var videoRepository: VideoRepository
+    private lateinit var videoViewModel: VideoViewModel
+    private lateinit var videoRepository: VideoRepository
 
-  @Before
-  fun setup() {
-    videoRepository = mock(VideoRepository::class.java)
-    videoViewModel = VideoViewModel(videoRepository)
-  }
+    @Before
+    fun setup() {
+        videoRepository = mock(VideoRepository::class.java)
+        videoViewModel = VideoViewModel(videoRepository)
+    }
 
-  @Test
-  fun `uploadVideo should update uploadSuccess on success`() = runTest {
-    // Arrange
-    val videoUri = mock(Uri::class.java)
-    val downloadUrl = "http://example.com/video.mp4"
-    doAnswer {
-          val successCallback = it.getArgument<(String) -> Unit>(1)
-          successCallback(downloadUrl)
-          null
-        }
-        .`when`(videoRepository)
-        .uploadVideo(anyOrNull(), anyOrNull(), anyOrNull())
+    @Test
+    fun `loadVideos should update videos on success`() = runTest {
+        // Arrange
+        val videos = listOf(
+            Video("Title 1", "http://example.com/video1.mp4", "Tag1", "http://example.com/thumb1.jpg", "120", "Description 1"),
+            Video("Title 2", "http://example.com/video2.mp4", "Tag2", "http://example.com/thumb2.jpg", "240", "Description 2")
+        )
+        doAnswer {
+            val successCallback = it.getArgument<(List<Video>) -> Unit>(0)
+            successCallback(videos)
+            null
+        }.`when`(videoRepository).getVideos(any(), any())
 
-    // Act
-    videoViewModel.uploadVideo(videoUri)
+        // Act
+        videoViewModel.loadVideos()
 
-    // Assert
-    assertEquals(downloadUrl, videoViewModel.uploadSuccess.first())
-    assertNull(videoViewModel.error.first())
-  }
+        // Assert
+        assertEquals(videos, videoViewModel.videos.first())
+        assertNull(videoViewModel.error.first())
+    }
 
-  @Test
-  fun `uploadVideo should update error on failure`() = runTest {
-    // Arrange
-    val videoUri = mock(Uri::class.java)
-    val exception = Exception("Upload failed")
-    doAnswer {
-          val failureCallback = it.getArgument<(Exception) -> Unit>(2)
-          failureCallback(exception)
-          null
-        }
-        .`when`(videoRepository)
-        .uploadVideo(anyOrNull(), anyOrNull(), anyOrNull())
+    @Test
+    fun `loadVideos should update error on failure`() = runTest {
+        // Arrange
+        val exception = Exception("Failed to load videos")
+        doAnswer {
+            val failureCallback = it.getArgument<(Exception) -> Unit>(1)
+            failureCallback(exception)
+            null
+        }.`when`(videoRepository).getVideos(any(), any())
 
-    // Act
-    videoViewModel.uploadVideo(videoUri)
+        // Act
+        videoViewModel.loadVideos()
 
-    // Assert
-    assertEquals("Upload failed: ${exception.message}", videoViewModel.error.first())
-    assertNull(videoViewModel.uploadSuccess.first())
-  }
+        // Assert
+        assertEquals("Failed to load videos: ${exception.message}", videoViewModel.error.first())
+        assertTrue(videoViewModel.videos.first().isEmpty())
+    }
 
-  @Test
-  fun `loadVideos should update videoUrls on success`() = runTest {
-    // Arrange
-    val urls = listOf("http://example.com/video1.mp4", "http://example.com/video2.mp4")
-    doAnswer {
-          val successCallback = it.getArgument<(List<String>) -> Unit>(0)
-          successCallback(urls)
-          null
-        }
-        .`when`(videoRepository)
-        .getVideoUrls(any(), any())
+    @Test
+    fun `selectVideo should update selectedVideo`() = runTest {
+        // Arrange
+        val selectedVideo = Video("Title", "http://example.com/video.mp4", "Tag", "http://example.com/thumb.jpg", "120", "Description")
 
-    // Act
-    videoViewModel.loadVideos()
+        // Act
+        videoViewModel.selectVideo(selectedVideo)
 
-    // Assert
-    assertEquals(urls, videoViewModel.videoUrls.first())
-    assertNull(videoViewModel.error.first())
-  }
-
-  @Test
-  fun `loadVideos should update error on failure`() = runTest {
-    // Arrange
-    val exception = Exception("Failed to load videos")
-    doAnswer {
-          val failureCallback = it.getArgument<(Exception) -> Unit>(1)
-          failureCallback(exception)
-          null
-        }
-        .`when`(videoRepository)
-        .getVideoUrls(any(), any())
-
-    // Act
-    videoViewModel.loadVideos()
-
-    // Assert
-    assertEquals("Failed to load videos: ${exception.message}", videoViewModel.error.first())
-    assertTrue(videoViewModel.videoUrls.first().isEmpty())
-  }
+        // Assert
+        assertEquals(selectedVideo, videoViewModel.selectedVideo.first())
+    }
 }
