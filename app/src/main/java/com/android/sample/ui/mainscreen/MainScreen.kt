@@ -86,7 +86,7 @@ fun MainScreen(navigationActions: NavigationActions) {
       )
 
   Scaffold(
-      modifier = Modifier.testTag("MainScreen"),
+      modifier = Modifier.testTag("mainScreen"),
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -250,7 +250,7 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .clickable { /*Navigate to screen to choose type of workout*/}
+                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
                 .padding(vertical = 16.dp, horizontal = 16.dp)
                 .height(48.dp)
                 .background(Grey, RoundedCornerShape(24.dp))
