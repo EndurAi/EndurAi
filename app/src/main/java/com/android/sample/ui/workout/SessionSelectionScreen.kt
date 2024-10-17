@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -31,16 +32,18 @@ fun SessionSelectionScreen(navigationActions: NavigationActions) {
         TopAppBar(
             title = { Text("New session") },
             navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-              }
+              IconButton(
+                  onClick = { navigationActions.goBack() },
+                  modifier = Modifier.testTag("sessionSelectionScreenBackButton")) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                  }
             })
       },
       content = { padding ->
         LazyColumn(
             contentPadding = padding,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            modifier = Modifier.fillMaxSize().padding(16.dp).testTag("sessionSelectionScreen")) {
               items(sessionItems) { session ->
                 SessionCard(session) { selectedSession ->
                   when (selectedSession.title) {
@@ -61,7 +64,8 @@ fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
           Modifier.clickable { onSessionClick(session) }
               .fillMaxWidth()
               .height(180.dp)
-              .border(2.dp, Color.Black, RoundedCornerShape(8.dp)),
+              .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+              .testTag("sessionCard_${session.title}"),
       shape = RoundedCornerShape(8.dp),
       elevation = CardDefaults.cardElevation(8.dp),
   ) {
@@ -70,7 +74,7 @@ fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
           painter = painterResource(id = session.imageRes),
           contentDescription = session.title,
           contentScale = ContentScale.Crop,
-          modifier = Modifier.fillMaxSize())
+          modifier = Modifier.fillMaxSize().testTag("image_${session.title}"))
       Text(
           text = session.title,
           style = MaterialTheme.typography.bodyLarge,

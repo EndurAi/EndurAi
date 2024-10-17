@@ -32,8 +32,9 @@ fun PreferencesScreen(
   val context = LocalContext.current
 
   val preferences =
-      preferencesViewModel.preferences.collectAsState().value
-          ?: run { throw IllegalStateException("Preferences should not be null.") }
+      requireNotNull(preferencesViewModel.preferences.collectAsState().value) {
+        "Preferences should not be null."
+      }
 
   var unitsSystem by remember { mutableStateOf(preferences.unitsSystem) }
   var weightUnit by remember { mutableStateOf(preferences.weight) }
