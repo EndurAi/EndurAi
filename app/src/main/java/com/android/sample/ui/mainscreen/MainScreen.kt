@@ -37,7 +37,6 @@ import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.GreyLight
-import com.google.firebase.Timestamp
 import java.util.Date
 
 /**
@@ -45,6 +44,7 @@ import java.util.Date
  *
  * @param navigationActions Actions for navigating between screens.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navigationActions: NavigationActions) {
   // Temp until got real account repository
@@ -58,7 +58,7 @@ fun MainScreen(navigationActions: NavigationActions) {
           70f,
           WeightUnit.KG,
           Gender.MALE,
-          Timestamp(Date()),
+          Date(),
           "")
   val profile = R.drawable.homme
 
@@ -86,7 +86,21 @@ fun MainScreen(navigationActions: NavigationActions) {
       )
 
   Scaffold(
-      modifier = Modifier.testTag("MainScreen"),
+      modifier = Modifier.testTag("mainScreen"),
+      topBar = {
+        TopAppBar(
+            title = { Text("Main Screen") },
+            actions = {
+              IconButton(
+                  onClick = { navigationActions.navigateTo("Settings Screen") },
+                  modifier = Modifier.testTag("SettingsButton")) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.Black)
+                  }
+            })
+      },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -250,7 +264,7 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .clickable { /*Navigate to screen to choose type of workout*/}
+                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
                 .padding(vertical = 16.dp, horizontal = 16.dp)
                 .height(48.dp)
                 .background(Grey, RoundedCornerShape(24.dp))
