@@ -55,8 +55,8 @@ class SessionSelectionScreenTest {
     composeTestRule.setContent { SessionSelectionScreen(navigationActions) }
 
     // Perform click on the back button
-    composeTestRule.onNodeWithTag("sessionSelectionScreenBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("sessionSelectionScreenBackButton").performClick()
+    composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
 
     // Verify navigation back
     verify(navigationActions).goBack()
