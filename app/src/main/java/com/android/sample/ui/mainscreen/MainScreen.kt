@@ -36,6 +36,7 @@ import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.GreyLight
+import com.google.firebase.Timestamp
 import java.util.Date
 
 /**
@@ -56,7 +57,7 @@ fun MainScreen(navigationActions: NavigationActions) {
           70f,
           WeightUnit.KG,
           Gender.MALE,
-          Date(),
+          Timestamp(Date()),
           "")
   val profile = R.drawable.homme
 
