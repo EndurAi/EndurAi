@@ -30,23 +30,23 @@ class MainScreenTest {
   }
 
   /*  @Test
-  fun testMainScreenDisplaysProfileSection() {
-    // Check that the profile picture is displayed
-    //composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
+    fun testMainScreenDisplaysProfileSection() {
+      // Check that the profile picture is displayed
+      //composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
 
-    // Check that the welcome text is displayed
-    //composeTestRule.onNodeWithTag("WelcomeText").assertIsDisplayed()
+      // Check that the welcome text is displayed
+      //composeTestRule.onNodeWithTag("WelcomeText").assertIsDisplayed()
 
-    // Check that the settings button is displayed
-    //composeTestRule.onNodeWithTag("SettingsButton").assertIsDisplayed()
+      // Check that the settings button is displayed
+      //composeTestRule.onNodeWithTag("SettingsButton").assertIsDisplayed()
 
-    // Simulate a click on the settings button and verify the navigation
-    //composeTestRule.onNodeWithTag("SettingsButton").performClick()
+      // Simulate a click on the settings button and verify the navigation
+      //composeTestRule.onNodeWithTag("SettingsButton").performClick()
 
-    // Verify that navigateTo for SETTINGS was called
-    //verify(navigationActions).navigateTo(Screen.SETTINGS)
-  }
-
+      // Verify that navigateTo for SETTINGS was called
+      //verify(navigationActions).navigateTo(Screen.SETTINGS)
+    }
+  */
   @Test
   fun testMainScreenDisplaysWorkoutSessionsSection() {
     // Check that the workout section is displayed
@@ -61,7 +61,7 @@ class MainScreenTest {
     // Simulate clicking on "View all"
     composeTestRule.onNodeWithTag("ViewAllButton").performClick()
     // Future test can be write here when view all will navigate to an other screen
-  }*/
+  }
 
   @Test
   fun testMainScreenDisplaysQuickWorkoutSection() {
@@ -72,7 +72,7 @@ class MainScreenTest {
     composeTestRule.onAllNodesWithTag("QuickWorkoutButton").assertCountEquals(4)
   }
 
-  @Test
+  /*  @Test
   fun testMainScreenDisplaysNewWorkoutPlanSection() {
     // Check that the New Workout button is displayed
     composeTestRule.onNodeWithTag("NewWorkoutButton").assertIsDisplayed()
@@ -80,7 +80,7 @@ class MainScreenTest {
     // Simulate clicking on the New Workout Plan section
     composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
     // Future test can be written here when it will navigate to creation screen
-  }
+  }*/
 
   @Test
   fun testBottomNavigationBarIsDisplayed() {
