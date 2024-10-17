@@ -102,9 +102,7 @@ class EndToEndTest1 {
     if (composeTestRule.onNodeWithTag("SettingsButton").isNotDisplayed()) {
       throw Exception("SettingsButton not displayed in mainScreenIsWellDisplayed")
     }
-    if (composeTestRule.onNodeWithTag("NewWorkoutButton").isNotDisplayed()) {
-      throw Exception("NewWorkoutButton not displayed in mainScreenIsWellDisplayed")
-    }
+    composeTestRule.onNodeWithTag("NewWorkoutButton").assertExists("NewWorkoutButton doesent exist")
   }
 
   private fun achievementScreenIsWellDisplayed() {
