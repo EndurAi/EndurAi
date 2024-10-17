@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,24 +30,24 @@ class MainScreenTest {
     composeTestRule.setContent { MainScreen(navigationActions) }
   }
 
-  /*  @Test
-    fun testMainScreenDisplaysProfileSection() {
-      // Check that the profile picture is displayed
-      //composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
+  @Test
+  fun testMainScreenDisplaysProfileSection() {
+    // Check that the profile picture is displayed
+    composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
 
-      // Check that the welcome text is displayed
-      //composeTestRule.onNodeWithTag("WelcomeText").assertIsDisplayed()
+    // Check that the welcome text is displayed
+    composeTestRule.onNodeWithTag("WelcomeText").assertIsDisplayed()
 
-      // Check that the settings button is displayed
-      //composeTestRule.onNodeWithTag("SettingsButton").assertIsDisplayed()
+    // Check that the settings button is displayed
+    composeTestRule.onNodeWithTag("SettingsButton").assertIsDisplayed()
 
-      // Simulate a click on the settings button and verify the navigation
-      //composeTestRule.onNodeWithTag("SettingsButton").performClick()
+    // Simulate a click on the settings button and verify the navigation
+    composeTestRule.onNodeWithTag("SettingsButton").performClick()
 
-      // Verify that navigateTo for SETTINGS was called
-      //verify(navigationActions).navigateTo(Screen.SETTINGS)
-    }
-  */
+    // Verify that navigateTo for SETTINGS was called
+    verify(navigationActions).navigateTo(Screen.SETTINGS)
+  }
+
   @Test
   fun testMainScreenDisplaysWorkoutSessionsSection() {
     // Check that the workout section is displayed
@@ -72,7 +73,7 @@ class MainScreenTest {
     composeTestRule.onAllNodesWithTag("QuickWorkoutButton").assertCountEquals(4)
   }
 
-  /*  @Test
+  @Test
   fun testMainScreenDisplaysNewWorkoutPlanSection() {
     // Check that the New Workout button is displayed
     composeTestRule.onNodeWithTag("NewWorkoutButton").assertIsDisplayed()
@@ -80,7 +81,7 @@ class MainScreenTest {
     // Simulate clicking on the New Workout Plan section
     composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
     // Future test can be written here when it will navigate to creation screen
-  }*/
+  }
 
   @Test
   fun testBottomNavigationBarIsDisplayed() {
