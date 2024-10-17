@@ -7,7 +7,7 @@ on:
 
 jobs:
   ci:
-    name: CI
+    name: APK Generator
     # Execute the CI on the course's runners
     runs-on: ubuntu-latest
 
