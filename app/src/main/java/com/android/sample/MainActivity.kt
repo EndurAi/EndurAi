@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -22,6 +23,8 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
+import com.android.sample.ui.authentication.AddAccount
+import com.android.sample.ui.authentication.EditAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -31,6 +34,7 @@ import com.android.sample.ui.preferences.PreferencesScreen
 import com.android.sample.ui.settings.SettingsScreen
 import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoScreen
+import com.android.sample.viewmodel.UserAccountViewModel
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
 import com.google.firebase.Firebase
@@ -57,6 +61,9 @@ class MainActivity : ComponentActivity() {
 fun MainApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+
+  val userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
+
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
   val bodyweightWorkoutRepository =
@@ -70,7 +77,8 @@ fun MainApp() {
 
     // Auth Screen
     navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
-      composable(Screen.AUTH) { SignInScreen(navigationActions) }
+      composable(Screen.AUTH) { SignInScreen(userAccountViewModel, navigationActions) }
+      composable(Screen.ADD_ACCOUNT) { AddAccount(userAccountViewModel, navigationActions) }
     }
 
     // Main Screen
@@ -96,6 +104,7 @@ fun MainApp() {
     // Settings Screen
     navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.EDIT_ACCOUNT) { EditAccount(userAccountViewModel, navigationActions) }
     }
 
     // Session Selection Screen

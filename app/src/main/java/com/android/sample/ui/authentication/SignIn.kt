@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
+import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -38,24 +43,52 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 @Composable
-fun SignInScreen(navigationActions: NavigationActions) {
+fun SignInScreen(
+    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
+    navigationActions: NavigationActions
+) {
   val context = LocalContext.current
+  val scope = rememberCoroutineScope() // Check
+  val isLoading by userAccountViewModel.isLoading.collectAsState() // Observe isLoading
 
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
+            val userId = result.user?.uid
+
+            if (userId != null) {
+              userAccountViewModel.getUserAccount(userId)
+
+              scope.launch {
+                delay(450) // delay introduced to wait for data to be fetched
+                // TODO: Find a way to modify this
+
+                // Observe changes in userAccount to know if profile exists
+                userAccountViewModel.userAccount.collect { account ->
+                  if (account != null) {
+                    // If account exists, navigate to main screen
+                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                  } else {
+                    // If no account exists, navigate to AddAccount screen
+                    navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+                  }
+                }
+              }
+            }
+
             Toast.makeText(context, "Login successful!", Toast.LENGTH_LONG).show()
-            navigationActions.navigateTo(TopLevelDestinations.MAIN)
           },
           onAuthError = {
             Log.e("SignInScreen", "Failed to sign in: ${it.statusCode}")
             Toast.makeText(context, "Login Failed!", Toast.LENGTH_LONG).show()
           })
+
   val token = stringResource(com.android.sample.R.string.default_web_client_id)
   // The main container for the screen
   // A surface container using the 'background' color from the theme

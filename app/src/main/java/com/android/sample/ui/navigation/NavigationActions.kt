@@ -29,6 +29,8 @@ object Screen {
   const val SESSIONSELECTION = "Session Selection Screen"
   const val IMPORTORCREATE = "Import Or Create Screen"
   const val TEST = "Test Screen"
+  const val ADD_ACCOUNT = "Add Account Screen"
+  const val EDIT_ACCOUNT = "Edit Account Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)

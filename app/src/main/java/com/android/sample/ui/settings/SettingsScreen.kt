@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.navigation.TopLevelDestinations
+import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +33,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
         TopAppBar(
             title = { Text("Settings", fontSize = 20.sp) },
             navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
+              IconButton(onClick = { navigationActions.navigateTo(TopLevelDestinations.MAIN) }) {
                 Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "Back")
               }
             },
@@ -45,7 +47,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
             horizontalAlignment = Alignment.CenterHorizontally) {
               // User data button
               Button(
-                  onClick = { /* TODO: Handle User Data */},
+                  onClick = { navigationActions.navigateTo(Screen.EDIT_ACCOUNT) },
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(60.dp)
