@@ -51,22 +51,17 @@ class UserAccountViewModelTest {
 
   @Test
   fun `getUserAccount sets isLoading to false on failure`() = runTest {
-    // Arrange: simulate failure callback in the repository
     `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {
       val onFailure = it.arguments[2] as (Exception) -> Unit
       onFailure(Exception("User not found"))
     }
 
-    // Act: trigger the getUserAccount call
     userAccountViewModel.getUserAccount("1")
 
-    // Assert
     verify(userAccountRepository).getUserAccount(eq("1"), any(), any())
 
-    // Check that loading is set to false
     assertThat(userAccountViewModel.isLoading.first(), `is`(false))
 
-    // Check that userAccount is null due to failure
     assertThat(userAccountViewModel.userAccount.first(), nullValue())
   }
 

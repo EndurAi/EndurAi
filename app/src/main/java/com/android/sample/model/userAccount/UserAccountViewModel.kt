@@ -37,16 +37,12 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
 
   fun createUserAccount(userAccount: UserAccount) {
     repository.createUserAccount(
-        userAccount,
-        onSuccess = { _userAccount.value = userAccount },
-        onFailure = { /* Handle failure, e.g., show error message */})
+        userAccount, onSuccess = { _userAccount.value = userAccount }, onFailure = {})
   }
 
   fun updateUserAccount(userAccount: UserAccount) {
     repository.updateUserAccount(
-        userAccount,
-        onSuccess = { getUserAccount(userAccount.userId) },
-        onFailure = { /* Handle failure, e.g., show error message */})
+        userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
   }
 
   // Factory for creating instances of the ViewModel

@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -53,8 +52,7 @@ fun SignInScreen(
     navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
-  val scope = rememberCoroutineScope() // Check
-  val isLoading by userAccountViewModel.isLoading.collectAsState() // Observe isLoading
+  val scope = rememberCoroutineScope()
 
   val launcher =
       rememberFirebaseAuthLauncher(
@@ -67,7 +65,7 @@ fun SignInScreen(
 
               scope.launch {
                 delay(450) // delay introduced to wait for data to be fetched
-                // TODO: Find a way to modify this
+                // TODO: Find a way to modify this with loading screen
 
                 // Observe changes in userAccount to know if profile exists
                 userAccountViewModel.userAccount.collect { account ->
@@ -90,8 +88,7 @@ fun SignInScreen(
           })
 
   val token = stringResource(com.android.sample.R.string.default_web_client_id)
-  // The main container for the screen
-  // A surface container using the 'background' color from the theme
+
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       content = { padding ->
@@ -115,8 +112,6 @@ fun SignInScreen(
               style =
                   MaterialTheme.typography.headlineLarge.copy(fontSize = 57.sp, lineHeight = 64.sp),
               fontWeight = FontWeight.Bold,
-              // center the text
-
               textAlign = TextAlign.Center)
 
           Spacer(modifier = Modifier.height(48.dp))

@@ -34,9 +34,9 @@ import com.android.sample.ui.preferences.PreferencesScreen
 import com.android.sample.ui.settings.SettingsScreen
 import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoScreen
-import com.android.sample.viewmodel.UserAccountViewModel
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
+import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 

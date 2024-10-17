@@ -1,6 +1,5 @@
 package com.android.sample.ui.authentication
 
-import android.net.Uri
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.model.userAccount.*
@@ -35,9 +34,7 @@ class AddAccountScreenTest {
     userAccountViewModel = UserAccountViewModel(userAccountRepository)
 
     // Mock any necessary data or methods on the repository
-    `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {
-      // Simulate repository behavior if needed
-    }
+    `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {}
   }
 
   @Test
@@ -79,13 +76,10 @@ class AddAccountScreenTest {
     composeTestRule.onNodeWithTag("weight").performTextInput("75")
     composeTestRule.onNodeWithTag("birthday").performTextInput("01/01/1990")
 
-    // Mock profile image URI if necessary
-    val testUri = Uri.parse("content://path/to/image")
     `when`(userAccountRepository.createUserAccount(any(), any(), any())).then {}
 
     composeTestRule.onNodeWithText("Submit").performClick()
 
-    // Verify navigation action
     verify(navigationActions).navigateTo(TopLevelDestinations.MAIN)
   }
 

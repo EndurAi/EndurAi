@@ -96,8 +96,7 @@ fun AddAccount(
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.Start // Left alignment for the remaining fields
-            ) {
+            horizontalAlignment = Alignment.Start) {
               TextField(
                   value = firstName,
                   onValueChange = { firstName = it },
@@ -141,28 +140,25 @@ fun AddAccount(
                         modifier = Modifier.width(90.dp).testTag("weightUnit"))
                   }
 
-              Row(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag("gender") // Not sure if the position is right
-                  ) {
-                    Button(
-                        onClick = { gender = Gender.MALE },
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                if (gender == Gender.MALE) MaterialTheme.colorScheme.primary
-                                else Color.Gray)) {
-                          Text("Male")
-                        }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(
-                        onClick = { gender = Gender.FEMALE },
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                if (gender == Gender.FEMALE) MaterialTheme.colorScheme.primary
-                                else Color.Gray)) {
-                          Text("Female")
-                        }
-                  }
+              Row(modifier = Modifier.fillMaxWidth().testTag("gender")) {
+                Button(
+                    onClick = { gender = Gender.MALE },
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            if (gender == Gender.MALE) MaterialTheme.colorScheme.primary
+                            else Color.Gray)) {
+                      Text("Male")
+                    }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { gender = Gender.FEMALE },
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            if (gender == Gender.FEMALE) MaterialTheme.colorScheme.primary
+                            else Color.Gray)) {
+                      Text("Female")
+                    }
+              }
 
               OutlinedTextField(
                   value = birthDate,
@@ -196,8 +192,7 @@ fun AddAccount(
                                         gender = gender,
                                         birthDate = Timestamp(calendar.time),
                                         profileImageUrl = downloadUrl))
-                                navigationActions.navigateTo(
-                                    TopLevelDestinations.MAIN) // Navigate to main screen
+                                navigationActions.navigateTo(TopLevelDestinations.MAIN)
                               } catch (e: Exception) {
                                 Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT)
                                     .show()
@@ -226,8 +221,7 @@ fun AddAccount(
                                   gender = gender,
                                   birthDate = Timestamp(calendar.time),
                                   profileImageUrl = ""))
-                          navigationActions.navigateTo(
-                              TopLevelDestinations.MAIN) // Navigate to main screen
+                          navigationActions.navigateTo(TopLevelDestinations.MAIN)
                         } catch (e: Exception) {
                           Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
                         }

@@ -67,8 +67,7 @@ fun EditAccount(
             calendar.time = timestamp.toDate()
             "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(Calendar.YEAR)}"
           }
-      profileImageUri =
-          Uri.parse(it.profileImageUrl) // TODO check if it's the right way to store it
+      profileImageUri = Uri.parse(it.profileImageUrl)
       originalProfileImageUri = Uri.parse(it.profileImageUrl) // Set the original URI
     }
   }
@@ -205,8 +204,7 @@ fun EditAccount(
                                         gender = gender,
                                         birthDate = Timestamp(calendar.time),
                                         profileImageUrl = downloadUrl))
-                                navigationActions.navigateTo(
-                                    Screen.SETTINGS) // Navigate to main screen
+                                navigationActions.navigateTo(Screen.SETTINGS)
                               } catch (e: Exception) {
                                 Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT)
                                     .show()
@@ -235,7 +233,7 @@ fun EditAccount(
                                   gender = gender,
                                   birthDate = Timestamp(calendar.time),
                                   profileImageUrl = userAccount!!.profileImageUrl))
-                          navigationActions.navigateTo(Screen.SETTINGS) // Navigate to main screen
+                          navigationActions.navigateTo(Screen.SETTINGS)
                         } catch (e: Exception) {
                           Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
                         }
