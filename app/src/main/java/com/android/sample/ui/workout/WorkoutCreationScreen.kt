@@ -30,15 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.workout.BodyWeightExercise
 import com.android.sample.model.workout.BodyWeightExerciseType
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.Workout
-import com.android.sample.model.workout.WorkoutRepositoryFirestore
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaExercise
@@ -46,8 +43,6 @@ import com.android.sample.model.workout.YogaExerciseType
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

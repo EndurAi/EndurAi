@@ -12,8 +12,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.model.workout.WorkoutType
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
