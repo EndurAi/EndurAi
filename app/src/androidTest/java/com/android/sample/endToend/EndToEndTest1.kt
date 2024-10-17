@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.core.content.ContextCompat.startActivity
 import androidx.test.core.app.ApplicationProvider
@@ -61,6 +62,13 @@ class EndToEndTest1 {
     // go back to the main screen
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     mainScreenIsWellDisplayed()
+    //go to workout selection screen
+    composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
+    selectionWorkoutIsWellDisplayed()
+    //go back to the main screen
+    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    mainScreenIsWellDisplayed()
+
   }
 
   private fun settingScreenIsWellDisplayed() {
@@ -119,5 +127,19 @@ class EndToEndTest1 {
     // Verify that the selections were updated
     composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
     composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
+  }
+
+  private fun selectionWorkoutIsWellDisplayed(){
+
+    composeTestRule.onNodeWithTag("sessionSelectionScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("sessionCard_Body weight").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("sessionCard_Running").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("sessionCard_Yoga").assertIsDisplayed()
+
+    composeTestRule.onNodeWithText("Body weight").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Running").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Yoga").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertDoesNotExist()
+    composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
   }
 }
