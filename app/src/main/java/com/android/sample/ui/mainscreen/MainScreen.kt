@@ -249,7 +249,7 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION)}
+                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
                 .padding(vertical = 16.dp, horizontal = 16.dp)
                 .height(48.dp)
                 .background(Grey, RoundedCornerShape(24.dp))
