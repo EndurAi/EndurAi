@@ -25,12 +25,14 @@ fun MainScreen(navigationActions: NavigationActions) {
         TopAppBar(
             title = { Text("Main Screen") },
             actions = {
-              IconButton(onClick = { navigationActions.navigateTo("Settings Screen") }) {
-                Icon(
-                    imageVector = Icons.Outlined.Settings,
-                    contentDescription = "Settings",
-                    tint = Color.Black)
-              }
+              IconButton(
+                  onClick = { navigationActions.navigateTo("Settings Screen") },
+                  modifier = Modifier.testTag("SettingsButton")) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.Black)
+                  }
             })
       },
       content = { padding ->
@@ -46,7 +48,9 @@ fun MainScreen(navigationActions: NavigationActions) {
                         modifier = Modifier.padding(bottom = 16.dp))
                     Button(
                         onClick = { navigationActions.navigateTo(Screen.SESSIONSELECTION) },
-                        modifier = Modifier.size(width = 200.dp, height = 100.dp),
+                        modifier =
+                            Modifier.size(width = 200.dp, height = 100.dp)
+                                .testTag("NewWorkoutButton"),
                         colors =
                             ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary)) {

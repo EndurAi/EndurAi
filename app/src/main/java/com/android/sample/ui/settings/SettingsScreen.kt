@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
@@ -30,11 +31,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
       topBar = {
         TopAppBar(
             title = { Text("Settings", fontSize = 20.sp) },
-            navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "Back")
-              }
-            },
+            navigationIcon = { ArrowBack(navigationActions) },
             modifier = Modifier.testTag("settingsScreen") // Add testTag for the screen itself
             )
       },

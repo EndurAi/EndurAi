@@ -46,7 +46,8 @@ class MainActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              MainApp()
+              val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
+              MainApp(startDestination)
             }
       }
     }
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainApp() {
+fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
@@ -66,7 +67,7 @@ fun MainApp() {
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
   val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
 
-  NavHost(navController = navController, startDestination = Route.AUTH) {
+  NavHost(navController = navController, startDestination = startDestination) {
 
     // Auth Screen
     navigation(startDestination = Screen.AUTH, route = Route.AUTH) {

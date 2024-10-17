@@ -3,7 +3,6 @@ package com.android.sample.ui.preferences
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +19,7 @@ import com.android.sample.model.preferences.Preferences
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitsSystem
 import com.android.sample.model.preferences.WeightUnit
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
 
@@ -42,11 +42,7 @@ fun PreferencesScreen(
       topBar = {
         TopAppBar(
             title = { Text("Modify preferences", fontSize = 20.sp, fontWeight = FontWeight.Bold) },
-            navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-              }
-            },
+            navigationIcon = { ArrowBack(navigationActions) },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
             modifier = Modifier.testTag("preferencesTopBar"))
       },
