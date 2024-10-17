@@ -3,6 +3,8 @@
 package com.android.sample.model.video
 
 import androidx.core.net.toUri
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -53,15 +55,19 @@ class VideoRepositoryStorage(
 
   // Retrieve all video URLs with metadata from Firestore
   override fun getVideos(onSuccess: (List<Video>) -> Unit, onFailure: (Exception) -> Unit) {
-    videosCollection
-        .get()
-        .addOnSuccessListener { result ->
-          val videoList =
-              result.documents.mapNotNull { doc ->
-                doc.toObject(Video::class.java) // Deserializing to Video class
-              }
-          onSuccess(videoList)
-        }
-        .addOnFailureListener { exception -> onFailure(exception) }
+      Firebase.auth.addAuthStateListener {
+          if (it.currentUser != null) {
+          videosCollection
+            .get()
+            .addOnSuccessListener { result ->
+              val videoList =
+                  result.documents.mapNotNull { doc ->
+                    doc.toObject(Video::class.java) // Deserializing to Video class
+                  }
+              onSuccess(videoList)
+            }
+            .addOnFailureListener { exception -> onFailure(exception) }
+      }
   }
+}
 }
