@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
@@ -37,6 +38,11 @@ import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.GreyLight
 import java.util.Date
 
+/**
+ * Main composable function that sets up the main screen layout.
+ *
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun MainScreen(navigationActions: NavigationActions) {
   // Temp until got real account repository
@@ -101,7 +107,14 @@ fun MainScreen(navigationActions: NavigationActions) {
       bottomBar = { BottomNavigationBar(navigationActions = navigationActions) })
 }
 
-// Composable function for the profile section with profile picture and settings
+/**
+ * Composable function that displays the profile section, including the profile picture and
+ * settings.
+ *
+ * @param account The user account information.
+ * @param profile The resource ID for the profile image.
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun ProfileSection(account: UserAccount, profile: Int, navigationActions: NavigationActions) {
   Row(
@@ -121,7 +134,7 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
               Spacer(modifier = Modifier.width(8.dp))
               // Display user name dynamically
               Text(
-                  text = "What's up ${account.firstName}?",
+                  text = stringResource(id = R.string.welcome_message, account.firstName),
                   style = MaterialTheme.typography.titleSmall.copy(fontSize = 30.sp),
                   color = Color.White,
                   modifier = Modifier.testTag("WelcomeText"))
@@ -142,7 +155,13 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
       }
 }
 
-// Composable function for workout sessions section
+/**
+ * Composable function that displays a list of workout sessions.
+ *
+ * @param workouts The list of workout sessions.
+ * @param profile The resource ID for the profile image.
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun WorkoutSessionsSection(
     workouts: List<Workout>,
@@ -182,7 +201,11 @@ fun WorkoutSessionsSection(
   }
 }
 
-// Composable function for the quick workout section
+/**
+ * Composable function that displays the quick workout section.
+ *
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun QuickWorkoutSection(navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
@@ -210,7 +233,11 @@ fun QuickWorkoutSection(navigationActions: NavigationActions) {
   }
 }
 
-// Composable function for the new workout plan button
+/**
+ * Composable function that displays the button to create a new workout plan.
+ *
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun NewWorkoutSection(navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth()) {
@@ -236,7 +263,11 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
   }
 }
 
-// Composable function for the bottom navigation bar
+/**
+ * Composable function that displays the bottom navigation bar.
+ *
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun BottomNavigationBar(navigationActions: NavigationActions) {
   Column(
@@ -250,7 +281,13 @@ fun BottomNavigationBar(navigationActions: NavigationActions) {
   }
 }
 
-// Composable function for a workout card
+/**
+ * Composable function that displays a workout card for a given workout.
+ *
+ * @param workout The exercise.
+ * @param profile The resource ID for the profile image.
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationActions) {
   // Choose icon dynamically with the workout type
@@ -298,7 +335,12 @@ fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationAct
       }
 }
 
-// Composable for a QuickWorkout Button
+/**
+ * Composable function that displays a button for a quick workout session.
+ *
+ * @param iconId The resource ID for the quick workout icon.
+ * @param navigationActions Actions for navigating between screens.
+ */
 @Composable
 fun QuickWorkoutButton(iconId: Int, navigationActions: NavigationActions) {
   Box(

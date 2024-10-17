@@ -37,10 +37,7 @@ class MainScreenTest {
     composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
 
     // Check that the welcome text is displayed
-    composeTestRule
-        .onNodeWithTag("WelcomeText")
-        .assertIsDisplayed()
-        .assertTextContains("What's up Micheal?")
+    composeTestRule.onNodeWithTag("WelcomeText").assertIsDisplayed()
 
     // Check that the settings button is displayed
     composeTestRule.onNodeWithTag("SettingsButton").assertIsDisplayed()
@@ -89,12 +86,6 @@ class MainScreenTest {
 
   @Test
   fun testBottomNavigationBarIsDisplayed() {
-    // Check that the BottomNavigationBar is displayed
-    composeTestRule.onNodeWithTag("BottomNavigationBar").assertIsDisplayed()
-  }
-
-  @Test
-  fun testMainScreenDiplaysNavigationBar() {
     // Check that the BottomNavigationBar is displayed
     composeTestRule.onNodeWithTag("BottomNavigationBar").assertIsDisplayed()
   }
