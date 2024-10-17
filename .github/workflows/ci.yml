@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - tests/Add-end-to-end-test
 
   pull_request:
     types:
