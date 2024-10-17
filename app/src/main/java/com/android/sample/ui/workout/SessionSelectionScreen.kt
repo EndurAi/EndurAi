@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +20,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
@@ -30,14 +30,7 @@ fun SessionSelectionScreen(navigationActions: NavigationActions) {
   Scaffold(
       topBar = {
         TopAppBar(
-            title = { Text("New session") },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigationActions.goBack() },
-                  modifier = Modifier.testTag("sessionSelectionScreenBackButton")) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                  }
-            })
+            title = { Text("New session") }, navigationIcon = { ArrowBack(navigationActions) })
       },
       content = { padding ->
         LazyColumn(
