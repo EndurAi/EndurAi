@@ -2,7 +2,7 @@ package com.android.sample.screen.mainscreen
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.android.sample.ui.mainscreen.OverviewScreen
+import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -13,7 +13,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
-class OverviewScreenTest {
+class MainScreenTest {
 
   private lateinit var navigationActions: NavigationActions
 
@@ -28,11 +28,11 @@ class OverviewScreenTest {
     `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
 
     // Set the content of the screen for testing
-    composeTestRule.setContent { OverviewScreen(navigationActions) }
+    composeTestRule.setContent { MainScreen(navigationActions) }
   }
 
   @Test
-  fun testOverviewScreenDisplaysProfileSection() {
+  fun testMainScreenDisplaysProfileSection() {
     // Check that the profile picture is displayed
     composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
 
@@ -53,7 +53,7 @@ class OverviewScreenTest {
   }
 
   @Test
-  fun testOverviewScreenDisplaysWorkoutSessionsSection() {
+  fun testMainScreenDisplaysWorkoutSessionsSection() {
     // Check that the workout section is displayed
     composeTestRule.onNodeWithTag("WorkoutSection").assertIsDisplayed()
 
@@ -69,7 +69,7 @@ class OverviewScreenTest {
   }
 
   @Test
-  fun testOverviewScreenDisplaysQuickWorkoutSection() {
+  fun testMainScreenDisplaysQuickWorkoutSection() {
     // Check that the Quick Workout section is displayed
     composeTestRule.onNodeWithTag("QuickSection").assertIsDisplayed()
 
@@ -78,7 +78,7 @@ class OverviewScreenTest {
   }
 
   @Test
-  fun testOverviewScreenDisplaysNewWorkoutPlanSection() {
+  fun testMainScreenDisplaysNewWorkoutPlanSection() {
     // Check that the New Workout button is displayed
     composeTestRule.onNodeWithTag("NewWorkoutButton").assertIsDisplayed()
 
@@ -94,7 +94,7 @@ class OverviewScreenTest {
   }
 
   @Test
-  fun testOverviewScreenDiplays() {
+  fun testMainScreenDiplaysNavigationBar() {
     // Check that the BottomNavigationBar is displayed
     composeTestRule.onNodeWithTag("BottomNavigationBar").assertIsDisplayed()
   }

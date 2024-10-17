@@ -19,7 +19,7 @@ import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.SignInScreen
-import com.android.sample.ui.mainscreen.OverviewScreen
+import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -62,7 +62,7 @@ fun MainApp() {
 
     // Main Screen
     navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
-      composable(Screen.MAIN) { OverviewScreen(navigationActions) }
+      composable(Screen.MAIN) { MainScreen(navigationActions) }
     }
 
     // Video Screen
