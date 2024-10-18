@@ -48,11 +48,15 @@ class EditAccountScreenTest {
   }
 
   @Test
-  fun displayAllComponents() {
+   fun displayAllComponents() {
     composeTestRule.setContent {
       EditAccount(
           userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
     }
+
+      // Introduce a delay to ensure all components are rendered
+      composeTestRule.waitForIdle()
+      Thread.sleep(1000) // 1 second delay
 
     composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("profileImage").assertIsDisplayed()
