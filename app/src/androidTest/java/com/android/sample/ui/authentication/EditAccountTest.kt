@@ -48,15 +48,15 @@ class EditAccountScreenTest {
   }
 
   @Test
-   fun displayAllComponents() {
+  fun displayAllComponents() {
     composeTestRule.setContent {
       EditAccount(
           userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
     }
 
-      // Introduce a delay to ensure all components are rendered
-      composeTestRule.waitForIdle()
-      Thread.sleep(1000) // 1 second delay
+    // Introduce a delay to ensure all components are rendered
+    composeTestRule.waitForIdle()
+    Thread.sleep(1000) // 1 second delay
 
     composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("profileImage").assertIsDisplayed()
@@ -91,6 +91,9 @@ class EditAccountScreenTest {
           userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
     }
 
+    composeTestRule.waitForIdle()
+    Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
+
     composeTestRule.onNodeWithTag("firstName").performTextClearance()
     composeTestRule.onNodeWithTag("firstName").performTextInput("Jane")
     composeTestRule.onNodeWithTag("lastName").performTextClearance()
@@ -101,6 +104,8 @@ class EditAccountScreenTest {
     composeTestRule.onNodeWithTag("weight").performTextInput("65")
 
     composeTestRule.onNodeWithText("Save Changes").performClick()
+
+    composeTestRule.waitForIdle() // Wait for any pending actions to complete
 
     verify(navigationActions).navigateTo(Screen.SETTINGS)
   }

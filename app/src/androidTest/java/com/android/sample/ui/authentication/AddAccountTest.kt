@@ -46,6 +46,9 @@ class AddAccountScreenTest {
           userId = "testUserId")
     }
 
+    composeTestRule.waitForIdle()
+    Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
+
     // Check if all the necessary components are displayed
     composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("profileImage").assertIsDisplayed()
@@ -69,6 +72,9 @@ class AddAccountScreenTest {
           userId = "testUserId")
     }
 
+    composeTestRule.waitForIdle()
+    Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
+
     // Interact with the UI elements to simulate valid data entry
     composeTestRule.onNodeWithTag("firstName").performTextInput("John")
     composeTestRule.onNodeWithTag("lastName").performTextInput("Doe")
@@ -79,6 +85,8 @@ class AddAccountScreenTest {
     `when`(userAccountRepository.createUserAccount(any(), any(), any())).then {}
 
     composeTestRule.onNodeWithText("Submit").performClick()
+
+    composeTestRule.waitForIdle() // Wait for any pending actions to complete
 
     verify(navigationActions).navigateTo(TopLevelDestinations.MAIN)
   }
