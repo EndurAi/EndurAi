@@ -3,7 +3,7 @@ package com.android.sample.model.workout
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.*
 
-open class WorkoutViewModel<T : Workout>(private val repository: WorkoutRepository<T>) :
+open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepository<T>) :
     ViewModel() {
 
   private val workouts_ = MutableStateFlow<List<T>>(emptyList())
@@ -35,7 +35,7 @@ open class WorkoutViewModel<T : Workout>(private val repository: WorkoutReposito
    *
    * @param workout The Workout document to be added.
    */
-  fun addWorkout(workout: T) {
+  fun addWorkout(workout: @UnsafeVariance T) {
     repository.addDocument(obj = workout, onSuccess = { getWorkouts() }, onFailure = {})
   }
 
@@ -44,7 +44,7 @@ open class WorkoutViewModel<T : Workout>(private val repository: WorkoutReposito
    *
    * @param workout The Workout document to be updated.
    */
-  fun updateWorkout(workout: T) {
+  fun updateWorkout(workout: @UnsafeVariance T) {
     repository.updateDocument(obj = workout, onSuccess = { getWorkouts() }, onFailure = {})
   }
 
@@ -62,7 +62,7 @@ open class WorkoutViewModel<T : Workout>(private val repository: WorkoutReposito
    *
    * @param workout The Workout document to be selected.
    */
-  fun selectWorkout(workout: T) {
+  fun selectWorkout(workout: @UnsafeVariance T) {
     selectedWorkout_.value = workout
   }
 }
