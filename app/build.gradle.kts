@@ -113,6 +113,10 @@ sonar {
         property("sonar.projectName", "EndurAi")
         property("sonar.organization", "enduraimakesmybodymoves1919")
         property("sonar.host.url", "https://sonarcloud.io")
+
+        // Add the following property to skip implicit compilation
+        property("sonar.gradle.skipCompile", "true")
+
         // Comma-separated paths to the various directories containing the *.xml JUnit report files. Each path may be absolute or relative to the project base directory.
         property("sonar.junit.reportPaths", "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/")
         // Paths to xml files with Android Lint issues. If the main flavor is changed, this file will have to be changed too.
@@ -153,6 +157,10 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
+
+    // Activity Compose for rememberLauncherForActivityResult
+    implementation(libs.androidx.activity.compose.v131)
+    implementation(libs.coil.compose)
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
