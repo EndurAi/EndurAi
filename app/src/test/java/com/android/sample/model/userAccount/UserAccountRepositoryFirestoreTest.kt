@@ -25,147 +25,147 @@ import org.robolectric.Shadows.shadowOf
 @RunWith(RobolectricTestRunner::class)
 class UserAccountRepositoryFirestoreTest {
 
-    @Mock private lateinit var mockFirestore: FirebaseFirestore
-    @Mock private lateinit var mockDocumentReference: DocumentReference
-    @Mock private lateinit var mockCollectionReference: CollectionReference
-    @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
+  @Mock private lateinit var mockFirestore: FirebaseFirestore
+  @Mock private lateinit var mockDocumentReference: DocumentReference
+  @Mock private lateinit var mockCollectionReference: CollectionReference
+  @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
 
-    private lateinit var userAccountRepositoryFirestore: UserAccountRepositoryFirestore
+  private lateinit var userAccountRepositoryFirestore: UserAccountRepositoryFirestore
 
-    private val userAccount =
-        UserAccount(
-            userId = "1",
-            firstName = "John",
-            lastName = "Doe",
-            height = 180f,
-            weight = 75f,
-            heightUnit = HeightUnit.CM,
-            weightUnit = WeightUnit.KG,
-            gender = Gender.MALE,
-            birthDate = Timestamp.now(),
-            profileImageUrl = "profile_image_url")
+  private val userAccount =
+      UserAccount(
+          userId = "1",
+          firstName = "John",
+          lastName = "Doe",
+          height = 180f,
+          weight = 75f,
+          heightUnit = HeightUnit.CM,
+          weightUnit = WeightUnit.KG,
+          gender = Gender.MALE,
+          birthDate = Timestamp.now(),
+          profileImageUrl = "profile_image_url")
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
 
-        if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-            FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-        }
-
-        userAccountRepositoryFirestore = UserAccountRepositoryFirestore(mockFirestore)
-
-        `when`(mockFirestore.collection(any())).thenReturn(mockCollectionReference)
-        `when`(mockCollectionReference.document(any())).thenReturn(mockDocumentReference)
-        `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
-    @Test
-    fun getUserAccount_success() {
-        `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-        `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(userAccount)
+    userAccountRepositoryFirestore = UserAccountRepositoryFirestore(mockFirestore)
 
-        var successCalled = false
+    `when`(mockFirestore.collection(any())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(any())).thenReturn(mockDocumentReference)
+    `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
+  }
 
-        userAccountRepositoryFirestore.getUserAccount(
-            "1",
-            onSuccess = { account ->
-                successCalled = true
-                assertTrue(account == userAccount)
-            },
-            onFailure = { fail("Failure callback should not be called") })
+  @Test
+  fun getUserAccount_success() {
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(userAccount)
 
-        shadowOf(Looper.getMainLooper()).idle()
+    var successCalled = false
 
-        verify(mockDocumentReference).get()
-        assertTrue("Success callback should be called", successCalled)
-    }
+    userAccountRepositoryFirestore.getUserAccount(
+        "1",
+        onSuccess = { account ->
+          successCalled = true
+          assertTrue(account == userAccount)
+        },
+        onFailure = { fail("Failure callback should not be called") })
 
-    @Test
-    fun getUserAccount_failure() {
-        val exception = RuntimeException("Failed to get user account")
-        `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+    shadowOf(Looper.getMainLooper()).idle()
 
-        var failureCalled = false
+    verify(mockDocumentReference).get()
+    assertTrue("Success callback should be called", successCalled)
+  }
 
-        userAccountRepositoryFirestore.getUserAccount(
-            "1",
-            onSuccess = { fail("Success callback should not be called") },
-            onFailure = { failureCalled = true })
+  @Test
+  fun getUserAccount_failure() {
+    val exception = RuntimeException("Failed to get user account")
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
 
-        shadowOf(Looper.getMainLooper()).idle()
+    var failureCalled = false
 
-        verify(mockDocumentReference).get()
-        assertTrue("Failure callback should be called", failureCalled)
-    }
+    userAccountRepositoryFirestore.getUserAccount(
+        "1",
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
 
-    @Test
-    fun createUserAccount_success() {
-        `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forResult(null))
+    shadowOf(Looper.getMainLooper()).idle()
 
-        var successCalled = false
+    verify(mockDocumentReference).get()
+    assertTrue("Failure callback should be called", failureCalled)
+  }
 
-        userAccountRepositoryFirestore.createUserAccount(
-            userAccount,
-            onSuccess = { successCalled = true },
-            onFailure = { fail("Failure callback should not be called") })
+  @Test
+  fun createUserAccount_success() {
+    `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forResult(null))
 
-        shadowOf(Looper.getMainLooper()).idle()
+    var successCalled = false
 
-        verify(mockDocumentReference).set(userAccount)
-        assertTrue("Success callback should be called", successCalled)
-    }
+    userAccountRepositoryFirestore.createUserAccount(
+        userAccount,
+        onSuccess = { successCalled = true },
+        onFailure = { fail("Failure callback should not be called") })
 
-    @Test
-    fun createUserAccount_failure() {
-        val exception = RuntimeException("Failed to create user account")
-        `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forException(exception))
+    shadowOf(Looper.getMainLooper()).idle()
 
-        var failureCalled = false
+    verify(mockDocumentReference).set(userAccount)
+    assertTrue("Success callback should be called", successCalled)
+  }
 
-        userAccountRepositoryFirestore.createUserAccount(
-            userAccount,
-            onSuccess = { fail("Success callback should not be called") },
-            onFailure = { failureCalled = true })
+  @Test
+  fun createUserAccount_failure() {
+    val exception = RuntimeException("Failed to create user account")
+    `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forException(exception))
 
-        shadowOf(Looper.getMainLooper()).idle()
+    var failureCalled = false
 
-        verify(mockDocumentReference).set(userAccount)
-        assertTrue("Failure callback should be called", failureCalled)
-    }
+    userAccountRepositoryFirestore.createUserAccount(
+        userAccount,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
 
-    @Test
-    fun updateUserAccount_success() {
-        `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forResult(null))
+    shadowOf(Looper.getMainLooper()).idle()
 
-        var successCalled = false
+    verify(mockDocumentReference).set(userAccount)
+    assertTrue("Failure callback should be called", failureCalled)
+  }
 
-        userAccountRepositoryFirestore.updateUserAccount(
-            userAccount,
-            onSuccess = { successCalled = true },
-            onFailure = { fail("Failure callback should not be called") })
+  @Test
+  fun updateUserAccount_success() {
+    `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forResult(null))
 
-        shadowOf(Looper.getMainLooper()).idle()
+    var successCalled = false
 
-        verify(mockDocumentReference).set(userAccount)
-        assertTrue("Success callback should be called", successCalled)
-    }
+    userAccountRepositoryFirestore.updateUserAccount(
+        userAccount,
+        onSuccess = { successCalled = true },
+        onFailure = { fail("Failure callback should not be called") })
 
-    @Test
-    fun updateUserAccount_failure() {
-        val exception = RuntimeException("Failed to update user account")
-        `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forException(exception))
+    shadowOf(Looper.getMainLooper()).idle()
 
-        var failureCalled = false
+    verify(mockDocumentReference).set(userAccount)
+    assertTrue("Success callback should be called", successCalled)
+  }
 
-        userAccountRepositoryFirestore.updateUserAccount(
-            userAccount,
-            onSuccess = { fail("Success callback should not be called") },
-            onFailure = { failureCalled = true })
+  @Test
+  fun updateUserAccount_failure() {
+    val exception = RuntimeException("Failed to update user account")
+    `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forException(exception))
 
-        shadowOf(Looper.getMainLooper()).idle()
+    var failureCalled = false
 
-        verify(mockDocumentReference).set(userAccount)
-        assertTrue("Failure callback should be called", failureCalled)
-    }
+    userAccountRepositoryFirestore.updateUserAccount(
+        userAccount,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockDocumentReference).set(userAccount)
+    assertTrue("Failure callback should be called", failureCalled)
+  }
 }

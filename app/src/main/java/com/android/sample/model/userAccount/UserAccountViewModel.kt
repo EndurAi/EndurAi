@@ -12,49 +12,49 @@ import kotlinx.coroutines.flow.asStateFlow
 
 open class UserAccountViewModel(private val repository: UserAccountRepository) : ViewModel() {
 
-    private val _userAccount = MutableStateFlow<UserAccount?>(null)
-    val userAccount: StateFlow<UserAccount?>
-        get() = _userAccount.asStateFlow()
+  private val _userAccount = MutableStateFlow<UserAccount?>(null)
+  val userAccount: StateFlow<UserAccount?>
+    get() = _userAccount.asStateFlow()
 
-    // Loading state
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean>
-        get() = _isLoading.asStateFlow()
+  // Loading state
+  private val _isLoading = MutableStateFlow(false)
+  val isLoading: StateFlow<Boolean>
+    get() = _isLoading.asStateFlow()
 
-    fun getUserAccount(userId: String) {
-        _isLoading.value = true
-        repository.getUserAccount(
-            userId = userId,
-            onSuccess = {
-                _userAccount.value = it
-                _isLoading.value = false
-            },
-            onFailure = {
-                _userAccount.value = null
-                _isLoading.value = false
-            })
-    }
+  fun getUserAccount(userId: String) {
+    _isLoading.value = true
+    repository.getUserAccount(
+        userId = userId,
+        onSuccess = {
+          _userAccount.value = it
+          _isLoading.value = false
+        },
+        onFailure = {
+          _userAccount.value = null
+          _isLoading.value = false
+        })
+  }
 
-    fun createUserAccount(userAccount: UserAccount) {
-        repository.createUserAccount(
-            userAccount, onSuccess = { _userAccount.value = userAccount }, onFailure = {})
-    }
+  fun createUserAccount(userAccount: UserAccount) {
+    repository.createUserAccount(
+        userAccount, onSuccess = { _userAccount.value = userAccount }, onFailure = {})
+  }
 
-    fun updateUserAccount(userAccount: UserAccount) {
-        repository.updateUserAccount(
-            userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
-    }
+  fun updateUserAccount(userAccount: UserAccount) {
+    repository.updateUserAccount(
+        userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+  }
 
-    // Factory for creating instances of the ViewModel
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return UserAccountViewModel(
-                        UserAccountRepositoryFirestore(FirebaseFirestore.getInstance()))
-                            as T
-                }
-            }
-    }
+  // Factory for creating instances of the ViewModel
+  companion object {
+    val Factory: ViewModelProvider.Factory =
+        object : ViewModelProvider.Factory {
+          @Suppress("UNCHECKED_CAST")
+          override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return UserAccountViewModel(
+                UserAccountRepositoryFirestore(FirebaseFirestore.getInstance()))
+                as T
+          }
+        }
+  }
 }

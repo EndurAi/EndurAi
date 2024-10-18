@@ -10,7 +10,7 @@ class UserAccountTest {
   @Test
   fun testUserAccountCreation() {
     // Arrange: Create a Date object for birthDate
-      val birthDate = Timestamp(Date())
+    val birthDate = Timestamp(Date())
 
     // Act: Initialize a UserAccount instance
     val user =
