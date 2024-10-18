@@ -1,5 +1,6 @@
 package com.android.sample.model.userAccount
 
+import com.google.firebase.Timestamp
 import java.util.Date
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -9,7 +10,7 @@ class UserAccountTest {
   @Test
   fun testUserAccountCreation() {
     // Arrange: Create a Date object for birthDate
-    val birthDate = Date()
+      val birthDate = Timestamp(Date())
 
     // Act: Initialize a UserAccount instance
     val user =
