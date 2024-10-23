@@ -141,7 +141,9 @@ dependencies {
 
 
     // Coil Compose (for async image loading in Jetpack Compose)
-    implementation(libs.coil.compose)
+    implementation(libs.coil.compose){
+        exclude(module = "protobuf-lite")
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -199,6 +201,11 @@ dependencies {
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
+
+    configurations.configureEach {
+        exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    }
+    
 
 }
 

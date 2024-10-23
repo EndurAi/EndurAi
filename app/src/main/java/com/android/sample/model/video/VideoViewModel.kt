@@ -16,10 +16,10 @@ import kotlinx.coroutines.withContext
  *
  * @property videoRepository The repository for video operations.
  */
-class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel() {
+open class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel() {
 
   private val _videos = MutableStateFlow<List<Video>>(emptyList())
-  val videos: StateFlow<List<Video>>
+  open val videos: StateFlow<List<Video>>
     get() = _videos.asStateFlow()
 
   private val _error = MutableStateFlow<String?>(null)

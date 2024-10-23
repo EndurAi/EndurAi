@@ -55,9 +55,9 @@ class VideoRepositoryStorage(
 
   // Retrieve all video URLs with metadata from Firestore
   override fun getVideos(onSuccess: (List<Video>) -> Unit, onFailure: (Exception) -> Unit) {
-      Firebase.auth.addAuthStateListener {
-          if (it.currentUser != null) {
-          videosCollection
+    Firebase.auth.addAuthStateListener {
+      if (it.currentUser != null) {
+        videosCollection
             .get()
             .addOnSuccessListener { result ->
               val videoList =
@@ -68,6 +68,6 @@ class VideoRepositoryStorage(
             }
             .addOnFailureListener { exception -> onFailure(exception) }
       }
+    }
   }
-}
 }

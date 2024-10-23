@@ -1,6 +1,7 @@
 package com.android.sample
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,7 +61,9 @@ class MainActivity : ComponentActivity() {
 fun MainApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+  Log.d("DEBUG_MAIN", "MainApp: TAG A")
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
+  Log.d("DEBUG_MAIN", "MainApp: TAG B")
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)

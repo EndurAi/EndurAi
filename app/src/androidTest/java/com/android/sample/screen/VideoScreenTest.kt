@@ -16,59 +16,53 @@ import org.mockito.Mockito.`when`
 
 class VideoScreenTest {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    // Mock navigation actions
-    private lateinit var navigationActions: NavigationActions
+  // Mock navigation actions
+  private lateinit var navigationActions: NavigationActions
+
+  // Mock VideoViewModel
+  private lateinit var videoViewModel: VideoViewModel
+
+  // Sample video for testing
+  private val sampleVideo =
+      Video(
+          title = "Sample Video",
+          url = "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+          tag = "Sample",
+          thumbnailUrl = "",
+          duration = "2:30",
+          description = "Sample video description")
+
+  @Before
+  fun setUp() {
+    // Initialize mock navigation actions
+    navigationActions = Mockito.mock(NavigationActions::class.java)
 
     // Mock VideoViewModel
-    private lateinit var videoViewModel: VideoViewModel
+    videoViewModel = Mockito.mock(VideoViewModel::class.java)
 
-    // Sample video for testing
-    private val sampleVideo = Video(
-        title = "Sample Video",
-        url = "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
-        tag = "Sample",
-        thumbnailUrl = "",
-        duration = "2:30",
-        description = "Sample video description"
-    )
+    // Mock selected video flow with the sample video
+    `when`(videoViewModel.selectedVideo).thenReturn(MutableStateFlow(sampleVideo))
 
-    @Before
-    fun setUp() {
-        // Initialize mock navigation actions
-        navigationActions = Mockito.mock(NavigationActions::class.java)
-
-        // Mock VideoViewModel
-        videoViewModel = Mockito.mock(VideoViewModel::class.java)
-
-        // Mock selected video flow with the sample video
-        `when`(videoViewModel.selectedVideo).thenReturn(MutableStateFlow(sampleVideo))
-
-        // Set the content of the test to the VideoScreen
-        composeTestRule.setContent {
-            VideoScreen(
-                navigationActions = navigationActions,
-                videoViewModel = videoViewModel
-            )
-        }
+    // Set the content of the test to the VideoScreen
+    composeTestRule.setContent {
+      VideoScreen(navigationActions = navigationActions, videoViewModel = videoViewModel)
     }
+  }
 
-    @Test
-    fun videoScreenDisplaysCorrectly() {
-        // Verify the main screen (Scaffold) is displayed
-        composeTestRule.onNodeWithTag("videoScreen").assertIsDisplayed()
+  @Test
+  fun videoScreenDisplaysCorrectly() {
+    // Verify the main screen (Scaffold) is displayed
+    composeTestRule.onNodeWithTag("videoScreen").assertIsDisplayed()
 
-        // Verify the top app bar is displayed with the back button
-        composeTestRule.onNodeWithTag("backButton").assertIsDisplayed()
+    // Verify the top app bar is displayed with the back button
+    composeTestRule.onNodeWithTag("backButton").assertIsDisplayed()
 
-        // Verify that the video player is displayed
-        composeTestRule.onNodeWithTag("playerView").assertIsDisplayed()
-    }
+    // Verify that the video player is displayed
+    composeTestRule.onNodeWithTag("playerView").assertIsDisplayed()
+  }
 }
-
-
 
 //
 // @OptIn(ExperimentalCoroutinesApi::class)
