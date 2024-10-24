@@ -89,27 +89,13 @@ fun MainScreen(navigationActions: NavigationActions) {
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
       topBar = {
-        TopAppBar(
-            title = { Text("Main Screen") },
-            actions = {
-              IconButton(
-                  onClick = { navigationActions.navigateTo(Screen.SETTINGS) },
-                  modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton")) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = "Settings",
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp))
-                  }
-            })
+        // Display the profile section
+        ProfileSection(account = account, profile = profile, navigationActions = navigationActions)
       },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
             verticalArrangement = Arrangement.SpaceBetween) {
-              // Display the profile section
-              ProfileSection(
-                  account = account, profile = profile, navigationActions = navigationActions)
 
               // Display the workout sessions
               WorkoutSessionsSection(
@@ -163,7 +149,7 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
         // Settings Icon
         IconButton(
             onClick = { navigationActions.navigateTo(Screen.SETTINGS) },
-            modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton2")) {
+            modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton")) {
               Icon(
                   imageVector = Icons.Outlined.Settings,
                   contentDescription = "Settings",
