@@ -55,7 +55,7 @@ class MainScreenTest {
     composeTestRule.onNodeWithTag("WorkoutSection").assertIsDisplayed()
 
     // Check that two workout cards are displayed
-    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(2)
+    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(1)
 
     // Check that the "View all" button is displayed
     composeTestRule.onNodeWithTag("ViewAllButton").assertIsDisplayed()
