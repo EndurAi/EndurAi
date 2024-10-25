@@ -136,12 +136,14 @@ fun TopBar(navigationActions: NavigationActions) {
   Row(
       modifier = Modifier.fillMaxWidth().background(DarkBlue),
       verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { navigationActions.goBack() }) {
-          Icon(
-              imageVector = Icons.Outlined.ArrowBack,
-              contentDescription = "Back",
-              tint = Color.White)
-        }
+        IconButton(
+            onClick = { navigationActions.goBack() },
+            modifier = Modifier.testTag("ArrowBackButton")) {
+              Icon(
+                  imageVector = Icons.Outlined.ArrowBack,
+                  contentDescription = "Back",
+                  tint = Color.White)
+            }
 
         Spacer(modifier = Modifier.width(8.dp))
 

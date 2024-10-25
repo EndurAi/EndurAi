@@ -54,12 +54,14 @@ fun PreferencesScreen(
                   color = Color.White)
             },
             navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(
-                    imageVector = Icons.Outlined.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White)
-              }
+              IconButton(
+                  onClick = { navigationActions.goBack() },
+                  modifier = Modifier.testTag("ArrowBackButton")) {
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White)
+                  }
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
             modifier = Modifier.testTag("preferencesTopBar"))
