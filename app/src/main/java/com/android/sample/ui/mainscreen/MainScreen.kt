@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,10 +46,9 @@ import java.util.Date
  *
  * @param navigationActions Actions for navigating between screens.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navigationActions: NavigationActions) {
-  // Temp until got real account repository
+  // Configuration temporaire pour tester
   val account =
       UserAccount(
           "",
@@ -63,62 +63,33 @@ fun MainScreen(navigationActions: NavigationActions) {
           "")
   val profile = R.drawable.homme
 
-  // Temp until got real workouts repo
   val workouts =
       listOf(
           BodyWeightWorkout(
               workoutId = "1",
               name = "Run in Lavaux",
-              description = "Enjoying Lavaux with user2 and user3",
+              description = "Enjoying Lavaux",
               warmup = true,
-              userIdSet = mutableSetOf("user1", "user2", "user3")),
+              userIdSet = mutableSetOf("user1")),
           YogaWorkout(
               workoutId = "3",
               name = "After Comparch relax",
               description = "Chilling time",
               warmup = true,
-              userIdSet = mutableSetOf("user1")),
-          BodyWeightWorkout(
-              workoutId = "2",
-              name = "Summer body",
-              description = "Be ready for the summer",
-              warmup = false,
-              userIdSet = mutableSetOf("user1", "user4")),
-      )
+              userIdSet = mutableSetOf("user1")))
 
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
       topBar = {
-        TopAppBar(
-            title = { Text("Main Screen") },
-            actions = {
-              IconButton(
-                  onClick = { navigationActions.navigateTo(Screen.SETTINGS) },
-                  modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton")) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = "Settings",
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp))
-                  }
-            })
+        ProfileSection(account = account, profile = profile, navigationActions = navigationActions)
       },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
             verticalArrangement = Arrangement.SpaceBetween) {
-              // Display the profile section
-              ProfileSection(
-                  account = account, profile = profile, navigationActions = navigationActions)
-
-              // Display the workout sessions
               WorkoutSessionsSection(
                   workouts = workouts, profile = profile, navigationActions = navigationActions)
-
-              // Display the quick workout section
               QuickWorkoutSection(navigationActions = navigationActions)
-
-              // Display the new workout plan button
               NewWorkoutSection(navigationActions = navigationActions)
             }
       },
@@ -126,11 +97,10 @@ fun MainScreen(navigationActions: NavigationActions) {
 }
 
 /**
- * Composable function that displays the profile section, including the profile picture and
- * settings.
+ * Composable function that displays the profile section at the top of the screen.
  *
- * @param account The user account information.
- * @param profile The resource ID for the profile image.
+ * @param account The user account containing the profile information.
+ * @param profile The resource ID for the profile picture.
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
@@ -139,45 +109,41 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
       modifier =
           Modifier.fillMaxWidth()
               .background(DarkBlue)
-              .padding(vertical = 16.dp)
+              .padding(vertical = 12.dp)
               .testTag("ProfileSection")) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp)) {
-              // Profile image
               Image(
                   painter = painterResource(id = profile),
                   contentDescription = "Profile",
-                  modifier = Modifier.size(48.dp).clip(CircleShape).testTag("ProfilePicture"))
+                  modifier = Modifier.size(40.dp).clip(CircleShape).testTag("ProfilePicture"))
               Spacer(modifier = Modifier.width(8.dp))
-              // Display user name dynamically
               Text(
                   text = stringResource(id = R.string.welcome_message, account.firstName),
-                  style = MaterialTheme.typography.titleSmall.copy(fontSize = 30.sp),
+                  style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp),
                   color = Color.White,
                   modifier = Modifier.testTag("WelcomeText"))
             }
-
         Spacer(Modifier.weight(1f))
 
-        // Settings Icon
         IconButton(
             onClick = { navigationActions.navigateTo(Screen.SETTINGS) },
-            modifier = Modifier.padding(end = 16.dp).testTag("SettingsButton2")) {
+            modifier = Modifier.padding(end = 12.dp).testTag("SettingsButton")) {
               Icon(
                   imageVector = Icons.Outlined.Settings,
                   contentDescription = "Settings",
                   tint = Color.White,
-                  modifier = Modifier.size(30.dp))
+                  modifier = Modifier.size(24.dp))
             }
       }
 }
 
 /**
- * Composable function that displays a list of workout sessions.
+ * Composable function that displays a section with workout sessions.
  *
- * @param workouts The list of workout sessions.
- * @param profile The resource ID for the profile image.
+ * @param workouts A list of workouts to display.
+ * @param profile The resource ID for the profile picture.
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
@@ -186,34 +152,32 @@ fun WorkoutSessionsSection(
     profile: Int,
     navigationActions: NavigationActions
 ) {
-  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).testTag("WorkoutSection")) {
+  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
     Text(
         text = "My workout sessions",
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 25.sp),
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp),
         modifier = Modifier.padding(vertical = 8.dp))
-
     Column(
         modifier =
             Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(12.dp))
                 .background(GreyLight)
-                .padding(10.dp)) {
-          // Display the first two workouts
-          for (workout in workouts.take(2)) {
-            WorkoutCard(workout, profile, navigationActions = navigationActions)
+                .padding(8.dp)) {
+          workouts.take(1).forEach { workout ->
+            Box(modifier = Modifier.padding(vertical = 4.dp)) {
+              WorkoutCard(workout, profile, navigationActions)
+            }
           }
-
-          // "View All" button than navigate to a screen with all workouts
           Button(
-              onClick = { /* Navigate to screen displaying all workouts */},
-              modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("ViewAllButton"),
+              onClick = { navigationActions.navigateTo(Screen.VIEW_ALL) },
+              modifier =
+                  Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("ViewAllButton"),
               colors =
                   ButtonDefaults.buttonColors(
                       containerColor = DarkBlue2, contentColor = Color.White)) {
                 Text(
                     text = "View all",
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp),
-                )
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 14.sp))
               }
         }
   }
@@ -226,12 +190,17 @@ fun WorkoutSessionsSection(
  */
 @Composable
 fun QuickWorkoutSection(navigationActions: NavigationActions) {
-  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+  val context = LocalContext.current
+  val metrics = context.resources.displayMetrics
+  val screenWidth = metrics.widthPixels
+  val screenWidthDp = screenWidth / metrics.density
+  val buttonSizeDp = (screenWidthDp * 0.15).toInt()
+
+  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("QuickSection")) {
     Text(
         text = "Quick workout",
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 25.sp),
-        modifier = Modifier.padding(vertical = 8.dp).testTag("QuickSection"))
-
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp),
+        modifier = Modifier.padding(vertical = 8.dp))
     Column(
         modifier =
             Modifier.fillMaxWidth()
@@ -239,16 +208,83 @@ fun QuickWorkoutSection(navigationActions: NavigationActions) {
                 .background(GreyLight)
                 .padding(10.dp)) {
           Row(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+              modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
-                // One button for each Quickworkout session
-                QuickWorkoutButton(R.drawable.running_man, navigationActions = navigationActions)
-                QuickWorkoutButton(R.drawable.pushups, navigationActions = navigationActions)
-                QuickWorkoutButton(R.drawable.yoga, navigationActions = navigationActions)
-                QuickWorkoutButton(R.drawable.dumbbell, navigationActions = navigationActions)
+                QuickWorkoutButton(R.drawable.running_man, navigationActions, buttonSizeDp)
+                QuickWorkoutButton(R.drawable.pushups, navigationActions, buttonSizeDp)
+                QuickWorkoutButton(R.drawable.yoga, navigationActions, buttonSizeDp)
+                QuickWorkoutButton(R.drawable.dumbbell, navigationActions, buttonSizeDp)
               }
         }
   }
+}
+
+/**
+ * Composable function that displays a button for a quick workout session.
+ *
+ * @param iconId The resource ID for the quick workout icon.
+ * @param navigationActions Actions for navigating between screens.
+ */
+@Composable
+fun QuickWorkoutButton(iconId: Int, navigationActions: NavigationActions, buttonSize: Int) {
+  Box(
+      modifier =
+          Modifier.size(buttonSize.dp)
+              .aspectRatio(1f)
+              .background(Blue, CircleShape)
+              .clickable { /* Navigate to the screen associated with QuickWorkout */}
+              .testTag("QuickWorkoutButton"),
+      contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(id = iconId),
+            contentDescription = "Quick Workout Icon",
+            modifier = Modifier.fillMaxSize(0.5f))
+      }
+}
+/**
+ * Composable function that displays a workout card with its details.
+ *
+ * @param workout The workout data to display.
+ * @param profile The resource ID for the participant icon.
+ * @param navigationActions Actions for navigating between screens.
+ */
+@Composable
+fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationActions) {
+  Card(
+      shape = RoundedCornerShape(12.dp),
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(horizontal = 12.dp, vertical = 3.dp)
+              .clickable { /* Navigate to workout details or start workout */}
+              .testTag("WorkoutCard"),
+      colors = CardDefaults.cardColors(containerColor = Blue)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween) {
+              Column {
+                Text(
+                    text = workout.name,
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 17.sp))
+                Text(text = workout.description, style = MaterialTheme.typography.bodyMedium)
+                Image(
+                    painter = painterResource(id = profile),
+                    contentDescription = "Participant",
+                    modifier = Modifier.size(20.dp))
+              }
+              Image(
+                  painter =
+                      painterResource(
+                          id =
+                              when (workout) {
+                                is BodyWeightWorkout -> R.drawable.pushups
+                                is YogaWorkout -> R.drawable.yoga
+                                else -> R.drawable.dumbbell
+                              }),
+                  contentDescription = "Workout Icon",
+                  modifier = Modifier.size(40.dp))
+            }
+      }
 }
 
 /**
@@ -261,22 +297,22 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth()) {
     Text(
         "New workout plan",
-        modifier = Modifier.padding(horizontal = 16.dp),
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 25.sp))
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp))
     Box(
         modifier =
             Modifier.fillMaxWidth()
                 .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
-                .padding(vertical = 16.dp, horizontal = 16.dp)
+                .padding(vertical = 16.dp, horizontal = 12.dp)
                 .height(48.dp)
-                .background(Grey, RoundedCornerShape(24.dp))
+                .background(Grey, RoundedCornerShape(20.dp))
                 .testTag("NewWorkoutButton"),
         contentAlignment = Alignment.Center) {
           Icon(
               imageVector = Icons.Outlined.Add,
               contentDescription = "New Workout",
               tint = Color.Black,
-              modifier = Modifier.size(30.dp))
+              modifier = Modifier.size(28.dp))
         }
   }
 }
@@ -297,80 +333,4 @@ fun BottomNavigationBar(navigationActions: NavigationActions) {
         selectedItem = navigationActions.currentRoute(),
     )
   }
-}
-
-/**
- * Composable function that displays a workout card for a given workout.
- *
- * @param workout The exercise.
- * @param profile The resource ID for the profile image.
- * @param navigationActions Actions for navigating between screens.
- */
-@Composable
-fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationActions) {
-  // Choose icon dynamically with the workout type
-  val workoutImage =
-      when (workout) {
-        is BodyWeightWorkout -> R.drawable.pushups
-        is YogaWorkout -> R.drawable.yoga
-        else -> R.drawable.dumbbell
-      }
-
-  Card(
-      shape = RoundedCornerShape(30.dp),
-      modifier =
-          Modifier.fillMaxWidth()
-              .padding(vertical = 4.dp)
-              .clickable { /*Navigate to the screen to edit or start the workout*/}
-              .testTag("WorkoutCard"),
-      colors = CardDefaults.cardColors(containerColor = Blue)) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
-              Column {
-                // Name of the workout
-                Text(
-                    text = workout.name,
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 17.sp))
-
-                // Descrition of the workout
-                Text(text = workout.description, style = MaterialTheme.typography.bodyMedium)
-
-                // Temp should display profile pictures of all participants
-                Image(
-                    painter = painterResource(id = profile),
-                    contentDescription = "Participant",
-                    modifier = Modifier.size(15.dp))
-              }
-
-              // The type of workout
-              Image(
-                  painter = painterResource(id = workoutImage),
-                  contentDescription = "Workout Icon",
-                  modifier = Modifier.size(30.dp))
-            }
-      }
-}
-
-/**
- * Composable function that displays a button for a quick workout session.
- *
- * @param iconId The resource ID for the quick workout icon.
- * @param navigationActions Actions for navigating between screens.
- */
-@Composable
-fun QuickWorkoutButton(iconId: Int, navigationActions: NavigationActions) {
-  Box(
-      modifier =
-          Modifier.size(75.dp)
-              .background(Blue, CircleShape)
-              .clickable { /*Navigate to the screen of associated Quickworkout*/}
-              .testTag("QuickWorkoutButton"),
-      contentAlignment = Alignment.Center) {
-        Image(
-            painter = painterResource(id = iconId),
-            contentDescription = "Quick Workout Icon",
-            modifier = Modifier.size(35.dp))
-      }
 }

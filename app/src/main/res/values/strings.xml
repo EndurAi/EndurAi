@@ -4,4 +4,9 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="welcome_message">What\'s up %1$s?</string>
+    <string name="ViewAllTitle">All Workouts</string>
+    <string name="noWorkouts">You have no Workouts yet.</string>
+    <string name="TitleTabBody">BodyWeight</string>
+    <string name="TitleTabYoga">Yoga</string>
+    <string name="TitleTabRunning">Running</string>
 </resources>
