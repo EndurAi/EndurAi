@@ -158,7 +158,7 @@ fun <T : Workout> WorkoutList(
   } else {
     Spacer(modifier = Modifier.height(90.dp))
     Text(
-        modifier = Modifier.fillMaxWidth().padding(5.dp),
+        modifier = Modifier.fillMaxWidth().padding(5.dp).testTag("emptyWorkoutPrompt"),
         text = stringResource(id = R.string.noWorkouts),
         textAlign = TextAlign.Center)
     Box(modifier = Modifier.fillMaxSize().padding(8.dp)) {
