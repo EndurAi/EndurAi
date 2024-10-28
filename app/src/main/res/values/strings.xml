@@ -4,4 +4,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="welcome_message">What\'s up %1$s?</string>
+    <string name="setting_title">Settings</string>
 </resources>
