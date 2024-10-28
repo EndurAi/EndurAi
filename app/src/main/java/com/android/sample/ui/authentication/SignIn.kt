@@ -17,7 +17,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +49,8 @@ import kotlinx.coroutines.tasks.await
 fun SignInScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
+  val user by remember { mutableStateOf(Firebase.auth.currentUser) }
+
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
@@ -59,48 +65,53 @@ fun SignInScreen(navigationActions: NavigationActions) {
   val token = stringResource(com.android.sample.R.string.default_web_client_id)
   // The main container for the screen
   // A surface container using the 'background' color from the theme
-  Scaffold(
-      modifier = Modifier.fillMaxSize(),
-      content = { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-          // App Logo Image
-          Image(
-              painter = painterResource(id = com.android.sample.R.drawable.logo),
-              contentDescription = "App Logo",
-              modifier = Modifier.size(250.dp))
+  if (user == null) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        content = { padding ->
+          Column(
+              modifier = Modifier.fillMaxSize().padding(padding),
+              horizontalAlignment = Alignment.CenterHorizontally,
+              verticalArrangement = Arrangement.Center,
+          ) {
+            // App Logo Image
+            Image(
+                painter = painterResource(id = com.android.sample.R.drawable.logo),
+                contentDescription = "App Logo",
+                modifier = Modifier.size(250.dp))
 
-          Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-          // Welcome Text
-          Text(
-              modifier = Modifier.testTag("loginTitle"),
-              text = "Welcome",
-              style =
-                  MaterialTheme.typography.headlineLarge.copy(fontSize = 57.sp, lineHeight = 64.sp),
-              fontWeight = FontWeight.Bold,
-              // center the text
+            // Welcome Text
+            Text(
+                modifier = Modifier.testTag("loginTitle"),
+                text = "Welcome",
+                style =
+                    MaterialTheme.typography.headlineLarge.copy(
+                        fontSize = 57.sp, lineHeight = 64.sp),
+                fontWeight = FontWeight.Bold,
+                // center the text
 
-              textAlign = TextAlign.Center)
+                textAlign = TextAlign.Center)
 
-          Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
-          // Authenticate With Google Button
-          GoogleSignInButton(
-              onSignInClick = {
-                val gso =
-                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(token)
-                        .requestEmail()
-                        .build()
-                val googleSignInClient = GoogleSignIn.getClient(context, gso)
-                launcher.launch(googleSignInClient.signInIntent)
-              })
-        }
-      })
+            // Authenticate With Google Button
+            GoogleSignInButton(
+                onSignInClick = {
+                  val gso =
+                      GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                          .requestIdToken(token)
+                          .requestEmail()
+                          .build()
+                  val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                  launcher.launch(googleSignInClient.signInIntent)
+                })
+          }
+        })
+  } else {
+    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+  }
 }
 
 @Composable
