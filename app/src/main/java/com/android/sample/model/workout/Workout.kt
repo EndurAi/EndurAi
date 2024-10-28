@@ -28,6 +28,7 @@ sealed class ExerciseDetail {
 enum class WorkoutType {
   BODY_WEIGHT,
   YOGA,
+  WARMUP,
   RUNNING;
 
   override fun toString(): String {
@@ -35,6 +36,7 @@ enum class WorkoutType {
       BODY_WEIGHT -> "Body-weight"
       YOGA -> "Yoga"
       RUNNING -> "Running"
+      WARMUP -> "Warm-up"
     }
   }
 }
