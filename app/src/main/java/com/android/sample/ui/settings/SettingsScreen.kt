@@ -2,7 +2,6 @@ package com.android.sample.ui.settings
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,34 +15,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.theme.Blue
-import com.android.sample.ui.theme.DarkBlue
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 
-/**
- * Composable function representing the settings screen of the application.
- *
- * @param navigationActions NavigationActions object to handle navigation events within the app.
- */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
   Scaffold(
-      modifier = Modifier.testTag("settingsScreen"),
-      topBar = { TopBar(navigationActions) },
+      topBar = {
+        TopAppBar(
+            title = { Text("Settings", fontSize = 20.sp) },
+            navigationIcon = { ArrowBack(navigationActions) },
+            modifier = Modifier.testTag("settingsScreen") // Add testTag for the screen itself
+            )
+      },
       content = { paddingValues ->
         Column(
-            modifier =
-                Modifier.fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 24.dp, vertical = 24.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
               // User data button
@@ -52,8 +50,9 @@ fun SettingsScreen(navigationActions: NavigationActions) {
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(60.dp)
+                          .background(Color.LightGray, RoundedCornerShape(10.dp))
                           .testTag("userDataButton"), // Test tag for User Data button
-                  colors = ButtonDefaults.buttonColors(containerColor = Blue)) {
+                  colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)) {
                     Text("User data", color = Color.Black)
                   }
 
@@ -63,8 +62,9 @@ fun SettingsScreen(navigationActions: NavigationActions) {
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(60.dp)
+                          .background(Color.LightGray, RoundedCornerShape(10.dp))
                           .testTag("preferencesButton"), // Test tag for Preferences button
-                  colors = ButtonDefaults.buttonColors(containerColor = Blue)) {
+                  colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)) {
                     Text("Preferences", color = Color.Black)
                   }
 
@@ -76,81 +76,47 @@ fun SettingsScreen(navigationActions: NavigationActions) {
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(48.dp)
-                          .testTag("deleteAccountButton")
-                          .border(
-                              2.dp,
-                              Color.Red,
-                              RoundedCornerShape(10.dp)), // Test tag for Delete Account button
-                  colors =
-                      ButtonDefaults.outlinedButtonColors(
-                          containerColor = Color.Transparent,
-                          contentColor = Color.Red,
-                      )) {
+                          .testTag("deleteAccountButton"), // Test tag for Delete Account button
+                  colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
                         contentDescription = "Delete Account",
-                        tint = Color.Red)
+                        tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Delete account", color = Color.Red)
+                    Text("Delete account", color = Color.White)
                   }
 
               // Logout button
+              // Code taken from :
+              // https://stackoverflow.com/questions/72563673/google-authentication-with-firebase-and-jetpack-compose
               Button(
                   onClick = {
                     FirebaseAuth.getInstance().signOut() // Sign out from Firebase
+                    val gso =
+                        GoogleSignInOptions.Builder(
+                                GoogleSignInOptions.DEFAULT_SIGN_IN) // Sign out from Google
+                            .requestIdToken(context.getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                    val googleSignInClient: GoogleSignInClient =
+                        GoogleSignIn.getClient(context, gso)
+                    googleSignInClient.signOut()
+
                     navigationActions.navigateTo("Auth Screen") // Navigate back to Auth screen
                     Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
                   },
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(48.dp)
-                          .testTag("logoutButton")
-                          .border(
-                              2.dp,
-                              Color.Red,
-                              RoundedCornerShape(10.dp)), // Test tag for Logout button
-                  colors =
-                      ButtonDefaults.outlinedButtonColors(
-                          containerColor = Color.Transparent,
-                          contentColor = Color.Red,
-                      )) {
+                          .testTag("logoutButton"), // Test tag for Logout button
+                  colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                     Icon(
                         imageVector = Icons.Outlined.ExitToApp,
                         contentDescription = "Logout",
-                        tint = Color.Red)
+                        tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Logout", color = Color.Red)
+                    Text("Logout", color = Color.White)
                   }
             }
       })
-}
-
-/**
- * Composable function that creates a top bar for navigation.
- *
- * @param navigationActions NavigationActions object to handle navigation events when the back
- *   button is clicked.
- */
-@Composable
-fun TopBar(navigationActions: NavigationActions) {
-  Row(
-      modifier = Modifier.fillMaxWidth().background(DarkBlue),
-      verticalAlignment = Alignment.CenterVertically) {
-        IconButton(
-            onClick = { navigationActions.goBack() },
-            modifier = Modifier.testTag("ArrowBackButton")) {
-              Icon(
-                  imageVector = Icons.Outlined.ArrowBack,
-                  contentDescription = "Back",
-                  tint = Color.White)
-            }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text = stringResource(id = R.string.setting_title),
-            fontSize = 20.sp,
-            color = Color.White,
-            modifier = Modifier.weight(1f))
-      }
 }
