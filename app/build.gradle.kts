@@ -187,6 +187,11 @@ dependencies {
     implementation (libs.moshi.sealed.runtime)
     implementation (libs.moshi.sealed.reflect)
 
+    // --------- Coil dependencies ----------
+    implementation(libs.coil.compose)
+//    implementation(libs.coil.core)
+
+
 
     //----------- Test dependencies ---------------
     testImplementation(libs.mockito.core)
