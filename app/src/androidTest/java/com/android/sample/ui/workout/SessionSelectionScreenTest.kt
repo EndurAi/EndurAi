@@ -55,8 +55,8 @@ class SessionSelectionScreenTest {
     composeTestRule.setContent { SessionSelectionScreen(navigationActions) }
 
     // Perform click on the back button
-    composeTestRule.onNodeWithTag("sessionSelectionScreenBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("sessionSelectionScreenBackButton").performClick()
+    composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
 
     // Verify navigation back
     verify(navigationActions).goBack()
@@ -75,7 +75,7 @@ class SessionSelectionScreenTest {
     composeTestRule.onNodeWithTag("sessionCard_Body weight").performClick()
 
     // Verify navigation to Import or Create screen
-    verify(navigationActions).navigateTo(Screen.IMPORTORCREATE)
+    verify(navigationActions).navigateTo(Screen.IMPORTORCREATE_BODY_WEIGHT)
   }
 
   /**
@@ -91,7 +91,7 @@ class SessionSelectionScreenTest {
     composeTestRule.onNodeWithTag("sessionCard_Yoga").performClick()
 
     // Verify navigation to Import or Create screen
-    verify(navigationActions).navigateTo(Screen.IMPORTORCREATE)
+    verify(navigationActions).navigateTo(Screen.IMPORTORCREATE_YOGA)
   }
 
   /** Verifies that each session card (Body weight, Running, Yoga) is clickable. */

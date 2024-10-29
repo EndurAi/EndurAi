@@ -15,8 +15,12 @@ object Route {
   const val ACHIEVEMENTS = "Achievements"
   const val PREFERENCES = "Preferences"
   const val SETTINGS = "Settings"
+  const val BODY_WEIGHT_CREATION = "BodyWeightTraining"
+  const val RUNNING_CREATION = "RunningTraining"
+  const val YOGA_CREATION = "YogaTraining"
   const val SESSIONSELECTION = "Session Selection"
-  const val IMPORTORCREATE = "Import Or Create"
+  const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight"
+  const val IMPORTORCREATE_YOGA = "Import Or Create Yoga"
   const val TEST = "Test"
 }
 
@@ -28,8 +32,12 @@ object Screen {
   const val ACHIEVEMENTS = "Achievements Screen"
   const val PREFERENCES = "Preferences Screen"
   const val SETTINGS = "Settings Screen"
+  const val BODY_WEIGHT_CREATION = "BodyWeightTraining Screen"
+  const val RUNNING_CREATION = "RunningTraining Screen"
+  const val YOGA_CREATION = "YogaTraining Screen"
   const val SESSIONSELECTION = "Session Selection Screen"
-  const val IMPORTORCREATE = "Import Or Create Screen"
+  const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight Screen"
+  const val IMPORTORCREATE_YOGA = "Import Or Create Yoga Screen"
   const val TEST = "Test Screen"
 }
 

@@ -2,7 +2,6 @@ package com.android.sample.ui.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,20 +12,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.model.workout.WorkoutType
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ImportOrCreateScreen(navigationActions: NavigationActions) {
+fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: WorkoutType) {
   Scaffold(
       topBar = {
         TopAppBar(
-            title = { Text("New Session") },
-            navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-              }
-            })
+            title = { Text("New Session") }, navigationIcon = { ArrowBack(navigationActions) })
       }) { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
@@ -49,7 +46,14 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions) {
 
               // Create from Scratch Button
               Button(
-                  onClick = { /* Add the navigation action here ! */},
+                  onClick = {
+                    when (workoutType) {
+                      WorkoutType.BODY_WEIGHT ->
+                          navigationActions.navigateTo(Screen.BODY_WEIGHT_CREATION)
+                      WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_CREATION)
+                      WorkoutType.RUNNING -> TODO()
+                    }
+                  },
                   shape = RoundedCornerShape(12.dp),
                   colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
                   modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {

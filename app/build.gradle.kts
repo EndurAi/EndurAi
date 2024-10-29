@@ -139,12 +139,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation(libs.firebase.storage.ktx)
 
-
-    // Coil Compose (for async image loading in Jetpack Compose)
-    implementation(libs.coil.compose){
-        exclude(module = "protobuf-lite")
-    }
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -201,12 +195,9 @@ dependencies {
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
-
     configurations.configureEach {
         exclude(group = "com.google.protobuf", module = "protobuf-lite")
     }
-    
-
 }
 
 tasks.withType<Test> {

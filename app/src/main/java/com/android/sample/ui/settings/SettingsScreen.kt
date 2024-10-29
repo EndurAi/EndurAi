@@ -17,8 +17,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,11 +35,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
       topBar = {
         TopAppBar(
             title = { Text("Settings", fontSize = 20.sp) },
-            navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "Back")
-              }
-            },
+            navigationIcon = { ArrowBack(navigationActions) },
             modifier = Modifier.testTag("settingsScreen") // Add testTag for the screen itself
             )
       },
@@ -86,9 +87,21 @@ fun SettingsScreen(navigationActions: NavigationActions) {
                   }
 
               // Logout button
+              // Code taken from :
+              // https://stackoverflow.com/questions/72563673/google-authentication-with-firebase-and-jetpack-compose
               Button(
                   onClick = {
                     FirebaseAuth.getInstance().signOut() // Sign out from Firebase
+                    val gso =
+                        GoogleSignInOptions.Builder(
+                                GoogleSignInOptions.DEFAULT_SIGN_IN) // Sign out from Google
+                            .requestIdToken(context.getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                    val googleSignInClient: GoogleSignInClient =
+                        GoogleSignIn.getClient(context, gso)
+                    googleSignInClient.signOut()
+
                     navigationActions.navigateTo("Auth Screen") // Navigate back to Auth screen
                     Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
                   },

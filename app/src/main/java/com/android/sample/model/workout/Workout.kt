@@ -24,3 +24,17 @@ sealed class ExerciseDetail {
   @JsonClass(generateAdapter = true)
   data class RepetitionBased(val repetitions: Int) : ExerciseDetail()
 }
+
+enum class WorkoutType {
+  BODY_WEIGHT,
+  YOGA,
+  RUNNING;
+
+  override fun toString(): String {
+    return when (this) {
+      BODY_WEIGHT -> "Body-weight"
+      YOGA -> "Yoga"
+      RUNNING -> "Running"
+    }
+  }
+}
