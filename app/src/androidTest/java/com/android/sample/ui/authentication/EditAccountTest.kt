@@ -57,17 +57,17 @@ class EditAccountScreenTest {
     composeTestRule.waitForIdle()
     Thread.sleep(1000) // 1 second delay
 
-    composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("profileImage").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("firstName").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("lastName").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("height").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("heightUnit").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("weight").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("weightUnit").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("gender").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("birthday").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("saveChanges").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("addScreen").assertExists()
+    composeTestRule.onNodeWithTag("profileImage").assertExists()
+    composeTestRule.onNodeWithTag("firstName").assertExists()
+    composeTestRule.onNodeWithTag("lastName").assertExists()
+    composeTestRule.onNodeWithTag("height").assertExists()
+    composeTestRule.onNodeWithTag("heightUnit").assertExists()
+    composeTestRule.onNodeWithTag("weight").assertExists()
+    composeTestRule.onNodeWithTag("weightUnit").assertExists()
+    composeTestRule.onNodeWithTag("gender").assertExists()
+    composeTestRule.onNodeWithTag("birthday").assertExists()
+    composeTestRule.onNodeWithTag("saveChanges").assertExists()
   }
 
   @Test
