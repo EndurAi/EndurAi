@@ -41,6 +41,7 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaExercise
 import com.android.sample.model.workout.YogaExerciseType
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.ExerciseCard
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
@@ -130,13 +131,9 @@ fun WorkoutCreationScreen(
                   exerciseList.forEach { exercise ->
                     when (exercise) {
                       is YogaExercise ->
-                          Text(
-                              "${exercise.type}: ${exercise.detail}",
-                              modifier = Modifier.testTag("exerciseItem"))
+                          ExerciseCard(exercise)
                       is BodyWeightExercise ->
-                          Text(
-                              "${exercise.type}: ${exercise.detail}",
-                              modifier = Modifier.testTag("exerciseItem"))
+                          ExerciseCard(exercise)
                     }
                   }
                   Button(

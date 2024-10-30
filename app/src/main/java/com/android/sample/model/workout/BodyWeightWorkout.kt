@@ -1,5 +1,9 @@
 package com.android.sample.model.workout
 
+import com.android.sample.model.workout.YogaExerciseType.DOWNWARD_DOG
+import com.android.sample.model.workout.YogaExerciseType.SUN_SALUTATION
+import com.android.sample.model.workout.YogaExerciseType.TREE_POSE
+import com.android.sample.model.workout.YogaExerciseType.WARRIOR_II
 import com.squareup.moshi.JsonClass
 
 /**
@@ -64,11 +68,19 @@ class BodyWeightWorkout(
 }
 
 /** Enum class representing various types of bodyweight exercises. */
-enum class BodyWeightExerciseType {
+enum class BodyWeightExerciseType: ExerciseType {
   PUSH_UPS,
   SQUATS,
   PLANK,
-  CHAIR
+  CHAIR;
+    override fun toString(): String {
+        return when (this) {
+            PUSH_UPS -> "Push-ups"
+            SQUATS -> "Squats"
+            PLANK -> "Plank"
+            CHAIR -> "Chair"
+        }
+    }
 }
 
 /**
@@ -82,4 +94,4 @@ data class BodyWeightExercise(
     val exerciseId: String,
     val type: BodyWeightExerciseType,
     val detail: ExerciseDetail
-)
+): Exercise(exerciseId,type,detail)
