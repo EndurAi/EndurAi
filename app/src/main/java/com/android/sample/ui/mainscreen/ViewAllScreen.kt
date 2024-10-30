@@ -1,7 +1,6 @@
 package com.android.sample.ui.mainscreen
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +37,7 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.ImageComposable
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Blue
@@ -60,6 +59,8 @@ fun ViewAllScreen(
   val profile = R.drawable.homme
   var selectedTab by remember { mutableIntStateOf(0) } // (0 = Bodyweight, 1 = Yoga, 2 = Running)
 
+  val workoutViewModels = listOf(bodyWeightViewModel, yogaViewModel /*, runningViewModel */)
+
   Scaffold(
       modifier = Modifier.testTag("ViewAllScreen"),
       topBar = { TopBar(navigationActions, R.string.ViewAllTitle) },
@@ -67,24 +68,11 @@ fun ViewAllScreen(
         Column(modifier = Modifier.padding(pd)) {
           Tabs(selectedTab) { index -> selectedTab = index }
           Spacer(modifier = Modifier.height(10.dp))
-          when (selectedTab) {
-            0 ->
-                WorkoutList(
-                    viewModel = bodyWeightViewModel,
-                    navigationActions = navigationActions,
-                    profile = profile)
-            1 ->
-                WorkoutList(
-                    viewModel = yogaViewModel,
-                    navigationActions = navigationActions,
-                    profile = profile)
-          /*
-          2 -> WorkoutList(
-              viewModel = runningViewModel,
-              navigationActions = navigationActions,
-              profile = profile
-          )
-          */
+          if (selectedTab in 0..1) {
+            WorkoutList(
+                viewModel = workoutViewModels[selectedTab],
+                navigationActions = navigationActions,
+                profile = profile)
           }
         }
       })
@@ -185,11 +173,8 @@ fun <T : Workout> WorkoutList(
         text = stringResource(id = R.string.noWorkouts),
         textAlign = TextAlign.Center)
     Box(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-      Image(
-          painter = painterResource(id = com.android.sample.R.drawable.no_item),
-          contentDescription = "App Logo",
-          modifier = Modifier.size(200.dp).align(Alignment.Center) // Alignement centré
-          )
+      ImageComposable(
+          R.drawable.no_item, "No workout logo", Modifier.size(200.dp).align(Alignment.Center))
     }
   }
 }
@@ -241,17 +226,11 @@ fun ViewAllCard(
                 Text(text = workout.description, style = MaterialTheme.typography.bodyMedium)
 
                 // Temp should display profile pictures of all participants
-                Image(
-                    painter = painterResource(id = profile),
-                    contentDescription = "Participant",
-                    modifier = Modifier.size(15.dp))
+                ImageComposable(profile, "Participant", Modifier.size(15.dp))
               }
 
               // The type of workout
-              Image(
-                  painter = painterResource(id = workoutImage),
-                  contentDescription = "Workout Icon",
-                  modifier = Modifier.size(30.dp))
+              ImageComposable(workoutImage, "Workout Icon", Modifier.size(30.dp))
             }
       }
 }
