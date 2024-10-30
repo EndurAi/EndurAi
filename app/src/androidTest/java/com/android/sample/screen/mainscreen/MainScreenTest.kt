@@ -92,7 +92,9 @@ class MainScreenTest {
 
     // Simulate clicking on "View all"
     composeTestRule.onNodeWithTag("ViewAllButton").performClick()
-    // Future test can be write here when view all will navigate to an other screen
+
+    // Verify that navigateTo for ViewAllScreen was called
+    verify(navigationActions).navigateTo(Screen.VIEW_ALL)
   }
 
   @Test
