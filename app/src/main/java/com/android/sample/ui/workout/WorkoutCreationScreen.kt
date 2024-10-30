@@ -1,16 +1,27 @@
 package com.android.sample.ui.workout
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -27,10 +39,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.sample.model.workout.BodyWeightExercise
 import com.android.sample.model.workout.BodyWeightExerciseType
 import com.android.sample.model.workout.BodyWeightWorkout
@@ -42,8 +58,10 @@ import com.android.sample.model.workout.YogaExercise
 import com.android.sample.model.workout.YogaExerciseType
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.ExerciseCard
+import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Blue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,30 +137,72 @@ fun WorkoutCreationScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                 verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
-                  Row(
-                      verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                      modifier = Modifier.padding(16.dp)) {
-                        Text("Warmup")
-                        Switch(
-                            checked = warmup,
-                            onCheckedChange = { warmup = it },
-                            modifier = Modifier.padding(start = 8.dp).testTag("warmupSwitch"))
+                  Card(
+                      shape = RoundedCornerShape(16.dp),
+                      colors =
+                          CardDefaults.cardColors(
+                              containerColor = Color(0xFFD3D3D3)), // Gray color for consistency
+                      modifier =
+                          Modifier.fillMaxWidth(
+                                  0.9f) // Slightly reduced width to match ExerciseCard style
+                              .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                              Text(
+                                  text = "Warmup",
+                                  fontSize = 18.sp,
+                                  color = Color.DarkGray,
+                                  modifier = Modifier.weight(1f),
+                                  textAlign = TextAlign.Start)
+                              Switch(
+                                  checked = warmup,
+                                  onCheckedChange = { warmup = it },
+                                  colors = SwitchDefaults.colors(checkedTrackColor = Blue),
+                                  modifier = Modifier.padding(start = 8.dp).testTag("warmupSwitch"))
+                            }
                       }
+
                   exerciseList.forEach { exercise ->
                     when (exercise) {
-                      is YogaExercise ->
-                          ExerciseCard(exercise)
-                      is BodyWeightExercise ->
-                          ExerciseCard(exercise)
+                      is YogaExercise -> ExerciseCard(exercise)
+                      is BodyWeightExercise -> ExerciseCard(exercise)
                     }
                   }
-                  Button(
-                      onClick = { showExerciseDialog = true },
-                      modifier = Modifier.padding(16.dp).testTag("addExerciseButton")) {
-                        Text("+ Add Exercise")
+                  // Vertical line connecting the cards
+                  Column(
+                      horizontalAlignment = Alignment.CenterHorizontally,
+                      modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                        Box(
+                            modifier =
+                                Modifier.size(8.dp)
+                                    .background(Color(0xFF9C7EEA), shape = CircleShape))
+                        Spacer(
+                            modifier =
+                                Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
                       }
-                  Button(
-                      onClick = {
+                  Card(
+                      shape = RoundedCornerShape(16.dp),
+                      colors =
+                          CardDefaults.cardColors(
+                              containerColor = Color(0xFFD3D3D3)), // Couleur grise pour la carte
+                      modifier =
+                          Modifier.fillMaxWidth(0.9f)
+                              .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                        // Box cliquable avec texte "+"
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .height(56.dp)
+                                    .clickable { showExerciseDialog = true }
+                                    .testTag("addExerciseButton")) {
+                              Text(text = "+", fontSize = 24.sp, color = Color.DarkGray)
+                            }
+                      }
+
+                  SaveButton(
+                      onSaveClick = {
                         when (workoutType) {
                           WorkoutType.YOGA -> {
                             workoutViewModel.addWorkout(
@@ -171,9 +231,7 @@ fun WorkoutCreationScreen(
                             .show()
                         navigationActions.navigateTo(Screen.MAIN)
                       },
-                      modifier = Modifier.padding(16.dp).testTag("saveButton")) {
-                        Text("Save")
-                      }
+                      "saveButton")
                 }
           }
         }

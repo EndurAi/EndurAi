@@ -13,9 +13,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
-import com.android.sample.R
 import com.android.sample.ui.theme.Blue
 
 /**
@@ -25,57 +25,35 @@ import com.android.sample.ui.theme.Blue
  */
 @Composable
 fun ExerciseCard(exercise: Exercise) {
+  Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+    // Vertical line connecting the cards
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        // Vertical line connecting the cards
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(8.dp)
-                    .background(Color(0xFF9C7EEA), shape = CircleShape)
-            )
-            Spacer(
-                modifier = Modifier
-                    .height(16.dp)
-                    .width(2.dp)
-                    .background(Color(0xFF9C7EEA))
-            )
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+          Box(modifier = Modifier.size(8.dp).background(Color(0xFF9C7EEA), shape = CircleShape))
+          Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
         }
 
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFD3D3D3)),  // Gray color
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(horizontal = 16.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFD3D3D3)), // Gray color
+        modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp)) {
+          Row(
+              modifier = Modifier.padding(16.dp).fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically) {
                 // Exercise name (on the left)
                 Text(
                     text = exercise.exType.toString(),
                     fontSize = 18.sp,
                     color = Color.DarkGray,
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Start
-                )
+                    textAlign = TextAlign.Start)
 
                 // Exercise details (icon and information)
                 ExerciseDetailCard(exercise.exDetail)
-            }
+              }
         }
-    }
+  }
 }
 
 /**
@@ -85,47 +63,43 @@ fun ExerciseCard(exercise: Exercise) {
  */
 @Composable
 fun ExerciseDetailCard(detail: ExerciseDetail) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Blue), // Darker blue color
-        modifier = Modifier
-            .padding(start = 8.dp)
-            .wrapContentSize()
-    ) {
+  Card(
+      shape = RoundedCornerShape(12.dp),
+      colors = CardDefaults.cardColors(containerColor = Blue), // Darker blue color
+      modifier = Modifier.padding(start = 8.dp).wrapContentSize()) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            when (detail) {
+            verticalAlignment = Alignment.CenterVertically) {
+              when (detail) {
                 is ExerciseDetail.TimeBased -> {
-                    Icon(
-                        painter = painterResource(id = R.drawable.pace),
-                        contentDescription = "Time Based",
-                        modifier = Modifier.size(20.dp),
-                        tint = Color.Black  // Black icon
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "${detail.durationInSeconds / 60}′ X ${detail.sets}",
-                        fontSize = 14.sp,
-                        color = Color.Black  // Black text
-                    )
+                  Icon(
+                      painter = painterResource(id = R.drawable.pace),
+                      contentDescription = "Time Based",
+                      modifier = Modifier.size(20.dp),
+                      tint = Color.Black // Black icon
+                      )
+                  Spacer(modifier = Modifier.width(4.dp))
+                  Text(
+                      text = "${detail.durationInSeconds / 60}′ X ${detail.sets}",
+                      fontSize = 14.sp,
+                      color = Color.Black // Black text
+                      )
                 }
                 is ExerciseDetail.RepetitionBased -> {
-                    Icon(
-                        painter = painterResource(id = R.drawable.timeline),
-                        contentDescription = "Repetition Based",
-                        modifier = Modifier.size(20.dp),
-                        tint = Color.Black  // Black icon
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "X ${detail.repetitions}",
-                        fontSize = 14.sp,
-                        color = Color.Black  // Black text
-                    )
+                  Icon(
+                      painter = painterResource(id = R.drawable.timeline),
+                      contentDescription = "Repetition Based",
+                      modifier = Modifier.size(20.dp),
+                      tint = Color.Black // Black icon
+                      )
+                  Spacer(modifier = Modifier.width(4.dp))
+                  Text(
+                      text = "X ${detail.repetitions}",
+                      fontSize = 14.sp,
+                      color = Color.Black // Black text
+                      )
                 }
+              }
             }
-        }
-    }
+      }
 }
