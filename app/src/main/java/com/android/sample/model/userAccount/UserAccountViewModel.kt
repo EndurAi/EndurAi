@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +22,14 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
   private val _isLoading = MutableStateFlow(false)
   val isLoading: StateFlow<Boolean>
     get() = _isLoading.asStateFlow()
+
+    init {
+        repository.init {
+            Firebase.auth.currentUser?.let { user ->
+                getUserAccount(user.uid)
+            }
+        }
+    }
 
   fun getUserAccount(userId: String) {
     _isLoading.value = true
