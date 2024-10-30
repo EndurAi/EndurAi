@@ -3,6 +3,7 @@ package com.android.sample.ui.workout
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -106,8 +109,8 @@ fun WorkoutCreationScreen(
             Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
               Column(
                   modifier = Modifier.fillMaxSize().padding(paddingValues),
-                  horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                  verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement = Arrangement.Center) {
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -123,7 +126,7 @@ fun WorkoutCreationScreen(
                     Button(
                         onClick = { showNameDescriptionScreen = false },
                         modifier = Modifier.testTag("nextButton")) {
-                          Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                          Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("Next")
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -133,105 +136,113 @@ fun WorkoutCreationScreen(
                   }
             }
           } else {
-            Column(
+            LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
-                  Card(
-                      shape = RoundedCornerShape(16.dp),
-                      colors =
-                          CardDefaults.cardColors(
-                              containerColor = Color(0xFFD3D3D3)), // Gray color for consistency
-                      modifier =
-                          Modifier.fillMaxWidth(
-                                  0.9f) // Slightly reduced width to match ExerciseCard style
-                              .padding(horizontal = 24.dp, vertical = 8.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                              Text(
-                                  text = "Warmup",
-                                  fontSize = 18.sp,
-                                  color = Color.DarkGray,
-                                  modifier = Modifier.weight(1f),
-                                  textAlign = TextAlign.Start)
-                              Switch(
-                                  checked = warmup,
-                                  onCheckedChange = { warmup = it },
-                                  colors = SwitchDefaults.colors(checkedTrackColor = Blue),
-                                  modifier = Modifier.padding(start = 8.dp).testTag("warmupSwitch"))
-                            }
-                      }
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center) {
+                  item {
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = Color(0xFFD3D3D3)), // Gray color for consistency
+                        modifier =
+                            Modifier.fillMaxWidth(0.9f)
+                                .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                          Row(
+                              verticalAlignment = Alignment.CenterVertically,
+                              modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                                Text(
+                                    text = "Warmup",
+                                    fontSize = 18.sp,
+                                    color = Color.DarkGray,
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Start)
+                                Switch(
+                                    checked = warmup,
+                                    onCheckedChange = { warmup = it },
+                                    colors = SwitchDefaults.colors(checkedTrackColor = Blue),
+                                    modifier =
+                                        Modifier.padding(start = 8.dp).testTag("warmupSwitch"))
+                              }
+                        }
+                  }
 
-                  exerciseList.forEach { exercise ->
+                  items(exerciseList) { exercise ->
                     when (exercise) {
                       is YogaExercise -> ExerciseCard(exercise)
                       is BodyWeightExercise -> ExerciseCard(exercise)
                     }
                   }
-                  // Vertical line connecting the cards
-                  Column(
-                      horizontalAlignment = Alignment.CenterHorizontally,
-                      modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                        Box(
-                            modifier =
-                                Modifier.size(8.dp)
-                                    .background(Color(0xFF9C7EEA), shape = CircleShape))
-                        Spacer(
-                            modifier =
-                                Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
-                      }
-                  Card(
-                      shape = RoundedCornerShape(16.dp),
-                      colors =
-                          CardDefaults.cardColors(
-                              containerColor = Color(0xFFD3D3D3)), // Couleur grise pour la carte
-                      modifier =
-                          Modifier.fillMaxWidth(0.9f)
-                              .padding(horizontal = 24.dp, vertical = 8.dp)) {
-                        // Box cliquable avec texte "+"
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier =
-                                Modifier.fillMaxWidth()
-                                    .height(56.dp)
-                                    .clickable { showExerciseDialog = true }
-                                    .testTag("addExerciseButton")) {
-                              Text(text = "+", fontSize = 24.sp, color = Color.DarkGray)
-                            }
-                      }
 
-                  SaveButton(
-                      onSaveClick = {
-                        when (workoutType) {
-                          WorkoutType.YOGA -> {
-                            workoutViewModel.addWorkout(
-                                YogaWorkout(
-                                    workoutId = workoutViewModel.getNewUid(),
-                                    name = name,
-                                    description = description,
-                                    warmup = warmup,
-                                    exercises =
-                                        exerciseList.toMutableList() as MutableList<YogaExercise>))
-                          }
-                          WorkoutType.BODY_WEIGHT -> {
-                            workoutViewModel.addWorkout(
-                                BodyWeightWorkout(
-                                    workoutId = workoutViewModel.getNewUid(),
-                                    name = name,
-                                    description = description,
-                                    warmup = warmup,
-                                    exercises =
-                                        exerciseList.toMutableList()
-                                            as MutableList<BodyWeightExercise>))
-                          }
-                          else -> {}
+                  item {
+                    // Vertical line connecting the cards
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                          Box(
+                              modifier =
+                                  Modifier.size(8.dp)
+                                      .background(Color(0xFF9C7EEA), shape = CircleShape))
+                          Spacer(
+                              modifier =
+                                  Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
                         }
-                        Toast.makeText(context, "Workout successfully added", Toast.LENGTH_SHORT)
-                            .show()
-                        navigationActions.navigateTo(Screen.MAIN)
-                      },
-                      "saveButton")
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = Color(0xFFD3D3D3)), // Couleur grise pour la carte
+                        modifier =
+                            Modifier.fillMaxWidth(0.9f)
+                                .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                          // Box cliquable avec texte "+"
+                          Box(
+                              contentAlignment = Alignment.Center,
+                              modifier =
+                                  Modifier.fillMaxWidth()
+                                      .height(56.dp)
+                                      .clickable { showExerciseDialog = true }
+                                      .testTag("addExerciseButton")) {
+                                Text(text = "+", fontSize = 24.sp, color = Color.DarkGray)
+                              }
+                        }
+                  }
+
+                  item {
+                    SaveButton(
+                        onSaveClick = {
+                          when (workoutType) {
+                            WorkoutType.YOGA -> {
+                              workoutViewModel.addWorkout(
+                                  YogaWorkout(
+                                      workoutId = workoutViewModel.getNewUid(),
+                                      name = name,
+                                      description = description,
+                                      warmup = warmup,
+                                      exercises =
+                                          exerciseList.toMutableList()
+                                              as MutableList<YogaExercise>))
+                            }
+                            WorkoutType.BODY_WEIGHT -> {
+                              workoutViewModel.addWorkout(
+                                  BodyWeightWorkout(
+                                      workoutId = workoutViewModel.getNewUid(),
+                                      name = name,
+                                      description = description,
+                                      warmup = warmup,
+                                      exercises =
+                                          exerciseList.toMutableList()
+                                              as MutableList<BodyWeightExercise>))
+                            }
+                            else -> {}
+                          }
+                          Toast.makeText(context, "Workout successfully added", Toast.LENGTH_SHORT)
+                              .show()
+                          navigationActions.navigateTo(Screen.MAIN)
+                        },
+                        "saveButton")
+                  }
                 }
           }
         }
