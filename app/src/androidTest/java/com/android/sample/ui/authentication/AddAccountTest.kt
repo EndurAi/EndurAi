@@ -18,93 +18,93 @@ import org.mockito.kotlin.verify
 
 class AddAccountScreenTest {
 
-  @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule()
 
-  @Mock private lateinit var userAccountRepository: UserAccountRepository
+    @Mock private lateinit var userAccountRepository: UserAccountRepository
 
-  @Mock private lateinit var navigationActions: NavigationActions
+    @Mock private lateinit var navigationActions: NavigationActions
 
-  private lateinit var userAccountViewModel: UserAccountViewModel
+    private lateinit var userAccountViewModel: UserAccountViewModel
 
-  @Before
-  fun setUp() {
-    MockitoAnnotations.openMocks(this)
+    @Before
+    fun setUp() {
+        MockitoAnnotations.openMocks(this)
 
-    // Initialize the ViewModel with the mocked repository
-    userAccountViewModel = UserAccountViewModel(userAccountRepository)
+        // Initialize the ViewModel with the mocked repository
+        userAccountViewModel = UserAccountViewModel(userAccountRepository)
 
-    // Mock any necessary data or methods on the repository
-    `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {}
-  }
-
-  @Test
-  fun displayAllComponents() {
-    composeTestRule.setContent {
-      AddAccount(
-          userAccountViewModel = userAccountViewModel,
-          navigationActions = navigationActions,
-          userId = "testUserId")
+        // Mock any necessary data or methods on the repository
+        `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {}
     }
 
-    composeTestRule.waitForIdle()
-    Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
+    @Test
+    fun displayAllComponents() {
+        composeTestRule.setContent {
+            AddAccount(
+                userAccountViewModel = userAccountViewModel,
+                navigationActions = navigationActions,
+                userId = "testUserId")
+        }
 
-    // Check if all the necessary components are displayed
-    composeTestRule.onNodeWithTag("addScreen").assertExists()
-    composeTestRule.onNodeWithTag("profileImage").assertExists()
-    composeTestRule.onNodeWithTag("firstName").assertExists()
-    composeTestRule.onNodeWithTag("lastName").assertExists()
-    composeTestRule.onNodeWithTag("height").assertExists()
-    composeTestRule.onNodeWithTag("heightUnit").assertExists()
-    composeTestRule.onNodeWithTag("weight").assertExists()
-    composeTestRule.onNodeWithTag("weightUnit").assertExists()
-    composeTestRule.onNodeWithTag("gender").assertExists()
-    composeTestRule.onNodeWithTag("birthday").assertExists()
-    composeTestRule.onNodeWithTag("submit").assertExists()
-  }
+        composeTestRule.waitForIdle()
+        Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
 
-  @Test
-  fun enterValidDataAndSubmit() {
-    composeTestRule.setContent {
-      AddAccount(
-          userAccountViewModel = userAccountViewModel,
-          navigationActions = navigationActions,
-          userId = "testUserId")
+        // Check if all the necessary components are displayed
+        composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("profileImage").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("firstName").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("lastName").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("height").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("heightUnit").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("weight").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("weightUnit").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("gender").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("birthday").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("submit").assertIsDisplayed()
     }
 
-    composeTestRule.waitForIdle()
-    Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
+    @Test
+    fun enterValidDataAndSubmit() {
+        composeTestRule.setContent {
+            AddAccount(
+                userAccountViewModel = userAccountViewModel,
+                navigationActions = navigationActions,
+                userId = "testUserId")
+        }
 
-    // Interact with the UI elements to simulate valid data entry
-    composeTestRule.onNodeWithTag("firstName").performTextInput("John")
-    composeTestRule.onNodeWithTag("lastName").performTextInput("Doe")
-    composeTestRule.onNodeWithTag("height").performTextInput("180")
-    composeTestRule.onNodeWithTag("weight").performTextInput("75")
-    composeTestRule.onNodeWithTag("birthday").performTextInput("01/01/1990")
+        composeTestRule.waitForIdle()
+        Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
 
-    `when`(userAccountRepository.createUserAccount(any(), any(), any())).then {}
+        // Interact with the UI elements to simulate valid data entry
+        composeTestRule.onNodeWithTag("firstName").performTextInput("John")
+        composeTestRule.onNodeWithTag("lastName").performTextInput("Doe")
+        composeTestRule.onNodeWithTag("height").performTextInput("180")
+        composeTestRule.onNodeWithTag("weight").performTextInput("75")
+        composeTestRule.onNodeWithTag("birthday").performTextInput("01/01/1990")
 
-    composeTestRule.onNodeWithText("Submit").performClick()
+        `when`(userAccountRepository.createUserAccount(any(), any(), any())).then {}
 
-    composeTestRule.waitForIdle() // Wait for any pending actions to complete
+        composeTestRule.onNodeWithText("Submit").performClick()
 
-    verify(navigationActions).navigateTo(TopLevelDestinations.MAIN)
-  }
+        composeTestRule.waitForIdle() // Wait for any pending actions to complete
 
-  @Test
-  fun doesNotSubmitWithIncompleteData() {
-    composeTestRule.setContent {
-      AddAccount(
-          userAccountViewModel = userAccountViewModel,
-          navigationActions = navigationActions,
-          userId = "testUserId")
+        verify(navigationActions).navigateTo(TopLevelDestinations.MAIN)
     }
 
-    // Only input first name and leave other fields blank
-    composeTestRule.onNodeWithText("First Name").performTextInput("John")
-    composeTestRule.onNodeWithText("Submit").performClick()
+    @Test
+    fun doesNotSubmitWithIncompleteData() {
+        composeTestRule.setContent {
+            AddAccount(
+                userAccountViewModel = userAccountViewModel,
+                navigationActions = navigationActions,
+                userId = "testUserId")
+        }
 
-    // Verify that createUserAccount is never called due to incomplete data
-    verify(userAccountRepository, never()).createUserAccount(any(), any(), any())
-  }
+        // Only input first name and leave other fields blank
+        composeTestRule.onNodeWithText("First Name").performTextInput("John")
+        composeTestRule.onNodeWithText("Submit").performClick()
+
+        // Verify that createUserAccount is never called due to incomplete data
+        verify(userAccountRepository, never()).createUserAccount(any(), any(), any())
+    }
 }
