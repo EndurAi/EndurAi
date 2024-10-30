@@ -51,8 +51,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
-import com.android.sample.ui.composables.AnimatedCircularProgressIndicator
 import com.android.sample.ui.composables.CountDownTimer
+import com.android.sample.ui.composables.convertTimeToSeconds
 import kotlinx.coroutines.delay
 
 
@@ -70,16 +70,18 @@ fun ExerciseScreen(
   var finishButtonBoxIsDisplayed by remember { mutableStateOf(true) }
   var presentationButtonBoxIsDisplayed by remember { mutableStateOf(false) }
   var goalCounterBoxIsDisplayed by remember { mutableStateOf(true) }
-  val timer = remember { mutableStateOf("01:03") }
+  val timeLimit = "02:45"
+  val timer = remember { mutableStateOf(timeLimit) }
   val exerciseIsRepetitionBased = false
   LaunchedEffect(Unit) {
-    var totalSeconds = 63
+
+    var totalSeconds = convertTimeToSeconds(timer.value)
     while (totalSeconds >= 0) {
       val minutes = totalSeconds / 60
       val seconds = totalSeconds % 60
       timer.value = String.format("%02d:%02d", minutes, seconds)
       delay(1000L)
-      if (goalCounterBoxIsDisplayed) {
+      if (goalCounterBoxIsDisplayed ) {
         totalSeconds--
       }
     }
@@ -156,7 +158,7 @@ fun ExerciseScreen(
               )
           }
         } else {
-          CountDownTimer()
+          CountDownTimer(currentTime_str = timer.value, maxTime_str = timeLimit)
 
         }
       }
