@@ -43,6 +43,13 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Blue
 
+/**
+ * Displays the screen for viewing all workouts.
+ *
+ * @param navigationActions The navigation actions to handle navigation events.
+ * @param bodyWeightViewModel The ViewModel for managing bodyweight workouts.
+ * @param yogaViewModel The ViewModel for managing yoga workouts.
+ */
 @Composable
 fun ViewAllScreen(
     navigationActions: NavigationActions,
@@ -83,29 +90,29 @@ fun ViewAllScreen(
       })
 }
 
+/**
+ * Displays the tabs for selecting different workout types.
+ *
+ * @param selectedTab The currently selected tab index.
+ * @param onTabSelected Callback function to handle tab selection.
+ */
 @Composable
 fun Tabs(selectedTab: Int, onTabSelected: (Int) -> Unit) {
+  val tabTitles = listOf(R.string.TitleTabBody, R.string.TitleTabYoga, R.string.TitleTabRunning)
+  val tabTags = listOf("BodyTab", "YogaTab", "RunningTab")
+
   Column {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-          TabItem(
-              title = R.string.TitleTabBody,
-              isSelected = selectedTab == 0,
-              modifier = Modifier.testTag("BodyTab"),
-              onClick = { onTabSelected(0) })
-          TabItem(
-              title = R.string.TitleTabYoga,
-              isSelected = selectedTab == 1,
-              modifier = Modifier.testTag("YogaTab"),
-              onClick = { onTabSelected(1) })
-          TabItem(
-              title = R.string.TitleTabRunning,
-              isSelected = selectedTab == 2,
-              modifier = Modifier.testTag("RunningTab"),
-              onClick = { onTabSelected(2) })
+          tabTitles.forEachIndexed { index, titleRes ->
+            TabItem(
+                title = titleRes,
+                isSelected = selectedTab == index,
+                modifier = Modifier.testTag(tabTags[index]),
+                onClick = { onTabSelected(index) })
+          }
         }
-
     Divider(
         color = Color.Gray,
         thickness = 0.5.dp,
@@ -113,6 +120,14 @@ fun Tabs(selectedTab: Int, onTabSelected: (Int) -> Unit) {
   }
 }
 
+/**
+ * Display a single tab item in the tabs.
+ *
+ * @param title The resource ID for the tab title.
+ * @param isSelected Indicates if this tab is currently selected.
+ * @param onClick Callback function invoked when the tab is clicked.
+ * @param modifier A modifier for styling.
+ */
 @Composable
 fun TabItem(@StringRes title: Int, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier) {
   Box(
@@ -135,6 +150,14 @@ fun TabItem(@StringRes title: Int, isSelected: Boolean, onClick: () -> Unit, mod
       }
 }
 
+/**
+ * Displays a list of workouts based on the specified ViewModel.
+ *
+ * @param viewModel The ViewModel providing the workouts.
+ * @param navigationActions The navigation actions for handling navigation events.
+ * @param profile The resource ID for the profile image.
+ * @param T The type of workout being displayed, must extend [Workout].
+ */
 @Composable
 fun <T : Workout> WorkoutList(
     viewModel: WorkoutViewModel<T>,
@@ -171,6 +194,14 @@ fun <T : Workout> WorkoutList(
   }
 }
 
+/**
+ * Displays a card for a single workout, showing its details and an icon.
+ *
+ * @param workout The workout to display.
+ * @param profile The resource ID for the profile image.
+ * @param navigationActions The navigation actions for handling navigation events.
+ * @param viewModel The ViewModel for the selected workout.
+ */
 @Composable
 fun ViewAllCard(
     workout: Workout,
