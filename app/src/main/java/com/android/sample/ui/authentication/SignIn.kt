@@ -53,10 +53,11 @@ import kotlinx.coroutines.tasks.await
 fun SignInScreen(
     userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
     navigationActions: NavigationActions
-) {  val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+) {
+  val context = LocalContext.current
+  val scope = rememberCoroutineScope()
 
-    val user by remember { mutableStateOf(Firebase.auth.currentUser) }
+  val user by remember { mutableStateOf(Firebase.auth.currentUser) }
 
   val launcher =
       rememberFirebaseAuthLauncher(
@@ -64,23 +65,23 @@ fun SignInScreen(
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
             val userId = result.user?.uid
             if (userId != null) {
-                userAccountViewModel.getUserAccount(userId)
+              userAccountViewModel.getUserAccount(userId)
 
-                scope.launch {
-                    delay(450) // delay introduced to wait for data to be fetched
-                    // TODO: Find a way to modify this with loading screen
+              scope.launch {
+                delay(450) // delay introduced to wait for data to be fetched
+                // TODO: Find a way to modify this with loading screen
 
-                    // Observe changes in userAccount to know if profile exists
-                    userAccountViewModel.userAccount.collect { account ->
-                        if (account != null) {
-                            // If account exists, navigate to main screen
-                            navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                        } else {
-                            // If no account exists, navigate to AddAccount screen
-                            navigationActions.navigateTo(Screen.ADD_ACCOUNT)
-                        }
-                    }
+                // Observe changes in userAccount to know if profile exists
+                userAccountViewModel.userAccount.collect { account ->
+                  if (account != null) {
+                    // If account exists, navigate to main screen
+                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                  } else {
+                    // If no account exists, navigate to AddAccount screen
+                    navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+                  }
                 }
+              }
             }
             Toast.makeText(context, "Login successful!", Toast.LENGTH_LONG).show()
           },

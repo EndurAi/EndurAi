@@ -23,13 +23,9 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
   val isLoading: StateFlow<Boolean>
     get() = _isLoading.asStateFlow()
 
-    init {
-        repository.init {
-            Firebase.auth.currentUser?.let { user ->
-                getUserAccount(user.uid)
-            }
-        }
-    }
+  init {
+    repository.init { Firebase.auth.currentUser?.let { user -> getUserAccount(user.uid) } }
+  }
 
   fun getUserAccount(userId: String) {
     _isLoading.value = true
