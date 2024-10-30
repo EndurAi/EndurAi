@@ -14,154 +14,154 @@ import org.mockito.Mockito.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditAccountScreenTest {
 
-    private lateinit var userAccountRepository: UserAccountRepository
-    private lateinit var userAccountViewModel: UserAccountViewModel
-    private lateinit var navigationActions: NavigationActions
+  private lateinit var userAccountRepository: UserAccountRepository
+  private lateinit var userAccountViewModel: UserAccountViewModel
+  private lateinit var navigationActions: NavigationActions
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    private val userAccount =
-        UserAccount(
-            userId = "testUserId",
-            firstName = "John",
-            lastName = "Doe",
-            height = 180f,
-            heightUnit = HeightUnit.CM,
-            weight = 75f,
-            weightUnit = WeightUnit.KG,
-            gender = Gender.MALE,
-            birthDate = com.google.firebase.Timestamp.now(),
-            profileImageUrl = "content://path/to/image")
+  private val userAccount =
+      UserAccount(
+          userId = "testUserId",
+          firstName = "John",
+          lastName = "Doe",
+          height = 180f,
+          heightUnit = HeightUnit.CM,
+          weight = 75f,
+          weightUnit = WeightUnit.KG,
+          gender = Gender.MALE,
+          birthDate = com.google.firebase.Timestamp.now(),
+          profileImageUrl = "content://path/to/image")
 
-    @Before
-    fun setUp() {
-        userAccountRepository = FakeUserAccountRepository()
-        navigationActions = mock(NavigationActions::class.java)
-        userAccountViewModel = UserAccountViewModel(userAccountRepository)
+  @Before
+  fun setUp() {
+    userAccountRepository = FakeUserAccountRepository()
+    navigationActions = mock(NavigationActions::class.java)
+    userAccountViewModel = UserAccountViewModel(userAccountRepository)
 
-        // Initialize the fake repository with a user account for the tests
-        (userAccountRepository as FakeUserAccountRepository).setUserAccount(userAccount)
+    // Initialize the fake repository with a user account for the tests
+    (userAccountRepository as FakeUserAccountRepository).setUserAccount(userAccount)
 
-        // Call getUserAccount to initialize the state
-        userAccountViewModel.getUserAccount(userAccount.userId)
+    // Call getUserAccount to initialize the state
+    userAccountViewModel.getUserAccount(userAccount.userId)
+  }
+
+  @Test
+  fun displayAllComponents() {
+    composeTestRule.setContent {
+      EditAccount(
+          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
     }
 
-    @Test
-    fun displayAllComponents() {
-        composeTestRule.setContent {
-            EditAccount(
-                userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
-        }
+    // Introduce a delay to ensure all components are rendered
+    composeTestRule.waitForIdle()
+    Thread.sleep(1000) // 1 second delay
 
-        // Introduce a delay to ensure all components are rendered
-        composeTestRule.waitForIdle()
-        Thread.sleep(1000) // 1 second delay
+    composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("profileImage").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("firstName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("lastName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("height").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("heightUnit").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("weight").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("weightUnit").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("gender").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("birthday").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("saveChanges").assertIsDisplayed()
+  }
 
-        composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("profileImage").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("firstName").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("lastName").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("height").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("heightUnit").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("weight").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("weightUnit").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("gender").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("birthday").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("saveChanges").assertIsDisplayed()
+  @Test
+  fun inputsHaveInitialValue() {
+    composeTestRule.setContent {
+      EditAccount(
+          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
     }
 
-    @Test
-    fun inputsHaveInitialValue() {
-        composeTestRule.setContent {
-            EditAccount(
-                userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
-        }
+    composeTestRule.onNodeWithTag("firstName").assertTextContains(userAccount.firstName)
+    composeTestRule.onNodeWithTag("lastName").assertTextContains(userAccount.lastName)
+    composeTestRule.onNodeWithTag("height").assertTextContains(userAccount.height.toString())
+    composeTestRule.onNodeWithTag("weight").assertTextContains(userAccount.weight.toString())
+  }
 
-        composeTestRule.onNodeWithTag("firstName").assertTextContains(userAccount.firstName)
-        composeTestRule.onNodeWithTag("lastName").assertTextContains(userAccount.lastName)
-        composeTestRule.onNodeWithTag("height").assertTextContains(userAccount.height.toString())
-        composeTestRule.onNodeWithTag("weight").assertTextContains(userAccount.weight.toString())
+  @Test
+  fun updatesUserAccountAndNavigatesBackOnSaveClick() {
+    composeTestRule.setContent {
+      EditAccount(
+          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
     }
 
-    @Test
-    fun updatesUserAccountAndNavigatesBackOnSaveClick() {
-        composeTestRule.setContent {
-            EditAccount(
-                userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
-        }
+    composeTestRule.waitForIdle()
+    Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
 
-        composeTestRule.waitForIdle()
-        Thread.sleep(1000) // 1 second delay to ensure UI is fully rendered
+    composeTestRule.onNodeWithTag("firstName").performTextClearance()
+    composeTestRule.onNodeWithTag("firstName").performTextInput("Jane")
+    composeTestRule.onNodeWithTag("lastName").performTextClearance()
+    composeTestRule.onNodeWithTag("lastName").performTextInput("Smith")
+    composeTestRule.onNodeWithTag("height").performTextClearance()
+    composeTestRule.onNodeWithTag("height").performTextInput("170")
+    composeTestRule.onNodeWithTag("weight").performTextClearance()
+    composeTestRule.onNodeWithTag("weight").performTextInput("65")
 
-        composeTestRule.onNodeWithTag("firstName").performTextClearance()
-        composeTestRule.onNodeWithTag("firstName").performTextInput("Jane")
-        composeTestRule.onNodeWithTag("lastName").performTextClearance()
-        composeTestRule.onNodeWithTag("lastName").performTextInput("Smith")
-        composeTestRule.onNodeWithTag("height").performTextClearance()
-        composeTestRule.onNodeWithTag("height").performTextInput("170")
-        composeTestRule.onNodeWithTag("weight").performTextClearance()
-        composeTestRule.onNodeWithTag("weight").performTextInput("65")
+    composeTestRule.onNodeWithText("Save Changes").performClick()
 
-        composeTestRule.onNodeWithText("Save Changes").performClick()
+    composeTestRule.waitForIdle() // Wait for any pending actions to complete
 
-        composeTestRule.waitForIdle() // Wait for any pending actions to complete
+    verify(navigationActions).goBack()
+  }
 
-        verify(navigationActions).goBack()
+  @Test
+  fun doesNotNavigateBackWhenDataIsInvalid() {
+    composeTestRule.setContent {
+      EditAccount(
+          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
     }
 
-    @Test
-    fun doesNotNavigateBackWhenDataIsInvalid() {
-        composeTestRule.setContent {
-            EditAccount(
-                userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
-        }
+    composeTestRule.onNodeWithTag("firstName").performTextClearance()
+    composeTestRule.onNodeWithText("Save Changes").performClick()
 
-        composeTestRule.onNodeWithTag("firstName").performTextClearance()
-        composeTestRule.onNodeWithText("Save Changes").performClick()
-
-        verify(navigationActions, never()).goBack()
-    }
+    verify(navigationActions, never()).goBack()
+  }
 }
 
 class FakeUserAccountRepository : UserAccountRepository {
-    private var userAccount: UserAccount? = null
-    private var error: Exception? = null
+  private var userAccount: UserAccount? = null
+  private var error: Exception? = null
 
-    override fun init(onSuccess: () -> Unit) {
-        onSuccess()
-    }
+  override fun init(onSuccess: () -> Unit) {
+    onSuccess()
+  }
 
-    override fun getUserAccount(
-        userId: String,
-        onSuccess: (UserAccount) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        if (error != null) {
-            onFailure(error!!)
-        } else {
-            userAccount?.let { onSuccess(it) }
-        }
+  override fun getUserAccount(
+      userId: String,
+      onSuccess: (UserAccount) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (error != null) {
+      onFailure(error!!)
+    } else {
+      userAccount?.let { onSuccess(it) }
     }
+  }
 
-    override fun createUserAccount(
-        userAccount: UserAccount,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        this.userAccount = userAccount
-        onSuccess()
-    }
+  override fun createUserAccount(
+      userAccount: UserAccount,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    this.userAccount = userAccount
+    onSuccess()
+  }
 
-    override fun updateUserAccount(
-        userAccount: UserAccount,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        this.userAccount = userAccount
-        onSuccess()
-    }
+  override fun updateUserAccount(
+      userAccount: UserAccount,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    this.userAccount = userAccount
+    onSuccess()
+  }
 
-    fun setUserAccount(account: UserAccount?) {
-        this.userAccount = account
-    }
+  fun setUserAccount(account: UserAccount?) {
+    this.userAccount = account
+  }
 }
