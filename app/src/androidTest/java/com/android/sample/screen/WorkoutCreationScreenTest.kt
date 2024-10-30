@@ -93,6 +93,7 @@ class WorkoutCreationScreenTest {
         .assertIsDisplayed()
         .assertHasClickAction()
     composeTestRule.onNodeWithTag("addExerciseConfirmButton").performClick()
+    composeTestRule.onNodeWithTag("exerciseCard").assertIsDisplayed()
     composeTestRule.onNodeWithTag("saveButton").assertIsDisplayed().assertHasClickAction()
   }
 
@@ -141,6 +142,7 @@ class WorkoutCreationScreenTest {
         .assertIsDisplayed()
         .assertHasClickAction()
     composeTestRule.onNodeWithTag("addExerciseConfirmButton").performClick()
+    composeTestRule.onNodeWithTag("exerciseCard").assertIsDisplayed()
     composeTestRule.onNodeWithTag("saveButton").assertIsDisplayed().assertHasClickAction()
   }
 }

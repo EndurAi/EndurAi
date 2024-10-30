@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,35 +26,37 @@ import com.android.sample.ui.theme.Blue
  */
 @Composable
 fun ExerciseCard(exercise: Exercise) {
-  Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-    // Vertical line connecting the cards
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-          Box(modifier = Modifier.size(8.dp).background(Color(0xFF9C7EEA), shape = CircleShape))
-          Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
-        }
+  Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+      modifier = Modifier.fillMaxWidth().testTag("exerciseCard")) {
+        // Vertical line connecting the cards
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+              Box(modifier = Modifier.size(8.dp).background(Color(0xFF9C7EEA), shape = CircleShape))
+              Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
+            }
 
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFD3D3D3)), // Gray color
-        modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp)) {
-          Row(
-              modifier = Modifier.padding(16.dp).fillMaxWidth(),
-              verticalAlignment = Alignment.CenterVertically) {
-                // Exercise name (on the left)
-                Text(
-                    text = exercise.exType.toString(),
-                    fontSize = 18.sp,
-                    color = Color.DarkGray,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Start)
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFD3D3D3)), // Gray color
+            modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp)) {
+              Row(
+                  modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                  verticalAlignment = Alignment.CenterVertically) {
+                    // Exercise name (on the left)
+                    Text(
+                        text = exercise.exType.toString(),
+                        fontSize = 18.sp,
+                        color = Color.DarkGray,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Start)
 
-                // Exercise details (icon and information)
-                ExerciseDetailCard(exercise.exDetail)
-              }
-        }
-  }
+                    // Exercise details (icon and information)
+                    ExerciseDetailCard(exercise.exDetail)
+                  }
+            }
+      }
 }
 
 /**
