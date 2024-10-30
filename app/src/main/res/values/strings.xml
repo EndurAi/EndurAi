@@ -9,4 +9,5 @@
     <string name="TitleTabBody">BodyWeight</string>
     <string name="TitleTabYoga">Yoga</string>
     <string name="TitleTabRunning">Running</string>
+    <string name="setting_title">Settings</string>
 </resources>

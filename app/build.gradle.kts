@@ -195,7 +195,9 @@ dependencies {
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
-
+    configurations.configureEach {
+        exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    }
 }
 
 tasks.withType<Test> {
