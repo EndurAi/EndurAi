@@ -32,6 +32,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.storage.FirebaseStorage
+import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.UUID
 
@@ -39,9 +40,18 @@ import java.util.UUID
 fun AddAccount(
     userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
     navigationActions: NavigationActions,
+    accountExists: Boolean,
     userId: String? = Firebase.auth.currentUser?.uid
 ) {
 
+  val userAccount by userAccountViewModel.userAccount.collectAsState() // Observe the user account
+  var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+  var originalProfileImageUri by remember {
+    mutableStateOf<Uri?>(null)
+  } // Hold the original image URI
+
+  // Initialize form fields only if userAccount is not null
+  var userId2 by remember { mutableStateOf("") }
   var firstName by remember { mutableStateOf("") }
   var lastName by remember { mutableStateOf("") }
   var height by remember { mutableStateOf("") }
@@ -51,12 +61,34 @@ fun AddAccount(
   var gender by remember { mutableStateOf(Gender.MALE) }
   var birthDate by remember { mutableStateOf("") }
 
-  var profileImageUri by remember { mutableStateOf<Uri?>(null) }
-
-  val context = LocalContext.current
-
   // Retrieve current user UID from Firebase Auth
   val actualUserId = userId ?: return // Ensure user is signed in
+
+  if (accountExists) {
+    LaunchedEffect(userAccount) {
+      userAccount?.let {
+        userId2 = it.userId
+        firstName = it.firstName
+        lastName = it.lastName
+        height = it.height.toString()
+        weight = it.weight.toString()
+        heightUnit = it.heightUnit
+        weightUnit = it.weightUnit
+        gender = it.gender
+        birthDate =
+            it.birthDate.let { timestamp ->
+              val calendar = Calendar.getInstance()
+              calendar.time = timestamp.toDate()
+              "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(
+                            Calendar.YEAR)}"
+            }
+        profileImageUri = Uri.parse(it.profileImageUrl)
+        originalProfileImageUri = Uri.parse(it.profileImageUrl) // Set the original URI
+      }
+    }
+  }
+
+  val context = LocalContext.current
 
   // Initialize the image picker launcher outside of the clickable scope
   val imagePickerLauncher =
@@ -83,13 +115,13 @@ fun AddAccount(
       onGenderChange = { gender = it },
       birthDate = birthDate,
       onBirthDateChange = { birthDate = it },
-      buttonText = "Submit",
+      buttonText = if (accountExists) "Save Changes" else "Submit",
       onButtonClick = {
         saveAccount(
-            isNewAccount = true,
+            isNewAccount = !accountExists,
             userAccountViewModel = userAccountViewModel,
             navigationActions = navigationActions,
-            userId = actualUserId,
+            userId = if (accountExists) userId2 else actualUserId,
             firstName = firstName,
             lastName = lastName,
             height = height,
@@ -99,11 +131,11 @@ fun AddAccount(
             gender = gender,
             birthDate = birthDate,
             profileImageUri = profileImageUri,
-            originalProfileImageUri = null,
+            originalProfileImageUri = if (accountExists) originalProfileImageUri else null,
             context = context)
       },
       isButtonEnabled = firstName.isNotBlank(),
-      testTag = "addScreen")
+      testTag = if (accountExists) "editScreen" else "addScreen")
 }
 
 @Composable

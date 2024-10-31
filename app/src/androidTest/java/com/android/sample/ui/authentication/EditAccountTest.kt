@@ -49,8 +49,11 @@ class EditAccountScreenTest {
   @Test
   fun displayAllComponents() {
     composeTestRule.setContent {
-      EditAccount(
-          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
+      AddAccount(
+          userAccountViewModel = userAccountViewModel,
+          navigationActions = navigationActions,
+          true,
+          userId = "testUserId")
     }
 
     // Introduce a delay to ensure all components are rendered
@@ -73,8 +76,11 @@ class EditAccountScreenTest {
   @Test
   fun inputsHaveInitialValue() {
     composeTestRule.setContent {
-      EditAccount(
-          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
+      AddAccount(
+          userAccountViewModel = userAccountViewModel,
+          navigationActions = navigationActions,
+          true,
+          userId = "testUserId")
     }
 
     composeTestRule
@@ -98,8 +104,11 @@ class EditAccountScreenTest {
   @Test
   fun updatesUserAccountAndNavigatesBackOnSaveClick() {
     composeTestRule.setContent {
-      EditAccount(
-          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
+      AddAccount(
+          userAccountViewModel = userAccountViewModel,
+          navigationActions = navigationActions,
+          true,
+          userId = "testUserId")
     }
 
     composeTestRule.waitForIdle()
@@ -124,8 +133,11 @@ class EditAccountScreenTest {
   @Test
   fun doesNotNavigateBackWhenDataIsInvalid() {
     composeTestRule.setContent {
-      EditAccount(
-          userAccountViewModel = userAccountViewModel, navigationActions = navigationActions)
+      AddAccount(
+          userAccountViewModel = userAccountViewModel,
+          navigationActions = navigationActions,
+          true,
+          userId = "testUserId")
     }
 
     composeTestRule.onNodeWithTag("firstName").performScrollTo().performTextClearance()

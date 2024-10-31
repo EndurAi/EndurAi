@@ -43,6 +43,7 @@ class AddAccountScreenTest {
       AddAccount(
           userAccountViewModel = userAccountViewModel,
           navigationActions = navigationActions,
+          false,
           userId = "testUserId")
     }
 
@@ -69,6 +70,7 @@ class AddAccountScreenTest {
       AddAccount(
           userAccountViewModel = userAccountViewModel,
           navigationActions = navigationActions,
+          false,
           userId = "testUserId")
     }
 
@@ -97,6 +99,7 @@ class AddAccountScreenTest {
       AddAccount(
           userAccountViewModel = userAccountViewModel,
           navigationActions = navigationActions,
+          false,
           userId = "testUserId")
     }
 
