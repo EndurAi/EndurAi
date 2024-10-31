@@ -92,23 +92,23 @@ fun AddAccount(
         BirthdayInput(birthDate) { birthDate = it }
         ActionButton(
             "Submit",
-            onClick = {saveAccount(
-                isNewAccount = true,
-                userAccountViewModel = userAccountViewModel,
-                navigationActions = navigationActions,
-                userId = actualUserId,
-                firstName = firstName,
-                lastName = lastName,
-                height = height,
-                heightUnit = heightUnit,
-                weight = weight,
-                weightUnit = weightUnit,
-                gender = gender,
-                birthDate = birthDate,
-                profileImageUri = profileImageUri,
-                originalProfileImageUri = null,
-                context = context
-            )
+            onClick = {
+              saveAccount(
+                  isNewAccount = true,
+                  userAccountViewModel = userAccountViewModel,
+                  navigationActions = navigationActions,
+                  userId = actualUserId,
+                  firstName = firstName,
+                  lastName = lastName,
+                  height = height,
+                  heightUnit = heightUnit,
+                  weight = weight,
+                  weightUnit = weightUnit,
+                  gender = gender,
+                  birthDate = birthDate,
+                  profileImageUri = profileImageUri,
+                  originalProfileImageUri = null,
+                  context = context)
             },
             enabled = firstName.isNotBlank())
       }
@@ -260,57 +260,56 @@ fun saveAccount(
     originalProfileImageUri: Uri?,
     context: android.content.Context
 ) {
-    val calendar = GregorianCalendar()
-    val parts = birthDate.split("/")
-    if (parts.size == 3) {
-        try {
-            calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-            val profileImageUrl = profileImageUri?.toString() ?: ""
+  val calendar = GregorianCalendar()
+  val parts = birthDate.split("/")
+  if (parts.size == 3) {
+    try {
+      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+      val profileImageUrl = profileImageUri?.toString() ?: ""
 
-            val accountData = UserAccount(
-                userId = userId,
-                firstName = firstName,
-                lastName = lastName,
-                height = height.toFloatOrNull() ?: 0f,
-                heightUnit = heightUnit,
-                weight = weight.toFloatOrNull() ?: 0f,
-                weightUnit = weightUnit,
-                gender = gender,
-                birthDate = Timestamp(calendar.time),
-                profileImageUrl = profileImageUrl
-            )
+      val accountData =
+          UserAccount(
+              userId = userId,
+              firstName = firstName,
+              lastName = lastName,
+              height = height.toFloatOrNull() ?: 0f,
+              heightUnit = heightUnit,
+              weight = weight.toFloatOrNull() ?: 0f,
+              weightUnit = weightUnit,
+              gender = gender,
+              birthDate = Timestamp(calendar.time),
+              profileImageUrl = profileImageUrl)
 
-            if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
-                uploadProfileImage(
-                    profileImageUri,
-                    userId,
-                    onSuccess = { downloadUrl ->
-                        accountData.profileImageUrl = downloadUrl
-                        if (isNewAccount) {
-                            userAccountViewModel.createUserAccount(accountData)
-                            navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                        } else {
-                            userAccountViewModel.updateUserAccount(accountData)
-                            navigationActions.goBack()
-                        }
-                    },
-                    onFailure = {
-                        Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
-                    }
-                )
-            } else {
-                if (isNewAccount) {
-                    userAccountViewModel.createUserAccount(accountData)
-                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                } else {
-                    userAccountViewModel.updateUserAccount(accountData)
-                    navigationActions.goBack()
-                }
-            }
-        } catch (e: Exception) {
-            Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
+      if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
+        uploadProfileImage(
+            profileImageUri,
+            userId,
+            onSuccess = { downloadUrl ->
+              accountData.profileImageUrl = downloadUrl
+              if (isNewAccount) {
+                userAccountViewModel.createUserAccount(accountData)
+                navigationActions.navigateTo(TopLevelDestinations.MAIN)
+              } else {
+                userAccountViewModel.updateUserAccount(accountData)
+                navigationActions.goBack()
+              }
+            },
+            onFailure = {
+              Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
+            })
+      } else {
+        if (isNewAccount) {
+          userAccountViewModel.createUserAccount(accountData)
+          navigationActions.navigateTo(TopLevelDestinations.MAIN)
+        } else {
+          userAccountViewModel.updateUserAccount(accountData)
+          navigationActions.goBack()
         }
+      }
+    } catch (e: Exception) {
+      Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
     }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

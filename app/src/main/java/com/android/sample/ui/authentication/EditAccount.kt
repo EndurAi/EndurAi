@@ -1,7 +1,6 @@
 package com.android.sample.ui.authentication
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -18,7 +17,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.model.userAccount.*
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.viewmodel.UserAccountViewModel
-import com.google.firebase.Timestamp
 import java.util.*
 
 @Composable
@@ -99,23 +97,23 @@ fun EditAccount(
         BirthdayInput(birthDate) { birthDate = it }
         ActionButton(
             "Save Changes",
-            onClick = {saveAccount(
-                isNewAccount = false,
-                userAccountViewModel = userAccountViewModel,
-                navigationActions = navigationActions,
-                userId = userId,
-                firstName = firstName,
-                lastName = lastName,
-                height = height,
-                heightUnit = heightUnit,
-                weight = weight,
-                weightUnit = weightUnit,
-                gender = gender,
-                birthDate = birthDate,
-                profileImageUri = profileImageUri,
-                originalProfileImageUri = originalProfileImageUri,
-                context = context
-            )
+            onClick = {
+              saveAccount(
+                  isNewAccount = false,
+                  userAccountViewModel = userAccountViewModel,
+                  navigationActions = navigationActions,
+                  userId = userId,
+                  firstName = firstName,
+                  lastName = lastName,
+                  height = height,
+                  heightUnit = heightUnit,
+                  weight = weight,
+                  weightUnit = weightUnit,
+                  gender = gender,
+                  birthDate = birthDate,
+                  profileImageUri = profileImageUri,
+                  originalProfileImageUri = originalProfileImageUri,
+                  context = context)
             },
             enabled = firstName.isNotBlank())
       }
