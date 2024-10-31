@@ -1,6 +1,7 @@
 package com.android.sample.model.workout
 
 import com.squareup.moshi.JsonClass
+import java.time.LocalDateTime
 
 /**
  * Represents a Yoga workout session which includes a list of yoga exercises.
@@ -19,8 +20,9 @@ class YogaWorkout(
     description: String,
     warmup: Boolean,
     userIdSet: MutableSet<String> = mutableSetOf(),
+    date: LocalDateTime,
     val exercises: MutableList<YogaExercise> = mutableListOf() // Default to an empty list
-) : Workout(workoutId, name, description, warmup, userIdSet) {
+) : Workout(workoutId, name, description, warmup, userIdSet, date) {
 
   companion object {
     const val DOCUMENT_NAME = "yogaWorkout"

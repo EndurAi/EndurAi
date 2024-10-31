@@ -39,6 +39,8 @@ import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.GreyLight
 import com.google.firebase.Timestamp
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 
 /**
@@ -70,12 +72,14 @@ fun MainScreen(navigationActions: NavigationActions) {
               name = "Run in Lavaux",
               description = "Enjoying Lavaux",
               warmup = true,
+              date = LocalDateTime.of(2024, 10, 31,8,0),
               userIdSet = mutableSetOf("user1")),
           YogaWorkout(
               workoutId = "3",
               name = "After Comparch relax",
               description = "Chilling time",
               warmup = true,
+              date = LocalDateTime.of(2024, 10, 31,22,0),
               userIdSet = mutableSetOf("user1")))
 
   Scaffold(

@@ -43,6 +43,8 @@ import com.android.sample.model.workout.YogaExerciseType
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -154,6 +156,7 @@ fun WorkoutCreationScreen(
                                     name = name,
                                     description = description,
                                     warmup = warmup,
+                                    date = LocalDateTime.of(2024, 10, 31,20,0),
                                     exercises =
                                         exerciseList.toMutableList() as MutableList<YogaExercise>))
                           }
@@ -164,6 +167,7 @@ fun WorkoutCreationScreen(
                                     name = name,
                                     description = description,
                                     warmup = warmup,
+                                    date = LocalDateTime.of(2024, 10, 31,19,0),
                                     exercises =
                                         exerciseList.toMutableList()
                                             as MutableList<BodyWeightExercise>))

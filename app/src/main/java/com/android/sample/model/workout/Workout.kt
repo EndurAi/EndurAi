@@ -2,6 +2,7 @@ package com.android.sample.model.workout
 
 import com.squareup.moshi.JsonClass
 import dev.zacsweers.moshix.sealed.annotations.TypeLabel
+import java.time.LocalDateTime
 
 abstract class Workout(
     val workoutId: String, // Uniquely identifies the workout among all others
@@ -9,7 +10,8 @@ abstract class Workout(
     val description: String,
     val warmup: Boolean, // Whether the user want to do a warmup
     val userIdSet:
-        MutableSet<String> // Set of userId that represent the User linked to a specific workout
+        MutableSet<String>, // Set of userId that represent the User linked to a specific workout
+    val date : LocalDateTime
 ) {}
 
 // Detail of the exercise based on its type

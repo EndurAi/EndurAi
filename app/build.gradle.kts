@@ -186,6 +186,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation (libs.moshi.sealed.runtime)
     implementation (libs.moshi.sealed.reflect)
+    implementation (libs.moshi.adapters)
 
 
     //----------- Test dependencies ---------------
@@ -198,6 +199,8 @@ dependencies {
     configurations.configureEach {
         exclude(group = "com.google.protobuf", module = "protobuf-lite")
     }
+
+    implementation(libs.kotlinx.datetime)
 }
 
 tasks.withType<Test> {
