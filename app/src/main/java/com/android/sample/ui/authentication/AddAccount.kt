@@ -70,169 +70,32 @@ fun AddAccount(
               .testTag("addScreen"), // Made the column scrollable
       verticalArrangement = Arrangement.spacedBy(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally) {
-        // Profile picture section
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier =
-                Modifier.size(80.dp) // Changed from 120.dp to 80.dp for smaller screens
-                    .clip(CircleShape)
-                    .border(1.dp, Color.Gray, CircleShape)
-                    .testTag("profileImage")
-                    .clickable {
-                      // Launch the image picker when clicking the box
-                      imagePickerLauncher.launch("image/*")
-                    }) {
+        ProfileImagePicker(profileImageUri) { imagePickerLauncher.launch("image/*") }
+        Spacer(modifier = Modifier.height(8.dp))
+        NameInputFields(
+            firstName,
+            lastName,
+            onFirstNameChange = { firstName = it },
+            onLastNameChange = { lastName = it })
+        HeightWeightInput(
+            height,
+            weight,
+            heightUnit,
+            weightUnit,
+            onHeightChange = { height = it },
+            onWeightChange = { weight = it },
+            onHeightUnitChange = { heightUnit = it },
+            onWeightUnitChange = { weightUnit = it })
+        GenderSelection(gender) { gender = it }
+        BirthdayInput(birthDate) { birthDate = it }
+        ActionButton(
+            "Submit",
+            onClick = {
               if (profileImageUri != null) {
-                Image(
-                    painter = rememberAsyncImagePainter(profileImageUri),
-                    contentDescription = "Profile Image",
-                    contentScale = ContentScale.Crop,
-                    modifier =
-                        Modifier.size(80.dp).clip(CircleShape)) // Changed from 120.dp to 80.dp
-              } else {
-                // Placeholder if no image selected
-                Text("Tap to add photo", fontSize = 8.sp, color = Color.Gray) // Reduced font size
-              }
-            }
-
-        Spacer(modifier = Modifier.height(8.dp)) // Reduced space after profile picture
-
-        // Aligning remaining fields to the left
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.Start) {
-              TextField(
-                  value = firstName,
-                  onValueChange = { firstName = it },
-                  label = { Text("First Name") },
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = 8.dp, vertical = 4.dp)
-                          .testTag("firstName")) // Added padding
-              TextField(
-                  value = lastName,
-                  onValueChange = { lastName = it },
-                  label = { Text("Last Name") },
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = 8.dp, vertical = 4.dp)
-                          .testTag("lastName")) // Added padding
-
-              Row(
-                  verticalAlignment = Alignment.CenterVertically,
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = 8.dp, vertical = 4.dp)) { // Added padding
-                    TextField(
-                        value = height,
-                        onValueChange = { height = it },
-                        label = { Text("Height") },
-                        modifier = Modifier.weight(1f).testTag("height"))
-                    Spacer(
-                        modifier =
-                            Modifier.width(6.dp)) // Reduced space between height and unit fields
-                    DropdownMenuButton(
-                        selectedOption = heightUnit,
-                        options = HeightUnit.entries,
-                        onOptionSelected = { heightUnit = it },
-                        modifier =
-                            Modifier.width(100.dp)
-                                .testTag("heightUnit")) // Reduced width for unit dropdown
-              }
-
-              Row(
-                  verticalAlignment = Alignment.CenterVertically,
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = 8.dp, vertical = 4.dp) // Added padding
-                  ) {
-                    TextField(
-                        value = weight,
-                        onValueChange = { weight = it },
-                        label = { Text("Weight") },
-                        modifier = Modifier.weight(1f).testTag("weight"))
-                    Spacer(
-                        modifier =
-                            Modifier.width(6.dp)) // Reduced space between weight and unit fields
-                    DropdownMenuButton(
-                        selectedOption = weightUnit,
-                        options = WeightUnit.entries,
-                        onOptionSelected = { weightUnit = it },
-                        modifier =
-                            Modifier.width(90.dp)
-                                .testTag("weightUnit") // Reduced width for unit dropdown
-                        )
-                  }
-
-              Row(modifier = Modifier.fillMaxWidth().testTag("gender")) {
-                Button(
-                    onClick = { gender = Gender.MALE },
-                    modifier =
-                        Modifier.weight(1f).height(40.dp), // Adjusted height for smaller button
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            if (gender == Gender.MALE) MaterialTheme.colorScheme.primary
-                            else Color.Gray)) {
-                      Text("Male", fontSize = 12.sp) // Reduced font size
-                }
-                Spacer(modifier = Modifier.width(6.dp)) // Reduced space between gender buttons
-                Button(
-                    onClick = { gender = Gender.FEMALE },
-                    modifier =
-                        Modifier.weight(1f).height(40.dp), // Adjusted height for smaller button
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            if (gender == Gender.FEMALE) MaterialTheme.colorScheme.primary
-                            else Color.Gray)) {
-                      Text("Female", fontSize = 12.sp) // Reduced font size
-                }
-              }
-
-              OutlinedTextField(
-                  value = birthDate,
-                  onValueChange = { birthDate = it },
-                  label = { Text("Birthday") },
-                  placeholder = { Text("DD/MM/YYYY") },
-                  modifier = Modifier.fillMaxWidth().testTag("birthday"))
-
-              Button(
-                  onClick = {
-                    if (profileImageUri != null) {
-                      uploadProfileImage(
-                          profileImageUri!!,
-                          actualUserId,
-                          onSuccess = { downloadUrl ->
-                            val calendar = GregorianCalendar()
-                            val parts = birthDate.split("/")
-                            if (parts.size == 3) {
-                              try {
-                                calendar.set(
-                                    parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-                                userAccountViewModel.createUserAccount(
-                                    UserAccount(
-                                        userId = actualUserId,
-                                        firstName = firstName,
-                                        lastName = lastName,
-                                        height = height.toFloatOrNull() ?: 0f,
-                                        heightUnit = heightUnit,
-                                        weight = weight.toFloatOrNull() ?: 0f,
-                                        weightUnit = weightUnit,
-                                        gender = gender,
-                                        birthDate = Timestamp(calendar.time),
-                                        profileImageUrl = downloadUrl))
-                                navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                              } catch (e: Exception) {
-                                Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT)
-                                    .show()
-                              }
-                            }
-                          },
-                          onFailure = {
-                            Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT)
-                                .show()
-                          })
-                    } else {
+                uploadProfileImage(
+                    profileImageUri!!,
+                    actualUserId,
+                    onSuccess = { downloadUrl ->
                       val calendar = GregorianCalendar()
                       val parts = birthDate.split("/")
                       if (parts.size == 3) {
@@ -249,23 +112,171 @@ fun AddAccount(
                                   weightUnit = weightUnit,
                                   gender = gender,
                                   birthDate = Timestamp(calendar.time),
-                                  profileImageUrl = ""))
+                                  profileImageUrl = downloadUrl))
                           navigationActions.navigateTo(TopLevelDestinations.MAIN)
                         } catch (e: Exception) {
                           Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
                         }
                       }
-                    }
-                  },
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = 8.dp)
-                          .height(48.dp)
-                          .testTag("submit"), // Added padding and adjusted height
-                  enabled = firstName.isNotBlank()) {
-                    Text("Submit", fontSize = 14.sp) // Slightly reduced font size for better fit
+                    },
+                    onFailure = {
+                      Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                    })
+              } else {
+                val calendar = GregorianCalendar()
+                val parts = birthDate.split("/")
+                if (parts.size == 3) {
+                  try {
+                    calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+                    userAccountViewModel.createUserAccount(
+                        UserAccount(
+                            userId = actualUserId,
+                            firstName = firstName,
+                            lastName = lastName,
+                            height = height.toFloatOrNull() ?: 0f,
+                            heightUnit = heightUnit,
+                            weight = weight.toFloatOrNull() ?: 0f,
+                            weightUnit = weightUnit,
+                            gender = gender,
+                            birthDate = Timestamp(calendar.time),
+                            profileImageUrl = ""))
+                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                  } catch (e: Exception) {
+                    Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
+                  }
+                }
               }
-            }
+            },
+            enabled = firstName.isNotBlank())
+      }
+}
+
+@Composable
+fun ProfileImagePicker(profileImageUri: Uri?, onImageClick: () -> Unit) {
+  Box(
+      contentAlignment = Alignment.Center,
+      modifier =
+          Modifier.size(80.dp)
+              .clip(CircleShape)
+              .border(1.dp, Color.Gray, CircleShape)
+              .testTag("profileImage")
+              .clickable { onImageClick() }) {
+        if (profileImageUri != null) {
+          Image(
+              painter = rememberAsyncImagePainter(profileImageUri),
+              contentDescription = "Profile Image",
+              contentScale = ContentScale.Crop,
+              modifier = Modifier.size(80.dp).clip(CircleShape))
+        } else {
+          Text("Tap to add photo", fontSize = 8.sp, color = Color.Gray)
+        }
+      }
+}
+
+@Composable
+fun NameInputFields(
+    firstName: String,
+    lastName: String,
+    onFirstNameChange: (String) -> Unit,
+    onLastNameChange: (String) -> Unit
+) {
+  TextField(
+      value = firstName,
+      onValueChange = onFirstNameChange,
+      label = { Text("First Name") },
+      modifier =
+          Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp).testTag("firstName"))
+  TextField(
+      value = lastName,
+      onValueChange = onLastNameChange,
+      label = { Text("Last Name") },
+      modifier =
+          Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp).testTag("lastName"))
+}
+
+@Composable
+fun HeightWeightInput(
+    height: String,
+    weight: String,
+    heightUnit: HeightUnit,
+    weightUnit: WeightUnit,
+    onHeightChange: (String) -> Unit,
+    onWeightChange: (String) -> Unit,
+    onHeightUnitChange: (HeightUnit) -> Unit,
+    onWeightUnitChange: (WeightUnit) -> Unit
+) {
+  Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)) {
+        TextField(
+            value = height,
+            onValueChange = onHeightChange,
+            label = { Text("Height") },
+            modifier = Modifier.weight(1f).testTag("height"))
+        Spacer(modifier = Modifier.width(6.dp))
+        DropdownMenuButton(
+            selectedOption = heightUnit,
+            options = HeightUnit.entries,
+            onOptionSelected = onHeightUnitChange,
+            modifier = Modifier.width(100.dp).testTag("heightUnit"))
+      }
+  Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)) {
+        TextField(
+            value = weight,
+            onValueChange = onWeightChange,
+            label = { Text("Weight") },
+            modifier = Modifier.weight(1f).testTag("weight"))
+        Spacer(modifier = Modifier.width(6.dp))
+        DropdownMenuButton(
+            selectedOption = weightUnit,
+            options = WeightUnit.entries,
+            onOptionSelected = onWeightUnitChange,
+            modifier = Modifier.width(90.dp).testTag("weightUnit"))
+      }
+}
+
+@Composable
+fun GenderSelection(gender: Gender, onGenderChange: (Gender) -> Unit) {
+  Row(modifier = Modifier.fillMaxWidth().testTag("gender")) {
+    Button(
+        onClick = { onGenderChange(Gender.MALE) },
+        modifier = Modifier.weight(1f).height(40.dp),
+        colors =
+            ButtonDefaults.buttonColors(
+                if (gender == Gender.MALE) MaterialTheme.colorScheme.primary else Color.Gray)) {
+          Text("Male", fontSize = 12.sp)
+        }
+    Spacer(modifier = Modifier.width(6.dp))
+    Button(
+        onClick = { onGenderChange(Gender.FEMALE) },
+        modifier = Modifier.weight(1f).height(40.dp),
+        colors =
+            ButtonDefaults.buttonColors(
+                if (gender == Gender.FEMALE) MaterialTheme.colorScheme.primary else Color.Gray)) {
+          Text("Female", fontSize = 12.sp)
+        }
+  }
+}
+
+@Composable
+fun BirthdayInput(birthDate: String, onBirthDateChange: (String) -> Unit) {
+  OutlinedTextField(
+      value = birthDate,
+      onValueChange = onBirthDateChange,
+      label = { Text("Birthday") },
+      placeholder = { Text("DD/MM/YYYY") },
+      modifier = Modifier.fillMaxWidth().testTag("birthday"))
+}
+
+@Composable
+fun ActionButton(text: String, onClick: () -> Unit, enabled: Boolean) {
+  Button(
+      onClick = onClick,
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).height(48.dp).testTag("submit"),
+      enabled = enabled) {
+        Text(text, fontSize = 14.sp)
       }
 }
 

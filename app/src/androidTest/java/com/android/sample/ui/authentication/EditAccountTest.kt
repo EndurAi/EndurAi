@@ -57,7 +57,7 @@ class EditAccountScreenTest {
     composeTestRule.waitForIdle()
     Thread.sleep(1000) // 1 second delay
 
-    composeTestRule.onNodeWithTag("editScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("profileImage").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("firstName").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("lastName").performScrollTo().assertIsDisplayed()
@@ -67,7 +67,7 @@ class EditAccountScreenTest {
     composeTestRule.onNodeWithTag("weightUnit").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("gender").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("birthday").performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag("saveChanges").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("submit").performScrollTo().assertIsDisplayed()
   }
 
   @Test
