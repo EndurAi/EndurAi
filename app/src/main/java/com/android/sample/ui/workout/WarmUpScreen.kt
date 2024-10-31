@@ -82,6 +82,7 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
     finishButtonBoxIsDisplayed = false
     presentationButtonBoxIsDisplayed = true
     goalCounterBoxIsDisplayed = false
+    countDownTimerIsPaused = false
   }
 
   fun paramToExercise() {
@@ -95,6 +96,7 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
     if (exerciseIndex < exerciseStateList.size-1) {
       exerciseIndex++
       paramToPresentation()
+
     } else {
       navigationActions.navigateTo(Screen.MAIN)
     }
@@ -123,7 +125,7 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
     LaunchedEffect(Unit) {
       while (timer >= 0) {
         delay(1000L)
-        if (goalCounterBoxIsDisplayed && !countDownTimerIsPaused) {
+        if (!countDownTimerIsPaused) {
           timer--
         }
       }
