@@ -48,14 +48,14 @@ fun ExerciseCard(exercise: Exercise) {
                   verticalAlignment = Alignment.CenterVertically) {
                     // Exercise name (on the left)
                     Text(
-                        text = exercise.exType.toString(),
+                        text = exercise.type.toString(),
                         fontSize = 18.sp,
                         color = Color.DarkGray,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Start)
 
                     // Exercise details (icon and information)
-                    ExerciseDetailCard(exercise.exDetail)
+                    ExerciseDetailCard(exercise.detail)
                   }
             }
       }

@@ -4,21 +4,21 @@ class WarmUpViewModel(val repository: WorkoutRepository<WarmUp>) :
     WorkoutViewModel<WarmUp>(repository) {
 
   private val default_exercise_id = "default"
-  private val DEFAULT_WARM_UP_EXERCISES: MutableList<WarmUpExercise> =
+  private val DEFAULT_WARM_UP_EXERCISES: MutableList<Exercise> =
       mutableListOf(
-          WarmUpExercise(
+          Exercise(
               default_exercise_id,
-              WarmUpExerciseType.LEG_SWINGS,
+              ExerciseType.LEG_SWINGS,
               ExerciseDetail.RepetitionBased(15)),
-          WarmUpExercise(
+          Exercise(
               default_exercise_id,
-              WarmUpExerciseType.JUMPING_JACKS,
+              ExerciseType.JUMPING_JACKS,
               ExerciseDetail.RepetitionBased(25)),
-          WarmUpExercise(
-              default_exercise_id, WarmUpExerciseType.ARM_CIRCLES, ExerciseDetail.TimeBased(30, 2)),
-          WarmUpExercise(
+          Exercise(
+              default_exercise_id, ExerciseType.ARM_CIRCLES, ExerciseDetail.TimeBased(30, 2)),
+          Exercise(
               default_exercise_id,
-              WarmUpExerciseType.ARM_WRIST_CIRCLES,
+              ExerciseType.ARM_WRIST_CIRCLES,
               ExerciseDetail.TimeBased(15, 2)))
 
   val DEFAULT_WARMUP: WarmUp =

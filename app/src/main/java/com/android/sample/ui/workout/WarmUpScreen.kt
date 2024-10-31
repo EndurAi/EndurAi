@@ -48,8 +48,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
+import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
-import com.android.sample.model.workout.WarmUpExercise
 import com.android.sample.model.workout.WarmUpViewModel
 import com.android.sample.ui.composables.CountDownTimer
 import com.android.sample.ui.composables.convertSecondsToTime
@@ -58,7 +58,7 @@ import kotlinx.coroutines.delay
 import kotlin.jvm.Throws
 import kotlin.reflect.jvm.internal.impl.serialization.deserialization.FlexibleTypeDeserializer.ThrowException
 
-data class ExerciseState(val exercise: WarmUpExercise, var isDone : Boolean)
+data class ExerciseState(val exercise: Exercise, var isDone : Boolean)
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -143,7 +143,8 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
               .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
               Text(
-                  text = exerciseState.exercise.type.name,
+                //TODO THe name here
+                  text = exerciseState.exercise.type.toString(),
                   style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
                   fontWeight = FontWeight.Bold,
                   modifier = Modifier.height(79.dp))
