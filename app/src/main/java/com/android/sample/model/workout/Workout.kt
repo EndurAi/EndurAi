@@ -11,7 +11,7 @@ abstract class Workout(
     val warmup: Boolean, // Whether the user want to do a warmup
     val userIdSet:
         MutableSet<String>, // Set of userId that represent the User linked to a specific workout
-    val date : LocalDateTime
+    val date: LocalDateTime
 ) {}
 
 // Detail of the exercise based on its type

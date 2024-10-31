@@ -42,8 +42,6 @@ import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.GreyLight
 import com.google.firebase.Timestamp
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.Date
 
 /**

@@ -150,6 +150,5 @@ fun MainApp(startDestination: String = Route.AUTH) {
         CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
       }
     }
-
   }
 }

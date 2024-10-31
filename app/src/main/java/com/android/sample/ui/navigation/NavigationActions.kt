@@ -47,12 +47,15 @@ object TopLevelDestinations {
   val VIDEO = TopLevelDestination(Route.VIDEO, Icons.Filled.PlayArrow, textId = "Video")
   val ACHIEVEMENTS =
       TopLevelDestination(Route.ACHIEVEMENTS, Icons.Outlined.DateRange, textId = "Achievements")
-  val CALENDAR =
-    TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
+  val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
-    listOf(TopLevelDestinations.MAIN, TopLevelDestinations.VIDEO, TopLevelDestinations.ACHIEVEMENTS, TopLevelDestinations.CALENDAR)
+    listOf(
+        TopLevelDestinations.MAIN,
+        TopLevelDestinations.VIDEO,
+        TopLevelDestinations.ACHIEVEMENTS,
+        TopLevelDestinations.CALENDAR)
 
 open class NavigationActions(private val navController: NavHostController) {
   /**

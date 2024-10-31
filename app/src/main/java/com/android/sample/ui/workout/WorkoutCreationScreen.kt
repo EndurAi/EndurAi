@@ -1,5 +1,7 @@
 package com.android.sample.ui.workout
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -66,14 +69,10 @@ import com.android.sample.ui.composables.ExerciseCard
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import java.time.LocalDateTime
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.Purple60
-
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import androidx.compose.material.icons.filled.Edit
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +89,7 @@ fun WorkoutCreationScreen(
   var name by remember { mutableStateOf(selectedWorkout?.name ?: "") }
   var description by remember { mutableStateOf(selectedWorkout?.description ?: "") }
   var warmup by remember { mutableStateOf(selectedWorkout?.warmup ?: false) }
-    var selectedDateTime by remember { mutableStateOf<LocalDateTime?>(null) }
+  var selectedDateTime by remember { mutableStateOf<LocalDateTime?>(null) }
   var exerciseList by remember {
     mutableStateOf(
         (selectedWorkout as? YogaWorkout)?.exercises
@@ -128,8 +127,7 @@ fun WorkoutCreationScreen(
                         placeholder = { Text("Enter name of your exercise plan") },
                         modifier = Modifier.testTag("nameTextField"))
 
-                  Spacer(Modifier.height(16.dp))
-
+                    Spacer(Modifier.height(16.dp))
 
                     OutlinedTextField(
                         value = description,
@@ -138,17 +136,15 @@ fun WorkoutCreationScreen(
                         placeholder = { Text("Describe your exercise plan") },
                         modifier = Modifier.testTag("descriptionTextField"))
 
-                  Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(16.dp))
 
-
-                  DateTimePicker(
-                      selectedDateTime = selectedDateTime,
-                      onDateTimeSelected = { newDateTime ->
+                    DateTimePicker(
+                        selectedDateTime = selectedDateTime,
+                        onDateTimeSelected = { newDateTime ->
                           selectedDateTime = newDateTime // Mise à jour avec la date sélectionnée
-                      }
-                  )
+                        })
 
-                  Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(16.dp))
 
                     Button(
                         onClick = { showNameDescriptionScreen = false },
@@ -420,39 +416,45 @@ fun DateTimePicker(
     selectedDateTime: LocalDateTime?,
     onDateTimeSelected: (LocalDateTime) -> Unit,
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    // Function to launch the Date and Time pickers
-    fun showDateTimePickers() {
-        val now = LocalDateTime.now()
-        val datePicker = DatePickerDialog(
-            context, { _, year, month, dayOfMonth ->
-                val timePicker = TimePickerDialog(
-                    context, { _, hourOfDay, minute ->
-                        val selectedDate = LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute)
+  // Function to launch the Date and Time pickers
+  fun showDateTimePickers() {
+    val now = LocalDateTime.now()
+    val datePicker =
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+              val timePicker =
+                  TimePickerDialog(
+                      context,
+                      { _, hourOfDay, minute ->
+                        val selectedDate =
+                            LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute)
                         onDateTimeSelected(selectedDate)
-                    }, now.hour, now.minute, true
-                )
-                timePicker.show()
-            }, now.year, now.monthValue - 1, now.dayOfMonth
-        )
-        datePicker.show()
-    }
+                      },
+                      now.hour,
+                      now.minute,
+                      true)
+              timePicker.show()
+            },
+            now.year,
+            now.monthValue - 1,
+            now.dayOfMonth)
+    datePicker.show()
+  }
 
-    OutlinedTextField(
-        value = selectedDateTime?.let { "${it.dayOfMonth} ${it.month.name.lowercase().capitalize()} ${it.year} at ${it.hour}:${it.minute.toString().padStart(2, '0')}" } ?: "Select Date and Time",
-        onValueChange = { /* No-op since we control the value */ },
-        readOnly = true,
-        label = { Text("Workout Date") },
-        trailingIcon = {
-            IconButton(onClick = {
-                showDateTimePickers()
-            }) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Date")
-            }
+  OutlinedTextField(
+      value =
+          selectedDateTime?.let {
+            "${it.dayOfMonth} ${it.month.name.lowercase().capitalize()} ${it.year} at ${it.hour}:${it.minute.toString().padStart(2, '0')}"
+          } ?: "Select Date and Time",
+      onValueChange = { /* No-op since we control the value */},
+      readOnly = true,
+      label = { Text("Workout Date") },
+      trailingIcon = {
+        IconButton(onClick = { showDateTimePickers() }) {
+          Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Date")
         }
-    )
+      })
 }
-
-
-
