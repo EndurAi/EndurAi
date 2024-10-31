@@ -2,7 +2,6 @@ package com.android.sample.ui.workout
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,76 +47,87 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
+import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.WarmUpViewModel
+import com.android.sample.model.workout.WorkoutType
+import com.android.sample.model.workout.WorkoutViewModel
+import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.CountDownTimer
 import com.android.sample.ui.composables.convertSecondsToTime
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import kotlinx.coroutines.delay
-import kotlin.jvm.Throws
-import kotlin.reflect.jvm.internal.impl.serialization.deserialization.FlexibleTypeDeserializer.ThrowException
 
-data class ExerciseState(val exercise: Exercise, var isDone : Boolean)
-
+data class ExerciseState(val exercise: Exercise, var isDone: Boolean)
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
+fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : String, navigationActions: NavigationActions) {
   // Variable for the screen
   var exerciseIndex by remember { mutableIntStateOf(0) }
-  val exerciseState  = exerciseStateList?.get(exerciseIndex) ?: error("Exercise state list is null or index out of bounds")
+  val exerciseState =
+      exerciseStateList?.get(exerciseIndex)
+          ?: error("Exercise state list is null or index out of bounds")
   var videoBoxIsDisplayed by remember { mutableStateOf(true) }
   var finishButtonBoxIsDisplayed by remember { mutableStateOf(false) }
   var presentationButtonBoxIsDisplayed by remember { mutableStateOf(true) }
   var goalCounterBoxIsDisplayed by remember { mutableStateOf(false) }
   var countDownTimerIsPaused by remember { mutableStateOf(false) }
 
-  fun paramToPresentation(){
-    videoBoxIsDisplayed =true
-    finishButtonBoxIsDisplayed =false
+  fun paramToPresentation() {
+    videoBoxIsDisplayed = true
+    finishButtonBoxIsDisplayed = false
     presentationButtonBoxIsDisplayed = true
     goalCounterBoxIsDisplayed = false
-
   }
 
-  fun paramToExercise(){
-    videoBoxIsDisplayed =false
-    finishButtonBoxIsDisplayed =true
+  fun paramToExercise() {
+    videoBoxIsDisplayed = false
+    finishButtonBoxIsDisplayed = true
     presentationButtonBoxIsDisplayed = false
     goalCounterBoxIsDisplayed = true
-
   }
 
-
-  val exerciseIsRepetitionBased = when(exerciseState.exercise.detail){
-    is ExerciseDetail.TimeBased -> false;
-    is ExerciseDetail.RepetitionBased -> true
-  }
-
-
-  val repetitions = when (exerciseState.exercise.detail) {
-    is ExerciseDetail.RepetitionBased -> (exerciseState.exercise.detail as ExerciseDetail.RepetitionBased).repetitions
-    else -> 0
-  }
-  var timer by remember { mutableIntStateOf( 0) }
-  var timeLimit = 0
-  if(!exerciseIsRepetitionBased){
-    val rawDetail = exerciseState.exercise.detail as ExerciseDetail.TimeBased
-    //TODO Handle the Sets factor
-   timeLimit = rawDetail.durationInSeconds * rawDetail.sets
-    timer = timeLimit
-
-
-  LaunchedEffect(Unit) {
-    while (timer >= 0) {
-      delay(1000L)
-      if (goalCounterBoxIsDisplayed && !countDownTimerIsPaused) {
-        timer--
-      }
+  fun nextExercise() {
+    if (exerciseIndex < exerciseStateList.size-1) {
+      exerciseIndex++
+      paramToPresentation()
+    } else {
+      navigationActions.navigateTo(Screen.MAIN)
     }
   }
+
+  val exerciseIsRepetitionBased =
+      when (exerciseState.exercise.detail) {
+        is ExerciseDetail.TimeBased -> false
+        is ExerciseDetail.RepetitionBased -> true
+      }
+
+  val repetitions =
+      when (exerciseState.exercise.detail) {
+        is ExerciseDetail.RepetitionBased ->
+            (exerciseState.exercise.detail as ExerciseDetail.RepetitionBased).repetitions
+        else -> 0
+      }
+  var timer by remember { mutableIntStateOf(0) }
+  var timeLimit = 0
+  if (!exerciseIsRepetitionBased) {
+    val rawDetail = exerciseState.exercise.detail as ExerciseDetail.TimeBased
+    // TODO Handle the Sets factor
+    timeLimit = rawDetail.durationInSeconds * rawDetail.sets
+    timer = timeLimit
+
+    LaunchedEffect(Unit) {
+      while (timer >= 0) {
+        delay(1000L)
+        if (goalCounterBoxIsDisplayed && !countDownTimerIsPaused) {
+          timer--
+        }
+      }
+    }
   }
 
   Scaffold(
@@ -125,44 +135,40 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
         CenterAlignedTopAppBar(
             title = {
               Text(
-                  "WarmUp",
+                  workoutName,
                   modifier =
-                  Modifier
-                    .background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
-                    .padding(horizontal = 80.dp)
-                    .padding(1.dp),
+                      Modifier.background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
+                          .padding(horizontal = 80.dp)
+                          .padding(1.dp),
                   fontWeight = FontWeight(500),
                   color = MaterialTheme.colorScheme.onSurface)
             })
       }) { innerPadding ->
         Column(
             modifier =
-            Modifier
-              .fillMaxSize()
-              .padding(innerPadding) // Use innerPadding to avoid overlapping with the app bar
-              .padding(16.dp),
+                Modifier.fillMaxSize()
+                    .padding(innerPadding) // Use innerPadding to avoid overlapping with the app bar
+                    .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
               Text(
-                //TODO THe name here
+                  // TODO THe name here
                   text = exerciseState.exercise.type.toString(),
                   style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
                   fontWeight = FontWeight.Bold,
                   modifier = Modifier.height(79.dp))
 
               Spacer(modifier = Modifier.height(16.dp))
-          //description text
+              // description text
               Text(
-                //TODO add some descpriton
-                  text = exerciseState.exercise.type.name,
+                  // TODO add some descpriton
+                  text = exerciseState.exercise.type.getInstruction(),
                   style =
                       MaterialTheme.typography.displaySmall.copy(
                           fontSize = 20.sp, lineHeight = 25.sp),
                   textAlign = TextAlign.Center,
-                  modifier = Modifier
-                    .width(317.dp)
-                    .height(79.dp))
+                  modifier = Modifier.width(317.dp).height(79.dp))
               Spacer(modifier = Modifier.height(16.dp))
-          //TODO add video specific
+              // TODO add video specific
               val URL =
                   "https://firebasestorage.googleapis.com/v0/b/endurai-92811.appspot.com/o/template_videos%2FPush%20Up.mp4?alt=media&token=2677215b-59a4-47c8-854b-a3326532e8af"
 
@@ -200,14 +206,19 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
                   Box(modifier = Modifier.size(200.dp)) {
                     val workoutImage =
                         Image(
-                            painter = painterResource(id = R.drawable.warmup_logo),
+                            painter = painterResource(id =
+                              when(exerciseState.exercise.type.workoutType){
+                                WorkoutType.WARMUP -> R.drawable.warmup_logo
+                                WorkoutType.YOGA -> R.drawable.yoga
+                                WorkoutType.BODY_WEIGHT-> R.drawable.dumbbell
+                                WorkoutType.RUNNING -> TODO()
+                              }
+                            ),
                             contentDescription = "Goal Counter",
                             modifier = Modifier.size(350.dp, 200.dp))
                   }
                 } else {
-                  Box(modifier = Modifier.size(200.dp)) {
-                    CountDownTimer(timer,timeLimit)
-                  }
+                  Box(modifier = Modifier.size(200.dp)) { CountDownTimer(timer, timeLimit) }
                 }
               }
 
@@ -220,9 +231,9 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
                         verticalArrangement = Arrangement.Bottom) {
                           // Skip button
                           Button(
-                              onClick = {exerciseIndex++
-                                paramToPresentation()
-                                        },
+                              onClick = {
+                                nextExercise()
+                              },
                               colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                                 Text("Skip", color = Color.Black)
                               }
@@ -235,9 +246,7 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
                                 finishButtonBoxIsDisplayed = true
                                 videoBoxIsDisplayed = false
                               },
-                              modifier = Modifier
-                                .width(200.dp)
-                                .height(50.dp),
+                              modifier = Modifier.width(200.dp).height(50.dp),
                               colors =
                                   ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
                               shape = RoundedCornerShape(size = 11.dp)) {
@@ -271,12 +280,9 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
                           val finishButton =
                               Button(
                                   onClick = {
-                                    exerciseIndex++
-                                    paramToPresentation()},
-                                  modifier = Modifier
-                                    .width(200.dp)
-                                    .height(50.dp)
-                                    .padding(),
+                                    nextExercise()
+                                  },
+                                  modifier = Modifier.width(200.dp).height(50.dp).padding(),
                                   colors =
                                       ButtonDefaults.buttonColors(
                                           containerColor = Color(0xFFA9B0FF)),
@@ -288,8 +294,9 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
 
                           val skipButton =
                               Button(
-                                  onClick = {exerciseIndex++
-                                            paramToPresentation()},
+                                  onClick = {
+                                    nextExercise()
+                                  },
                                   colors =
                                       ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                                     Text("Skip", color = Color.Black)
@@ -299,10 +306,10 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
               }
             }
       }
-
-
-
 }
+
+
+
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -335,26 +342,23 @@ fun VideoPlayer(url: String, context: Context) {
   DisposableEffect(Unit) { onDispose { exoPlayer.release() } }
 }
 
-
-
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun WarmUpScreen(navigationActions: NavigationActions, warmUpViewModel: WarmUpViewModel){
+fun WorkoutScreen(navigationActions: NavigationActions,
+                 warmUpViewModel: WarmUpViewModel,
+                 bodyweightViewModel: WorkoutViewModel<BodyWeightWorkout>,
+                 yogaViewModel: WorkoutViewModel<YogaWorkout>,
+                  workoutType: WorkoutType) {
 
-  val selectedWorkout = warmUpViewModel.selectedWorkout.value
+  val selectedWorkout = when(workoutType){
+    WorkoutType.YOGA -> yogaViewModel.selectedWorkout.value
+    WorkoutType.WARMUP -> warmUpViewModel.selectedWorkout.value
+    WorkoutType.BODY_WEIGHT-> bodyweightViewModel.selectedWorkout.value
+    WorkoutType.RUNNING -> TODO()
+  }
+
   val exerciseStateList =
-    selectedWorkout?.exercises?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
+      selectedWorkout?.exercises?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
 
-
-  WarmUpScreenBody(exerciseStateList)
-
-
-
-
-
-
-
-
+  selectedWorkout?.name?.let { WarmUpScreenBody(exerciseStateList,workoutName = it, navigationActions = navigationActions) }
 }
-
-

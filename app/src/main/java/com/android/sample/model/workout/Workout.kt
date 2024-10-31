@@ -9,9 +9,9 @@ abstract class Workout(
     val description: String,
     val warmup: Boolean, // Whether the user want to do a warmup
     val userIdSet:
-        MutableSet<String> ,// Set of userId that represent the User linked to a specific workout
-  val exercises: MutableList<Exercise> = mutableListOf()
-){
+        MutableSet<String>, // Set of userId that represent the User linked to a specific workout
+    val exercises: MutableList<Exercise> = mutableListOf()
+) {
 
   fun addUserById(id: String) {
     userIdSet.add(id)
@@ -26,7 +26,6 @@ abstract class Workout(
     userIdSet.removeAll { it == id }
   }
 
-
   fun addExercise(exercise: Exercise) {
     exercises.add(exercise)
   }
@@ -39,14 +38,6 @@ abstract class Workout(
   fun removeExerciseById(exerciseId: String) {
     exercises.removeAll { it.id == exerciseId }
   }
-
-
-
-
-
-
-
-
 }
 
 // Detail of the exercise based on its type

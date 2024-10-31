@@ -18,10 +18,9 @@ class WarmUp(
     description: String,
     userIdSet: MutableSet<String> = mutableSetOf(),
     exercises: MutableList<Exercise> = mutableListOf() // Default to an empty list
-) : Workout(workoutId, name, description, warmup= true, userIdSet, exercises) {
+) : Workout(workoutId, name, description, warmup = true, userIdSet, exercises) {
 
   companion object {
     const val DOCUMENT_NAME = "warmUp"
   }
 }
-

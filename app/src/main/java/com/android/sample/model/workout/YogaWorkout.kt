@@ -26,5 +26,3 @@ class YogaWorkout(
     const val DOCUMENT_NAME = "yogaWorkout"
   }
 }
-
-

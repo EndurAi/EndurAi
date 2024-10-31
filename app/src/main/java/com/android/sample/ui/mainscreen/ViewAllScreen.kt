@@ -40,6 +40,7 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.ImageComposable
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
 
 /**
@@ -66,7 +67,8 @@ fun ViewAllScreen(
       topBar = { TopBar(navigationActions, R.string.ViewAllTitle) },
       content = { pd ->
         Column(modifier = Modifier.padding(pd)) {
-          Tabs(selectedTab) { index -> selectedTab = index }
+          Tabs(selectedTab) { index -> selectedTab = index
+          }
           Spacer(modifier = Modifier.height(10.dp))
           if (selectedTab in 0..1) {
             WorkoutList(
@@ -209,6 +211,12 @@ fun ViewAllCard(
               .padding(vertical = 4.dp)
               .clickable {
                 viewModel.selectWorkout(workout)
+
+                when (workout) {
+                  is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
+                  is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_WORKOUT)
+                }
+
               /*Navigate to the screen to edit or start the workout*/ }
               .testTag("WorkoutCard"),
       colors = CardDefaults.cardColors(containerColor = Blue)) {

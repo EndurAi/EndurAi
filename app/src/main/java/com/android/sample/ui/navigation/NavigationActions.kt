@@ -22,7 +22,8 @@ object Route {
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga"
   const val TEST = "Test"
   const val WARMUP_WORKOUT = "Warmup workout"
-
+  const val BODY_WEIGHT_WORKOUT = "BodyWeight workout"
+  const val YOGA_WORKOUT = "Yoga workout"
 }
 
 object Screen {
@@ -41,6 +42,10 @@ object Screen {
   const val VIEW_ALL = "View All Screen"
   const val TEST = "Test Screen"
   const val WARMUP_WORKOUT = "Warmup workout screen"
+  const val BODY_WEIGHT_WORKOUT = "BodyWeight workout screen"
+  const val YOGA_WORKOUT =  "Yoga workout screen"
+
+
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)

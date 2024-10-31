@@ -25,8 +25,4 @@ class BodyWeightWorkout(
   companion object {
     const val DOCUMENT_NAME = "bodyweightWorkout"
   }
-
 }
-
-
-

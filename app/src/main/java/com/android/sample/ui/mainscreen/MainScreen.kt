@@ -132,7 +132,7 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
         Spacer(Modifier.weight(1f))
 
         IconButton(
-            onClick = { navigationActions.navigateTo(Screen.WARMUP_WORKOUT) },
+            onClick = { navigationActions.navigateTo(Screen.SETTINGS) },
             modifier = Modifier.padding(end = 12.dp).testTag("SettingsButton")) {
               Icon(
                   imageVector = Icons.Outlined.Settings,

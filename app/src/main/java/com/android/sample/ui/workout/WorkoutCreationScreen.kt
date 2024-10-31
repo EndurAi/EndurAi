@@ -52,7 +52,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
-
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -60,7 +59,6 @@ import com.android.sample.model.workout.ExerciseType
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
-
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.ExerciseCard
 import com.android.sample.ui.composables.SaveButton
@@ -172,9 +170,7 @@ fun WorkoutCreationScreen(
                         }
                   }
 
-                  items(exerciseList) { exercise ->
-                    ExerciseCard(exercise)
-                  }
+                  items(exerciseList) { exercise -> ExerciseCard(exercise) }
 
                   item {
                     // Vertical line connecting the cards
@@ -213,15 +209,13 @@ fun WorkoutCreationScreen(
                   item {
                     SaveButton(
                         onSaveClick = {
-
                           workoutViewModel.addWorkout(
-                            YogaWorkout(
-                              workoutId = workoutViewModel.getNewUid(),
-                              name = name,
-                              description = description,
-                              warmup = warmup,
-                              exercises = exerciseList.toMutableList()))
-
+                              YogaWorkout(
+                                  workoutId = workoutViewModel.getNewUid(),
+                                  name = name,
+                                  description = description,
+                                  warmup = warmup,
+                                  exercises = exerciseList.toMutableList()))
 
                           Toast.makeText(context, "Workout successfully added", Toast.LENGTH_SHORT)
                               .show()
@@ -249,26 +243,30 @@ fun WorkoutCreationScreen(
                 expanded = isDropdownExpanded, onDismissRequest = { isDropdownExpanded = false }) {
                   when (workoutType) {
                     WorkoutType.YOGA -> {
-                      ExerciseType.entries.filter { it.workoutType == WorkoutType.YOGA }.forEach { type ->
-                        DropdownMenuItem(
-                            onClick = {
-                              selectedExerciseType = type
-                              isDropdownExpanded = false
-                            },
-                            modifier = Modifier.testTag("exerciseType${type.name}"),
-                            text = { Text(type.name) })
-                      }
+                      ExerciseType.entries
+                          .filter { it.workoutType == WorkoutType.YOGA }
+                          .forEach { type ->
+                            DropdownMenuItem(
+                                onClick = {
+                                  selectedExerciseType = type
+                                  isDropdownExpanded = false
+                                },
+                                modifier = Modifier.testTag("exerciseType${type.name}"),
+                                text = { Text(type.name) })
+                          }
                     }
                     WorkoutType.BODY_WEIGHT -> {
-                      ExerciseType.entries.filter { it.workoutType == WorkoutType.BODY_WEIGHT }.forEach { type ->
-                        DropdownMenuItem(
-                            onClick = {
-                              selectedExerciseType = type
-                              isDropdownExpanded = false
-                            },
-                            modifier = Modifier.testTag("exerciseType${type.name}"),
-                            text = { Text(type.name) })
-                      }
+                      ExerciseType.entries
+                          .filter { it.workoutType == WorkoutType.BODY_WEIGHT }
+                          .forEach { type ->
+                            DropdownMenuItem(
+                                onClick = {
+                                  selectedExerciseType = type
+                                  isDropdownExpanded = false
+                                },
+                                modifier = Modifier.testTag("exerciseType${type.name}"),
+                                text = { Text(type.name) })
+                          }
                     }
                     else -> {}
                   }
@@ -342,10 +340,11 @@ fun WorkoutCreationScreen(
               onClick = {
                 if (selectedExerciseType != null && exerciseDetail != null) {
                   exerciseList =
-                      exerciseList + Exercise(
-                        id = workoutViewModel.getNewUid(),
-                        type = selectedExerciseType!!,
-                        detail = exerciseDetail!!)
+                      exerciseList +
+                          Exercise(
+                              id = workoutViewModel.getNewUid(),
+                              type = selectedExerciseType!!,
+                              detail = exerciseDetail!!)
 
                   showExerciseDialog = false
                 }

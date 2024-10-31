@@ -19,6 +19,7 @@ import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WarmUp
 import com.android.sample.model.workout.WarmUpViewModel
+import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
@@ -37,8 +38,8 @@ import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
-import com.android.sample.ui.workout.WarmUpScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
+import com.android.sample.ui.workout.WorkoutScreen
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -75,6 +76,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
   val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
   val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+
+
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -149,14 +152,50 @@ fun MainApp(startDestination: String = Route.AUTH) {
       }
     }
 
-    // Import or Create Screen for body weight workout
-    navigation(
-      startDestination = Screen.WARMUP_WORKOUT,
-      route = Route.WARMUP_WORKOUT) {
-      composable(Screen.WARMUP_WORKOUT) {
-        WarmUpScreen(navigationActions = navigationActions, warmUpViewModel = warmUpViewModel )
+
+    // Yoga Creation Screen
+    navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
+      composable(Screen.YOGA_CREATION) {
+        WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
       }
     }
+
+
+    // Body Weight Workout
+    navigation(startDestination = Screen.BODY_WEIGHT_WORKOUT, route = Route.BODY_WEIGHT_WORKOUT) {
+      composable(Screen.BODY_WEIGHT_WORKOUT) {
+        WorkoutScreen(
+          navigationActions = navigationActions,
+          bodyweightViewModel = bodyweightWorkoutViewModel,
+          yogaViewModel = yogaWorkoutViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT)
+      }
+    }
+    // Yoga Workout
+    navigation(startDestination = Screen.YOGA_WORKOUT, route = Route.YOGA_WORKOUT) {
+      composable(Screen.YOGA_WORKOUT) {
+        WorkoutScreen(
+          navigationActions = navigationActions,
+          bodyweightViewModel = bodyweightWorkoutViewModel,
+          yogaViewModel = yogaWorkoutViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.YOGA)
+      }
+    }
+
+    // warmUp Workout
+    navigation(startDestination = Screen.WARMUP_WORKOUT, route = Route.WARMUP_WORKOUT) {
+      composable(Screen.WARMUP_WORKOUT) {
+        WorkoutScreen(
+          navigationActions = navigationActions,
+          bodyweightViewModel = bodyweightWorkoutViewModel,
+          yogaViewModel = yogaWorkoutViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.WARMUP)
+      }
+    }
+
 
 
 
