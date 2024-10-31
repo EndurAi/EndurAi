@@ -154,6 +154,9 @@ dependencies {
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
 
+    // Activity Compose for rememberLauncherForActivityResult
+    implementation(libs.coil.compose)
+
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
