@@ -1,8 +1,9 @@
 package com.android.sample.ui.workout
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -47,46 +48,76 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
-import com.android.sample.model.workout.BodyWeightWorkout
-import com.android.sample.model.workout.WorkoutViewModel
+import com.android.sample.model.workout.ExerciseDetail
+import com.android.sample.model.workout.WarmUpExercise
+import com.android.sample.model.workout.WarmUpViewModel
 import com.android.sample.ui.composables.CountDownTimer
-import com.android.sample.ui.composables.convertTimeToSeconds
+import com.android.sample.ui.composables.convertSecondsToTime
 import com.android.sample.ui.navigation.NavigationActions
 import kotlinx.coroutines.delay
+import kotlin.jvm.Throws
+import kotlin.reflect.jvm.internal.impl.serialization.deserialization.FlexibleTypeDeserializer.ThrowException
 
+data class ExerciseState(val exercise: WarmUpExercise, var isDone : Boolean)
+
+
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun ExerciseScreen(
-    navigationActions: NavigationActions,
-    bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
-    yogaViewModel: WorkoutViewModel<Yog>
-
-    repetitions: Int = 10,
-    onSkip: () -> Unit = {},
-    onStart: () -> Unit = {}
-) {
+fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?) {
   // Variable for the screen
-  var videoBoxIsDisplayed by remember { mutableStateOf(false) }
-  var finishButtonBoxIsDisplayed by remember { mutableStateOf(true) }
-  var presentationButtonBoxIsDisplayed by remember { mutableStateOf(false) }
-  var goalCounterBoxIsDisplayed by remember { mutableStateOf(true) }
+  var exerciseIndex by remember { mutableIntStateOf(0) }
+  val exerciseState  = exerciseStateList?.get(exerciseIndex) ?: error("Exercise state list is null or index out of bounds")
+  var videoBoxIsDisplayed by remember { mutableStateOf(true) }
+  var finishButtonBoxIsDisplayed by remember { mutableStateOf(false) }
+  var presentationButtonBoxIsDisplayed by remember { mutableStateOf(true) }
+  var goalCounterBoxIsDisplayed by remember { mutableStateOf(false) }
   var countDownTimerIsPaused by remember { mutableStateOf(false) }
-  // Hard coded values
-  val timeLimit = "00:10"
-  val timer = remember { mutableStateOf(timeLimit) }
-  val exerciseIsRepetitionBased = false
+
+  fun paramToPresentation(){
+    videoBoxIsDisplayed =true
+    finishButtonBoxIsDisplayed =false
+    presentationButtonBoxIsDisplayed = true
+    goalCounterBoxIsDisplayed = false
+
+  }
+
+  fun paramToExercise(){
+    videoBoxIsDisplayed =false
+    finishButtonBoxIsDisplayed =true
+    presentationButtonBoxIsDisplayed = false
+    goalCounterBoxIsDisplayed = true
+
+  }
+
+
+  val exerciseIsRepetitionBased = when(exerciseState.exercise.detail){
+    is ExerciseDetail.TimeBased -> false;
+    is ExerciseDetail.RepetitionBased -> true
+  }
+
+
+  val repetitions = when (exerciseState.exercise.detail) {
+    is ExerciseDetail.RepetitionBased -> (exerciseState.exercise.detail as ExerciseDetail.RepetitionBased).repetitions
+    else -> 0
+  }
+  var timer by remember { mutableIntStateOf( 0) }
+  var timeLimit = 0
+  if(!exerciseIsRepetitionBased){
+    val rawDetail = exerciseState.exercise.detail as ExerciseDetail.TimeBased
+    //TODO Handle the Sets factor
+   timeLimit = rawDetail.durationInSeconds * rawDetail.sets
+    timer = timeLimit
+
+
   LaunchedEffect(Unit) {
-    var totalSeconds = convertTimeToSeconds(timer.value)
-    while (totalSeconds >= 0) {
-      val minutes = totalSeconds / 60
-      val seconds = totalSeconds % 60
-      timer.value = String.format("%02d:%02d", minutes, seconds)
+    while (timer >= 0) {
       delay(1000L)
       if (goalCounterBoxIsDisplayed && !countDownTimerIsPaused) {
-        totalSeconds--
+        timer--
       }
     }
+  }
   }
 
   Scaffold(
@@ -96,34 +127,41 @@ fun ExerciseScreen(
               Text(
                   "WarmUp",
                   modifier =
-                      Modifier.background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
-                          .padding(horizontal = 80.dp)
-                          .padding(1.dp),
+                  Modifier
+                    .background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
+                    .padding(horizontal = 80.dp)
+                    .padding(1.dp),
                   fontWeight = FontWeight(500),
                   color = MaterialTheme.colorScheme.onSurface)
             })
       }) { innerPadding ->
         Column(
             modifier =
-                Modifier.fillMaxSize()
-                    .padding(innerPadding) // Use innerPadding to avoid overlapping with the app bar
-                    .padding(16.dp),
+            Modifier
+              .fillMaxSize()
+              .padding(innerPadding) // Use innerPadding to avoid overlapping with the app bar
+              .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
               Text(
-                  text = exerciseName,
+                  text = exerciseState.exercise.type.name,
                   style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
                   fontWeight = FontWeight.Bold,
                   modifier = Modifier.height(79.dp))
 
               Spacer(modifier = Modifier.height(16.dp))
+          //description text
               Text(
-                  text = instruction,
+                //TODO add some descpriton
+                  text = exerciseState.exercise.type.name,
                   style =
                       MaterialTheme.typography.displaySmall.copy(
                           fontSize = 20.sp, lineHeight = 25.sp),
                   textAlign = TextAlign.Center,
-                  modifier = Modifier.width(317.dp).height(79.dp))
+                  modifier = Modifier
+                    .width(317.dp)
+                    .height(79.dp))
               Spacer(modifier = Modifier.height(16.dp))
+          //TODO add video specific
               val URL =
                   "https://firebasestorage.googleapis.com/v0/b/endurai-92811.appspot.com/o/template_videos%2FPush%20Up.mp4?alt=media&token=2677215b-59a4-47c8-854b-a3326532e8af"
 
@@ -149,7 +187,7 @@ fun ExerciseScreen(
                       painter = painterResource(R.drawable.baseline_access_time_24),
                       contentDescription = "timerLogo",
                       modifier = Modifier.padding(horizontal = (5).dp))
-                  Text(timeLimit, fontSize = 20.sp)
+                  Text(convertSecondsToTime(timeLimit), fontSize = 20.sp)
                 }
               }
               Spacer(modifier = Modifier.height(35.dp))
@@ -167,7 +205,7 @@ fun ExerciseScreen(
                   }
                 } else {
                   Box(modifier = Modifier.size(200.dp)) {
-                    CountDownTimer(currentTime_str = timer.value, maxTime_str = timeLimit)
+                    CountDownTimer(timer,timeLimit)
                   }
                 }
               }
@@ -181,7 +219,9 @@ fun ExerciseScreen(
                         verticalArrangement = Arrangement.Bottom) {
                           // Skip button
                           Button(
-                              onClick = { videoBoxIsDisplayed = !videoBoxIsDisplayed },
+                              onClick = {exerciseIndex++
+                                paramToPresentation()
+                                        },
                               colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                                 Text("Skip", color = Color.Black)
                               }
@@ -194,7 +234,9 @@ fun ExerciseScreen(
                                 finishButtonBoxIsDisplayed = true
                                 videoBoxIsDisplayed = false
                               },
-                              modifier = Modifier.width(200.dp).height(50.dp),
+                              modifier = Modifier
+                                .width(200.dp)
+                                .height(50.dp),
                               colors =
                                   ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
                               shape = RoundedCornerShape(size = 11.dp)) {
@@ -207,7 +249,7 @@ fun ExerciseScreen(
                         modifier = Modifier.size(height = 250.dp, width = 180.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top) {
-                          if (!exerciseIsRepetitionBased && timer.value != "00:00") {
+                          if (!exerciseIsRepetitionBased && timer != 0) {
                             Button(
                                 onClick = { countDownTimerIsPaused = !countDownTimerIsPaused },
                                 modifier = Modifier.size(65.dp)) {
@@ -227,8 +269,13 @@ fun ExerciseScreen(
                           Spacer(Modifier.size(25.dp))
                           val finishButton =
                               Button(
-                                  onClick = {},
-                                  modifier = Modifier.width(200.dp).height(50.dp).padding(),
+                                  onClick = {
+                                    exerciseIndex++
+                                    paramToPresentation()},
+                                  modifier = Modifier
+                                    .width(200.dp)
+                                    .height(50.dp)
+                                    .padding(),
                                   colors =
                                       ButtonDefaults.buttonColors(
                                           containerColor = Color(0xFFA9B0FF)),
@@ -240,7 +287,8 @@ fun ExerciseScreen(
 
                           val skipButton =
                               Button(
-                                  onClick = {},
+                                  onClick = {exerciseIndex++
+                                            paramToPresentation()},
                                   colors =
                                       ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                                     Text("Skip", color = Color.Black)
@@ -250,6 +298,9 @@ fun ExerciseScreen(
               }
             }
       }
+
+
+
 }
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -282,3 +333,27 @@ fun VideoPlayer(url: String, context: Context) {
       })
   DisposableEffect(Unit) { onDispose { exoPlayer.release() } }
 }
+
+
+
+@SuppressLint("StateFlowValueCalledInComposition")
+@Composable
+fun WarmUpScreen(navigationActions: NavigationActions, warmUpViewModel: WarmUpViewModel){
+
+  val selectedWorkout = warmUpViewModel.selectedWorkout.value
+  val exerciseStateList =
+    selectedWorkout?.exercises?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
+
+
+  WarmUpScreenBody(exerciseStateList)
+
+
+
+
+
+
+
+
+}
+
+

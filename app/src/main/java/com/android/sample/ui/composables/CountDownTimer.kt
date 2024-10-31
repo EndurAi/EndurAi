@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun CountDownTimer(
-    currentTime_str: String = "00:02",
-    maxTime_str: String = "00:03",
+    currentTime_int: Int = 50,
+    maxTime_int: Int = 60,
     fullColor: Color = Color.Green,
     criticalColor: Color = Color.Red,
     criticalRate: Float = 0.15f,
@@ -30,6 +30,10 @@ fun CountDownTimer(
     onFinishedText: String = "Done",
     onFinishedIcon: ImageVector = Icons.Filled.Done
 ) {
+
+  val currentTime_str = convertSecondsToTime(currentTime_int)
+  val maxTime_str = convertSecondsToTime(maxTime_int)
+
   Canvas(modifier = Modifier.fillMaxSize()) {
     val currentTime = convertTimeToSeconds(currentTime_str)
     val maxTime = convertTimeToSeconds(maxTime_str)
@@ -121,4 +125,10 @@ fun convertTimeToSeconds(currentTimeStr: String): Int {
   val minutes = parts[0].toInt()
   val seconds = parts[1].toInt()
   return minutes * 60 + seconds
+}
+
+fun convertSecondsToTime(seconds: Int): String {
+  val minutes = seconds / 60
+  val remainingSeconds = seconds % 60
+  return String.format("%02d:%02d", minutes, remainingSeconds)
 }

@@ -17,6 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.WarmUp
+import com.android.sample.model.workout.WarmUpViewModel
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
@@ -35,6 +37,7 @@ import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
+import com.android.sample.ui.workout.WarmUpScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -69,6 +72,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val yogaWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
   val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
+
+  val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
+  val warmUpViewModel = WarmUpViewModel(warmUpRepository)
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -142,5 +148,17 @@ fun MainApp(startDestination: String = Route.AUTH) {
         WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
       }
     }
+
+    // Import or Create Screen for body weight workout
+    navigation(
+      startDestination = Screen.WARMUP_WORKOUT,
+      route = Route.WARMUP_WORKOUT) {
+      composable(Screen.WARMUP_WORKOUT) {
+        WarmUpScreen(navigationActions = navigationActions, warmUpViewModel = warmUpViewModel )
+      }
+    }
+
+
+
   }
 }
