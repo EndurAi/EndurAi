@@ -4,15 +4,10 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.model.userAccount.*
 import com.android.sample.ui.navigation.NavigationActions
@@ -69,52 +64,44 @@ fun EditAccount(
           contract = ActivityResultContracts.GetContent(),
           onResult = { uri -> profileImageUri = uri })
 
-  Column(
-      modifier =
-          Modifier.padding(16.dp)
-              .fillMaxSize()
-              .verticalScroll(rememberScrollState())
-              .testTag("addScreen"),
-      verticalArrangement = Arrangement.spacedBy(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally) {
-        ProfileImagePicker(profileImageUri) { imagePickerLauncher.launch("image/*") }
-        Spacer(modifier = Modifier.height(8.dp))
-        NameInputFields(
-            firstName,
-            lastName,
-            onFirstNameChange = { firstName = it },
-            onLastNameChange = { lastName = it })
-        HeightWeightInput(
-            height,
-            weight,
-            heightUnit,
-            weightUnit,
-            onHeightChange = { height = it },
-            onWeightChange = { weight = it },
-            onHeightUnitChange = { heightUnit = it },
-            onWeightUnitChange = { weightUnit = it })
-        GenderSelection(gender) { gender = it }
-        BirthdayInput(birthDate) { birthDate = it }
-        ActionButton(
-            "Save Changes",
-            onClick = {
-              saveAccount(
-                  isNewAccount = false,
-                  userAccountViewModel = userAccountViewModel,
-                  navigationActions = navigationActions,
-                  userId = userId,
-                  firstName = firstName,
-                  lastName = lastName,
-                  height = height,
-                  heightUnit = heightUnit,
-                  weight = weight,
-                  weightUnit = weightUnit,
-                  gender = gender,
-                  birthDate = birthDate,
-                  profileImageUri = profileImageUri,
-                  originalProfileImageUri = originalProfileImageUri,
-                  context = context)
-            },
-            enabled = firstName.isNotBlank())
-      }
+  AccountForm(
+      profileImageUri = profileImageUri,
+      onImageClick = { imagePickerLauncher.launch("image/*") },
+      firstName = firstName,
+      lastName = lastName,
+      onFirstNameChange = { firstName = it },
+      onLastNameChange = { lastName = it },
+      height = height,
+      weight = weight,
+      heightUnit = heightUnit,
+      weightUnit = weightUnit,
+      onHeightChange = { height = it },
+      onWeightChange = { weight = it },
+      onHeightUnitChange = { heightUnit = it },
+      onWeightUnitChange = { weightUnit = it },
+      gender = gender,
+      onGenderChange = { gender = it },
+      birthDate = birthDate,
+      onBirthDateChange = { birthDate = it },
+      buttonText = "Save Changes",
+      onButtonClick = {
+        saveAccount(
+            isNewAccount = false,
+            userAccountViewModel = userAccountViewModel,
+            navigationActions = navigationActions,
+            userId = userId,
+            firstName = firstName,
+            lastName = lastName,
+            height = height,
+            heightUnit = heightUnit,
+            weight = weight,
+            weightUnit = weightUnit,
+            gender = gender,
+            birthDate = birthDate,
+            profileImageUri = profileImageUri,
+            originalProfileImageUri = originalProfileImageUri,
+            context = context)
+      },
+      isButtonEnabled = firstName.isNotBlank(),
+      testTag = "editScreen")
 }

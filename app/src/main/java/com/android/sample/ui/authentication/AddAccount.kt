@@ -64,54 +64,46 @@ fun AddAccount(
           contract = ActivityResultContracts.GetContent(),
           onResult = { uri -> profileImageUri = uri })
 
-  Column(
-      modifier =
-          Modifier.padding(16.dp)
-              .fillMaxSize()
-              .verticalScroll(rememberScrollState())
-              .testTag("addScreen"), // Made the column scrollable
-      verticalArrangement = Arrangement.spacedBy(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally) {
-        ProfileImagePicker(profileImageUri) { imagePickerLauncher.launch("image/*") }
-        Spacer(modifier = Modifier.height(8.dp))
-        NameInputFields(
-            firstName,
-            lastName,
-            onFirstNameChange = { firstName = it },
-            onLastNameChange = { lastName = it })
-        HeightWeightInput(
-            height,
-            weight,
-            heightUnit,
-            weightUnit,
-            onHeightChange = { height = it },
-            onWeightChange = { weight = it },
-            onHeightUnitChange = { heightUnit = it },
-            onWeightUnitChange = { weightUnit = it })
-        GenderSelection(gender) { gender = it }
-        BirthdayInput(birthDate) { birthDate = it }
-        ActionButton(
-            "Submit",
-            onClick = {
-              saveAccount(
-                  isNewAccount = true,
-                  userAccountViewModel = userAccountViewModel,
-                  navigationActions = navigationActions,
-                  userId = actualUserId,
-                  firstName = firstName,
-                  lastName = lastName,
-                  height = height,
-                  heightUnit = heightUnit,
-                  weight = weight,
-                  weightUnit = weightUnit,
-                  gender = gender,
-                  birthDate = birthDate,
-                  profileImageUri = profileImageUri,
-                  originalProfileImageUri = null,
-                  context = context)
-            },
-            enabled = firstName.isNotBlank())
-      }
+  AccountForm(
+      profileImageUri = profileImageUri,
+      onImageClick = { imagePickerLauncher.launch("image/*") },
+      firstName = firstName,
+      lastName = lastName,
+      onFirstNameChange = { firstName = it },
+      onLastNameChange = { lastName = it },
+      height = height,
+      weight = weight,
+      heightUnit = heightUnit,
+      weightUnit = weightUnit,
+      onHeightChange = { height = it },
+      onWeightChange = { weight = it },
+      onHeightUnitChange = { heightUnit = it },
+      onWeightUnitChange = { weightUnit = it },
+      gender = gender,
+      onGenderChange = { gender = it },
+      birthDate = birthDate,
+      onBirthDateChange = { birthDate = it },
+      buttonText = "Submit",
+      onButtonClick = {
+        saveAccount(
+            isNewAccount = true,
+            userAccountViewModel = userAccountViewModel,
+            navigationActions = navigationActions,
+            userId = actualUserId,
+            firstName = firstName,
+            lastName = lastName,
+            height = height,
+            heightUnit = heightUnit,
+            weight = weight,
+            weightUnit = weightUnit,
+            gender = gender,
+            birthDate = birthDate,
+            profileImageUri = profileImageUri,
+            originalProfileImageUri = null,
+            context = context)
+      },
+      isButtonEnabled = firstName.isNotBlank(),
+      testTag = "addScreen")
 }
 
 @Composable
@@ -310,6 +302,57 @@ fun saveAccount(
       Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
     }
   }
+}
+
+@Composable
+fun AccountForm(
+    profileImageUri: Uri?,
+    onImageClick: () -> Unit,
+    firstName: String,
+    lastName: String,
+    onFirstNameChange: (String) -> Unit,
+    onLastNameChange: (String) -> Unit,
+    height: String,
+    weight: String,
+    heightUnit: HeightUnit,
+    weightUnit: WeightUnit,
+    onHeightChange: (String) -> Unit,
+    onWeightChange: (String) -> Unit,
+    onHeightUnitChange: (HeightUnit) -> Unit,
+    onWeightUnitChange: (WeightUnit) -> Unit,
+    gender: Gender,
+    onGenderChange: (Gender) -> Unit,
+    birthDate: String,
+    onBirthDateChange: (String) -> Unit,
+    buttonText: String,
+    onButtonClick: () -> Unit,
+    isButtonEnabled: Boolean,
+    testTag: String
+) {
+  Column(
+      modifier =
+          Modifier.padding(16.dp)
+              .fillMaxSize()
+              .verticalScroll(rememberScrollState())
+              .testTag(testTag),
+      verticalArrangement = Arrangement.spacedBy(16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        ProfileImagePicker(profileImageUri, onImageClick)
+        Spacer(modifier = Modifier.height(8.dp))
+        NameInputFields(firstName, lastName, onFirstNameChange, onLastNameChange)
+        HeightWeightInput(
+            height,
+            weight,
+            heightUnit,
+            weightUnit,
+            onHeightChange,
+            onWeightChange,
+            onHeightUnitChange,
+            onWeightUnitChange)
+        GenderSelection(gender, onGenderChange)
+        BirthdayInput(birthDate, onBirthDateChange)
+        ActionButton(buttonText, onButtonClick, isButtonEnabled)
+      }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

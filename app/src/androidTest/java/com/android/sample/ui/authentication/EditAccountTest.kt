@@ -57,7 +57,7 @@ class EditAccountScreenTest {
     composeTestRule.waitForIdle()
     Thread.sleep(1000) // 1 second delay
 
-    composeTestRule.onNodeWithTag("addScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("profileImage").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("firstName").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("lastName").performScrollTo().assertIsDisplayed()
