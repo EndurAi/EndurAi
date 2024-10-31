@@ -33,8 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
+import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -42,21 +45,44 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 @Composable
-fun SignInScreen(navigationActions: NavigationActions) {
+fun SignInScreen(
+    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
+    navigationActions: NavigationActions
+) {
   val context = LocalContext.current
-
+  val scope = rememberCoroutineScope()
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
 
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
+            val userId = result.user?.uid
+            if (userId != null) {
+              userAccountViewModel.getUserAccount(userId)
+
+              scope.launch {
+                delay(450) // delay introduced to wait for data to be fetched
+                // TODO: Find a way to modify this with loading screen
+
+                // Observe changes in userAccount to know if profile exists
+                userAccountViewModel.userAccount.collect { account ->
+                  if (account != null) {
+                    // If account exists, navigate to main screen
+                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                  } else {
+                    // If no account exists, navigate to AddAccount screen
+                    navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+                  }
+                }
+              }
+            }
             Toast.makeText(context, "Login successful!", Toast.LENGTH_LONG).show()
-            navigationActions.navigateTo(TopLevelDestinations.MAIN)
           },
           onAuthError = {
             Log.e("SignInScreen", "Failed to sign in: ${it.statusCode}")
