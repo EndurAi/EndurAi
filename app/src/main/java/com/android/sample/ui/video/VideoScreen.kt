@@ -32,6 +32,7 @@ import com.android.sample.ui.navigation.NavigationActions
 @Composable
 /**
  * Video Screen composable function to display the video screen.
+ *
  * @param navigationActions
  * @param videoViewModel
  */

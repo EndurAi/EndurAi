@@ -2,13 +2,10 @@
 
 package com.android.sample.model.video
 
-import android.net.Uri
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
-import coil.compose.AsyncImagePainter
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -17,12 +14,9 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.StorageReference
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -39,17 +33,16 @@ class VideoRepositoryTest {
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
   @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
 
+  private lateinit var videoRepositoryStorage: VideoRepositoryStorage
 
-   private lateinit var videoRepositoryStorage: VideoRepositoryStorage
-
-  private val video = Video(
-    title = "Sample Video",
-    url = "http://example.com/video.mp4",
-    tag = "Sample Tag",
-    thumbnailUrl = "http://example.com/thumbnail.jpg",
-    duration = "60",
-    description = "Sample Description"
-  )
+  private val video =
+      Video(
+          title = "Sample Video",
+          url = "http://example.com/video.mp4",
+          tag = "Sample Tag",
+          thumbnailUrl = "http://example.com/thumbnail.jpg",
+          duration = "60",
+          description = "Sample Description")
 
   @Before
   fun setUp() {
@@ -64,18 +57,14 @@ class VideoRepositoryTest {
     `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.toObject(Video::class.java)).thenReturn(video)
-
   }
+
   @Test
   fun getVideos_success() {
 
     videoRepositoryStorage.getVideos(
-      onSuccess = { videos ->
-        assertTrue(videos.contains(video))
-      },
-      onFailure = {
-        fail("Failure callback should not be called") }
-    )
+        onSuccess = { videos -> assertTrue(videos.contains(video)) },
+        onFailure = { fail("Failure callback should not be called") })
 
     shadowOf(Looper.getMainLooper()).idle()
     verify(mockCollectionReference).get()
@@ -88,17 +77,13 @@ class VideoRepositoryTest {
 
     var failureCalled = false
     videoRepositoryStorage.getVideos(
-      onSuccess = {
-        fail("Success callback should not be called")
-      },
-      onFailure = { error ->
-        failureCalled = true
-        assertTrue(error.message == "Test exception")
-      }
-    )
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { error ->
+          failureCalled = true
+          assertTrue(error.message == "Test exception")
+        })
 
     shadowOf(Looper.getMainLooper()).idle()
     assertTrue(failureCalled)
   }
 }
-

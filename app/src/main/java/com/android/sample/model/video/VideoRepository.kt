@@ -7,11 +7,9 @@ interface VideoRepository {
    *
    * @param onSuccess Callback function to be invoked on successful initialization.
    */
-
   fun init(onSuccess: () -> Unit)
   /**
-   * Uploads a video to the repository.
-   * not currently supported
+   * Uploads a video to the repository. not currently supported
    *
    * @param videoUri The URI of the video to upload.
    * @param onSuccess Callback function to be invoked with the download URL on successful upload.

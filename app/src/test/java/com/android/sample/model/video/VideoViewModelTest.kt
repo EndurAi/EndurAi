@@ -27,7 +27,6 @@ class VideoViewModelTest {
 
   @Test
   fun `loadVideos should update videos on success`() = runTest {
-
     val videos =
         listOf(
             Video(
@@ -52,17 +51,14 @@ class VideoViewModelTest {
         .`when`(videoRepository)
         .getVideos(any(), any())
 
-
     videoViewModel.loadVideos()
 
-
     assertEquals(videos, videoViewModel.videos.first())
-    assertNull(videoViewModel.error.first())   // verify no error occured
+    assertNull(videoViewModel.error.first()) // verify no error occured
   }
 
   @Test
   fun `loadVideos should update error on failure`() = runTest {
-
     val exception = Exception("Failed to load videos")
     doAnswer {
           val failureCallback = it.getArgument<(Exception) -> Unit>(1)
@@ -72,9 +68,7 @@ class VideoViewModelTest {
         .`when`(videoRepository)
         .getVideos(any(), any())
 
-
     videoViewModel.loadVideos()
-
 
     assertEquals("Failed to load videos: ${exception.message}", videoViewModel.error.first())
     assertTrue(videoViewModel.videos.first().isEmpty())
@@ -91,9 +85,7 @@ class VideoViewModelTest {
             "120",
             "Description")
 
-
     videoViewModel.selectVideo(selectedVideo)
-
 
     assertEquals(selectedVideo, videoViewModel.selectedVideo.first())
   }

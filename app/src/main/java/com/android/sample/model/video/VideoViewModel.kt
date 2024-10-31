@@ -31,15 +31,17 @@ open class VideoViewModel(private val videoRepository: VideoRepository) : ViewMo
   open val selectedVideo: StateFlow<Video?> = selectedVideo_.asStateFlow()
 
   init {
-    videoRepository.init {  }
+    videoRepository.init {}
   }
 
   /** Load videos from the repository. */
   suspend fun loadVideos() {
     withContext(Dispatchers.IO) {
       videoRepository.getVideos(
-          { videoList -> _videos.update { videoList }
-            Log.d("VideoViewModel", "Loaded videos: $videoList")},
+          { videoList ->
+            _videos.update { videoList }
+            Log.d("VideoViewModel", "Loaded videos: $videoList")
+          },
           { exception -> _error.update { "Failed to load videos: ${exception.message}" } })
     }
   }

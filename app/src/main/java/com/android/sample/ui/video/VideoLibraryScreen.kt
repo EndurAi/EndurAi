@@ -32,9 +32,7 @@ import com.android.sample.model.video.VideoViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
-/**
- * Screen to display the video library.
- * */
+/** Screen to display the video library. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: VideoViewModel) {
@@ -95,9 +93,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
       })
 }
 
-/**
- * Composable function to display a the searchbar
- */
+/** Composable function to display a the searchbar */
 @Composable
 fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
   Box(
@@ -116,10 +112,7 @@ fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier
             })
       }
 }
-/**
- * Composable function to display a dropdown menu for selecting tags.
- */
-
+/** Composable function to display a dropdown menu for selecting tags. */
 @Composable
 fun TagDropdown(
     selectedTag: String,
@@ -149,9 +142,7 @@ fun TagDropdown(
   }
 }
 
-/**
- * Composable function to display a video item in the list.
- */
+/** Composable function to display a video item in the list. */
 @Composable
 fun VideoListItem(video: Video, onClick: () -> Unit, modifier: Modifier = Modifier) {
   // Modified card with thumbnail on the right and larger size
