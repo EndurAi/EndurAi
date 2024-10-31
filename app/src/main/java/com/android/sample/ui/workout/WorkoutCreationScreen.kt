@@ -47,9 +47,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.model.workout.BodyWeightExercise
 import com.android.sample.model.workout.BodyWeightExerciseType
 import com.android.sample.model.workout.BodyWeightWorkout
@@ -65,6 +67,8 @@ import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.Grey
+import com.android.sample.ui.theme.Purple60
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,7 +149,7 @@ fun WorkoutCreationScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors =
                             CardDefaults.cardColors(
-                                containerColor = Color(0xFFD3D3D3)), // Gray color for consistency
+                                containerColor = Grey), // Gray color for consistency
                         modifier =
                             Modifier.fillMaxWidth(0.9f)
                                 .padding(horizontal = 24.dp, vertical = 8.dp)) {
@@ -182,17 +186,14 @@ fun WorkoutCreationScreen(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                           Box(
                               modifier =
-                                  Modifier.size(8.dp)
-                                      .background(Color(0xFF9C7EEA), shape = CircleShape))
-                          Spacer(
-                              modifier =
-                                  Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
+                                  Modifier.size(8.dp).background(Purple60, shape = CircleShape))
+                          Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Purple60))
                         }
                     Card(
                         shape = RoundedCornerShape(16.dp),
                         colors =
                             CardDefaults.cardColors(
-                                containerColor = Color(0xFFD3D3D3)), // Couleur grise pour la carte
+                                containerColor = Grey), // Couleur grise pour la carte
                         modifier =
                             Modifier.fillMaxWidth(0.9f)
                                 .padding(horizontal = 24.dp, vertical = 8.dp)) {
@@ -204,7 +205,10 @@ fun WorkoutCreationScreen(
                                       .height(56.dp)
                                       .clickable { showExerciseDialog = true }
                                       .testTag("addExerciseButton")) {
-                                Text(text = "+", fontSize = 24.sp, color = Color.DarkGray)
+                                Text(
+                                    text = stringResource(id = R.string.addButton),
+                                    fontSize = 24.sp,
+                                    color = Color.DarkGray)
                               }
                         }
                   }

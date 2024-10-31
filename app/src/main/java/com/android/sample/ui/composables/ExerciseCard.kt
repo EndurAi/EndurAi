@@ -18,6 +18,8 @@ import com.android.sample.R
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.Grey
+import com.android.sample.ui.theme.Purple20
 
 /**
  * Displays a card representing an exercise with its name and details.
@@ -33,13 +35,13 @@ fun ExerciseCard(exercise: Exercise) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-              Box(modifier = Modifier.size(8.dp).background(Color(0xFF9C7EEA), shape = CircleShape))
-              Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Color(0xFF9C7EEA)))
+              Box(modifier = Modifier.size(8.dp).background(Purple20, shape = CircleShape))
+              Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Purple20))
             }
 
         Card(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFD3D3D3)), // Gray color
+            colors = CardDefaults.cardColors(containerColor = Grey), // Grey color
             modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp)) {
               Row(
                   modifier = Modifier.padding(16.dp).fillMaxWidth(),
