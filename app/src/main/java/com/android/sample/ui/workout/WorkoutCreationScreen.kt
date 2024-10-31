@@ -71,6 +71,10 @@ import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.Grey
 import com.android.sample.ui.theme.Purple60
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import androidx.compose.material.icons.filled.Edit
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutCreationScreen(
@@ -86,6 +90,7 @@ fun WorkoutCreationScreen(
   var name by remember { mutableStateOf(selectedWorkout?.name ?: "") }
   var description by remember { mutableStateOf(selectedWorkout?.description ?: "") }
   var warmup by remember { mutableStateOf(selectedWorkout?.warmup ?: false) }
+    var selectedDateTime by remember { mutableStateOf<LocalDateTime?>(null) }
   var exerciseList by remember {
     mutableStateOf(
         (selectedWorkout as? YogaWorkout)?.exercises
@@ -122,12 +127,29 @@ fun WorkoutCreationScreen(
                         label = { Text("Exercise Plan Name") },
                         placeholder = { Text("Enter name of your exercise plan") },
                         modifier = Modifier.testTag("nameTextField"))
+
+                  Spacer(Modifier.height(16.dp))
+
+
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
                         label = { Text("Description") },
                         placeholder = { Text("Describe your exercise plan") },
                         modifier = Modifier.testTag("descriptionTextField"))
+
+                  Spacer(Modifier.height(16.dp))
+
+
+                  DateTimePicker(
+                      selectedDateTime = selectedDateTime,
+                      onDateTimeSelected = { newDateTime ->
+                          selectedDateTime = newDateTime // Mise à jour avec la date sélectionnée
+                      }
+                  )
+
+                  Spacer(Modifier.height(16.dp))
+
                     Button(
                         onClick = { showNameDescriptionScreen = false },
                         modifier = Modifier.testTag("nextButton")) {
@@ -224,7 +246,7 @@ fun WorkoutCreationScreen(
                                       name = name,
                                       description = description,
                                       warmup = warmup,
-                                      date = LocalDateTime.of(2024,10,31,22,0,0),
+                                      date = selectedDateTime!!,
                                       exercises =
                                           exerciseList.toMutableList()
                                               as MutableList<YogaExercise>))
@@ -236,7 +258,7 @@ fun WorkoutCreationScreen(
                                       name = name,
                                       description = description,
                                       warmup = warmup,
-                                      date = LocalDateTime.of(2024,10,31,22,0,0),
+                                      date = selectedDateTime!!,
                                       exercises =
                                           exerciseList.toMutableList()
                                               as MutableList<BodyWeightExercise>))
@@ -392,3 +414,45 @@ fun WorkoutCreationScreen(
         })
   }
 }
+
+@Composable
+fun DateTimePicker(
+    selectedDateTime: LocalDateTime?,
+    onDateTimeSelected: (LocalDateTime) -> Unit,
+) {
+    val context = LocalContext.current
+
+    // Function to launch the Date and Time pickers
+    fun showDateTimePickers() {
+        val now = LocalDateTime.now()
+        val datePicker = DatePickerDialog(
+            context, { _, year, month, dayOfMonth ->
+                val timePicker = TimePickerDialog(
+                    context, { _, hourOfDay, minute ->
+                        val selectedDate = LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute)
+                        onDateTimeSelected(selectedDate)
+                    }, now.hour, now.minute, true
+                )
+                timePicker.show()
+            }, now.year, now.monthValue - 1, now.dayOfMonth
+        )
+        datePicker.show()
+    }
+
+    OutlinedTextField(
+        value = selectedDateTime?.let { "${it.dayOfMonth} ${it.month.name.lowercase().capitalize()} ${it.year} at ${it.hour}:${it.minute.toString().padStart(2, '0')}" } ?: "Select Date and Time",
+        onValueChange = { /* No-op since we control the value */ },
+        readOnly = true,
+        label = { Text("Workout Date") },
+        trailingIcon = {
+            IconButton(onClick = {
+                showDateTimePickers()
+            }) {
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Date")
+            }
+        }
+    )
+}
+
+
+
