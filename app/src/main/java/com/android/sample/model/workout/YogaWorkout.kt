@@ -64,11 +64,20 @@ class YogaWorkout(
 }
 
 /** Enum class representing various types of yoga exercises. */
-enum class YogaExerciseType {
+enum class YogaExerciseType : ExerciseType {
   DOWNWARD_DOG,
   TREE_POSE,
   SUN_SALUTATION,
-  WARRIOR_II
+  WARRIOR_II;
+
+  override fun toString(): String {
+    return when (this) {
+      DOWNWARD_DOG -> "Downward Dog"
+      TREE_POSE -> "Tree Pose"
+      SUN_SALUTATION -> "Sun Salutation"
+      WARRIOR_II -> "Warrior 2 Pose"
+    }
+  }
 }
 
 /**
@@ -82,4 +91,4 @@ data class YogaExercise(
     val exerciseId: String,
     val type: YogaExerciseType,
     val detail: ExerciseDetail
-)
+) : Exercise(exerciseId, type, detail)
