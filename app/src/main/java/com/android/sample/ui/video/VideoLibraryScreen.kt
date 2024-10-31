@@ -32,7 +32,9 @@ import com.android.sample.model.video.VideoViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
-/** Screen to display the video library. */
+/**
+ * Screen to display the video library.
+ * */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: VideoViewModel) {
@@ -45,7 +47,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
   Scaffold(
       topBar = {
         TopAppBar(
-            title = { Text("Videos Library", Modifier.semantics { testTag = "library_title" }) },
+            title = { Text("Videos Library", Modifier.semantics { testTag = "libraryTitle" }) },
             navigationIcon = {
               IconButton(onClick = { navigationActions.goBack() }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -60,20 +62,20 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
               SearchBar(
                   query = searchQuery,
                   onQueryChange = { searchQuery = it },
-                  modifier = Modifier.weight(1f).semantics { testTag = "search_bar" })
+                  modifier = Modifier.weight(1f).semantics { testTag = "searchBar" })
 
               Spacer(modifier = Modifier.width(8.dp))
 
               TagDropdown(
                   selectedTag = selectedTag,
                   onTagSelected = { selectedTag = it },
-                  modifier = Modifier.width(100.dp).semantics { testTag = "tag_dropdown" })
+                  modifier = Modifier.width(100.dp).semantics { testTag = "tagDropdown" })
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Filtered video list
-            LazyColumn(modifier = Modifier.semantics { testTag = "video_list" }) {
+            LazyColumn(modifier = Modifier.semantics { testTag = "videoList" }) {
               items(
                   videoList.filter { video ->
                     (selectedTag == "All" || video.tag == selectedTag) &&
@@ -85,7 +87,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                           videoViewModel.selectVideo(video)
                           navigationActions.navigateTo(Screen.VIDEO)
                         },
-                        modifier = Modifier.semantics { testTag = "video_item_${video.title}" })
+                        modifier = Modifier.semantics { testTag = "videoItem${video.title}" })
                   }
             }
           }
@@ -93,6 +95,9 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
       })
 }
 
+/**
+ * Composable function to display a the searchbar
+ */
 @Composable
 fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
   Box(
@@ -111,6 +116,9 @@ fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier
             })
       }
 }
+/**
+ * Composable function to display a dropdown menu for selecting tags.
+ */
 
 @Composable
 fun TagDropdown(
@@ -141,6 +149,9 @@ fun TagDropdown(
   }
 }
 
+/**
+ * Composable function to display a video item in the list.
+ */
 @Composable
 fun VideoListItem(video: Video, onClick: () -> Unit, modifier: Modifier = Modifier) {
   // Modified card with thumbnail on the right and larger size

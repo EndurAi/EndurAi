@@ -2,6 +2,7 @@
 
 package com.android.sample.model.video
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.Dispatchers
@@ -29,11 +30,16 @@ open class VideoViewModel(private val videoRepository: VideoRepository) : ViewMo
   private val selectedVideo_ = MutableStateFlow<Video?>(null)
   open val selectedVideo: StateFlow<Video?> = selectedVideo_.asStateFlow()
 
+  init {
+    videoRepository.init {  }
+  }
+
   /** Load videos from the repository. */
   suspend fun loadVideos() {
     withContext(Dispatchers.IO) {
       videoRepository.getVideos(
-          { videoList -> _videos.update { videoList } },
+          { videoList -> _videos.update { videoList }
+            Log.d("VideoViewModel", "Loaded videos: $videoList")},
           { exception -> _error.update { "Failed to load videos: ${exception.message}" } })
     }
   }

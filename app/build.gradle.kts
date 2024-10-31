@@ -193,13 +193,18 @@ dependencies {
 
 
 
+
     //----------- Test dependencies ---------------
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockk)
+//    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    
+    testImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
+
     configurations.configureEach {
         exclude(group = "com.google.protobuf", module = "protobuf-lite")
     }

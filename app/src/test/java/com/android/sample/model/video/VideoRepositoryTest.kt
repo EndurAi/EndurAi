@@ -1,70 +1,104 @@
-import com.android.sample.model.video.Video
-import com.android.sample.model.video.VideoRepositoryStorage
+// Portions of this code were developed with the help of ChatGPT and github copilot
+
+package com.android.sample.model.video
+
+import android.net.Uri
+import android.os.Looper
+import androidx.test.core.app.ApplicationProvider
+import coil.compose.AsyncImagePainter
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.StorageReference
-import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-import org.mockito.kotlin.times
+import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.verify
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
-class VideoRepositoryStorageTest {
+@RunWith(RobolectricTestRunner::class)
+class VideoRepositoryTest {
+  @Mock private lateinit var mockFirestore: FirebaseFirestore
+  @Mock private lateinit var mockStorage: StorageReference
+  @Mock private lateinit var mockDocumentReference: DocumentReference
+  @Mock private lateinit var mockCollectionReference: CollectionReference
+  @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
+  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
 
-  private lateinit var videoRepository: VideoRepositoryStorage
-  private lateinit var mockStorageReference: StorageReference
-  private lateinit var mockFirestore: FirebaseFirestore
-  private lateinit var mockQuerySnapshot: QuerySnapshot
-  private lateinit var mockVideoRef: StorageReference
+
+   private lateinit var videoRepositoryStorage: VideoRepositoryStorage
+
+  private val video = Video(
+    title = "Sample Video",
+    url = "http://example.com/video.mp4",
+    tag = "Sample Tag",
+    thumbnailUrl = "http://example.com/thumbnail.jpg",
+    duration = "60",
+    description = "Sample Description"
+  )
 
   @Before
-  fun setup() {
-    mockStorageReference = Mockito.mock(StorageReference::class.java)
-    mockFirestore = Mockito.mock(FirebaseFirestore::class.java)
-    mockQuerySnapshot = Mockito.mock(QuerySnapshot::class.java)
-    mockVideoRef = Mockito.mock(StorageReference::class.java)
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
 
-    // Mock the collection method to return a valid CollectionReference
-    val mockCollectionReference = Mockito.mock(CollectionReference::class.java)
-    Mockito.`when`(mockFirestore.collection("videos")).thenReturn(mockCollectionReference)
+    videoRepositoryStorage = VideoRepositoryStorage(mockStorage, mockFirestore)
 
-    videoRepository = VideoRepositoryStorage(mockStorageReference, mockFirestore)
+    `when`(mockFirestore.collection("videos")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.toObject(Video::class.java)).thenReturn(video)
+
+  }
+  @Test
+  fun getVideos_success() {
+
+    videoRepositoryStorage.getVideos(
+      onSuccess = { videos ->
+        assertTrue(videos.contains(video))
+      },
+      onFailure = {
+        fail("Failure callback should not be called") }
+    )
+
+    shadowOf(Looper.getMainLooper()).idle()
+    verify(mockCollectionReference).get()
   }
 
   @Test
-  fun `getVideos should return list of videos from Firestore`() {
-    // Arrange
-    val mockVideo1 = Video("Video 1", "url1", "tag1", "thumbnail1", "100", "description1")
-    val mockVideo2 = Video("Video 2", "url2", "tag2", "thumbnail2", "200", "description2")
-    val mockSnapshot = listOf(mockVideo1, mockVideo2)
+  fun getVideos_failure() {
+    val exception = Exception("Test exception")
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forException(exception))
 
-    val mockFirestoreTask = Tasks.forResult(mockQuerySnapshot)
-    Mockito.`when`(mockQuerySnapshot.toObjects(Video::class.java)).thenReturn(mockSnapshot)
-    Mockito.`when`(mockFirestore.collection("videos").get()).thenReturn(mockFirestoreTask)
+    var failureCalled = false
+    videoRepositoryStorage.getVideos(
+      onSuccess = {
+        fail("Success callback should not be called")
+      },
+      onFailure = { error ->
+        failureCalled = true
+        assertTrue(error.message == "Test exception")
+      }
+    )
 
-    // Act & Assert
-    videoRepository.getVideos(
-        onSuccess = { videos ->
-          assertEquals(2, videos.size)
-          assertTrue(videos.contains(mockVideo1))
-          assertTrue(videos.contains(mockVideo2))
-        },
-        onFailure = { fail("Should not fail") })
-  }
-
-  @Test
-  fun `getVideos should call onFailure if Firestore retrieval fails`() {
-    // Arrange
-    val mockFirestoreFailureTask = Tasks.forException<QuerySnapshot>(Exception("Firestore failed"))
-    Mockito.`when`(mockFirestore.collection("videos").get()).thenReturn(mockFirestoreFailureTask)
-
-    // Act & Assert
-    videoRepository.getVideos(
-        onSuccess = { fail("Should not succeed") },
-        onFailure = { exception -> assertTrue(exception is Exception) })
+    shadowOf(Looper.getMainLooper()).idle()
+    assertTrue(failureCalled)
   }
 }
+

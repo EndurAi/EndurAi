@@ -30,6 +30,11 @@ import com.android.sample.ui.navigation.NavigationActions
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * Video Screen composable function to display the video screen.
+ * @param navigationActions
+ * @param videoViewModel
+ */
 fun VideoScreen(
     navigationActions: NavigationActions,
     videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
@@ -39,7 +44,7 @@ fun VideoScreen(
       modifier = Modifier.testTag("videoScreen"),
       topBar = {
         TopAppBar(
-            title = { Text("Videos Library") },
+            title = { Text("Videos Library", modifier = Modifier.testTag("videosLibraryTitle")) },
             navigationIcon = {
               IconButton(
                   onClick = { navigationActions.goBack() },

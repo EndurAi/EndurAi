@@ -1,3 +1,5 @@
+// Portions of this code were developed with the help of ChatGPT and github copilot
+
 package com.android.sample.model.video
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,7 +27,7 @@ class VideoViewModelTest {
 
   @Test
   fun `loadVideos should update videos on success`() = runTest {
-    // Arrange
+
     val videos =
         listOf(
             Video(
@@ -50,17 +52,17 @@ class VideoViewModelTest {
         .`when`(videoRepository)
         .getVideos(any(), any())
 
-    // Act
+
     videoViewModel.loadVideos()
 
-    // Assert
+
     assertEquals(videos, videoViewModel.videos.first())
-    assertNull(videoViewModel.error.first())
+    assertNull(videoViewModel.error.first())   // verify no error occured
   }
 
   @Test
   fun `loadVideos should update error on failure`() = runTest {
-    // Arrange
+
     val exception = Exception("Failed to load videos")
     doAnswer {
           val failureCallback = it.getArgument<(Exception) -> Unit>(1)
@@ -70,17 +72,16 @@ class VideoViewModelTest {
         .`when`(videoRepository)
         .getVideos(any(), any())
 
-    // Act
+
     videoViewModel.loadVideos()
 
-    // Assert
+
     assertEquals("Failed to load videos: ${exception.message}", videoViewModel.error.first())
     assertTrue(videoViewModel.videos.first().isEmpty())
   }
 
   @Test
   fun `selectVideo should update selectedVideo`() = runTest {
-    // Arrange
     val selectedVideo =
         Video(
             "Title",
@@ -90,10 +91,10 @@ class VideoViewModelTest {
             "120",
             "Description")
 
-    // Act
+
     videoViewModel.selectVideo(selectedVideo)
 
-    // Assert
+
     assertEquals(selectedVideo, videoViewModel.selectedVideo.first())
   }
 }

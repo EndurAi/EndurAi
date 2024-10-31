@@ -81,6 +81,7 @@ mockito-kotlin-v400 = { module = "org.mockito.kotlin:mockito-kotlin", version.re
 moshi-sealed-reflect = { module = "dev.zacsweers.moshix:moshi-sealed-reflect", version.ref = "moshiSealedReflect" }
 moshi-sealed-runtime = { module = "dev.zacsweers.moshix:moshi-sealed-runtime", version.ref = "moshiSealedRuntime" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", version = "2.1.0" }
 
 # Firebase Libraries
 firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }
