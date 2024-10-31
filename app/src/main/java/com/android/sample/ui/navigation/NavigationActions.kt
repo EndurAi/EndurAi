@@ -24,6 +24,8 @@ object Route {
   const val WARMUP_WORKOUT = "Warmup workout"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout"
   const val YOGA_WORKOUT = "Yoga workout"
+  const val ADD_ACCOUNT = "Add Account"
+  const val EDIT_ACCOUNT = "Edit Account"
 }
 
 object Screen {
@@ -46,6 +48,8 @@ object Screen {
   const val YOGA_WORKOUT =  "Yoga workout screen"
 
 
+  const val ADD_ACCOUNT = "Add Account Screen"
+  const val EDIT_ACCOUNT = "Edit Account Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
