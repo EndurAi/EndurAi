@@ -17,6 +17,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
 import com.android.sample.model.workout.WorkoutType
@@ -34,6 +35,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.preferences.PreferencesScreen
 import com.android.sample.ui.settings.SettingsScreen
 import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.video.VideoLibraryScreen
 import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
@@ -67,6 +69,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+
+  val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
   val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository)
@@ -97,8 +101,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
     }
 
     // Video Screen
-    navigation(startDestination = Screen.VIDEO, route = Route.VIDEO) {
-      composable(Screen.VIDEO) { VideoScreen(navigationActions) }
+    navigation(startDestination = Screen.VIDEO_LIBRARY, route = Route.VIDEO_LIBRARY) {
+      composable(Screen.VIDEO_LIBRARY) { VideoLibraryScreen(navigationActions, videoViewModel) }
+      composable(Screen.VIDEO) { VideoScreen(navigationActions, videoViewModel) }
     }
 
     // Achievements Screen
