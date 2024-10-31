@@ -2,7 +2,7 @@
 
 package com.android.sample.model.video
 
-import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.Dispatchers
@@ -17,48 +17,55 @@ import kotlinx.coroutines.withContext
  *
  * @property videoRepository The repository for video operations.
  */
-class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel() {
+open class VideoViewModel(private val videoRepository: VideoRepository) : ViewModel() {
 
-  private val _videoUrls = MutableStateFlow<List<String>>(emptyList())
-  val videoUrls: StateFlow<List<String>>
-    get() = _videoUrls.asStateFlow()
-
-  private val _uploadSuccess = MutableStateFlow<String?>(null)
-  val uploadSuccess: StateFlow<String?>
-    get() = _uploadSuccess.asStateFlow()
+  private val _videos = MutableStateFlow<List<Video>>(emptyList())
+  open val videos: StateFlow<List<Video>>
+    get() = _videos.asStateFlow()
 
   private val _error = MutableStateFlow<String?>(null)
   val error: StateFlow<String?>
     get() = _error.asStateFlow()
 
-  /**
-   * Uploads a video and updates the state.
-   *
-   * @param videoUri The URI of the video to upload.
-   */
-  fun uploadVideo(videoUri: Uri) {
-    videoRepository.uploadVideo(
-        videoUri,
-        { downloadUrl -> _uploadSuccess.value = downloadUrl },
-        { exception -> _error.value = "Upload failed: ${exception.message}" })
+  private val selectedVideo_ = MutableStateFlow<Video?>(null)
+  open val selectedVideo: StateFlow<Video?> = selectedVideo_.asStateFlow()
+
+  init {
+    videoRepository.init {}
   }
 
-  /** Loads the video URLs and updates the state. */
+  /** Load videos from the repository. */
   suspend fun loadVideos() {
     withContext(Dispatchers.IO) {
-      videoRepository.getVideoUrls(
-          { urls -> _videoUrls.update { urls } },
+      videoRepository.getVideos(
+          { videoList ->
+            _videos.update { videoList }
+            Log.d("VideoViewModel", "Loaded videos: $videoList")
+          },
           { exception -> _error.update { "Failed to load videos: ${exception.message}" } })
     }
   }
 
-  // Companion object factory for ViewModel
+  /**
+   * Select a video.
+   *
+   * @param video The video to select.
+   */
+  fun selectVideo(video: Video) {
+    selectedVideo_.value = video
+  }
+
+  /**
+   * Factory for creating instances of [VideoViewModel].
+   *
+   * This factory method is used to create a new instance of [VideoViewModel] with a
+   * [VideoRepositoryStorage] as the repository.
+   */
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            // Initialize the VideoRepositoryStorage
             val videoRepository = VideoRepositoryStorage()
             return VideoViewModel(videoRepository) as T
           }
