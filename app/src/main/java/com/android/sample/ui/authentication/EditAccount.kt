@@ -65,6 +65,7 @@ fun EditAccount(
   }
 
   val context = LocalContext.current
+
   val imagePickerLauncher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.GetContent(),
@@ -98,62 +99,23 @@ fun EditAccount(
         BirthdayInput(birthDate) { birthDate = it }
         ActionButton(
             "Save Changes",
-            onClick = {
-              if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
-                uploadProfileImage(
-                    profileImageUri!!,
-                    userId,
-                    onSuccess = { downloadUrl ->
-                      val calendar = GregorianCalendar()
-                      val parts = birthDate.split("/")
-                      if (parts.size == 3) {
-                        try {
-                          calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-                          userAccountViewModel.updateUserAccount(
-                              UserAccount(
-                                  userId = userAccount!!.userId,
-                                  firstName = firstName,
-                                  lastName = lastName,
-                                  height = height.toFloatOrNull() ?: 0f,
-                                  heightUnit = heightUnit,
-                                  weight = weight.toFloatOrNull() ?: 0f,
-                                  weightUnit = weightUnit,
-                                  gender = gender,
-                                  birthDate = Timestamp(calendar.time),
-                                  profileImageUrl = downloadUrl))
-                          navigationActions.goBack()
-                        } catch (e: Exception) {
-                          Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
-                        }
-                      }
-                    },
-                    onFailure = {
-                      Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
-                    })
-              } else {
-                val calendar = GregorianCalendar()
-                val parts = birthDate.split("/")
-                if (parts.size == 3) {
-                  try {
-                    calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-                    userAccountViewModel.updateUserAccount(
-                        UserAccount(
-                            userId = userAccount!!.userId,
-                            firstName = firstName,
-                            lastName = lastName,
-                            height = height.toFloatOrNull() ?: 0f,
-                            heightUnit = heightUnit,
-                            weight = weight.toFloatOrNull() ?: 0f,
-                            weightUnit = weightUnit,
-                            gender = gender,
-                            birthDate = Timestamp(calendar.time),
-                            profileImageUrl = userAccount!!.profileImageUrl))
-                    navigationActions.goBack()
-                  } catch (e: Exception) {
-                    Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
-                  }
-                }
-              }
+            onClick = {saveAccount(
+                isNewAccount = false,
+                userAccountViewModel = userAccountViewModel,
+                navigationActions = navigationActions,
+                userId = userId,
+                firstName = firstName,
+                lastName = lastName,
+                height = height,
+                heightUnit = heightUnit,
+                weight = weight,
+                weightUnit = weightUnit,
+                gender = gender,
+                birthDate = birthDate,
+                profileImageUri = profileImageUri,
+                originalProfileImageUri = originalProfileImageUri,
+                context = context
+            )
             },
             enabled = firstName.isNotBlank())
       }
