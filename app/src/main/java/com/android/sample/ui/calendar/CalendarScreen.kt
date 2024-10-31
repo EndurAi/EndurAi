@@ -144,7 +144,7 @@ fun CalendarScreen(
     }
 
     Scaffold(
-        topBar = { TopBar(navigationActions, R.string.calendar_tittle) }
+        topBar = { TopBar(navigationActions, R.string.calendar_title) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -10,5 +10,9 @@
     <string name="TitleTabYoga">Yoga</string>
     <string name="TitleTabRunning">Running</string>
     <string name="setting_title">Settings</string>
+<<<<<<< HEAD
     <string name="calendar_title">Calendar</string>
+=======
+    <string name="addButton">+</string>
+>>>>>>> origin/main
 </resources>
