@@ -38,6 +38,7 @@ object Screen {
   const val SESSIONSELECTION = "Session Selection Screen"
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight Screen"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga Screen"
+  const val VIEW_ALL = "View All Screen"
   const val TEST = "Test Screen"
 }
 
