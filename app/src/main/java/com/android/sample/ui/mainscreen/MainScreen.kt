@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
@@ -28,6 +30,7 @@ import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
+import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
@@ -49,7 +52,11 @@ import java.util.Date
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun MainScreen(navigationActions: NavigationActions) {
+fun MainScreen(
+    navigationActions: NavigationActions,
+    bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
+    yogaViewModel: WorkoutViewModel<YogaWorkout>,
+) {
   // Configuration temporaire pour tester
   val account =
       UserAccount(
@@ -64,23 +71,15 @@ fun MainScreen(navigationActions: NavigationActions) {
           Timestamp(Date()),
           "")
   val profile = R.drawable.homme
+  val bodyWeightWorkouts = bodyWeightViewModel.workouts.collectAsState()
+  val yogaWorkouts = yogaViewModel.workouts.collectAsState()
 
-  val workouts =
-      listOf(
-          BodyWeightWorkout(
-              workoutId = "1",
-              name = "Run in Lavaux",
-              description = "Enjoying Lavaux",
-              warmup = true,
-              date = LocalDateTime.of(2024, 10, 31,8,0),
-              userIdSet = mutableSetOf("user1")),
-          YogaWorkout(
-              workoutId = "3",
-              name = "After Comparch relax",
-              description = "Chilling time",
-              warmup = true,
-              date = LocalDateTime.of(2024, 10, 31,22,0),
-              userIdSet = mutableSetOf("user1")))
+  val workoutDisplayed =
+      when {
+        bodyWeightWorkouts.value.isNotEmpty() -> bodyWeightWorkouts.value[0]
+        yogaWorkouts.value.isNotEmpty() -> yogaWorkouts.value[0]
+        else -> null
+      }
 
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
@@ -92,7 +91,9 @@ fun MainScreen(navigationActions: NavigationActions) {
             modifier = Modifier.fillMaxSize().padding(padding),
             verticalArrangement = Arrangement.SpaceBetween) {
               WorkoutSessionsSection(
-                  workouts = workouts, profile = profile, navigationActions = navigationActions)
+                  workout = workoutDisplayed,
+                  profile = profile,
+                  navigationActions = navigationActions)
               QuickWorkoutSection(navigationActions = navigationActions)
               NewWorkoutSection(navigationActions = navigationActions)
             }
@@ -151,11 +152,7 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun WorkoutSessionsSection(
-    workouts: List<Workout>,
-    profile: Int,
-    navigationActions: NavigationActions
-) {
+fun WorkoutSessionsSection(workout: Workout?, profile: Int, navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
     Text(
         text = "My workout sessions",
@@ -167,13 +164,20 @@ fun WorkoutSessionsSection(
                 .clip(RoundedCornerShape(12.dp))
                 .background(GreyLight)
                 .padding(8.dp)) {
-          workouts.take(1).forEach { workout ->
+          if (workout != null) {
             Box(modifier = Modifier.padding(vertical = 4.dp)) {
               WorkoutCard(workout, profile, navigationActions)
             }
+          } else {
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                textAlign = TextAlign.Center,
+                text = "No workouts yet",
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
           }
+
           Button(
-              onClick = { /* Navigate to all workouts */},
+              onClick = { navigationActions.navigateTo(Screen.VIEW_ALL) },
               modifier =
                   Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("ViewAllButton"),
               colors =

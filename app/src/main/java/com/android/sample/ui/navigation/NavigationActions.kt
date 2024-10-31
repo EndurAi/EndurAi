@@ -37,6 +37,7 @@ object Screen {
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight Screen"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga Screen"
   const val CALENDAR = "Calendar Screen"
+  const val VIEW_ALL = "View All Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
