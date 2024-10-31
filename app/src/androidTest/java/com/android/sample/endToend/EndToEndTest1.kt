@@ -45,7 +45,7 @@ class EndToEndTest1 {
     composeTestRule.onNodeWithTag("Video").performClick()
     // composeTestRule.onNodeWithTag("videoScreen").assertIsDisplayed()
     // go back to the main screen
-    composeTestRule.onNodeWithTag("Main").performClick()
+    composeTestRule.onNodeWithTag("backButton").performClick()
     // composeTestRule.onNodeWithTag("mainScreen").assertIsDisplayed()
     // go to the settings screen
     composeTestRule.onNodeWithTag("SettingsButton").performClick()
