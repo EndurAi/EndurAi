@@ -90,7 +90,6 @@ fun AddAccount(
           }
         } catch (e: Exception) {
           Toast.makeText(context, "Invalid profile image URL", Toast.LENGTH_SHORT).show()
-          // You might also set profileImageUri to null or a default URI if needed
           profileImageUri = null
           originalProfileImageUri = null
         }
