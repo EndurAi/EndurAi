@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.0"
+coilCompose = "2.1.0"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 kotlinxDatetime = "0.5.0"
@@ -28,6 +29,7 @@ sonar = "4.4.1.3373"
 gms = "4.4.2"
 mockk = "1.13.5"
 moshi = "1.14.0"
+coil = "2.4.0"
 
 # Firebase
 firebaseAuth = "23.0.0"
@@ -45,6 +47,7 @@ junitJupiter = "5.8.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -64,6 +67,8 @@ compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-
 compose-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
+
+
 kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", version.ref = "kaspresso" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
@@ -82,6 +87,7 @@ mockito-kotlin-v400 = { module = "org.mockito.kotlin:mockito-kotlin", version.re
 moshi-sealed-reflect = { module = "dev.zacsweers.moshix:moshi-sealed-reflect", version.ref = "moshiSealedReflect" }
 moshi-sealed-runtime = { module = "dev.zacsweers.moshix:moshi-sealed-runtime", version.ref = "moshiSealedRuntime" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", version = "2.1.0" }
 
 # Firebase Libraries
 firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }

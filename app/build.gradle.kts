@@ -154,6 +154,9 @@ dependencies {
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
 
+    // Activity Compose for rememberLauncherForActivityResult
+    implementation(libs.coil.compose)
+
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
@@ -188,14 +191,24 @@ dependencies {
     implementation (libs.moshi.sealed.reflect)
     implementation (libs.moshi.adapters)
 
+    // --------- Coil dependencies ----------
+    implementation(libs.coil.compose)
+//    implementation(libs.coil.core)
+
+
+
 
     //----------- Test dependencies ---------------
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockk)
+//    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    
+    testImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
+
     configurations.configureEach {
         exclude(group = "com.google.protobuf", module = "protobuf-lite")
     }

@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 object Route {
   const val MAIN = "Main"
   const val AUTH = "Auth"
+  const val VIDEO_LIBRARY = "VideoLibrary"
   const val VIDEO = "Video"
   const val ACHIEVEMENTS = "Achievements"
   const val PREFERENCES = "Preferences"
@@ -21,11 +22,14 @@ object Route {
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga"
   const val CALENDAR = "Calendar"
+  const val ADD_ACCOUNT = "Add Account"
+  const val EDIT_ACCOUNT = "Edit Account"
 }
 
 object Screen {
   const val MAIN = "Main Screen"
   const val AUTH = "Auth Screen"
+  const val VIDEO_LIBRARY = "Video Library Screen"
   const val VIDEO = "Video Screen"
   const val ACHIEVEMENTS = "Achievements Screen"
   const val PREFERENCES = "Preferences Screen"
@@ -38,13 +42,15 @@ object Screen {
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga Screen"
   const val CALENDAR = "Calendar Screen"
   const val VIEW_ALL = "View All Screen"
+  const val ADD_ACCOUNT = "Add Account Screen"
+  const val EDIT_ACCOUNT = "Edit Account Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
   val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
-  val VIDEO = TopLevelDestination(Route.VIDEO, Icons.Filled.PlayArrow, textId = "Video")
+  val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
   val ACHIEVEMENTS =
       TopLevelDestination(Route.ACHIEVEMENTS, Icons.Outlined.DateRange, textId = "Achievements")
   val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")

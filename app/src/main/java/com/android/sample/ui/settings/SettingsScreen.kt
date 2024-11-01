@@ -46,7 +46,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
             horizontalAlignment = Alignment.CenterHorizontally) {
               // User data button
               Button(
-                  onClick = { /* TODO: Handle User Data */},
+                  onClick = { navigationActions.navigateTo(Screen.EDIT_ACCOUNT) },
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(60.dp)
