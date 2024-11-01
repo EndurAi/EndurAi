@@ -5,11 +5,15 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.ToJson
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dev.zacsweers.moshix.sealed.reflect.MoshiSealedJsonAdapterFactory
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 
@@ -27,7 +31,11 @@ class WorkoutRepositoryFirestore<T : Workout>(
   }
 
   private val moshi =
-      Moshi.Builder().add(MoshiSealedJsonAdapterFactory()).add(KotlinJsonAdapterFactory()).build()
+      Moshi.Builder()
+          .add(MoshiSealedJsonAdapterFactory())
+          .add(KotlinJsonAdapterFactory())
+          .add(LocalDateTimeAdapter())
+          .build()
 
   private val adapter = moshi.adapter(clazz)
 
@@ -135,5 +143,19 @@ class WorkoutRepositoryFirestore<T : Workout>(
       Log.e("Moshi", "Conversion error : ${e.message}")
       throw e
     }
+  }
+}
+
+class LocalDateTimeAdapter {
+  private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
+  @ToJson
+  fun toJson(dateTime: LocalDateTime): String {
+    return dateTime.format(formatter)
+  }
+
+  @FromJson
+  fun fromJson(dateTimeString: String): LocalDateTime {
+    return LocalDateTime.parse(dateTimeString, formatter)
   }
 }

@@ -68,7 +68,6 @@ fun MainScreen(
           Gender.MALE,
           Timestamp(Date()),
           "")
-
   val profile = R.drawable.homme
   val bodyWeightWorkouts = bodyWeightViewModel.workouts.collectAsState()
   val yogaWorkouts = yogaViewModel.workouts.collectAsState()

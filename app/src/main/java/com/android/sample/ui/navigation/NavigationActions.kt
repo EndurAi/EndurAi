@@ -21,7 +21,7 @@ object Route {
   const val SESSIONSELECTION = "Session Selection"
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga"
-  const val TEST = "Test"
+  const val CALENDAR = "Calendar"
   const val ADD_ACCOUNT = "Add Account"
   const val EDIT_ACCOUNT = "Edit Account"
 }
@@ -40,8 +40,8 @@ object Screen {
   const val SESSIONSELECTION = "Session Selection Screen"
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight Screen"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga Screen"
+  const val CALENDAR = "Calendar Screen"
   const val VIEW_ALL = "View All Screen"
-  const val TEST = "Test Screen"
   const val ADD_ACCOUNT = "Add Account Screen"
   const val EDIT_ACCOUNT = "Edit Account Screen"
 }
@@ -53,10 +53,15 @@ object TopLevelDestinations {
   val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
   val ACHIEVEMENTS =
       TopLevelDestination(Route.ACHIEVEMENTS, Icons.Outlined.DateRange, textId = "Achievements")
+  val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
-    listOf(TopLevelDestinations.MAIN, TopLevelDestinations.VIDEO, TopLevelDestinations.ACHIEVEMENTS)
+    listOf(
+        TopLevelDestinations.MAIN,
+        TopLevelDestinations.VIDEO,
+        TopLevelDestinations.ACHIEVEMENTS,
+        TopLevelDestinations.CALENDAR)
 
 open class NavigationActions(private val navController: NavHostController) {
   /**

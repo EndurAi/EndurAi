@@ -27,6 +27,7 @@ import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -159,6 +160,13 @@ fun MainApp(startDestination: String = Route.AUTH) {
     navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
       composable(Screen.YOGA_CREATION) {
         WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+      }
+    }
+
+    // Calendar Screen
+    navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
+      composable(Screen.CALENDAR) {
+        CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
       }
     }
   }

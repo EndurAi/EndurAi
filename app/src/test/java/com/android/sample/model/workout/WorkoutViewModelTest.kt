@@ -1,5 +1,6 @@
 package com.android.sample.model.workout
 
+import java.time.LocalDateTime
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
@@ -22,6 +23,7 @@ class WorkoutViewModelTest {
           workoutId = "workout-1",
           name = "Morning Workout",
           description = "A great way to start your day!",
+          date = LocalDateTime.of(2024, 11, 1, 0, 42),
           warmup = true)
 
   private val workout2 =
@@ -29,6 +31,7 @@ class WorkoutViewModelTest {
           workoutId = "workout-2",
           name = "Workout after Bugnion lesson",
           description = "A great way to change my mind!",
+          date = LocalDateTime.of(2024, 11, 1, 0, 42),
           warmup = true)
 
   @Before
