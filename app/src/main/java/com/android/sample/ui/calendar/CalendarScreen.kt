@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -57,9 +58,9 @@ fun CalendarScreen(
   val workoutsYoga by yogaworkoutViewModel.workouts.collectAsState(emptyList())
 
   val coloredWorkoutsBody =
-      workoutsBody.map { ColoredWorkout(it, PastelBlue, WorkoutType.BODY_WEIGHT) } // Rouge pastel
+      workoutsBody.map { ColoredWorkout(it, PastelBlue, WorkoutType.BODY_WEIGHT) }
   val coloredWorkoutsYoga =
-      workoutsYoga.map { ColoredWorkout(it, PastelRed, WorkoutType.YOGA) } // Bleu pastel
+      workoutsYoga.map { ColoredWorkout(it, PastelRed, WorkoutType.YOGA) }
   val workouts = coloredWorkoutsYoga + coloredWorkoutsBody
 
   // Infinite scrolling logic
@@ -86,6 +87,7 @@ fun CalendarScreen(
 
   if (showDialog && selectedWorkout != null) {
     AlertDialog(
+        modifier = Modifier.testTag("alertDialog"),
         onDismissRequest = { showDialog = false },
         title = {
           Row(
@@ -102,6 +104,7 @@ fun CalendarScreen(
                 OutlinedButton(
                     onClick = { showDialog = false },
                     colors = ButtonDefaults.outlinedButtonColors(),
+                    modifier = Modifier.testTag("editButton"),
                     border = BorderStroke(2.dp, Yellow)) {
                       Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Yellow)
                       Spacer(modifier = Modifier.width(8.dp))
@@ -122,6 +125,7 @@ fun CalendarScreen(
                       showDialog = false
                     },
                     colors = ButtonDefaults.outlinedButtonColors(),
+                    modifier = Modifier.testTag("deleteButton"),
                     border = BorderStroke(2.dp, Red)) {
                       Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Red)
                       Spacer(modifier = Modifier.width(8.dp))
@@ -137,9 +141,9 @@ fun CalendarScreen(
     Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
       Spacer(modifier = Modifier.height(8.dp))
 
-      Legend()
+        Legend(modifier = Modifier.testTag("legend"))
 
-      LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize().padding(16.dp)) {
+      LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
         items(dates) { date ->
           DaySection(
               date = date,
@@ -162,20 +166,21 @@ private fun generateDateRange(
 }
 
 @Composable
-fun Legend() {
+fun Legend(modifier: Modifier = Modifier) {
   Row(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
+      modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
-        LegendItem(color = PastelBlue, label = "Yoga")
+        LegendItem(color = PastelBlue, label = "Yoga",modifier = Modifier.testTag("legendYoga"))
 
-        LegendItem(color = PastelRed, label = "Bodyweight")
+        LegendItem(color = PastelRed, label = "Bodyweight",modifier = Modifier.testTag("legendBodyweight"))
       }
 }
 
 @Composable
-fun LegendItem(color: Color, label: String) {
+fun LegendItem(color: Color, label: String, modifier: Modifier = Modifier) {
   Row(
+      modifier = modifier,
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Box(modifier = Modifier.size(16.dp).background(color, shape = MaterialTheme.shapes.small))
@@ -192,6 +197,7 @@ fun DaySection(
   Row(
       modifier =
           Modifier.fillMaxWidth()
+              .testTag("daySection")
               .padding(vertical = 8.dp)
               .background(color = LightGray.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
               .padding(16.dp),
@@ -212,7 +218,7 @@ fun DaySection(
 
         if (workouts.isEmpty()) {
           Text(
-              text = "Pas d'entraînement",
+              text = "No workout",
               style = MaterialTheme.typography.bodyMedium,
               color = Gray)
         } else {
@@ -229,7 +235,7 @@ fun DaySection(
 fun WorkoutItem(coloredWorkout: ColoredWorkout, onClick: (ColoredWorkout) -> Unit) {
   Card(
       modifier =
-          Modifier.fillMaxWidth().clickable { onClick(coloredWorkout) }.padding(vertical = 4.dp),
+          Modifier.fillMaxWidth().clickable { onClick(coloredWorkout) }.padding(vertical = 4.dp).testTag("workoutItem"),
       colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
       shape = MaterialTheme.shapes.medium) {
         Row(
@@ -246,18 +252,18 @@ fun WorkoutItem(coloredWorkout: ColoredWorkout, onClick: (ColoredWorkout) -> Uni
 
 private fun getMonthName(monthNumber: Int): String {
   return when (monthNumber) {
-    1 -> "janvier"
-    2 -> "février"
-    3 -> "mars"
-    4 -> "avril"
-    5 -> "mai"
-    6 -> "juin"
-    7 -> "juillet"
-    8 -> "août"
-    9 -> "septembre"
-    10 -> "octobre"
-    11 -> "novembre"
-    12 -> "décembre"
+    1 -> "January"
+    2 -> "February"
+    3 -> "March"
+    4 -> "April"
+    5 -> "May"
+    6 -> "June"
+    7 -> "July"
+    8 -> "August"
+    9 -> "September"
+    10 -> "October"
+    11 -> "November"
+    12 -> "December"
     else -> ""
   }
 }
