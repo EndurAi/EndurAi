@@ -11,6 +11,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import java.time.LocalDateTime
 import junit.framework.TestCase.fail
 import org.junit.After
 import org.junit.Before
@@ -24,7 +25,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
-import java.time.LocalDateTime
 
 @RunWith(RobolectricTestRunner::class)
 class WorkoutRepositoryFirestoreTest {
@@ -44,7 +44,7 @@ class WorkoutRepositoryFirestoreTest {
           workoutId = "workout-1",
           name = "Morning Workout",
           description = "A great way to start your day!",
-        date = LocalDateTime.of(2024, 11, 1, 0, 42),
+          date = LocalDateTime.of(2024, 11, 1, 0, 42),
           warmup = true)
 
   private val yogaWorkout =
@@ -52,7 +52,7 @@ class WorkoutRepositoryFirestoreTest {
           workoutId = "workout-2",
           name = "Workout after Bugnion lesson",
           description = "A great way to change my mind!",
-        date = LocalDateTime.of(2024, 11, 1, 0, 42),
+          date = LocalDateTime.of(2024, 11, 1, 0, 42),
           warmup = false)
 
   @Before
