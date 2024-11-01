@@ -1,5 +1,6 @@
 package com.android.sample.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.userAccount.UserAccount
@@ -8,6 +9,8 @@ import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,6 +52,25 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
   fun updateUserAccount(userAccount: UserAccount) {
     repository.updateUserAccount(
         userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+  }
+
+  fun uploadProfileImage(
+      uri: Uri,
+      userId: String,
+      onSuccess: (String) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val storageRef = FirebaseStorage.getInstance().reference
+    val profileImageRef = storageRef.child("profile_images/${userId}/${UUID.randomUUID()}.jpg")
+
+    profileImageRef
+        .putFile(uri)
+        .addOnSuccessListener {
+          profileImageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+            onSuccess(downloadUri.toString())
+          }
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
   }
 
   // Factory for creating instances of the ViewModel
