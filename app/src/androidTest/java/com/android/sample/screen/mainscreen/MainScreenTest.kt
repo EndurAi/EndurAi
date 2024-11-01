@@ -10,6 +10,7 @@ import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -17,7 +18,6 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import java.time.LocalDateTime
 
 class MainScreenTest {
 
@@ -37,8 +37,18 @@ class MainScreenTest {
 
     val bodyWeightWorkouts =
         listOf(
-            BodyWeightWorkout("1", "NopainNogain", "Do 20 push-ups", false, date = LocalDateTime.of(2024,11,1,0,42)),
-            BodyWeightWorkout("2", "NightSes", "Hold for 60 seconds", false, date = LocalDateTime.of(2024,11,1,0,43)))
+            BodyWeightWorkout(
+                "1",
+                "NopainNogain",
+                "Do 20 push-ups",
+                false,
+                date = LocalDateTime.of(2024, 11, 1, 0, 42)),
+            BodyWeightWorkout(
+                "2",
+                "NightSes",
+                "Hold for 60 seconds",
+                false,
+                date = LocalDateTime.of(2024, 11, 1, 0, 43)))
     val yogaWorkouts: List<YogaWorkout> = listOf()
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {

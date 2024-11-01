@@ -59,8 +59,7 @@ fun CalendarScreen(
 
   val coloredWorkoutsBody =
       workoutsBody.map { ColoredWorkout(it, PastelBlue, WorkoutType.BODY_WEIGHT) }
-  val coloredWorkoutsYoga =
-      workoutsYoga.map { ColoredWorkout(it, PastelRed, WorkoutType.YOGA) }
+  val coloredWorkoutsYoga = workoutsYoga.map { ColoredWorkout(it, PastelRed, WorkoutType.YOGA) }
   val workouts = coloredWorkoutsYoga + coloredWorkoutsBody
 
   // Infinite scrolling logic
@@ -141,19 +140,21 @@ fun CalendarScreen(
     Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
       Spacer(modifier = Modifier.height(8.dp))
 
-        Legend(modifier = Modifier.testTag("legend"))
+      Legend(modifier = Modifier.testTag("legend"))
 
-      LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
-        items(dates) { date ->
-          DaySection(
-              date = date,
-              workouts = workoutsByDate[date] ?: emptyList(),
-              onWorkoutClick = { workout ->
-                selectedWorkout = workout
-                showDialog = true
-              })
-        }
-      }
+      LazyColumn(
+          state = lazyListState,
+          modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
+            items(dates) { date ->
+              DaySection(
+                  date = date,
+                  workouts = workoutsByDate[date] ?: emptyList(),
+                  onWorkoutClick = { workout ->
+                    selectedWorkout = workout
+                    showDialog = true
+                  })
+            }
+          }
     }
   }
 }
@@ -171,9 +172,12 @@ fun Legend(modifier: Modifier = Modifier) {
       modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
-        LegendItem(color = PastelBlue, label = "Yoga",modifier = Modifier.testTag("legendYoga"))
+        LegendItem(color = PastelBlue, label = "Yoga", modifier = Modifier.testTag("legendYoga"))
 
-        LegendItem(color = PastelRed, label = "Bodyweight",modifier = Modifier.testTag("legendBodyweight"))
+        LegendItem(
+            color = PastelRed,
+            label = "Bodyweight",
+            modifier = Modifier.testTag("legendBodyweight"))
       }
 }
 
@@ -217,10 +221,7 @@ fun DaySection(
         }
 
         if (workouts.isEmpty()) {
-          Text(
-              text = "No workout",
-              style = MaterialTheme.typography.bodyMedium,
-              color = Gray)
+          Text(text = "No workout", style = MaterialTheme.typography.bodyMedium, color = Gray)
         } else {
           Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
             workouts
@@ -235,7 +236,10 @@ fun DaySection(
 fun WorkoutItem(coloredWorkout: ColoredWorkout, onClick: (ColoredWorkout) -> Unit) {
   Card(
       modifier =
-          Modifier.fillMaxWidth().clickable { onClick(coloredWorkout) }.padding(vertical = 4.dp).testTag("workoutItem"),
+          Modifier.fillMaxWidth()
+              .clickable { onClick(coloredWorkout) }
+              .padding(vertical = 4.dp)
+              .testTag("workoutItem"),
       colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
       shape = MaterialTheme.shapes.medium) {
         Row(
