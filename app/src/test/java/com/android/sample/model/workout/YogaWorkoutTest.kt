@@ -2,6 +2,7 @@ package com.android.sample.model.workout
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDateTime
 
 class YogaWorkoutTest {
   val WORKOUT_ID = "001"
@@ -17,6 +18,7 @@ class YogaWorkoutTest {
             name = "Morning Yoga Flow",
             description = "A calming yoga routine to start your day.",
             warmup = false,
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             userIdSet = mutableSetOf(USER_ID_1, USER_ID_2))
     assertEquals(WORKOUT_ID, workout.workoutId)
     assertEquals("Morning Yoga Flow", workout.name)
@@ -33,6 +35,7 @@ class YogaWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Morning Yoga Flow",
             description = "A calming yoga routine to start your day.",
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             warmup = false)
 
     val downwardDog =
@@ -50,6 +53,7 @@ class YogaWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Morning Yoga Flow",
             description = "A calming yoga routine to start your day.",
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             warmup = false)
 
     val downwardDog1 =
@@ -73,6 +77,7 @@ class YogaWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Morning Yoga Flow",
             description = "A calming yoga routine to start your day.",
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             warmup = false)
     workout.addUserById(USER_ID_1)
     assertEquals(1, workout.userIdSet.size)
@@ -88,6 +93,7 @@ class YogaWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Morning Yoga Flow",
             description = "A calming yoga routine to start your day.",
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             userIdSet = mutableSetOf(USER_ID_1, USER_ID_2),
             warmup = false)
 

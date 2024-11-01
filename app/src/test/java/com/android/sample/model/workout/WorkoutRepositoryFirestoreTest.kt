@@ -24,6 +24,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
+import java.time.LocalDateTime
 
 @RunWith(RobolectricTestRunner::class)
 class WorkoutRepositoryFirestoreTest {
@@ -43,6 +44,7 @@ class WorkoutRepositoryFirestoreTest {
           workoutId = "workout-1",
           name = "Morning Workout",
           description = "A great way to start your day!",
+        date = LocalDateTime.of(2024, 11, 1, 0, 42),
           warmup = true)
 
   private val yogaWorkout =
@@ -50,6 +52,7 @@ class WorkoutRepositoryFirestoreTest {
           workoutId = "workout-2",
           name = "Workout after Bugnion lesson",
           description = "A great way to change my mind!",
+        date = LocalDateTime.of(2024, 11, 1, 0, 42),
           warmup = false)
 
   @Before

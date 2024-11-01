@@ -2,6 +2,7 @@ package com.android.sample.model.workout
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDateTime
 
 class BodyWeightWorkoutTest {
   val WORKOUT_ID = "001"
@@ -17,7 +18,8 @@ class BodyWeightWorkoutTest {
             name = "Bodyweight Strength",
             description = "A workout focused on bodyweight exercises.",
             warmup = true,
-            userIdSet = mutableSetOf(USER_ID_1))
+            userIdSet = mutableSetOf(USER_ID_1),
+            date = LocalDateTime.of(2024, 11, 1, 0, 42))
     assertEquals(WORKOUT_ID, workout.workoutId)
     assertEquals("Bodyweight Strength", workout.name)
     assertEquals("A workout focused on bodyweight exercises.", workout.description)
@@ -33,6 +35,7 @@ class BodyWeightWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Bodyweight Strength",
             description = "A workout focused on bodyweight exercises.",
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             warmup = true)
 
     val pushUps =
@@ -51,6 +54,7 @@ class BodyWeightWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Bodyweight Strength",
             description = "A workout focused on bodyweight exercises.",
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             warmup = true)
 
     val pushUps1 =
@@ -76,6 +80,7 @@ class BodyWeightWorkoutTest {
             workoutId = WORKOUT_ID,
             name = "Bodyweight Strength",
             description = "A workout focused on bodyweight exercises.",
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             warmup = true) // UserId Set is initially empty
 
     workout.addUserById(USER_ID_1)
@@ -93,6 +98,7 @@ class BodyWeightWorkoutTest {
             name = "Bodyweight Strength",
             description = "A workout focused on bodyweight exercises.",
             warmup = true,
+            date = LocalDateTime.of(2024, 11, 1, 0, 42),
             userIdSet = mutableSetOf(USER_ID_1, USER_ID_2)) // UserId Set is initially empty
 
     workout.removeUserById(USER_ID_1)
