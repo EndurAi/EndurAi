@@ -144,7 +144,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
       }
     }
 
-    // Calenar Screen
+    // Calendar Screen
     navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
       composable(Screen.CALENDAR) {
         CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
