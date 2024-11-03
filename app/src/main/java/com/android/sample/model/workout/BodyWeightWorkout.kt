@@ -21,8 +21,9 @@ class BodyWeightWorkout(
     description: String,
     warmup: Boolean,
     userIdSet: MutableSet<String> = mutableSetOf(),
-    exercises: MutableList<Exercise> = mutableListOf() // Default to an empty list
-) : Workout(workoutId, name, description, warmup, userIdSet, exercises) {
+    exercises: MutableList<Exercise> = mutableListOf(), // Default to an empty list
+    date: LocalDateTime
+) : Workout(workoutId, name, description, warmup, userIdSet, exercises, date) {
 
   companion object {
     const val DOCUMENT_NAME = "bodyweightWorkout"

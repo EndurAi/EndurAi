@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,7 +66,11 @@ data class ExerciseState(val exercise: Exercise, var isDone: Boolean)
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : String, navigationActions: NavigationActions) {
+fun WarmUpScreenBody(
+    exerciseStateList: List<ExerciseState>?,
+    workoutName: String,
+    navigationActions: NavigationActions
+) {
   // Variable for the screen
   var exerciseIndex by remember { mutableIntStateOf(0) }
   val exerciseState =
@@ -93,10 +98,9 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
   }
 
   fun nextExercise() {
-    if (exerciseIndex < exerciseStateList.size-1) {
+    if (exerciseIndex < exerciseStateList.size - 1) {
       exerciseIndex++
       paramToPresentation()
-
     } else {
       navigationActions.navigateTo(Screen.MAIN)
     }
@@ -123,9 +127,9 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
     timer = timeLimit
 
     LaunchedEffect(Unit) {
-      while (timer >= 0) {
+      while (true) {
         delay(1000L)
-        if (!countDownTimerIsPaused) {
+        if (!countDownTimerIsPaused && timer > 0) {
           timer--
         }
       }
@@ -149,27 +153,30 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
         Column(
             modifier =
                 Modifier.fillMaxSize()
-                    .padding(innerPadding) // Use innerPadding to avoid overlapping with the app bar
-                    .padding(16.dp),
+                    .padding(
+                        innerPadding), // Use innerPadding to avoid overlapping with the app bar
             horizontalAlignment = Alignment.CenterHorizontally) {
-              Text(
-                  // TODO THe name here
-                  text = exerciseState.exercise.type.toString(),
-                  style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
-                  fontWeight = FontWeight.Bold,
-                  modifier = Modifier.height(79.dp))
-
-              Spacer(modifier = Modifier.height(16.dp))
-              // description text
-              Text(
-                  // TODO add some descpriton
-                  text = exerciseState.exercise.type.getInstruction(),
-                  style =
-                      MaterialTheme.typography.displaySmall.copy(
-                          fontSize = 20.sp, lineHeight = 25.sp),
-                  textAlign = TextAlign.Center,
-                  modifier = Modifier.width(317.dp).height(79.dp))
-              Spacer(modifier = Modifier.height(16.dp))
+              val upColumn =
+                  Column(
+                      modifier = Modifier.size(350.dp, 150.dp),
+                      horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            // TODO THe name here
+                            text = exerciseState.exercise.type.toString(),
+                            style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.height(50.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        // description text
+                        Text(
+                            // TODO add some descpriton
+                            text = exerciseState.exercise.type.getInstruction(),
+                            style =
+                                MaterialTheme.typography.displaySmall.copy(
+                                    fontSize = 20.sp, lineHeight = 25.sp),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(317.dp).height(79.dp))
+                      }
               // TODO add video specific
               val URL =
                   "https://firebasestorage.googleapis.com/v0/b/endurai-92811.appspot.com/o/template_videos%2FPush%20Up.mp4?alt=media&token=2677215b-59a4-47c8-854b-a3326532e8af"
@@ -182,48 +189,60 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
                     }
               }
 
-              Spacer(modifier = Modifier.height(16.dp))
-              Row(verticalAlignment = Alignment.CenterVertically) {
-                if (exerciseIsRepetitionBased) {
-                  Image(
-                      painter = painterResource(R.drawable.baseline_timeline_24),
-                      contentDescription = "repetition",
-                      modifier = Modifier.padding(horizontal = (5).dp))
+              val middleColumn =
+                  Column(
+                      modifier =
+                          if (goalCounterBoxIsDisplayed) Modifier.size(300.dp, 300.dp)
+                          else Modifier.size(100.dp, 100.dp),
+                      horizontalAlignment = Alignment.CenterHorizontally) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                          if (exerciseIsRepetitionBased) {
+                            Image(
+                                painter = painterResource(R.drawable.baseline_timeline_24),
+                                contentDescription = "repetition",
+                                modifier = Modifier.padding(horizontal = (5).dp))
 
-                  Text(text = "$repetitions Rep.", fontSize = 20.sp)
-                } else {
-                  Image(
-                      painter = painterResource(R.drawable.baseline_access_time_24),
-                      contentDescription = "timerLogo",
-                      modifier = Modifier.padding(horizontal = (5).dp))
-                  Text(convertSecondsToTime(timeLimit), fontSize = 20.sp)
-                }
-              }
-              Spacer(modifier = Modifier.height(35.dp))
+                            Text(text = "$repetitions Rep.", fontSize = 20.sp)
+                          } else {
+                            Image(
+                                painter = painterResource(R.drawable.baseline_access_time_24),
+                                contentDescription = "timerLogo",
+                                modifier = Modifier.padding(horizontal = (5).dp))
+                            Text(convertSecondsToTime(timeLimit), fontSize = 20.sp)
+                          }
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
 
-              // Box for the goal counter
-              if (goalCounterBoxIsDisplayed) {
+                        // Box for the goal counter
+                        if (goalCounterBoxIsDisplayed) {
 
-                if (exerciseIsRepetitionBased) {
-                  Box(modifier = Modifier.size(200.dp)) {
-                    val workoutImage =
-                        Image(
-                            painter = painterResource(id =
-                              when(exerciseState.exercise.type.workoutType){
-                                WorkoutType.WARMUP -> R.drawable.warmup_logo
-                                WorkoutType.YOGA -> R.drawable.yoga
-                                WorkoutType.BODY_WEIGHT-> R.drawable.dumbbell
-                                WorkoutType.RUNNING -> TODO()
-                              }
-                            ),
-                            contentDescription = "Goal Counter",
-                            modifier = Modifier.size(350.dp, 200.dp))
-                  }
-                } else {
-                  Box(modifier = Modifier.size(200.dp)) { CountDownTimer(timer, timeLimit) }
-                }
-              }
-
+                          if (exerciseIsRepetitionBased) {
+                            val workoutImage =
+                                Image(
+                                    painter =
+                                        painterResource(
+                                            id =
+                                                when (exerciseState.exercise.type.workoutType) {
+                                                  WorkoutType.WARMUP -> R.drawable.warmup_logo
+                                                  WorkoutType.YOGA -> R.drawable.yoga
+                                                  WorkoutType.BODY_WEIGHT -> R.drawable.dumbbell
+                                                  WorkoutType.RUNNING -> TODO()
+                                                }),
+                                    contentDescription = "Goal Counter",
+                                    modifier = Modifier.size(350.dp, 200.dp))
+                          } else {
+                            CountDownTimer(
+                                timer,
+                                timeLimit,
+                                modifier =
+                                    Modifier.size(220.dp).clickable {
+                                      countDownTimerIsPaused = !countDownTimerIsPaused
+                                    },
+                                isPaused = countDownTimerIsPaused)
+                            Spacer(modifier = Modifier.height(5.dp))
+                          }
+                        }
+                      }
               // Presentation button box
               if (presentationButtonBoxIsDisplayed) {
                 val presentationButtonBox =
@@ -233,9 +252,7 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
                         verticalArrangement = Arrangement.Bottom) {
                           // Skip button
                           Button(
-                              onClick = {
-                                nextExercise()
-                              },
+                              onClick = { nextExercise() },
                               colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                                 Text("Skip", color = Color.Black)
                               }
@@ -261,29 +278,18 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
                         modifier = Modifier.size(height = 250.dp, width = 180.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top) {
-                          if (!exerciseIsRepetitionBased && timer != 0) {
-                            Button(
-                                onClick = { countDownTimerIsPaused = !countDownTimerIsPaused },
-                                modifier = Modifier.size(65.dp)) {
-                                  Image(
-                                      painterResource(
-                                          if (countDownTimerIsPaused)
-                                              R.drawable.baseline_play_arrow_24
-                                          else R.drawable.baseline_pause_24),
-                                      contentDescription = "play/pausebtn",
-                                      modifier = Modifier.fillMaxSize())
-                                }
-                            Spacer(Modifier.size(25.dp))
-                          } else {
-                            Spacer(modifier = Modifier.size(90.dp))
-                          }
-
+                          val skipButton =
+                              Button(
+                                  onClick = { nextExercise() },
+                                  colors =
+                                      ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                                    Text("Skip", color = Color.Black)
+                                  }
                           Spacer(Modifier.size(25.dp))
+
                           val finishButton =
                               Button(
-                                  onClick = {
-                                    nextExercise()
-                                  },
+                                  onClick = { nextExercise() },
                                   modifier = Modifier.width(200.dp).height(50.dp).padding(),
                                   colors =
                                       ButtonDefaults.buttonColors(
@@ -293,25 +299,11 @@ fun WarmUpScreenBody(exerciseStateList: List<ExerciseState>?, workoutName : Stri
                                   }
 
                           Spacer(Modifier.size(25.dp))
-
-                          val skipButton =
-                              Button(
-                                  onClick = {
-                                    nextExercise()
-                                  },
-                                  colors =
-                                      ButtonDefaults.buttonColors(containerColor = Color.Red)) {
-                                    Text("Skip", color = Color.Black)
-                                  }
-
                         }
               }
             }
       }
 }
-
-
-
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -346,21 +338,26 @@ fun VideoPlayer(url: String, context: Context) {
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun WorkoutScreen(navigationActions: NavigationActions,
-                 warmUpViewModel: WarmUpViewModel,
-                 bodyweightViewModel: WorkoutViewModel<BodyWeightWorkout>,
-                 yogaViewModel: WorkoutViewModel<YogaWorkout>,
-                  workoutType: WorkoutType) {
+fun WorkoutScreen(
+    navigationActions: NavigationActions,
+    warmUpViewModel: WarmUpViewModel,
+    bodyweightViewModel: WorkoutViewModel<BodyWeightWorkout>,
+    yogaViewModel: WorkoutViewModel<YogaWorkout>,
+    workoutType: WorkoutType
+) {
 
-  val selectedWorkout = when(workoutType){
-    WorkoutType.YOGA -> yogaViewModel.selectedWorkout.value
-    WorkoutType.WARMUP -> warmUpViewModel.selectedWorkout.value
-    WorkoutType.BODY_WEIGHT-> bodyweightViewModel.selectedWorkout.value
-    WorkoutType.RUNNING -> TODO()
-  }
+  val selectedWorkout =
+      when (workoutType) {
+        WorkoutType.YOGA -> yogaViewModel.selectedWorkout.value
+        WorkoutType.WARMUP -> warmUpViewModel.selectedWorkout.value
+        WorkoutType.BODY_WEIGHT -> bodyweightViewModel.selectedWorkout.value
+        WorkoutType.RUNNING -> TODO()
+      }
 
   val exerciseStateList =
       selectedWorkout?.exercises?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
 
-  selectedWorkout?.name?.let { WarmUpScreenBody(exerciseStateList,workoutName = it, navigationActions = navigationActions) }
+  selectedWorkout?.name?.let {
+    WarmUpScreenBody(exerciseStateList, workoutName = it, navigationActions = navigationActions)
+  }
 }

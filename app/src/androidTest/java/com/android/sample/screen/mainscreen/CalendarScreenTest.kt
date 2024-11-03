@@ -11,6 +11,7 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.navigation.NavigationActions
+import java.lang.Thread.sleep
 import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
@@ -41,7 +42,7 @@ class CalendarScreenTest {
                 "NightSes",
                 "Hold for 60 seconds",
                 false,
-                date = LocalDateTime.of(2024, 11, 1, 2, 1)))
+                date = LocalDateTime.of(2024, 11, 10, 2, 1)))
     val yogaWorkouts: List<YogaWorkout> = listOf()
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
@@ -61,6 +62,8 @@ class CalendarScreenTest {
 
     // Mock the NavigationActions
     navigationActions = mock(NavigationActions::class.java)
+
+    bodyWeightViewModel.getWorkouts()
   }
 
   @Test
@@ -68,7 +71,8 @@ class CalendarScreenTest {
     composeTestRule.setContent {
       CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel)
     }
-    bodyWeightViewModel.getWorkouts()
+
+    sleep(10000)
 
     // Check if the top bar, legend, and lazy column are displayed
     composeTestRule.onNodeWithTag("workoutItem").assertIsDisplayed()

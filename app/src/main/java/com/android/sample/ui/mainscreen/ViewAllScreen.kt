@@ -67,8 +67,7 @@ fun ViewAllScreen(
       topBar = { TopBar(navigationActions, R.string.ViewAllTitle) },
       content = { pd ->
         Column(modifier = Modifier.padding(pd)) {
-          Tabs(selectedTab) { index -> selectedTab = index
-          }
+          Tabs(selectedTab) { index -> selectedTab = index }
           Spacer(modifier = Modifier.height(10.dp))
           if (selectedTab in 0..1) {
             WorkoutList(

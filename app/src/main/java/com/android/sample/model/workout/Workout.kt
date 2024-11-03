@@ -11,7 +11,8 @@ abstract class Workout(
     val warmup: Boolean, // Whether the user want to do a warmup
     val userIdSet:
         MutableSet<String>, // Set of userId that represent the User linked to a specific workout
-    val exercises: MutableList<Exercise> = mutableListOf()
+    val exercises: MutableList<Exercise> = mutableListOf(),
+    val date: LocalDateTime = LocalDateTime.now()
 ) {
 
   fun addUserById(id: String) {
@@ -40,8 +41,6 @@ abstract class Workout(
     exercises.removeAll { it.id == exerciseId }
   }
 }
-    val date: LocalDateTime
-) {}
 
 // Detail of the exercise based on its type
 @JsonClass(generateAdapter = true, generator = "sealed:type")

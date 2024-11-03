@@ -49,8 +49,7 @@ object Screen {
   const val TEST = "Test Screen"
   const val WARMUP_WORKOUT = "Warmup workout screen"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout screen"
-  const val YOGA_WORKOUT =  "Yoga workout screen"
-
+  const val YOGA_WORKOUT = "Yoga workout screen"
 
   const val ADD_ACCOUNT = "Add Account Screen"
   const val EDIT_ACCOUNT = "Edit Account Screen"

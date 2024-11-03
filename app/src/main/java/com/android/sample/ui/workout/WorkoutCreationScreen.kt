@@ -228,14 +228,6 @@ fun WorkoutCreationScreen(
                   item {
                     SaveButton(
                         onSaveClick = {
-                          workoutViewModel.addWorkout(
-                              YogaWorkout(
-                                  workoutId = workoutViewModel.getNewUid(),
-                                  name = name,
-                                  description = description,
-                                  warmup = warmup,
-                                  exercises = exerciseList.toMutableList()))
-
                           when (workoutType) {
                             WorkoutType.YOGA -> {
                               workoutViewModel.addWorkout(
@@ -246,8 +238,7 @@ fun WorkoutCreationScreen(
                                       warmup = warmup,
                                       date = selectedDateTime!!,
                                       exercises =
-                                          exerciseList.toMutableList()
-                                              as MutableList<YogaExercise>))
+                                          exerciseList.toMutableList() as MutableList<Exercise>))
                             }
                             WorkoutType.BODY_WEIGHT -> {
                               workoutViewModel.addWorkout(
@@ -258,8 +249,7 @@ fun WorkoutCreationScreen(
                                       warmup = warmup,
                                       date = selectedDateTime!!,
                                       exercises =
-                                          exerciseList.toMutableList()
-                                              as MutableList<BodyWeightExercise>))
+                                          exerciseList.toMutableList() as MutableList<Exercise>))
                             }
                             else -> {}
                           }

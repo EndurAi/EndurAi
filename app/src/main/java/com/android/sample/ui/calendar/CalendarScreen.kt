@@ -120,6 +120,7 @@ fun CalendarScreen(
                             yogaworkoutViewModel.deleteWorkoutById(
                                 selectedWorkout!!.workout.workoutId)
                         WorkoutType.RUNNING -> {}
+                        WorkoutType.WARMUP -> TODO()
                       }
                       showDialog = false
                     },
