@@ -54,6 +54,16 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
         userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
   }
 
+
+    fun addFriend(userAccount: UserAccount, friendId: String) {
+        repository.addFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+    }
+
+    fun removeFriend(userAccount: UserAccount, friendId: String) {
+        repository.removeFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+    }
+
+
   fun uploadProfileImage(
       uri: Uri,
       userId: String,
