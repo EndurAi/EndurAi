@@ -5,13 +5,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.model.userAccount.*
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.viewmodel.UserAccountViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class EditAccountScreenTest {
 
   private lateinit var userAccountRepository: UserAccountRepository

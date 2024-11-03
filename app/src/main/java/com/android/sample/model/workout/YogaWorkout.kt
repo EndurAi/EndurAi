@@ -1,6 +1,7 @@
 package com.android.sample.model.workout
 
 import com.squareup.moshi.JsonClass
+import java.time.LocalDateTime
 
 /**
  * Represents a Yoga workout session which includes a list of yoga exercises.
@@ -10,6 +11,7 @@ import com.squareup.moshi.JsonClass
  * @param description Brief description of the workout.
  * @param warmup Boolean indicating if the workout includes a warmup.
  * @param userIdSet Set of user IDs associated with this workout (defaults to an empty set).
+ * @param date Date and Time of the workout.
  * @param exercises List of exercises included in the workout (defaults to an empty list).
  */
 @JsonClass(generateAdapter = true)

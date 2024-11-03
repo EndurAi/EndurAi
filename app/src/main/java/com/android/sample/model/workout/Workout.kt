@@ -2,6 +2,7 @@ package com.android.sample.model.workout
 
 import com.squareup.moshi.JsonClass
 import dev.zacsweers.moshix.sealed.annotations.TypeLabel
+import java.time.LocalDateTime
 
 abstract class Workout(
     val workoutId: String, // Uniquely identifies the workout among all others
@@ -39,6 +40,8 @@ abstract class Workout(
     exercises.removeAll { it.id == exerciseId }
   }
 }
+    val date: LocalDateTime
+) {}
 
 // Detail of the exercise based on its type
 @JsonClass(generateAdapter = true, generator = "sealed:type")

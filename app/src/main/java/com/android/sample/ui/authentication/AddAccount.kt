@@ -31,10 +31,8 @@ import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
-import com.google.firebase.storage.FirebaseStorage
 import java.util.Calendar
 import java.util.GregorianCalendar
-import java.util.UUID
 
 @Composable
 fun AddAccount(
@@ -63,6 +61,7 @@ fun AddAccount(
 
   // Retrieve current user UID from Firebase Auth
   val actualUserId = userId ?: return // Ensure user is signed in
+  val context = LocalContext.current
 
   if (accountExists) {
     LaunchedEffect(userAccount) {
@@ -82,13 +81,21 @@ fun AddAccount(
               "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(
                             Calendar.YEAR)}"
             }
-        profileImageUri = Uri.parse(it.profileImageUrl)
-        originalProfileImageUri = Uri.parse(it.profileImageUrl) // Set the original URI
+        // Check for valid URI before assigning it
+        try {
+          val parsedUri = Uri.parse(it.profileImageUrl)
+          if (parsedUri != null && parsedUri.toString().isNotBlank()) {
+            profileImageUri = parsedUri
+            originalProfileImageUri = parsedUri // Set the original URI if valid
+          }
+        } catch (e: Exception) {
+          Toast.makeText(context, "Invalid profile image URL", Toast.LENGTH_SHORT).show()
+          profileImageUri = null
+          originalProfileImageUri = null
+        }
       }
     }
   }
-
-  val context = LocalContext.current
 
   // Initialize the image picker launcher outside of the clickable scope
   val imagePickerLauncher =
@@ -305,7 +312,7 @@ fun saveAccount(
               profileImageUrl = profileImageUrl)
 
       if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
-        uploadProfileImage(
+        userAccountViewModel.uploadProfileImage(
             profileImageUri,
             userId,
             onSuccess = { downloadUrl ->
@@ -417,23 +424,4 @@ fun <T> DropdownMenuButton(
       }
     }
   }
-}
-
-val storageRef = FirebaseStorage.getInstance().reference
-
-fun uploadProfileImage(
-    uri: Uri,
-    userId: String,
-    onSuccess: (String) -> Unit,
-    onFailure: (Exception) -> Unit
-) {
-  val profileImageRef = storageRef.child("profile_images/${userId}/${UUID.randomUUID()}.jpg")
-  profileImageRef
-      .putFile(uri)
-      .addOnSuccessListener {
-        profileImageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-          onSuccess(downloadUri.toString())
-        }
-      }
-      .addOnFailureListener { exception -> onFailure(exception) }
 }
