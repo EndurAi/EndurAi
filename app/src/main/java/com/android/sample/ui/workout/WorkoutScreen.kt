@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -154,6 +155,7 @@ fun WarmUpScreenBody(
               toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
             } else if (countDownValue == 0) {
               isCountdownTime = false
+              toneGen1.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 150)
               countDownValue = maxCountDownTIme
             }
           } else {
@@ -178,12 +180,12 @@ fun WarmUpScreenBody(
                   modifier =
                       Modifier.background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
                           .padding(horizontal = 80.dp)
-                          .padding(1.dp),
+                          .padding(1.dp)
+                          .testTag("WorkoutName"),
                   fontWeight = FontWeight(500),
                   color = MaterialTheme.colorScheme.onSurface)
             },
-          navigationIcon = { ArrowBack(navigationActions) }
-        )
+            navigationIcon = { ArrowBack(navigationActions) })
       }) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -198,7 +200,7 @@ fun WarmUpScreenBody(
                         text = exerciseState.exercise.type.toString(),
                         style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.height(50.dp))
+                        modifier = Modifier.height(50.dp).testTag("ExerciseName"))
                     Spacer(modifier = Modifier.height(16.dp))
                     // display the instruction
                     Text(
@@ -207,7 +209,8 @@ fun WarmUpScreenBody(
                             MaterialTheme.typography.displaySmall.copy(
                                 fontSize = 20.sp, lineHeight = 25.sp),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(317.dp).height(79.dp))
+                        modifier =
+                            Modifier.width(317.dp).height(79.dp).testTag("ExerciseDescription"))
                   }
 
               // URL for the video demonstration (this should be dynamic)
@@ -216,10 +219,12 @@ fun WarmUpScreenBody(
 
               // Box for the video player
               if (videoBoxIsDisplayed) {
-                Box(modifier = Modifier.size(width = 350.dp, height = 200.dp)) {
-                  VideoPlayer(context = LocalContext.current, url = URL)
-                  Spacer(Modifier.height(5.dp))
-                }
+                Box(
+                    modifier =
+                        Modifier.size(width = 350.dp, height = 200.dp).testTag("VideoPlayer")) {
+                      VideoPlayer(context = LocalContext.current, url = URL)
+                      Spacer(Modifier.height(5.dp))
+                    }
               }
 
               // Column for displaying exercise goals (repetitions or timer)
@@ -229,20 +234,21 @@ fun WarmUpScreenBody(
                       else Modifier.size(150.dp, 100.dp),
                   horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                      if (exerciseIsRepetitionBased) {
-                        Image(
-                            painter = painterResource(R.drawable.baseline_timeline_24),
-                            contentDescription = "repetition",
-                            modifier = Modifier.padding(horizontal = (5).dp))
-                        Text(text = "$repetitions Rep.", fontSize = 20.sp)
-                      } else {
-                        Image(
-                            painter = painterResource(R.drawable.baseline_access_time_24),
-                            contentDescription = "timerLogo",
-                            modifier = Modifier.padding(horizontal = (5).dp))
-                        Text(convertSecondsToTime(timeLimit), fontSize = 20.sp)
-                      }
+                      Image(
+                          painter =
+                              painterResource(
+                                  if (exerciseIsRepetitionBased) R.drawable.baseline_timeline_24
+                                  else R.drawable.baseline_access_time_24),
+                          contentDescription = "repetition",
+                          modifier = Modifier.padding(horizontal = (5).dp).testTag("GoalIcon"))
+                      Text(
+                          text =
+                              (if (exerciseIsRepetitionBased) "$repetitions Rep."
+                              else convertSecondsToTime(timeLimit)),
+                          fontSize = 20.sp,
+                          modifier = Modifier.testTag("GoalValue"))
                     }
+
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // Box for the goal counter: Display an image of the exercise type if rep based
@@ -260,13 +266,13 @@ fun WarmUpScreenBody(
                                           WorkoutType.RUNNING -> TODO()
                                         }),
                             contentDescription = "Goal Counter",
-                            modifier = Modifier.size(350.dp, 200.dp))
+                            modifier = Modifier.size(350.dp, 200.dp).testTag("ExerciseTypeIcon"))
                       } else {
                         CountDownTimer(
                             timer,
                             timeLimit,
                             modifier =
-                                Modifier.size(220.dp).clickable {
+                                Modifier.size(220.dp).testTag("CountDownTimer").clickable {
                                   countDownTimerIsPaused = !countDownTimerIsPaused
                                 },
                             isPaused = countDownTimerIsPaused,
@@ -285,7 +291,8 @@ fun WarmUpScreenBody(
                     verticalArrangement = Arrangement.Bottom) {
                       Button(
                           onClick = { nextExercise() },
-                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                          modifier = Modifier.testTag("SkipButton")) {
                             Text("Skip", color = Color.Black)
                           }
                       Spacer(modifier = Modifier.height(25.dp))
@@ -296,7 +303,7 @@ fun WarmUpScreenBody(
                             finishButtonBoxIsDisplayed = true
                             videoBoxIsDisplayed = false
                           },
-                          modifier = Modifier.width(200.dp).height(50.dp),
+                          modifier = Modifier.width(200.dp).height(50.dp).testTag("StartButton"),
                           colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
                           shape = RoundedCornerShape(size = 11.dp)) {
                             Text("Start", color = Color.Black, fontSize = 20.sp)
@@ -310,13 +317,18 @@ fun WarmUpScreenBody(
                     verticalArrangement = Arrangement.Top) {
                       Button(
                           onClick = { nextExercise() },
-                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                          modifier = Modifier.testTag("SkipButton")) {
                             Text("Skip", color = Color.Black)
                           }
                       Spacer(Modifier.size(25.dp))
                       Button(
                           onClick = { nextExercise() },
-                          modifier = Modifier.width(200.dp).height(50.dp).padding(),
+                          modifier =
+                              Modifier.width(200.dp)
+                                  .height(50.dp)
+                                  .padding()
+                                  .testTag("FinishButton"),
                           colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
                           shape = RoundedCornerShape(size = 11.dp)) {
                             Text("Finish", color = Color.Black, fontSize = 20.sp)
@@ -381,8 +393,7 @@ fun WorkoutScreen(
   // condition
   val exerciseStateList =
       selectedWorkout?.let {
-        (if (selectedWorkout.warmup) warmUpViewModel.selectedWorkout.value?.exercises
-            else listOf<Exercise>())
+        (if (selectedWorkout.warmup) warmUpViewModel.selectedWorkout.value?.exercises else listOf())
             ?.plus(it.exercises)
             ?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
       }
