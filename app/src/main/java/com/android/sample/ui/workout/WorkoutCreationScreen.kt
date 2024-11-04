@@ -65,6 +65,7 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaExercise
 import com.android.sample.model.workout.YogaExerciseType
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.DateTimePicker
 import com.android.sample.ui.composables.ExerciseCard
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
@@ -142,7 +143,9 @@ fun WorkoutCreationScreen(
                         selectedDateTime = selectedDateTime,
                         onDateTimeSelected = { newDateTime ->
                           selectedDateTime = newDateTime // Mise à jour avec la date sélectionnée
-                        })
+                        },
+                        title = "Workout Date"
+                        )
 
                     Spacer(Modifier.height(16.dp))
 
@@ -409,52 +412,4 @@ fun WorkoutCreationScreen(
               }
         })
   }
-}
-
-@Composable
-fun DateTimePicker(
-    selectedDateTime: LocalDateTime?,
-    onDateTimeSelected: (LocalDateTime) -> Unit,
-) {
-  val context = LocalContext.current
-
-  // Function to launch the Date and Time pickers
-  fun showDateTimePickers() {
-    val now = LocalDateTime.now()
-    val datePicker =
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-              val timePicker =
-                  TimePickerDialog(
-                      context,
-                      { _, hourOfDay, minute ->
-                        val selectedDate =
-                            LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute)
-                        onDateTimeSelected(selectedDate)
-                      },
-                      now.hour,
-                      now.minute,
-                      true)
-              timePicker.show()
-            },
-            now.year,
-            now.monthValue - 1,
-            now.dayOfMonth)
-    datePicker.show()
-  }
-
-  OutlinedTextField(
-      value =
-          selectedDateTime?.let {
-            "${it.dayOfMonth} ${it.month.name.lowercase().capitalize()} ${it.year} at ${it.hour}:${it.minute.toString().padStart(2, '0')}"
-          } ?: "Select Date and Time",
-      onValueChange = { /* No-op since we control the value */},
-      readOnly = true,
-      label = { Text("Workout Date") },
-      trailingIcon = {
-        IconButton(onClick = { showDateTimePickers() }) {
-          Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Date")
-        }
-      })
 }
