@@ -57,6 +57,7 @@ import com.android.sample.model.workout.WarmUpViewModel
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.composables.CountDownTimer
 import com.android.sample.ui.composables.convertSecondsToTime
 import com.android.sample.ui.navigation.NavigationActions
@@ -170,6 +171,7 @@ fun WarmUpScreenBody(
       topBar = {
         CenterAlignedTopAppBar(
             title = {
+
               // Display the workout name
               Text(
                   workoutName,
@@ -179,7 +181,9 @@ fun WarmUpScreenBody(
                           .padding(1.dp),
                   fontWeight = FontWeight(500),
                   color = MaterialTheme.colorScheme.onSurface)
-            })
+            },
+          navigationIcon = { ArrowBack(navigationActions) }
+        )
       }) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
