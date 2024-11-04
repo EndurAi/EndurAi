@@ -70,7 +70,7 @@ import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
-import com.android.sample.ui.theme.Grey
+import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Purple60
 import java.time.LocalDateTime
 
@@ -168,7 +168,7 @@ fun WorkoutCreationScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors =
                             CardDefaults.cardColors(
-                                containerColor = Grey), // Gray color for consistency
+                                containerColor = LightGrey), // Gray color for consistency
                         modifier =
                             Modifier.fillMaxWidth(0.9f)
                                 .padding(horizontal = 24.dp, vertical = 8.dp)) {
@@ -211,7 +211,7 @@ fun WorkoutCreationScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors =
                             CardDefaults.cardColors(
-                                containerColor = Grey), // Couleur grise pour la carte
+                                containerColor = LightGrey), // Couleur grise pour la carte
                         modifier =
                             Modifier.fillMaxWidth(0.9f)
                                 .padding(horizontal = 24.dp, vertical = 8.dp)) {
