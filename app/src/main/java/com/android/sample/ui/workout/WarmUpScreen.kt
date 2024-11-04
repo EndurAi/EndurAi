@@ -2,6 +2,8 @@ package com.android.sample.ui.workout
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -61,6 +63,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import kotlinx.coroutines.delay
 
+// Data class to hold the state of an exercise
 data class ExerciseState(val exercise: Exercise, var isDone: Boolean)
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -71,17 +74,30 @@ fun WarmUpScreenBody(
     workoutName: String,
     navigationActions: NavigationActions
 ) {
-  // Variable for the screen
+  // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
   val exerciseState =
       exerciseStateList?.get(exerciseIndex)
           ?: error("Exercise state list is null or index out of bounds")
+  // Video box for the video model
   var videoBoxIsDisplayed by remember { mutableStateOf(true) }
+
   var finishButtonBoxIsDisplayed by remember { mutableStateOf(false) }
+  // presentation button are the skip and the start button showed first
   var presentationButtonBoxIsDisplayed by remember { mutableStateOf(true) }
+  // the goalCenterBox contains either the image of the exercise or the timer
   var goalCounterBoxIsDisplayed by remember { mutableStateOf(false) }
   var countDownTimerIsPaused by remember { mutableStateOf(false) }
+  // Setting a countdown or not before the time based exercises begins
+  var isCountdownTime by remember {
+    mutableStateOf(true)
+  } // for the countdown before the exercise starts
+  val maxCountDownTIme = 3
+  var countDownValue by remember { mutableIntStateOf(maxCountDownTIme) }
+  // Tone to be played when te countDown decreases
+  val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
 
+  // Function to set UI state for exercise presentation
   fun paramToPresentation() {
     videoBoxIsDisplayed = true
     finishButtonBoxIsDisplayed = false
@@ -90,13 +106,7 @@ fun WarmUpScreenBody(
     countDownTimerIsPaused = false
   }
 
-  fun paramToExercise() {
-    videoBoxIsDisplayed = false
-    finishButtonBoxIsDisplayed = true
-    presentationButtonBoxIsDisplayed = false
-    goalCounterBoxIsDisplayed = true
-  }
-
+  /** Moves to the next exercise or finishes the workout if all exercises are completed. */
   fun nextExercise() {
     if (exerciseIndex < exerciseStateList.size - 1) {
       exerciseIndex++
@@ -106,40 +116,61 @@ fun WarmUpScreenBody(
     }
   }
 
+  /** Determine if the exercise is repetition-based or time-based. */
   val exerciseIsRepetitionBased =
       when (exerciseState.exercise.detail) {
         is ExerciseDetail.TimeBased -> false
         is ExerciseDetail.RepetitionBased -> true
       }
 
+  /** Get the number of repetitions for repetition-based exercises */
   val repetitions =
       when (exerciseState.exercise.detail) {
         is ExerciseDetail.RepetitionBased ->
             (exerciseState.exercise.detail as ExerciseDetail.RepetitionBased).repetitions
         else -> 0
       }
+
+  /** State variables for managing the timer */
   var timer by remember { mutableIntStateOf(0) }
   var timeLimit = 0
+
+  // Initialize the timer for time-based exercises
   if (!exerciseIsRepetitionBased) {
     val rawDetail = exerciseState.exercise.detail as ExerciseDetail.TimeBased
-    // TODO Handle the Sets factor
+    isCountdownTime = true
     timeLimit = rawDetail.durationInSeconds * rawDetail.sets
     timer = timeLimit
 
+    // Coroutine to decrement the timer every second
     LaunchedEffect(Unit) {
       while (true) {
         delay(1000L)
-        if (!countDownTimerIsPaused && timer > 0) {
-          timer--
+        if (!countDownTimerIsPaused && finishButtonBoxIsDisplayed) {
+          if (isCountdownTime) {
+            if (countDownValue > 0) {
+              countDownValue--
+              toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+            } else if (countDownValue == 0) {
+              isCountdownTime = false
+              countDownValue = maxCountDownTIme
+            }
+          } else {
+            if (timer > 0) {
+              timer--
+            }
+          }
         }
       }
     }
   }
 
+  // Scaffold for basic material design layout
   Scaffold(
       topBar = {
         CenterAlignedTopAppBar(
             title = {
+              // Display the workout name
               Text(
                   workoutName,
                   modifier =
@@ -151,167 +182,155 @@ fun WarmUpScreenBody(
             })
       }) { innerPadding ->
         Column(
-            modifier =
-                Modifier.fillMaxSize()
-                    .padding(
-                        innerPadding), // Use innerPadding to avoid overlapping with the app bar
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally) {
-              val upColumn =
-                  Column(
-                      modifier = Modifier.size(350.dp, 150.dp),
-                      horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            // TODO THe name here
-                            text = exerciseState.exercise.type.toString(),
-                            style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.height(50.dp))
-                        Spacer(modifier = Modifier.height(16.dp))
-                        // description text
-                        Text(
-                            // TODO add some descpriton
-                            text = exerciseState.exercise.type.getInstruction(),
-                            style =
-                                MaterialTheme.typography.displaySmall.copy(
-                                    fontSize = 20.sp, lineHeight = 25.sp),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.width(317.dp).height(79.dp))
-                      }
-              // TODO add video specific
+
+              // Column for displaying exercise information
+              Column(
+                  modifier = Modifier.size(350.dp, 150.dp),
+                  horizontalAlignment = Alignment.CenterHorizontally) {
+                    // display the exercise name
+                    Text(
+                        text = exerciseState.exercise.type.toString(),
+                        style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.height(50.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    // display the instruction
+                    Text(
+                        text = exerciseState.exercise.type.getInstruction(),
+                        style =
+                            MaterialTheme.typography.displaySmall.copy(
+                                fontSize = 20.sp, lineHeight = 25.sp),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.width(317.dp).height(79.dp))
+                  }
+
+              // URL for the video demonstration (this should be dynamic)
               val URL =
                   "https://firebasestorage.googleapis.com/v0/b/endurai-92811.appspot.com/o/template_videos%2FPush%20Up.mp4?alt=media&token=2677215b-59a4-47c8-854b-a3326532e8af"
 
               // Box for the video player
               if (videoBoxIsDisplayed) {
-                val videoBox =
-                    Box(modifier = Modifier.size(width = 350.dp, height = 200.dp)) {
-                      VideoPlayer(context = LocalContext.current, url = URL)
-                    }
+                Box(modifier = Modifier.size(width = 350.dp, height = 200.dp)) {
+                  VideoPlayer(context = LocalContext.current, url = URL)
+                  Spacer(Modifier.height(5.dp))
+                }
               }
 
-              val middleColumn =
-                  Column(
-                      modifier =
-                          if (goalCounterBoxIsDisplayed) Modifier.size(300.dp, 300.dp)
-                          else Modifier.size(100.dp, 100.dp),
-                      horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                          if (exerciseIsRepetitionBased) {
-                            Image(
-                                painter = painterResource(R.drawable.baseline_timeline_24),
-                                contentDescription = "repetition",
-                                modifier = Modifier.padding(horizontal = (5).dp))
-
-                            Text(text = "$repetitions Rep.", fontSize = 20.sp)
-                          } else {
-                            Image(
-                                painter = painterResource(R.drawable.baseline_access_time_24),
-                                contentDescription = "timerLogo",
-                                modifier = Modifier.padding(horizontal = (5).dp))
-                            Text(convertSecondsToTime(timeLimit), fontSize = 20.sp)
-                          }
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        // Box for the goal counter
-                        if (goalCounterBoxIsDisplayed) {
-
-                          if (exerciseIsRepetitionBased) {
-                            val workoutImage =
-                                Image(
-                                    painter =
-                                        painterResource(
-                                            id =
-                                                when (exerciseState.exercise.type.workoutType) {
-                                                  WorkoutType.WARMUP -> R.drawable.warmup_logo
-                                                  WorkoutType.YOGA -> R.drawable.yoga
-                                                  WorkoutType.BODY_WEIGHT -> R.drawable.dumbbell
-                                                  WorkoutType.RUNNING -> TODO()
-                                                }),
-                                    contentDescription = "Goal Counter",
-                                    modifier = Modifier.size(350.dp, 200.dp))
-                          } else {
-                            CountDownTimer(
-                                timer,
-                                timeLimit,
-                                modifier =
-                                    Modifier.size(220.dp).clickable {
-                                      countDownTimerIsPaused = !countDownTimerIsPaused
-                                    },
-                                isPaused = countDownTimerIsPaused)
-                            Spacer(modifier = Modifier.height(5.dp))
-                          }
-                        }
+              // Column for displaying exercise goals (repetitions or timer)
+              Column(
+                  modifier =
+                      if (goalCounterBoxIsDisplayed) Modifier.size(300.dp, 300.dp)
+                      else Modifier.size(150.dp, 100.dp),
+                  horizontalAlignment = Alignment.CenterHorizontally) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                      if (exerciseIsRepetitionBased) {
+                        Image(
+                            painter = painterResource(R.drawable.baseline_timeline_24),
+                            contentDescription = "repetition",
+                            modifier = Modifier.padding(horizontal = (5).dp))
+                        Text(text = "$repetitions Rep.", fontSize = 20.sp)
+                      } else {
+                        Image(
+                            painter = painterResource(R.drawable.baseline_access_time_24),
+                            contentDescription = "timerLogo",
+                            modifier = Modifier.padding(horizontal = (5).dp))
+                        Text(convertSecondsToTime(timeLimit), fontSize = 20.sp)
                       }
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Box for the goal counter: Display an image of the exercise type if rep based
+                    // or a timer
+                    if (goalCounterBoxIsDisplayed) {
+                      if (exerciseIsRepetitionBased) {
+                        Image(
+                            painter =
+                                painterResource(
+                                    id =
+                                        when (exerciseState.exercise.type.workoutType) {
+                                          WorkoutType.WARMUP -> R.drawable.warmup_logo
+                                          WorkoutType.YOGA -> R.drawable.yoga
+                                          WorkoutType.BODY_WEIGHT -> R.drawable.dumbbell
+                                          WorkoutType.RUNNING -> TODO()
+                                        }),
+                            contentDescription = "Goal Counter",
+                            modifier = Modifier.size(350.dp, 200.dp))
+                      } else {
+                        CountDownTimer(
+                            timer,
+                            timeLimit,
+                            modifier =
+                                Modifier.size(220.dp).clickable {
+                                  countDownTimerIsPaused = !countDownTimerIsPaused
+                                },
+                            isPaused = countDownTimerIsPaused,
+                            countDownCurrentValue = countDownValue,
+                            isCountDownTime = isCountdownTime)
+                        Spacer(modifier = Modifier.height(5.dp))
+                      }
+                    }
+                  }
+
               // Presentation button box
               if (presentationButtonBoxIsDisplayed) {
-                val presentationButtonBox =
-                    Column(
-                        modifier = Modifier.size(height = 120.dp, width = 180.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom) {
-                          // Skip button
-                          Button(
-                              onClick = { nextExercise() },
-                              colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
-                                Text("Skip", color = Color.Black)
-                              }
-                          Spacer(modifier = Modifier.height(25.dp))
-                          // Start button
-                          Button(
-                              onClick = {
-                                presentationButtonBoxIsDisplayed = false
-                                goalCounterBoxIsDisplayed = true
-                                finishButtonBoxIsDisplayed = true
-                                videoBoxIsDisplayed = false
-                              },
-                              modifier = Modifier.width(200.dp).height(50.dp),
-                              colors =
-                                  ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
-                              shape = RoundedCornerShape(size = 11.dp)) {
-                                Text("Start", color = Color.Black, fontSize = 20.sp)
-                              }
-                        }
+                Column(
+                    modifier = Modifier.size(height = 120.dp, width = 180.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom) {
+                      Button(
+                          onClick = { nextExercise() },
+                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                            Text("Skip", color = Color.Black)
+                          }
+                      Spacer(modifier = Modifier.height(25.dp))
+                      Button(
+                          onClick = {
+                            presentationButtonBoxIsDisplayed = false
+                            goalCounterBoxIsDisplayed = true
+                            finishButtonBoxIsDisplayed = true
+                            videoBoxIsDisplayed = false
+                          },
+                          modifier = Modifier.width(200.dp).height(50.dp),
+                          colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
+                          shape = RoundedCornerShape(size = 11.dp)) {
+                            Text("Start", color = Color.Black, fontSize = 20.sp)
+                          }
+                    }
               } else if (finishButtonBoxIsDisplayed) {
-                val finishButtonBox =
-                    Column(
-                        modifier = Modifier.size(height = 250.dp, width = 180.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top) {
-                          val skipButton =
-                              Button(
-                                  onClick = { nextExercise() },
-                                  colors =
-                                      ButtonDefaults.buttonColors(containerColor = Color.Red)) {
-                                    Text("Skip", color = Color.Black)
-                                  }
-                          Spacer(Modifier.size(25.dp))
-
-                          val finishButton =
-                              Button(
-                                  onClick = { nextExercise() },
-                                  modifier = Modifier.width(200.dp).height(50.dp).padding(),
-                                  colors =
-                                      ButtonDefaults.buttonColors(
-                                          containerColor = Color(0xFFA9B0FF)),
-                                  shape = RoundedCornerShape(size = 11.dp)) {
-                                    Text("Finish", color = Color.Black, fontSize = 20.sp)
-                                  }
-
-                          Spacer(Modifier.size(25.dp))
-                        }
+                // Finish button box to be displayed during a exercise to be executing
+                Column(
+                    modifier = Modifier.size(height = 250.dp, width = 180.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top) {
+                      Button(
+                          onClick = { nextExercise() },
+                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                            Text("Skip", color = Color.Black)
+                          }
+                      Spacer(Modifier.size(25.dp))
+                      Button(
+                          onClick = { nextExercise() },
+                          modifier = Modifier.width(200.dp).height(50.dp).padding(),
+                          colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
+                          shape = RoundedCornerShape(size = 11.dp)) {
+                            Text("Finish", color = Color.Black, fontSize = 20.sp)
+                          }
+                      Spacer(Modifier.size(25.dp))
+                    }
               }
             }
       }
 }
 
+// Composable function for the video player using ExoPlayer : SHOULD BE ADAPTED TO THE VIDEO VIEW
+// MODEL
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(url: String, context: Context) {
-  // Créer et gérer l'instance ExoPlayer en utilisant remember
   val exoPlayer = remember {
     ExoPlayer.Builder(context).build().apply {
-      // Charger l'élément multimédia en utilisant l'URL fournie
       val mediaItem = MediaItem.fromUri(url)
       setMediaItem(mediaItem)
       prepare()
@@ -319,23 +338,23 @@ fun VideoPlayer(url: String, context: Context) {
     }
   }
 
-  // Utiliser DisposableEffect pour libérer le lecteur lorsque le composable est supprimé de
-  // l'interface utilisateur
   AndroidView(
       modifier = Modifier.fillMaxSize(),
       factory = {
         PlayerView(context).apply {
           player = exoPlayer
-          useController = true // Masquer les contrôles par défaut
-          resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT // Remplir tout l'écran
+          useController = true
+          resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
           layoutParams =
               ViewGroup.LayoutParams(
                   ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
       })
+
   DisposableEffect(Unit) { onDispose { exoPlayer.release() } }
 }
 
+/** WorkoutScreen that display the workflow during a workout */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun WorkoutScreen(
@@ -345,7 +364,7 @@ fun WorkoutScreen(
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
     workoutType: WorkoutType
 ) {
-
+  // Get the selected workout based on the workout type
   val selectedWorkout =
       when (workoutType) {
         WorkoutType.YOGA -> yogaViewModel.selectedWorkout.value
@@ -354,9 +373,17 @@ fun WorkoutScreen(
         WorkoutType.RUNNING -> TODO()
       }
 
+  // Create a list of ExerciseState objects from the selected workout, add the workout to it on
+  // condition
   val exerciseStateList =
-      selectedWorkout?.exercises?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
+      selectedWorkout?.let {
+        (if (selectedWorkout.warmup) warmUpViewModel.selectedWorkout.value?.exercises
+            else listOf<Exercise>())
+            ?.plus(it.exercises)
+            ?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
+      }
 
+  // Display the WarmUpScreenBody with the exercise list and workout name
   selectedWorkout?.name?.let {
     WarmUpScreenBody(exerciseStateList, workoutName = it, navigationActions = navigationActions)
   }

@@ -16,6 +16,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.drawText
 
 @Composable
+/**
+ * Display a countdown timer that handles counting down before a process
+ *
+ * @param currentTime_int The current time in seconds.
+ * @param maxTime_int The maximum time in seconds.
+ * @param fullColor The color of the arc when the timer is not in the critical state.
+ * @param criticalColor The color of the arc when the timer is in the critical state.
+ * @param criticalRate The rate at which the timer is considered critical (e.g., 0.15 means 15% of
+ *   max time).
+ * @param stroke The stroke width of the arc.
+ * @param arcSize The size of the arc.
+ * @param onFinishedText The text to display when the timer finishes.
+ * @param onFinishedIcon The icon to display when the timer finishes.
+ * @param modifier The modifier to be applied to the Canvas.
+ * @param isPaused Whether the timer is paused.
+ * @param isCountDownTime Whether the timer is in countdown mode (Before decreasing the
+ *   maxTime_Int).
+ * @param countDownCurrentValue The current amount of time before the timer decreases the
+ *   currentTime_Int.
+ */
 fun CountDownTimer(
     currentTime_int: Int = 50,
     maxTime_int: Int = 60,
@@ -27,7 +47,9 @@ fun CountDownTimer(
     onFinishedText: String = "Done",
     onFinishedIcon: ImageVector = Icons.Filled.Done,
     modifier: Modifier,
-    isPaused: Boolean = false
+    isPaused: Boolean = false,
+    isCountDownTime: Boolean = true,
+    countDownCurrentValue: Int = 3
 ) {
 
   val currentTime_str = convertSecondsToTime(currentTime_int)
@@ -75,7 +97,7 @@ fun CountDownTimer(
           }
       if (currentTime > 0) {
         canvas.nativeCanvas.drawText(
-            currentTime_str,
+            if (isCountDownTime.not()) currentTime_str else countDownCurrentValue.toString(),
             width / 2,
             height / 2 + 32f, // Centering text along the circle’s vertical axis
             paint)
@@ -83,27 +105,24 @@ fun CountDownTimer(
         if (isPaused) {
           val path =
               android.graphics.Path().apply {
-                moveTo(width / 2, height / 2 - (50f / 3)) // 3x smaller Y
-                lineTo(width / 2 - (50f / 3), height / 2 + (50f / 3)) // 3x smaller X and Y
-                lineTo(width / 2 + (50f / 3), height / 2 + (50f / 3)) // 3x smaller X and Y
+                moveTo(width / 2, height / 2 - (50f / 3))
+                lineTo(width / 2 - (50f / 3), height / 2 + (50f / 3))
+                lineTo(width / 2 + (50f / 3), height / 2 + (50f / 3))
                 close()
               }
 
           // Rotate the canvas before drawing the path
           canvas.save()
           canvas.translate(0f, 80f)
-          canvas.rotate(90f, width / 2, height / 2) // Rotate by 90 degrees around the center
-
-          // Translate the canvas downwards
-          // Adjust the value (50f) to move it further down
+          canvas.rotate(90f, width / 2, height / 2)
 
           canvas.nativeCanvas.drawPath(path, paint.apply { color = android.graphics.Color.BLACK })
-          canvas.restore() // Restore the canvas to its original state
+          canvas.restore()
         }
       } else {
 
         val checkStartX = width / 2 - 60f
-        val checkStartY = height / 2 - 80f // Moved UPWARDS
+        val checkStartY = height / 2 - 80f
         val checkLineLength = 80f
 
         val checkPaint =
@@ -138,13 +157,24 @@ fun CountDownTimer(
   }
 }
 
+/**
+ * Converts a time string in the format "MM:SS" to the total number of seconds.
+ *
+ * @param currentTimeStr The time string in the format "MM:SS".
+ * @return The total number of seconds.
+ */
 fun convertTimeToSeconds(currentTimeStr: String): Int {
   val parts = currentTimeStr.split(":")
   val minutes = parts[0].toInt()
   val seconds = parts[1].toInt()
   return minutes * 60 + seconds
 }
-
+/**
+ * Converts a total number of seconds to a time string in the format "MM:SS".
+ *
+ * @param seconds The total number of seconds.
+ * @return The time string in the format "MM:SS".
+ */
 fun convertSecondsToTime(seconds: Int): String {
   val minutes = seconds / 60
   val remainingSeconds = seconds % 60

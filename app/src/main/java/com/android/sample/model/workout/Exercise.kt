@@ -12,7 +12,7 @@ enum class ExerciseType(val workoutType: WorkoutType) {
   PLANK(WorkoutType.BODY_WEIGHT),
   CHAIR(WorkoutType.BODY_WEIGHT),
   JUMPING_JACKS(WorkoutType.WARMUP),
-  LEG_SWINGS(WorkoutType.BODY_WEIGHT),
+  LEG_SWINGS(WorkoutType.WARMUP),
   ARM_CIRCLES(WorkoutType.WARMUP),
   ARM_WRIST_CIRCLES(WorkoutType.WARMUP);
 

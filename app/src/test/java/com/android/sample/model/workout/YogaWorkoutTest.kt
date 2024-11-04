@@ -39,7 +39,7 @@ class YogaWorkoutTest {
             warmup = false)
 
     val downwardDog =
-        YogaExercise(EX_ID, YogaExerciseType.DOWNWARD_DOG, ExerciseDetail.TimeBased(60, 1))
+        Exercise(EX_ID, ExerciseType.DOWNWARD_DOG, ExerciseDetail.TimeBased(60, 1))
     workout.addExercise(downwardDog)
 
     assertEquals(1, workout.exercises.size) // Now should have 1 exercise
@@ -57,10 +57,10 @@ class YogaWorkoutTest {
             warmup = false)
 
     val downwardDog1 =
-        YogaExercise("001", YogaExerciseType.DOWNWARD_DOG, ExerciseDetail.TimeBased(60, 1))
+        Exercise("001", ExerciseType.DOWNWARD_DOG, ExerciseDetail.TimeBased(60, 1))
     workout.addExercise(downwardDog1)
     val downwardDog2 =
-        YogaExercise("002", YogaExerciseType.DOWNWARD_DOG, ExerciseDetail.TimeBased(60, 1))
+        Exercise("002", ExerciseType.DOWNWARD_DOG, ExerciseDetail.TimeBased(60, 1))
     workout.addExercise(downwardDog2)
 
     assertEquals(2, workout.exercises.size) // Now should have 2 exercises

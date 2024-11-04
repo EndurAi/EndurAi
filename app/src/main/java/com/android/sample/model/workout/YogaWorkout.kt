@@ -16,13 +16,13 @@ import java.time.LocalDateTime
  */
 @JsonClass(generateAdapter = true)
 class YogaWorkout(
-    workoutId: String,
-    name: String,
-    description: String,
-    warmup: Boolean,
-    userIdSet: MutableSet<String> = mutableSetOf(),
-    exercises: MutableList<Exercise>, // Default to an empty list
-    date: LocalDateTime
+  workoutId: String,
+  name: String,
+  description: String,
+  warmup: Boolean,
+  userIdSet: MutableSet<String> = mutableSetOf(),
+  exercises: MutableList<Exercise> = mutableListOf() , // Default to an empty list
+  date: LocalDateTime
 ) : Workout(workoutId, name, description, warmup, userIdSet, exercises, date) {
 
   companion object {

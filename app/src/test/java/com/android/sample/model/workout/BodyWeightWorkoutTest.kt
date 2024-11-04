@@ -39,8 +39,8 @@ class BodyWeightWorkoutTest {
             warmup = true)
 
     val pushUps =
-        BodyWeightExercise(
-            EX_ID, BodyWeightExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(15))
+        Exercise(
+            EX_ID, ExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(15))
     workout.addExercise(pushUps)
 
     assertEquals(1, workout.exercises.size) // Now should have 1 exercise
@@ -58,13 +58,13 @@ class BodyWeightWorkoutTest {
             warmup = true)
 
     val pushUps1 =
-        BodyWeightExercise(
-            "001", BodyWeightExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(15))
+        Exercise(
+            "001", ExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(15))
     workout.addExercise(pushUps1)
 
     val pushUps2 =
-        BodyWeightExercise(
-            "002", BodyWeightExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(15))
+        Exercise(
+            "002", ExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(15))
     workout.addExercise(pushUps2)
 
     assertEquals(2, workout.exercises.size) // Now should have 2 exercises
