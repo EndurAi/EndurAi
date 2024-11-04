@@ -16,47 +16,47 @@ import java.time.LocalDateTime
 fun DateTimePicker(
     selectedDateTime: LocalDateTime?,
     onDateTimeSelected: (LocalDateTime) -> Unit,
-    title : String
+    title: String
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    // Function to launch the Date and Time pickers
-    fun showDateTimePickers() {
-        val now = LocalDateTime.now()
-        val datePicker =
-            DatePickerDialog(
-                context,
-                { _, year, month, dayOfMonth ->
-                    val timePicker =
-                        TimePickerDialog(
-                            context,
-                            { _, hourOfDay, minute ->
-                                val selectedDate =
-                                    LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute)
-                                onDateTimeSelected(selectedDate)
-                            },
-                            now.hour,
-                            now.minute,
-                            true)
-                    timePicker.show()
-                },
-                now.year,
-                now.monthValue - 1,
-                now.dayOfMonth)
-        datePicker.show()
-    }
+  // Function to launch the Date and Time pickers
+  fun showDateTimePickers() {
+    val now = LocalDateTime.now()
+    val datePicker =
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+              val timePicker =
+                  TimePickerDialog(
+                      context,
+                      { _, hourOfDay, minute ->
+                        val selectedDate =
+                            LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute)
+                        onDateTimeSelected(selectedDate)
+                      },
+                      now.hour,
+                      now.minute,
+                      true)
+              timePicker.show()
+            },
+            now.year,
+            now.monthValue - 1,
+            now.dayOfMonth)
+    datePicker.show()
+  }
 
-    OutlinedTextField(
-        value =
-        selectedDateTime?.let {
+  OutlinedTextField(
+      value =
+          selectedDateTime?.let {
             "${it.dayOfMonth} ${it.month.name.lowercase().capitalize()} ${it.year} at ${it.hour}:${it.minute.toString().padStart(2, '0')}"
-        } ?: "Select Date and Time",
-        onValueChange = { /* No-op since we control the value */},
-        readOnly = true,
-        label = { Text(title) },
-        trailingIcon = {
-            IconButton(onClick = { showDateTimePickers() }) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Date")
-            }
-        })
+          } ?: "Select Date and Time",
+      onValueChange = { /* No-op since we control the value */},
+      readOnly = true,
+      label = { Text(title) },
+      trailingIcon = {
+        IconButton(onClick = { showDateTimePickers() }) {
+          Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Date")
+        }
+      })
 }

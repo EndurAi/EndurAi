@@ -1,7 +1,5 @@
 package com.android.sample.ui.workout
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -144,8 +141,7 @@ fun WorkoutCreationScreen(
                         onDateTimeSelected = { newDateTime ->
                           selectedDateTime = newDateTime // Mise à jour avec la date sélectionnée
                         },
-                        title = "Workout Date"
-                        )
+                        title = "Workout Date")
 
                     Spacer(Modifier.height(16.dp))
 

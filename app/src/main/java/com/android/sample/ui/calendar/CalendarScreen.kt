@@ -32,8 +32,8 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.DarkGrey
-import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.MediumGrey
+import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.PastelBlue
 import com.android.sample.ui.theme.PastelRed
 import com.android.sample.ui.theme.Red
@@ -203,7 +203,8 @@ fun DaySection(
           Modifier.fillMaxWidth()
               .testTag("daySection")
               .padding(vertical = 8.dp)
-              .background(color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
+              .background(
+                  color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
               .padding(16.dp),
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
@@ -221,7 +222,8 @@ fun DaySection(
         }
 
         if (workouts.isEmpty()) {
-          Text(text = "No workout", style = MaterialTheme.typography.bodyMedium, color = NeutralGrey)
+          Text(
+              text = "No workout", style = MaterialTheme.typography.bodyMedium, color = NeutralGrey)
         } else {
           Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
             workouts
