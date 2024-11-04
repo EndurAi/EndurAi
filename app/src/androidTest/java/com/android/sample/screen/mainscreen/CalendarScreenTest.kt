@@ -41,7 +41,7 @@ class CalendarScreenTest {
                 "NightSes",
                 "Hold for 60 seconds",
                 false,
-                date = LocalDateTime.of(2024, 11, 1, 2, 1)))
+                date = LocalDateTime.now().plusDays(1)))
     val yogaWorkouts: List<YogaWorkout> = listOf()
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
