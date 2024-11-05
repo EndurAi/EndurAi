@@ -5,6 +5,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -79,9 +80,13 @@ fun WarmUpScreenBody(
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
+  val context = LocalContext.current
   val exerciseState =
-      exerciseStateList?.get(exerciseIndex)
-          ?: error("Exercise state list is null or index out of bounds")
+      exerciseStateList?.getOrNull(exerciseIndex)
+          ?: run {
+            Toast.makeText(context, "Error while fetching the list of exercise", Toast.LENGTH_SHORT)
+                .show()
+          }
   // Video box for the video model
   var videoBoxIsDisplayed by remember { mutableStateOf(true) }
 
