@@ -60,6 +60,7 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.composables.CountDownTimer
+import com.android.sample.ui.composables.SkipButton
 import com.android.sample.ui.composables.convertSecondsToTime
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -289,12 +290,7 @@ fun WarmUpScreenBody(
                     modifier = Modifier.size(height = 120.dp, width = 180.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom) {
-                      Button(
-                          onClick = { nextExercise() },
-                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                          modifier = Modifier.testTag("SkipButton")) {
-                            Text("Skip", color = Color.Black)
-                          }
+                      SkipButton(onClick = { nextExercise() })
                       Spacer(modifier = Modifier.height(25.dp))
                       Button(
                           onClick = {
@@ -315,12 +311,7 @@ fun WarmUpScreenBody(
                     modifier = Modifier.size(height = 250.dp, width = 180.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top) {
-                      Button(
-                          onClick = { nextExercise() },
-                          colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                          modifier = Modifier.testTag("SkipButton")) {
-                            Text("Skip", color = Color.Black)
-                          }
+                      SkipButton(onClick = { nextExercise() })
                       Spacer(Modifier.size(25.dp))
                       Button(
                           onClick = { nextExercise() },
