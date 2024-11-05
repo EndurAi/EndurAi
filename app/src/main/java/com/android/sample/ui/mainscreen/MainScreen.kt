@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -39,8 +38,8 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.DarkBlue2
-import com.android.sample.ui.theme.Grey
-import com.android.sample.ui.theme.GreyLight
+import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.SoftGrey
 import com.google.firebase.Timestamp
 import java.util.Date
 
@@ -160,7 +159,7 @@ fun WorkoutSessionsSection(workout: Workout?, profile: Int, navigationActions: N
         modifier =
             Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(GreyLight)
+                .background(SoftGrey)
                 .padding(8.dp)) {
           if (workout != null) {
             Box(modifier = Modifier.padding(vertical = 4.dp)) {
@@ -211,7 +210,7 @@ fun QuickWorkoutSection(navigationActions: NavigationActions) {
         modifier =
             Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(GreyLight)
+                .background(SoftGrey)
                 .padding(10.dp)) {
           Row(
               modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
@@ -311,7 +310,7 @@ fun NewWorkoutSection(navigationActions: NavigationActions) {
                 .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
                 .padding(vertical = 16.dp, horizontal = 12.dp)
                 .height(48.dp)
-                .background(Grey, RoundedCornerShape(20.dp))
+                .background(LightGrey, RoundedCornerShape(20.dp))
                 .testTag("NewWorkoutButton"),
         contentAlignment = Alignment.Center) {
           Icon(
