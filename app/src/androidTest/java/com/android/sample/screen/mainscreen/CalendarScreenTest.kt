@@ -40,7 +40,7 @@ class CalendarScreenTest {
                 "NightSes",
                 "Hold for 60 seconds",
                 false,
-                date = LocalDateTime.of(2024, 11, 10, 2, 1)))
+                date = LocalDateTime.now().plusDays(1)))
     val yogaWorkouts: List<YogaWorkout> = listOf()
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
@@ -125,7 +125,7 @@ class CalendarScreenTest {
     // Find all nodes with the testTag "daySection"
     val dayNodes = composeTestRule.onAllNodesWithTag("daySection", useUnmergedTree = true)
 
-    // Assert that there are 7 day sections displayed
+    // Assert that there are 3 day sections displayed
     assert(3 < dayNodes.fetchSemanticsNodes().size)
   }
 }

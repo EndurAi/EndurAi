@@ -1,7 +1,5 @@
 package com.android.sample.ui.workout
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -63,12 +60,13 @@ import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.DateTimePicker
 import com.android.sample.ui.composables.ExerciseCard
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
-import com.android.sample.ui.theme.Grey
+import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Purple60
 import java.time.LocalDateTime
 
@@ -140,7 +138,8 @@ fun WorkoutCreationScreen(
                         selectedDateTime = selectedDateTime,
                         onDateTimeSelected = { newDateTime ->
                           selectedDateTime = newDateTime // Mise à jour avec la date sélectionnée
-                        })
+                        },
+                        title = "Workout Date")
 
                     Spacer(Modifier.height(16.dp))
 
@@ -166,7 +165,7 @@ fun WorkoutCreationScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors =
                             CardDefaults.cardColors(
-                                containerColor = Grey), // Gray color for consistency
+                                containerColor = LightGrey), // Gray color for consistency
                         modifier =
                             Modifier.fillMaxWidth(0.9f)
                                 .padding(horizontal = 24.dp, vertical = 8.dp)) {
@@ -205,7 +204,7 @@ fun WorkoutCreationScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors =
                             CardDefaults.cardColors(
-                                containerColor = Grey), // Couleur grise pour la carte
+                                containerColor = LightGrey), // Couleur grise pour la carte
                         modifier =
                             Modifier.fillMaxWidth(0.9f)
                                 .padding(horizontal = 24.dp, vertical = 8.dp)) {
@@ -397,52 +396,4 @@ fun WorkoutCreationScreen(
               }
         })
   }
-}
-
-@Composable
-fun DateTimePicker(
-    selectedDateTime: LocalDateTime?,
-    onDateTimeSelected: (LocalDateTime) -> Unit,
-) {
-  val context = LocalContext.current
-
-  // Function to launch the Date and Time pickers
-  fun showDateTimePickers() {
-    val now = LocalDateTime.now()
-    val datePicker =
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-              val timePicker =
-                  TimePickerDialog(
-                      context,
-                      { _, hourOfDay, minute ->
-                        val selectedDate =
-                            LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute)
-                        onDateTimeSelected(selectedDate)
-                      },
-                      now.hour,
-                      now.minute,
-                      true)
-              timePicker.show()
-            },
-            now.year,
-            now.monthValue - 1,
-            now.dayOfMonth)
-    datePicker.show()
-  }
-
-  OutlinedTextField(
-      value =
-          selectedDateTime?.let {
-            "${it.dayOfMonth} ${it.month.name.lowercase().capitalize()} ${it.year} at ${it.hour}:${it.minute.toString().padStart(2, '0')}"
-          } ?: "Select Date and Time",
-      onValueChange = { /* No-op since we control the value */},
-      readOnly = true,
-      label = { Text("Workout Date") },
-      trailingIcon = {
-        IconButton(onClick = { showDateTimePickers() }) {
-          Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Date")
-        }
-      })
 }
