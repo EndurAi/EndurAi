@@ -52,6 +52,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                           navigationActions.navigateTo(Screen.BODY_WEIGHT_CREATION)
                       WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_CREATION)
                       WorkoutType.RUNNING -> TODO()
+                      WorkoutType.WARMUP -> TODO()
                     }
                   },
                   shape = RoundedCornerShape(12.dp),

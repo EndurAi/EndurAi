@@ -52,15 +52,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
-import com.android.sample.model.workout.BodyWeightExercise
-import com.android.sample.model.workout.BodyWeightExerciseType
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
+import com.android.sample.model.workout.ExerciseType
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
-import com.android.sample.model.workout.YogaExercise
-import com.android.sample.model.workout.YogaExerciseType
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.DateTimePicker
 import com.android.sample.ui.composables.ExerciseCard
@@ -96,7 +94,7 @@ fun WorkoutCreationScreen(
   }
   var showNameDescriptionScreen by remember { mutableStateOf(true) }
   var showExerciseDialog by remember { mutableStateOf(false) }
-  var selectedExerciseType by remember { mutableStateOf<Any?>(null) }
+  var selectedExerciseType by remember { mutableStateOf<ExerciseType?>(null) }
   var exerciseDetail by remember { mutableStateOf<ExerciseDetail?>(null) }
   var isDropdownExpanded by remember { mutableStateOf(false) }
 
@@ -190,12 +188,8 @@ fun WorkoutCreationScreen(
                         }
                   }
 
-                  items(exerciseList) { exercise ->
-                    when (exercise) {
-                      is YogaExercise -> ExerciseCard(exercise)
-                      is BodyWeightExercise -> ExerciseCard(exercise)
-                    }
-                  }
+                  items(exerciseList) { exercise -> ExerciseCard(exercise) }
+
                   item {
                     // Vertical line connecting the cards
                     Column(
@@ -243,8 +237,7 @@ fun WorkoutCreationScreen(
                                       warmup = warmup,
                                       date = selectedDateTime!!,
                                       exercises =
-                                          exerciseList.toMutableList()
-                                              as MutableList<YogaExercise>))
+                                          exerciseList.toMutableList() as MutableList<Exercise>))
                             }
                             WorkoutType.BODY_WEIGHT -> {
                               workoutViewModel.addWorkout(
@@ -255,8 +248,7 @@ fun WorkoutCreationScreen(
                                       warmup = warmup,
                                       date = selectedDateTime!!,
                                       exercises =
-                                          exerciseList.toMutableList()
-                                              as MutableList<BodyWeightExercise>))
+                                          exerciseList.toMutableList() as MutableList<Exercise>))
                             }
                             else -> {}
                           }
@@ -286,26 +278,30 @@ fun WorkoutCreationScreen(
                 expanded = isDropdownExpanded, onDismissRequest = { isDropdownExpanded = false }) {
                   when (workoutType) {
                     WorkoutType.YOGA -> {
-                      YogaExerciseType.entries.forEach { type ->
-                        DropdownMenuItem(
-                            onClick = {
-                              selectedExerciseType = type
-                              isDropdownExpanded = false
-                            },
-                            modifier = Modifier.testTag("exerciseType${type.name}"),
-                            text = { Text(type.name) })
-                      }
+                      ExerciseType.entries
+                          .filter { it.workoutType == WorkoutType.YOGA }
+                          .forEach { type ->
+                            DropdownMenuItem(
+                                onClick = {
+                                  selectedExerciseType = type
+                                  isDropdownExpanded = false
+                                },
+                                modifier = Modifier.testTag("exerciseType${type.name}"),
+                                text = { Text(type.name) })
+                          }
                     }
                     WorkoutType.BODY_WEIGHT -> {
-                      BodyWeightExerciseType.entries.forEach { type ->
-                        DropdownMenuItem(
-                            onClick = {
-                              selectedExerciseType = type
-                              isDropdownExpanded = false
-                            },
-                            modifier = Modifier.testTag("exerciseType${type.name}"),
-                            text = { Text(type.name) })
-                      }
+                      ExerciseType.entries
+                          .filter { it.workoutType == WorkoutType.BODY_WEIGHT }
+                          .forEach { type ->
+                            DropdownMenuItem(
+                                onClick = {
+                                  selectedExerciseType = type
+                                  isDropdownExpanded = false
+                                },
+                                modifier = Modifier.testTag("exerciseType${type.name}"),
+                                text = { Text(type.name) })
+                          }
                     }
                     else -> {}
                   }
@@ -380,19 +376,11 @@ fun WorkoutCreationScreen(
                 if (selectedExerciseType != null && exerciseDetail != null) {
                   exerciseList =
                       exerciseList +
-                          when (workoutType) {
-                            WorkoutType.YOGA ->
-                                YogaExercise(
-                                    exerciseId = workoutViewModel.getNewUid(),
-                                    type = selectedExerciseType as YogaExerciseType,
-                                    detail = exerciseDetail!!)
-                            WorkoutType.BODY_WEIGHT ->
-                                BodyWeightExercise(
-                                    exerciseId = workoutViewModel.getNewUid(),
-                                    type = selectedExerciseType as BodyWeightExerciseType,
-                                    detail = exerciseDetail!!)
-                            else -> throw IllegalArgumentException("Unsupported workout type")
-                          }
+                          Exercise(
+                              id = workoutViewModel.getNewUid(),
+                              type = selectedExerciseType!!,
+                              detail = exerciseDetail!!)
+
                   showExerciseDialog = false
                 }
               },
