@@ -82,11 +82,12 @@ fun WarmUpScreenBody(
   var exerciseIndex by remember { mutableIntStateOf(0) }
   val context = LocalContext.current
   val exerciseState =
-    exerciseStateList?.get(exerciseIndex)
-      ?: run {
-        Toast.makeText(context, "Error while fetching the list of exercise", Toast.LENGTH_SHORT).show()
-        error("Exercise state list is null or index out of bounds")
-      }
+      exerciseStateList?.get(exerciseIndex)
+          ?: run {
+            Toast.makeText(context, "Error while fetching the list of exercise", Toast.LENGTH_SHORT)
+                .show()
+            error("Exercise state list is null or index out of bounds")
+          }
   // Video box for the video model
   var videoBoxIsDisplayed by remember { mutableStateOf(true) }
 
