@@ -11,5 +11,8 @@
     <string name="TitleTabRunning">Running</string>
     <string name="setting_title">Settings</string>
     <string name="calendar_title">Calendar</string>
+    <string name="friends_title">Friends</string>
+    <string name="add_friends_title">Add a new Friend</string>
+
     <string name="addButton">+</string>
 </resources>
