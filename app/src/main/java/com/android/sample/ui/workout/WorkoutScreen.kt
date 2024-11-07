@@ -6,6 +6,9 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.camera.view.video.ExperimentalVideo
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,18 +17,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -37,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -52,6 +61,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
+import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -60,7 +70,9 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.ArrowBack
+import com.android.sample.ui.composables.CameraFeedBack
 import com.android.sample.ui.composables.CountDownTimer
+import com.android.sample.ui.composables.DualVideoPlayer
 import com.android.sample.ui.composables.SkipButton
 import com.android.sample.ui.composables.convertSecondsToTime
 import com.android.sample.ui.navigation.NavigationActions
@@ -70,13 +82,15 @@ import kotlinx.coroutines.delay
 // Data class to hold the state of an exercise
 data class ExerciseState(val exercise: Exercise, var isDone: Boolean)
 
+@androidx.annotation.OptIn(ExperimentalVideo::class)
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WarmUpScreenBody(
     exerciseStateList: List<ExerciseState>?,
     workoutName: String,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    cameraViewModel: CameraViewModel
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
@@ -94,13 +108,24 @@ fun WarmUpScreenBody(
   var finishButtonBoxIsDisplayed by remember { mutableStateOf(false) }
   // presentation button are the skip and the start button showed first
   var presentationButtonBoxIsDisplayed by remember { mutableStateOf(true) }
-  //The camera feedback is displaying or not
+  // The camera feedback is displaying or not
   var cameraFeedbackIsDisplayed by remember { mutableStateOf(false) }
   // if the camera is currently recording
-  var isRecordingInCamera by remember { mutableStateOf(false) }
+  var isRecordingInCamera by remember { mutableStateOf(cameraViewModel.recording.value != null) }
+  var cameraRecordAsked by remember { mutableStateOf(false) }
+  var userHasRecorded by remember { mutableStateOf(false) }
+
+  // current angle of the camera logo
+  val angle by
+      animateFloatAsState(
+          targetValue = if (cameraRecordAsked) 180f else 0f,
+          animationSpec = tween(durationMillis = 500),
+          label = "" // Adjust duration as needed
+          )
   // the goalCenterBox contains either the image of the exercise or the timer
   var goalCounterBoxIsDisplayed by remember { mutableStateOf(false) }
   var countDownTimerIsPaused by remember { mutableStateOf(false) }
+  var comparisonVideoIsDisplayed by remember { mutableStateOf(false) }
   // Setting a countdown or not before the time based exercises begins
   var isCountdownTime by remember {
     mutableStateOf(true)
@@ -121,6 +146,10 @@ fun WarmUpScreenBody(
 
   /** Moves to the next exercise or finishes the workout if all exercises are completed. */
   fun nextExercise() {
+    userHasRecorded = false
+    cameraRecordAsked = false
+    cameraFeedbackIsDisplayed = false
+    comparisonVideoIsDisplayed = false
     if (exerciseIndex < exerciseStateList.size - 1) {
       exerciseIndex++
       paramToPresentation()
@@ -159,7 +188,10 @@ fun WarmUpScreenBody(
     LaunchedEffect(Unit) {
       while (true) {
         delay(1000L)
-        if (!countDownTimerIsPaused && finishButtonBoxIsDisplayed) {
+        if (!countDownTimerIsPaused &&
+            finishButtonBoxIsDisplayed &&
+            !cameraRecordAsked &&
+            !comparisonVideoIsDisplayed) {
           if (isCountdownTime) {
             if (countDownValue > 0) {
               countDownValue--
@@ -199,7 +231,8 @@ fun WarmUpScreenBody(
             navigationIcon = { ArrowBack(navigationActions) })
       }) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            modifier =
+                Modifier.fillMaxSize().padding(innerPadding).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally) {
 
               // Column for displaying exercise information
@@ -240,9 +273,7 @@ fun WarmUpScreenBody(
 
               // Column for displaying exercise goals (repetitions or timer)
               Column(
-                  modifier =
-                      if (goalCounterBoxIsDisplayed) Modifier.size(300.dp, 300.dp)
-                      else Modifier.size(150.dp, 100.dp),
+                  modifier = Modifier.fillMaxHeight(),
                   horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                       Image(
@@ -265,31 +296,44 @@ fun WarmUpScreenBody(
                     // Box for the goal counter: Display an image of the exercise type if rep based
                     // or a timer
                     if (goalCounterBoxIsDisplayed) {
-                      if (exerciseIsRepetitionBased) {
-                        Image(
-                            painter =
-                                painterResource(
-                                    id =
-                                        when (exerciseState.exercise.type.workoutType) {
-                                          WorkoutType.WARMUP -> R.drawable.warmup_logo
-                                          WorkoutType.YOGA -> R.drawable.yoga
-                                          WorkoutType.BODY_WEIGHT -> R.drawable.dumbbell
-                                          WorkoutType.RUNNING -> TODO()
-                                        }),
-                            contentDescription = "Goal Counter",
-                            modifier = Modifier.size(350.dp, 200.dp).testTag("ExerciseTypeIcon"))
+
+                      if (comparisonVideoIsDisplayed) {
+                        //
+                        Column(Modifier.height(500.dp).fillMaxWidth()) {
+                          DualVideoPlayer(cameraViewModel.videoFile.value, url = URL, context)
+                        }
+                      } else if (!cameraRecordAsked) {
+
+                        if (exerciseIsRepetitionBased) {
+
+                          Image(
+                              painter =
+                                  painterResource(
+                                      id =
+                                          when (exerciseState.exercise.type.workoutType) {
+                                            WorkoutType.WARMUP -> R.drawable.warmup_logo
+                                            WorkoutType.YOGA -> R.drawable.yoga
+                                            WorkoutType.BODY_WEIGHT -> R.drawable.dumbbell
+                                            WorkoutType.RUNNING -> TODO()
+                                          }),
+                              contentDescription = "Goal Counter",
+                              modifier = Modifier.size(350.dp, 200.dp).testTag("ExerciseTypeIcon"))
+                        } else {
+                          CountDownTimer(
+                              timer,
+                              timeLimit,
+                              modifier =
+                                  Modifier.size(220.dp).testTag("CountDownTimer").clickable {
+                                    countDownTimerIsPaused = !countDownTimerIsPaused
+                                  },
+                              isPaused = countDownTimerIsPaused,
+                              countDownCurrentValue = countDownValue,
+                              isCountDownTime = isCountdownTime)
+                          Spacer(modifier = Modifier.height(5.dp))
+                        }
                       } else {
-                        CountDownTimer(
-                            timer,
-                            timeLimit,
-                            modifier =
-                                Modifier.size(220.dp).testTag("CountDownTimer").clickable {
-                                  countDownTimerIsPaused = !countDownTimerIsPaused
-                                },
-                            isPaused = countDownTimerIsPaused,
-                            countDownCurrentValue = countDownValue,
-                            isCountDownTime = isCountdownTime)
-                        Spacer(modifier = Modifier.height(5.dp))
+                        CameraFeedBack.CameraScreen(
+                            cameraViewModel, modifier = Modifier.size(220.dp, 350.dp))
                       }
                     }
                   }
@@ -297,11 +341,24 @@ fun WarmUpScreenBody(
               // Presentation button box
               if (presentationButtonBoxIsDisplayed) {
                 Column(
-                    modifier = Modifier.size(height = 120.dp, width = 180.dp),
+                    modifier = Modifier.size(height = 200.dp, width = 180.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom) {
                       SkipButton(onClick = { nextExercise() })
-                      Spacer(modifier = Modifier.height(25.dp))
+                      Spacer(modifier = Modifier.height(50.dp))
+                      // Switch to ask if the user wants to record itself
+                      Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.baseline_camera_24),
+                            contentDescription = "Record Video",
+                            modifier = Modifier.padding(end = 8.dp).rotate(angle))
+
+                        Switch(
+                            checked = cameraRecordAsked,
+                            onCheckedChange = { cameraRecordAsked = it },
+                          modifier = Modifier.testTag("recordSwitch"))
+                      }
+                      Spacer(Modifier.height(10.dp))
                       Button(
                           onClick = {
                             presentationButtonBoxIsDisplayed = false
@@ -321,10 +378,42 @@ fun WarmUpScreenBody(
                     modifier = Modifier.size(height = 250.dp, width = 180.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top) {
+                      if (cameraRecordAsked) {
+                        Button(
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor =
+                                        if (isRecordingInCamera) Color.Red
+                                        else if (userHasRecorded) Color.Green else Color.Cyan),
+                            onClick = {
+                              userHasRecorded = true
+                              cameraViewModel.recordVideo(
+                                  onSuccess = {
+                                    isRecordingInCamera = false
+                                    Toast.makeText(context, "Record saved", Toast.LENGTH_SHORT)
+                                        .show()
+                                  },
+                                  onFailure = { isRecordingInCamera = false },
+                                  onFinishRecording = { isRecordingInCamera = false },
+                                  onStarting = { isRecordingInCamera = true })
+                            }) {
+                              Text(
+                                  if (isRecordingInCamera) "Recording..."
+                                  else if (userHasRecorded) "Record again" else "Tap to record")
+                            }
+                      }
+
                       SkipButton(onClick = { nextExercise() })
                       Spacer(Modifier.size(25.dp))
                       Button(
-                          onClick = { nextExercise() },
+                          onClick = {
+                            if (cameraRecordAsked) {
+                              comparisonVideoIsDisplayed = true
+                              cameraRecordAsked = false
+                            } else {
+                              nextExercise()
+                            }
+                          },
                           modifier =
                               Modifier.width(200.dp)
                                   .height(50.dp)
@@ -372,6 +461,7 @@ fun VideoPlayer(url: String, context: Context) {
 }
 
 /** WorkoutScreen that display the workflow during a workout */
+@androidx.annotation.OptIn(ExperimentalVideo::class)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun WorkoutScreen(
@@ -379,7 +469,8 @@ fun WorkoutScreen(
     warmUpViewModel: WarmUpViewModel,
     bodyweightViewModel: WorkoutViewModel<BodyWeightWorkout>,
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
-    workoutType: WorkoutType
+    workoutType: WorkoutType,
+    cameraViewModel: CameraViewModel = CameraViewModel(LocalContext.current)
 ) {
   // Get the selected workout based on the workout type
   val selectedWorkout =
@@ -401,6 +492,10 @@ fun WorkoutScreen(
 
   // Display the WarmUpScreenBody with the exercise list and workout name
   selectedWorkout?.name?.let {
-    WarmUpScreenBody(exerciseStateList, workoutName = it, navigationActions = navigationActions)
+    WarmUpScreenBody(
+        exerciseStateList,
+        workoutName = it,
+        navigationActions = navigationActions,
+        cameraViewModel = cameraViewModel)
   }
 }

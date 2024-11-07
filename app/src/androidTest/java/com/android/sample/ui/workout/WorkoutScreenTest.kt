@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -103,7 +104,9 @@ class WorkoutScreenTest {
           bodyweightViewModel = bodyWeightViewModel,
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
-          workoutType = WorkoutType.BODY_WEIGHT)
+          workoutType = WorkoutType.BODY_WEIGHT,
+
+      )
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -137,6 +140,9 @@ class WorkoutScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("StartButton").assertTextEquals("Start")
+    composeTestRule.onNodeWithTag("recordSwitch").assertIsDisplayed()
+
+
 
     // VideoPlayer
     composeTestRule.onNodeWithTag("VideoPlayer").assertIsDisplayed()
