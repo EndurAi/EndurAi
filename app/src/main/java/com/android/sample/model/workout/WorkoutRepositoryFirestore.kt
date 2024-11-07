@@ -40,7 +40,7 @@ class WorkoutRepositoryFirestore<T : Workout>(
           .build()
 
   private val adapter = moshi.adapter(clazz)
-    private val adapterWorkoutID = moshi.adapter(WorkoutID::class.java)
+  private val adapterWorkoutID = moshi.adapter(WorkoutID::class.java)
 
   private val collectionPath: String
     get() {
@@ -52,12 +52,10 @@ class WorkoutRepositoryFirestore<T : Workout>(
 
   private val documentName: String = getDocumentName()
 
-    private val mainDocumentName = "allworkouts"
+  private val mainDocumentName = "allworkouts"
 
   override fun getNewUid(): String {
-    return db.collection(mainDocumentName)
-        .document()
-        .id
+    return db.collection(mainDocumentName).document().id
   }
 
   override fun init(onSuccess: () -> Unit) {
@@ -74,26 +72,24 @@ class WorkoutRepositoryFirestore<T : Workout>(
     val dataMapWorkout: Map<String, Any> =
         (moshi.adapter(Map::class.java).fromJson(jsonWorkout) as Map<String, Any>?)!!
 
-      val workoutById = WorkoutID(workoutid = obj.workoutId)
-      val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
+    val workoutById = WorkoutID(workoutid = obj.workoutId)
+    val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
 
-      val dataMapWorkoutID: Map<String, Any> =
-          (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
+    val dataMapWorkoutID: Map<String, Any> =
+        (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
 
+    db.collection(collectionPath)
+        .document(documentToCollectionName)
+        .collection(documentName)
+        .document(obj.workoutId)
+        .set(dataMapWorkoutID)
+        .addOnFailureListener { e -> onFailure(e) }
 
-      db.collection(collectionPath)
-          .document(documentToCollectionName)
-          .collection(documentName)
-          .document(obj.workoutId)
-          .set(dataMapWorkoutID)
-          .addOnFailureListener { e -> onFailure(e) }
-
-      db.collection(mainDocumentName)
-          .document(obj.workoutId)
-          .set(dataMapWorkout)
-          .addOnFailureListener { e -> onFailure(e) }
-          .addOnSuccessListener { onSuccess() }
-
+    db.collection(mainDocumentName)
+        .document(obj.workoutId)
+        .set(dataMapWorkout)
+        .addOnFailureListener { e -> onFailure(e) }
+        .addOnSuccessListener { onSuccess() }
   }
 
   override fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
@@ -103,29 +99,31 @@ class WorkoutRepositoryFirestore<T : Workout>(
         .get()
         .addOnCompleteListener { task ->
           if (task.isSuccessful) {
-              val workoutids = task.result?.mapNotNull { document -> documentSnapshotToObjectIds(document) } ?: emptyList()
-              val workouts = mutableListOf<T>()
-              val tasks = mutableListOf<Task<DocumentSnapshot>>()
+            val workoutids =
+                task.result?.mapNotNull { document -> documentSnapshotToObjectIds(document) }
+                    ?: emptyList()
+            val workouts = mutableListOf<T>()
+            val tasks = mutableListOf<Task<DocumentSnapshot>>()
 
-              for (id in workoutids) {
-                  val task = db.collection(mainDocumentName)
+            for (id in workoutids) {
+              val task =
+                  db.collection(mainDocumentName)
                       .document(id)
                       .get()
                       .addOnSuccessListener { document ->
-                          documentSnapshotToObject(document)?.let { workouts.add(it) }
+                        documentSnapshotToObject(document)?.let { workouts.add(it) }
                       }
                       .addOnFailureListener { e ->
-                          Log.e("WorkoutRepositoryFirestore", "Error getting workout document", e)
-                          onFailure(e)
+                        Log.e("WorkoutRepositoryFirestore", "Error getting workout document", e)
+                        onFailure(e)
                       }
-                  tasks.add(task)
-              }
+              tasks.add(task)
+            }
 
-              // Wait for all tasks to complete
-              Tasks.whenAllComplete(tasks)
-                  .addOnSuccessListener { onSuccess(workouts) }
-                  .addOnFailureListener { e -> onFailure(e) }
-
+            // Wait for all tasks to complete
+            Tasks.whenAllComplete(tasks)
+                .addOnSuccessListener { onSuccess(workouts) }
+                .addOnFailureListener { e -> onFailure(e) }
           } else {
             task.exception?.let { e ->
               Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
@@ -156,11 +154,11 @@ class WorkoutRepositoryFirestore<T : Workout>(
         .delete()
         .addOnFailureListener { e -> onFailure(e) }
 
-      db.collection(mainDocumentName)
-          .document(id)
-          .delete()
-          .addOnFailureListener { e -> onFailure(e) }
-          .addOnSuccessListener { onSuccess() }
+    db.collection(mainDocumentName)
+        .document(id)
+        .delete()
+        .addOnFailureListener { e -> onFailure(e) }
+        .addOnSuccessListener { onSuccess() }
   }
 
   private fun documentSnapshotToObjectIds(doc: DocumentSnapshot): String? {
@@ -170,7 +168,7 @@ class WorkoutRepositoryFirestore<T : Workout>(
     }
     return try {
       val json = moshi.adapter(Map::class.java).toJson(doc.data)
-        adapterWorkoutID.fromJson(json)?.workoutid
+      adapterWorkoutID.fromJson(json)?.workoutid
     } catch (e: JsonDataException) {
       Log.e("Moshi", "Data id error JSON : ${e.message}")
       throw e
@@ -183,25 +181,25 @@ class WorkoutRepositoryFirestore<T : Workout>(
     }
   }
 
-    private fun documentSnapshotToObject(doc: DocumentSnapshot): T? {
-        if (!doc.exists()) {
-            Log.e("DEB", "The document does not exist")
-            return null
-        }
-        return try {
-            val json = moshi.adapter(Map::class.java).toJson(doc.data)
-            adapter.fromJson(json)
-        } catch (e: JsonDataException) {
-            Log.e("Moshi", "Data error JSON : ${e.message}")
-            throw e
-        } catch (e: JsonEncodingException) {
-            Log.e("Moshi", "Encoding error JSON : ${e.message}")
-            throw e
-        } catch (e: Exception) {
-            Log.e("Moshi", "Conversion error : ${e.message}")
-            throw e
-        }
+  private fun documentSnapshotToObject(doc: DocumentSnapshot): T? {
+    if (!doc.exists()) {
+      Log.e("DEB", "The document does not exist")
+      return null
     }
+    return try {
+      val json = moshi.adapter(Map::class.java).toJson(doc.data)
+      adapter.fromJson(json)
+    } catch (e: JsonDataException) {
+      Log.e("Moshi", "Data error JSON : ${e.message}")
+      throw e
+    } catch (e: JsonEncodingException) {
+      Log.e("Moshi", "Encoding error JSON : ${e.message}")
+      throw e
+    } catch (e: Exception) {
+      Log.e("Moshi", "Conversion error : ${e.message}")
+      throw e
+    }
+  }
 }
 
 class LocalDateTimeAdapter {

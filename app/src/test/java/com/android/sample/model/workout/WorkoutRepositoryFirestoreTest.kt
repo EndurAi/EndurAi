@@ -29,24 +29,15 @@ import org.robolectric.Shadows.shadowOf
 @RunWith(RobolectricTestRunner::class)
 class WorkoutRepositoryFirestoreTest {
 
-  @Mock
-  private lateinit var mockFirestore: FirebaseFirestore
-  @Mock
-  private lateinit var mockCollectionPath: CollectionReference
-  @Mock
-  private lateinit var mockDocumentWorkoutID: DocumentReference
-  @Mock
-  private lateinit var mockMainDocumentName: CollectionReference
-  @Mock
-  private lateinit var mockDocumentToCollectionName: DocumentReference
-  @Mock
-  private lateinit var mockDocumentWorkout: DocumentReference
-  @Mock
-  private lateinit var mockCollectionDocumentName: CollectionReference
-  @Mock
-  private lateinit var mockUser: FirebaseUser
-  @Mock
-  private lateinit var mockAuth: FirebaseAuth
+  @Mock private lateinit var mockFirestore: FirebaseFirestore
+  @Mock private lateinit var mockCollectionPath: CollectionReference
+  @Mock private lateinit var mockDocumentWorkoutID: DocumentReference
+  @Mock private lateinit var mockMainDocumentName: CollectionReference
+  @Mock private lateinit var mockDocumentToCollectionName: DocumentReference
+  @Mock private lateinit var mockDocumentWorkout: DocumentReference
+  @Mock private lateinit var mockCollectionDocumentName: CollectionReference
+  @Mock private lateinit var mockUser: FirebaseUser
+  @Mock private lateinit var mockAuth: FirebaseAuth
   private lateinit var firebaseAuthMock: MockedStatic<FirebaseAuth>
 
   private lateinit var workoutRepositoryFirestore1: WorkoutRepositoryFirestore<BodyWeightWorkout>
@@ -56,22 +47,20 @@ class WorkoutRepositoryFirestoreTest {
   private val collectionPath: String = "mocked-uid"
 
   private val bodyWeightWorkout =
-    BodyWeightWorkout(
-      workoutId = "workout-1",
-      name = "Morning Workout",
-      description = "A great way to start your day!",
-      date = LocalDateTime.of(2024, 11, 1, 0, 42),
-      warmup = true
-    )
+      BodyWeightWorkout(
+          workoutId = "workout-1",
+          name = "Morning Workout",
+          description = "A great way to start your day!",
+          date = LocalDateTime.of(2024, 11, 1, 0, 42),
+          warmup = true)
 
   private val yogaWorkout =
-    YogaWorkout(
-      workoutId = "workout-2",
-      name = "Workout after Bugnion lesson",
-      description = "A great way to change my mind!",
-      date = LocalDateTime.of(2024, 11, 1, 0, 42),
-      warmup = false
-    )
+      YogaWorkout(
+          workoutId = "workout-2",
+          name = "Workout after Bugnion lesson",
+          description = "A great way to change my mind!",
+          date = LocalDateTime.of(2024, 11, 1, 0, 42),
+          warmup = false)
 
   @Before
   fun setUp() {
@@ -91,7 +80,7 @@ class WorkoutRepositoryFirestoreTest {
 
     // Test with BodyWeightWorkout
     workoutRepositoryFirestore1 =
-      WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
+        WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
 
     `when`(mockFirestore.collection(collectionPath)).thenReturn(mockCollectionPath)
     `when`(mockCollectionPath.document(any())).thenReturn(mockDocumentToCollectionName)
@@ -100,7 +89,6 @@ class WorkoutRepositoryFirestoreTest {
 
     `when`(mockFirestore.collection(mainDocumentName)).thenReturn(mockMainDocumentName)
     `when`(mockMainDocumentName.document(any())).thenReturn(mockDocumentWorkout)
-
   }
 
   @After
@@ -144,11 +132,11 @@ class WorkoutRepositoryFirestoreTest {
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
 
     workoutRepositoryFirestore1.getDocuments(
-      onSuccess = { documents ->
-        // Here you can check the documents received
-        assert(documents.isNotEmpty()) // Example assertion
-      },
-      onFailure = { fail("Failure callback should not be called") })
+        onSuccess = { documents ->
+          // Here you can check the documents received
+          assert(documents.isNotEmpty()) // Example assertion
+        },
+        onFailure = { fail("Failure callback should not be called") })
 
     // Verify that the collection reference's get method was called
     verify(mockCollectionDocumentName).get()

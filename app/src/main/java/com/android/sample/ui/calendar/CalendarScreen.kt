@@ -172,9 +172,11 @@ fun Legend(modifier: Modifier = Modifier) {
       modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
-        LegendItem(color = PastelRed, label = "Bodyweight", modifier = Modifier.testTag("legendBodyweight"))
+        LegendItem(
+            color = PastelRed,
+            label = "Bodyweight",
+            modifier = Modifier.testTag("legendBodyweight"))
         LegendItem(color = PastelBlue, label = "Yoga", modifier = Modifier.testTag("legendYoga"))
-
       }
 }
 
