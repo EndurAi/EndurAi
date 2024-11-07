@@ -15,6 +15,7 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.mainscreen.WorkoutList
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+
 /**
  * Screen that displays a list of workouts to choose from.
  *
