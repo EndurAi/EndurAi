@@ -4,11 +4,14 @@ import android.graphics.Camera
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.OptIn
+import androidx.camera.view.video.ExperimentalVideo
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -16,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.video.VideoViewModel
@@ -69,6 +73,7 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+@OptIn(ExperimentalVideo::class)
 @Composable
 fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
@@ -87,6 +92,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
   val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
   val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+
+  val cameraViewModel = CameraViewModel(context = LocalContext.current)
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -218,7 +225,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
     navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
       composable(Screen.CALENDAR) {
        // CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
-        CameraFeedBack.CameraScreen()
+        CameraFeedBack.CameraScreen(cameraViewModel)
 
       }
     }

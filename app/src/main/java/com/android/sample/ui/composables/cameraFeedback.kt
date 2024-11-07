@@ -55,34 +55,35 @@ class CameraFeedBack {
       val cameraPermissionState: PermissionState =
         rememberPermissionState(android.Manifest.permission.CAMERA)
 
-      if (cameraPermissionState.status.isGranted) {
+      if (!cameraPermissionState.status.isGranted) {
         Box(modifier = Modifier.size(30.dp)) {
-          CameraBody()
+          CameraBody(cameraViewModel)
         }
+
+      }
+      else{
+        Text("No perm")
       }
     }
 
     @androidx.annotation.OptIn(ExperimentalVideo::class)
     @Composable
-    fun CameraBody() {
+    fun CameraBody(cameraViewModel: CameraViewModel) {
 
       val context = LocalContext.current
       val lifecycleOwner = LocalLifecycleOwner.current
-      val cameraController = remember { LifecycleCameraController(context).apply {
-        setEnabledUseCases(CameraController.VIDEO_CAPTURE)
-      } }
-
-      cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA // Use the fron cam
 
 
       Scaffold(modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
           FloatingActionButton(onClick = {
-            recordVideo(
-              cameraController,
-              context
-            )
-          }) { Text("hi") }
+            cameraViewModel.recordVideo(
+              onSuccess = {Toast.makeText(context,"success",Toast.LENGTH_SHORT).show()},
+              onFailure = {Toast.makeText(context,"Failure",Toast.LENGTH_SHORT).show()},
+              onFinishRecording = {Toast.makeText(context,"Finish",Toast.LENGTH_SHORT).show()}
+            )}
+
+          ) { Text("hi") }
         }
       ) { pd: PaddingValues ->
 
@@ -97,8 +98,8 @@ class CameraFeedBack {
               setBackgroundColor(android.graphics.Color.BLACK)
               scaleType = PreviewView.ScaleType.FILL_START
             }.also { previewView ->
-              previewView.controller = cameraController
-              cameraController.bindToLifecycle(lifecycleOwner)
+              previewView.controller = cameraViewModel.cameraController.value
+              cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
 
             }
           })

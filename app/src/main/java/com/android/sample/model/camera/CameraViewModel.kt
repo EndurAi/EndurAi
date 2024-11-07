@@ -56,6 +56,8 @@ CameraSelector.DEFAULT_BACK_CAMERA -> {
   }
 
 
+
+
   fun recordVideo(onSuccess: ()-> Unit, onFailure: ()-> Unit, onFinishRecording: ()-> Unit){
 
     if (_recording.value != null) {
