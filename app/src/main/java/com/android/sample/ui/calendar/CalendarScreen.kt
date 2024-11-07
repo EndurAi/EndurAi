@@ -58,8 +58,8 @@ fun CalendarScreen(
   val workoutsYoga by yogaworkoutViewModel.workouts.collectAsState(emptyList())
 
   val coloredWorkoutsBody =
-      workoutsBody.map { ColoredWorkout(it, PastelBlue, WorkoutType.BODY_WEIGHT) }
-  val coloredWorkoutsYoga = workoutsYoga.map { ColoredWorkout(it, PastelRed, WorkoutType.YOGA) }
+      workoutsBody.map { ColoredWorkout(it, PastelRed, WorkoutType.BODY_WEIGHT) }
+  val coloredWorkoutsYoga = workoutsYoga.map { ColoredWorkout(it, PastelBlue, WorkoutType.YOGA) }
   val workouts = coloredWorkoutsYoga + coloredWorkoutsBody
 
   // Infinite scrolling logic
@@ -172,12 +172,9 @@ fun Legend(modifier: Modifier = Modifier) {
       modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
+        LegendItem(color = PastelRed, label = "Bodyweight", modifier = Modifier.testTag("legendBodyweight"))
         LegendItem(color = PastelBlue, label = "Yoga", modifier = Modifier.testTag("legendYoga"))
 
-        LegendItem(
-            color = PastelRed,
-            label = "Bodyweight",
-            modifier = Modifier.testTag("legendBodyweight"))
       }
 }
 
