@@ -30,6 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoViewModel
+import com.android.sample.ui.composables.CustomSearchBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
@@ -62,7 +63,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
           Column(modifier = Modifier.padding(16.dp)) {
             // Row to align Search bar and Tag dropdown
             Row(modifier = Modifier.fillMaxWidth()) {
-              SearchBar(
+              CustomSearchBar(
                   query = searchQuery,
                   onQueryChange = { searchQuery = it },
                   modifier = Modifier.weight(1f).semantics { testTag = "searchBar" })
@@ -98,25 +99,6 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
       })
 }
 
-/** Composable function to display a the searchbar */
-@Composable
-fun SearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
-  Box(
-      modifier =
-          modifier.clip(RoundedCornerShape(24.dp)).background(Color(0xFFF0F0F0)).padding(8.dp)) {
-        BasicTextField(
-            value = query,
-            onValueChange = onQueryChange,
-            modifier = Modifier.fillMaxWidth(),
-            decorationBox = { innerTextField ->
-              if (query.isEmpty()) {
-                androidx.compose.material3.Text(
-                    "Search", color = Color.Gray, modifier = Modifier.padding(start = 8.dp))
-              }
-              innerTextField()
-            })
-      }
-}
 /** Composable function to display a dropdown menu for selecting tags. */
 @Composable
 fun TagDropdown(
