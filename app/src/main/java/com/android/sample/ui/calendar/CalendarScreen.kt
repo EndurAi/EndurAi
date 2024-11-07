@@ -31,9 +31,9 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Black
-import com.android.sample.ui.theme.DarkGray
-import com.android.sample.ui.theme.Gray
-import com.android.sample.ui.theme.LightGray
+import com.android.sample.ui.theme.DarkGrey
+import com.android.sample.ui.theme.MediumGrey
+import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.PastelBlue
 import com.android.sample.ui.theme.PastelRed
 import com.android.sample.ui.theme.Red
@@ -120,6 +120,7 @@ fun CalendarScreen(
                             yogaworkoutViewModel.deleteWorkoutById(
                                 selectedWorkout!!.workout.workoutId)
                         WorkoutType.RUNNING -> {}
+                        WorkoutType.WARMUP -> TODO()
                       }
                       showDialog = false
                     },
@@ -203,7 +204,8 @@ fun DaySection(
           Modifier.fillMaxWidth()
               .testTag("daySection")
               .padding(vertical = 8.dp)
-              .background(color = LightGray.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
+              .background(
+                  color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
               .padding(16.dp),
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
@@ -217,11 +219,12 @@ fun DaySection(
               text = getMonthName(date.monthNumber),
               style = MaterialTheme.typography.bodySmall,
               fontWeight = FontWeight.Light,
-              color = DarkGray)
+              color = DarkGrey)
         }
 
         if (workouts.isEmpty()) {
-          Text(text = "No workout", style = MaterialTheme.typography.bodyMedium, color = Gray)
+          Text(
+              text = "No workout", style = MaterialTheme.typography.bodyMedium, color = NeutralGrey)
         } else {
           Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
             workouts

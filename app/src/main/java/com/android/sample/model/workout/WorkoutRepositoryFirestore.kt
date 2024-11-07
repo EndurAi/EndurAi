@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 
-class WorkoutRepositoryFirestore<T : Workout>(
+open class WorkoutRepositoryFirestore<T : Workout>(
     private val db: FirebaseFirestore,
     private val clazz: Class<T>
 ) : WorkoutRepository<T> {

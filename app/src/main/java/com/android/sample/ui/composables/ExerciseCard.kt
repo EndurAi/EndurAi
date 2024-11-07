@@ -18,7 +18,7 @@ import com.android.sample.R
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.ui.theme.Blue
-import com.android.sample.ui.theme.Grey
+import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Purple20
 
 /**
@@ -41,21 +41,21 @@ fun ExerciseCard(exercise: Exercise) {
 
         Card(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Grey), // Grey color
+            colors = CardDefaults.cardColors(containerColor = LightGrey), // Grey color
             modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp)) {
               Row(
                   modifier = Modifier.padding(16.dp).fillMaxWidth(),
                   verticalAlignment = Alignment.CenterVertically) {
                     // Exercise name (on the left)
                     Text(
-                        text = exercise.exType.toString(),
+                        text = exercise.type.toString(),
                         fontSize = 18.sp,
                         color = Color.DarkGray,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Start)
 
                     // Exercise details (icon and information)
-                    ExerciseDetailCard(exercise.exDetail)
+                    ExerciseDetailCard(exercise.detail)
                   }
             }
       }
