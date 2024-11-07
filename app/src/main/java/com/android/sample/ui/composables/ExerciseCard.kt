@@ -29,40 +29,39 @@ import com.android.sample.ui.theme.Purple20
  */
 @Composable
 fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () -> Unit) {
-  Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      modifier = Modifier.fillMaxWidth()) {
-        // Vertical line connecting the cards
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-              Box(modifier = Modifier.size(8.dp).background(Purple20, shape = CircleShape))
-              Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Purple20))
-            }
+  Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+    // Vertical line connecting the cards
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+          Box(modifier = Modifier.size(8.dp).background(Purple20, shape = CircleShape))
+          Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Purple20))
+        }
 
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = LightGrey), // Grey color
-            modifier = Modifier.fillMaxWidth(0.9f).testTag("exerciseCard").padding(horizontal = 16.dp).clickable {
-                onCardClick()
-            }
-        ) {
-              Row(
-                  modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                  verticalAlignment = Alignment.CenterVertically) {
-                    // Exercise name (on the left)
-                    Text(
-                        text = exercise.type.toString(),
-                        fontSize = 18.sp,
-                        color = Color.DarkGray,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Start)
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = LightGrey), // Grey color
+        modifier =
+            Modifier.fillMaxWidth(0.9f)
+                .testTag("exerciseCard")
+                .padding(horizontal = 16.dp)
+                .clickable { onCardClick() }) {
+          Row(
+              modifier = Modifier.padding(16.dp).fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically) {
+                // Exercise name (on the left)
+                Text(
+                    text = exercise.type.toString(),
+                    fontSize = 18.sp,
+                    color = Color.DarkGray,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Start)
 
-                    // Exercise details (icon and information)
-                    ExerciseDetailCard(exercise.detail, onClick = onDetailClick)
-                  }
-            }
-      }
+                // Exercise details (icon and information)
+                ExerciseDetailCard(exercise.detail, onClick = onDetailClick)
+              }
+        }
+  }
 }
 
 /**
@@ -75,10 +74,11 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
   Card(
       shape = RoundedCornerShape(12.dp),
       colors = CardDefaults.cardColors(containerColor = Blue), // Darker blue color
-      modifier = Modifier.padding(start = 8.dp).testTag("detailCard").wrapContentSize().clickable {
+      modifier =
+          Modifier.padding(start = 8.dp).testTag("detailCard").wrapContentSize().clickable {
             onClick()
-      }) {
-      Text(modifier = Modifier.testTag("etailCard"), text = "Details", color = Color.White)
+          }) {
+        Text(modifier = Modifier.testTag("etailCard"), text = "Details", color = Color.White)
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically) {

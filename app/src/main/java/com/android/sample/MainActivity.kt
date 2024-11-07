@@ -163,14 +163,14 @@ fun MainApp(startDestination: String = Route.AUTH) {
       }
     }
 
-    //Body Weight Selection Screen
+    // Body Weight Selection Screen
     navigation(startDestination = Screen.CHOOSE_BODYWEIGHT, route = Route.CHOOSE_BODYWEIGHT) {
       composable(Screen.CHOOSE_BODYWEIGHT) {
         WorkoutSelectionScreen(bodyweightWorkoutViewModel, navigationActions)
       }
     }
 
-    //Body Weight Import Screen
+    // Body Weight Import Screen
     navigation(startDestination = Screen.BODY_WEIGHT_IMPORT, route = Route.BODY_WEIGHT_IMPORT) {
       composable(Screen.BODY_WEIGHT_IMPORT) {
         WorkoutCreationScreen(
@@ -185,7 +185,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
       }
     }
 
-    //Yoga Selection Screen
+    // Yoga Selection Screen
     navigation(startDestination = Screen.CHOOSE_YOGA, route = Route.CHOOSE_YOGA) {
       composable(Screen.CHOOSE_YOGA) {
         WorkoutSelectionScreen(yogaWorkoutViewModel, navigationActions)

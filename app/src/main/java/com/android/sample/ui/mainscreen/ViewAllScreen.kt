@@ -147,7 +147,8 @@ fun TabItem(@StringRes title: Int, isSelected: Boolean, onClick: () -> Unit, mod
  * @param navigationActions The navigation actions for handling navigation events.
  * @param profile The resource ID for the profile image.
  * @param T The type of workout being displayed, must extend [Workout].
- * @param onClick Not necessary, you probably shouldn't use it. Callback function invoked when a workout is clicked.
+ * @param onClick Not necessary, you probably shouldn't use it. Callback function invoked when a
+ *   workout is clicked.
  */
 @Composable
 fun <T : Workout> WorkoutList(
@@ -216,7 +217,7 @@ fun ViewAllCard(
               .clickable {
                 viewModel.selectWorkout(workout)
 
-                onClick(workout,viewModel, navigationActions)
+                onClick(workout, viewModel, navigationActions)
 
               /*Navigate to the screen to edit or start the workout*/ }
               .testTag("WorkoutCard"),
@@ -251,7 +252,11 @@ fun ViewAllCard(
  * @param viewModel The ViewModel for the selected workout.
  * @param navigationActions The navigation actions for handling navigation events.
  */
-private fun navigateToWorkoutScreen(workout: Workout,viewModel: WorkoutViewModel<Workout>, navigationActions: NavigationActions) {
+private fun navigateToWorkoutScreen(
+    workout: Workout,
+    viewModel: WorkoutViewModel<Workout>,
+    navigationActions: NavigationActions
+) {
   when (workout) {
     is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
     is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_WORKOUT)

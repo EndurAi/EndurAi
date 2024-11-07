@@ -17,28 +17,33 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
 @Composable
-fun <T : Workout> WorkoutSelectionScreen(viewModel: WorkoutViewModel<T>, navigationActions: NavigationActions) {
-    val profile = R.drawable.homme
+fun <T : Workout> WorkoutSelectionScreen(
+    viewModel: WorkoutViewModel<T>,
+    navigationActions: NavigationActions
+) {
+  val profile = R.drawable.homme
 
-    Scaffold(
-        modifier = Modifier.testTag("WorkoutSelectionScreen"),
-        topBar = { TopBar(navigationActions, R.string.WorkoutSelectionTitle) },
-        content = { pd ->
-            Column(modifier = Modifier.padding(pd)) {
-                WorkoutList(
-                    viewModel = viewModel,
-                    navigationActions = navigationActions,
-                    profile = profile,
-                    onClick = ::navigateToWorkoutCreationScreen
-                )
-            }
+  Scaffold(
+      modifier = Modifier.testTag("WorkoutSelectionScreen"),
+      topBar = { TopBar(navigationActions, R.string.WorkoutSelectionTitle) },
+      content = { pd ->
+        Column(modifier = Modifier.padding(pd)) {
+          WorkoutList(
+              viewModel = viewModel,
+              navigationActions = navigationActions,
+              profile = profile,
+              onClick = ::navigateToWorkoutCreationScreen)
         }
-    )
+      })
 }
 
-fun navigateToWorkoutCreationScreen(workout: Workout, viewModel: WorkoutViewModel<Workout>, navigationActions: NavigationActions) {
-    when (workout) {
-        is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_IMPORT)
-        is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_IMPORT)
-    }
+fun navigateToWorkoutCreationScreen(
+    workout: Workout,
+    viewModel: WorkoutViewModel<Workout>,
+    navigationActions: NavigationActions
+) {
+  when (workout) {
+    is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_IMPORT)
+    is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_IMPORT)
+  }
 }
