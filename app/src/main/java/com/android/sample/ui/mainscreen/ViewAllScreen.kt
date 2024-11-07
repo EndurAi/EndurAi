@@ -247,6 +247,7 @@ fun ViewAllCard(
 
 /**
  * Navigate to the screen to actually do a workout.
+ * This function was created to avoid duplicating code, thus allowing the composable to be used also in the WorkoutSelectionScreen.
  *
  * @param workout The selected workout.
  * @param viewModel The ViewModel for the selected workout.
