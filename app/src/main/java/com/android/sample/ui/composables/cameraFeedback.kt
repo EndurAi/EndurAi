@@ -24,6 +24,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,14 +56,16 @@ class CameraFeedBack {
       val cameraPermissionState: PermissionState =
         rememberPermissionState(android.Manifest.permission.CAMERA)
 
-      if (!cameraPermissionState.status.isGranted) {
+      if (cameraPermissionState.status.isGranted) {
         Box(modifier = Modifier.size(30.dp)) {
           CameraBody(cameraViewModel)
         }
 
       }
       else{
-        Text("No perm")
+        LaunchedEffect(Unit) {
+          cameraPermissionState.launchPermissionRequest()
+        }
       }
     }
 

@@ -94,6 +94,10 @@ fun WarmUpScreenBody(
   var finishButtonBoxIsDisplayed by remember { mutableStateOf(false) }
   // presentation button are the skip and the start button showed first
   var presentationButtonBoxIsDisplayed by remember { mutableStateOf(true) }
+  //The camera feedback is displaying or not
+  var cameraFeedbackIsDisplayed by remember { mutableStateOf(false) }
+  // if the camera is currently recording
+  var isRecordingInCamera by remember { mutableStateOf(false) }
   // the goalCenterBox contains either the image of the exercise or the timer
   var goalCounterBoxIsDisplayed by remember { mutableStateOf(false) }
   var countDownTimerIsPaused by remember { mutableStateOf(false) }
