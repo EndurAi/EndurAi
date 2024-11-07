@@ -85,7 +85,7 @@ fun WorkoutCreationScreen(
   var name by remember { mutableStateOf(selectedWorkout?.name ?: "") }
   var description by remember { mutableStateOf(selectedWorkout?.description ?: "") }
   var warmup by remember { mutableStateOf(selectedWorkout?.warmup ?: false) }
-  var selectedDateTime by remember { mutableStateOf<LocalDateTime?>(null) }
+  var selectedDateTime by remember { mutableStateOf(selectedWorkout?.date) }
   var exerciseList by remember {
     mutableStateOf(
         (selectedWorkout as? YogaWorkout)?.exercises

@@ -31,7 +31,7 @@ import com.android.sample.ui.theme.Purple20
 fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () -> Unit) {
   Column(
       horizontalAlignment = Alignment.CenterHorizontally,
-      modifier = Modifier.fillMaxWidth().testTag("exerciseCard")) {
+      modifier = Modifier.fillMaxWidth()) {
         // Vertical line connecting the cards
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,7 +43,7 @@ fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () 
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = LightGrey), // Grey color
-            modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp).clickable {
+            modifier = Modifier.fillMaxWidth(0.9f).testTag("exerciseCard").padding(horizontal = 16.dp).clickable {
                 onCardClick()
             }
         ) {
@@ -75,9 +75,10 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
   Card(
       shape = RoundedCornerShape(12.dp),
       colors = CardDefaults.cardColors(containerColor = Blue), // Darker blue color
-      modifier = Modifier.padding(start = 8.dp).wrapContentSize().clickable {
+      modifier = Modifier.padding(start = 8.dp).testTag("detailCard").wrapContentSize().clickable {
             onClick()
       }) {
+      Text(modifier = Modifier.testTag("etailCard"), text = "Details", color = Color.White)
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically) {
@@ -107,7 +108,8 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
                   Text(
                       text = "X ${detail.repetitions}",
                       fontSize = 14.sp,
-                      color = Color.Black // Black text
+                      color = Color.Black, // Black text
+                      modifier = Modifier.testTag("repetitionBasedNumber") // Test tag
                       )
                 }
               }
