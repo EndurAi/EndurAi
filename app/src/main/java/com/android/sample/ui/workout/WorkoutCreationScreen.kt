@@ -68,6 +68,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Purple60
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +85,7 @@ fun WorkoutCreationScreen(
   var name by remember { mutableStateOf(selectedWorkout?.name ?: "") }
   var description by remember { mutableStateOf(selectedWorkout?.description ?: "") }
   var warmup by remember { mutableStateOf(selectedWorkout?.warmup ?: false) }
-  var selectedDateTime by remember { mutableStateOf(selectedWorkout?.date) }
+  var selectedDateTime by remember { mutableStateOf(selectedWorkout?.date ?: LocalDateTime.now()) }
   var exerciseList by remember {
     mutableStateOf(
         (selectedWorkout as? YogaWorkout)?.exercises
