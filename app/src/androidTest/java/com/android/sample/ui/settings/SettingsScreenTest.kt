@@ -75,8 +75,8 @@ class SettingsScreenTest {
   }
 
   @After
-    fun tearDown() {
-        reset(navigationActions)
-        reset(userAccountViewModel)
-    }
+  fun tearDown() {
+    reset(navigationActions)
+    reset(userAccountViewModel)
+  }
 }
