@@ -23,6 +23,8 @@ object Route {
   const val SESSIONSELECTION = "Session Selection"
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga"
+  const val CHOOSE_BODYWEIGHT = "Choose Bodyweight"
+  const val CHOOSE_YOGA = "Choose Yoga"
   const val TEST = "Test"
   const val WARMUP_WORKOUT = "Warmup workout"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout"
@@ -54,6 +56,8 @@ object Screen {
   const val BODY_WEIGHT_IMPORT = "BodyWeight import screen"
   const val YOGA_WORKOUT = "Yoga workout screen"
   const val YOGA_IMPORT = "Yoga import screen"
+  const val CHOOSE_BODYWEIGHT = "Choose Bodyweight Screen"
+  const val CHOOSE_YOGA = "Choose Yoga Screen"
 
   const val ADD_ACCOUNT = "Add Account Screen"
   const val EDIT_ACCOUNT = "Edit Account Screen"

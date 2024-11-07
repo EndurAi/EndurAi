@@ -73,7 +73,8 @@ fun ViewAllScreen(
             WorkoutList(
                 viewModel = workoutViewModels[selectedTab],
                 navigationActions = navigationActions,
-                profile = profile)
+                profile = profile,
+                onClick = ::navigateToWorkoutScreen)
           }
         }
       })
@@ -146,12 +147,14 @@ fun TabItem(@StringRes title: Int, isSelected: Boolean, onClick: () -> Unit, mod
  * @param navigationActions The navigation actions for handling navigation events.
  * @param profile The resource ID for the profile image.
  * @param T The type of workout being displayed, must extend [Workout].
+ * @param onClick Not necessary, you probably shouldn't use it. Callback function invoked when a workout is clicked.
  */
 @Composable
 fun <T : Workout> WorkoutList(
     viewModel: WorkoutViewModel<T>,
     navigationActions: NavigationActions,
-    profile: Int
+    profile: Int,
+    onClick: (Workout, WorkoutViewModel<Workout>, NavigationActions) -> Unit = { _, _, _ -> }
 ) {
   val workouts = viewModel.workouts.collectAsState()
 
@@ -164,7 +167,8 @@ fun <T : Workout> WorkoutList(
                 workout = workouts.value[index],
                 profile = profile,
                 navigationActions = navigationActions,
-                viewModel = viewModel)
+                viewModel = viewModel,
+                onClick = onClick)
           }
         }
   } else {
@@ -193,7 +197,8 @@ fun ViewAllCard(
     workout: Workout,
     profile: Int,
     navigationActions: NavigationActions,
-    viewModel: WorkoutViewModel<Workout>
+    viewModel: WorkoutViewModel<Workout>,
+    onClick: (Workout, WorkoutViewModel<Workout>, NavigationActions) -> Unit = { _, _, _ -> }
 ) {
   // Choose icon dynamically with the workout type
   val workoutImage =
@@ -211,10 +216,7 @@ fun ViewAllCard(
               .clickable {
                 viewModel.selectWorkout(workout)
 
-                when (workout) {
-                  is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
-                  is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_WORKOUT)
-                }
+                onClick(workout,viewModel, navigationActions)
 
               /*Navigate to the screen to edit or start the workout*/ }
               .testTag("WorkoutCard"),
@@ -240,4 +242,18 @@ fun ViewAllCard(
               ImageComposable(workoutImage, "Workout Icon", Modifier.size(30.dp))
             }
       }
+}
+
+/**
+ * Navigate to the screen to actually do a workout.
+ *
+ * @param workout The selected workout.
+ * @param viewModel The ViewModel for the selected workout.
+ * @param navigationActions The navigation actions for handling navigation events.
+ */
+private fun navigateToWorkoutScreen(workout: Workout,viewModel: WorkoutViewModel<Workout>, navigationActions: NavigationActions) {
+  when (workout) {
+    is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
+    is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_WORKOUT)
+  }
 }

@@ -1,6 +1,7 @@
 package com.android.sample.ui.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +28,7 @@ import com.android.sample.ui.theme.Purple20
  * @param exercise the [Exercise] data to display in the card.
  */
 @Composable
-fun ExerciseCard(exercise: Exercise) {
+fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () -> Unit) {
   Column(
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier.fillMaxWidth().testTag("exerciseCard")) {
@@ -42,7 +43,10 @@ fun ExerciseCard(exercise: Exercise) {
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = LightGrey), // Grey color
-            modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp)) {
+            modifier = Modifier.fillMaxWidth(0.9f).padding(horizontal = 16.dp).clickable {
+                onCardClick()
+            }
+        ) {
               Row(
                   modifier = Modifier.padding(16.dp).fillMaxWidth(),
                   verticalAlignment = Alignment.CenterVertically) {
@@ -55,7 +59,7 @@ fun ExerciseCard(exercise: Exercise) {
                         textAlign = TextAlign.Start)
 
                     // Exercise details (icon and information)
-                    ExerciseDetailCard(exercise.detail)
+                    ExerciseDetailCard(exercise.detail, onClick = onDetailClick)
                   }
             }
       }
@@ -67,11 +71,13 @@ fun ExerciseCard(exercise: Exercise) {
  * @param detail the [ExerciseDetail] data to display in the card.
  */
 @Composable
-fun ExerciseDetailCard(detail: ExerciseDetail) {
+fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
   Card(
       shape = RoundedCornerShape(12.dp),
       colors = CardDefaults.cardColors(containerColor = Blue), // Darker blue color
-      modifier = Modifier.padding(start = 8.dp).wrapContentSize()) {
+      modifier = Modifier.padding(start = 8.dp).wrapContentSize().clickable {
+            onClick()
+      }) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically) {
