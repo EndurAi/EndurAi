@@ -165,6 +165,7 @@ dependencies {
     implementation(libs.androidx.espresso.intents)
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
