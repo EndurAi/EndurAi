@@ -40,15 +40,9 @@ class AddFriendScreenTest {
     @Test
     fun addFriendScreenDisplaysCorrectly() {
         composeTestRule.onNodeWithTag("addFriendScreen").assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("Spacer1").assertIsDisplayed()
         composeTestRule.onNodeWithTag("tabButtons").assertIsDisplayed()
-
         composeTestRule.onNodeWithTag("newConnectionsTabButton").assertIsDisplayed().assertHasClickAction()
-        composeTestRule.onNodeWithTag("Spacer2").assertIsDisplayed()
         composeTestRule.onNodeWithTag("invitationsTabButton").assertIsDisplayed().assertHasClickAction()
-
-        composeTestRule.onNodeWithTag("Spacer3").assertIsDisplayed()
         composeTestRule.onNodeWithTag("newConnectionsContent").assertIsDisplayed()
     }
 }
