@@ -195,8 +195,15 @@ dependencies {
     implementation(libs.coil.compose)
 //    implementation(libs.coil.core)
 
+    val camerax_version = "1.3.0-alpha07"
+    //// CAMERA STUFF ////
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation ("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation ("androidx.camera:camera-view:$camerax_version")
+    implementation ("androidx.camera:camera-extensions:$camerax_version")
 
-
+    //// ACCOMPANIST ////
+implementation("com.google.accompanist:accompanist-permissions:0.30.1")
 
     //----------- Test dependencies ---------------
     testImplementation(libs.mockito.core)
