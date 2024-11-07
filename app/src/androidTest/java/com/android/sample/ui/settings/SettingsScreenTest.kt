@@ -5,8 +5,11 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.viewmodel.UserAccountViewModel
+import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,21 +57,26 @@ class SettingsScreenTest {
     verify(navigationActions).navigateTo("Auth Screen")
   }
 
-  // TODO: Find a way to verify the deleteAccount function is called without having an unfinished
-  // verification error
+  @Test
+  fun deleteAccountButtonCallsDeleteFunction() = runTest {
+    val context = ApplicationProvider.getApplicationContext<Context>()
 
-  //  @Test
-  //  fun deleteAccountButtonCallsDeleteFunction() = runTest {
-  //    val context = ApplicationProvider.getApplicationContext<Context>()
-  //
-  //    // Set up the SettingsScreen for testing
-  //    composeTestRule.setContent { SettingsScreen(navigationActions, userAccountViewModel) }
-  //
-  //    // Perform click on the delete account button
-  //    composeTestRule.onNodeWithTag("deleteAccountButton").performClick()
-  //
-  //    // Verify that the deleteAccount function is called
-  //    verify(userAccountViewModel).deleteAccount(eq(context), onSuccess = {}, onFailure = {})
-  //  }
+    // Set up the SettingsScreen for testing
+    composeTestRule.setContent { SettingsScreen(navigationActions, userAccountViewModel) }
 
+    // Perform click on the delete account button
+    composeTestRule.onNodeWithTag("deleteAccountButton").performClick()
+
+    // TODO: Find a way to verify the deleteAccount function is called without having an unfinished
+    // verification error
+
+    //    // Verify that the deleteAccount function is called
+    //    verify(userAccountViewModel).deleteAccount(eq(context), onSuccess = {}, onFailure = {})
+  }
+
+  @After
+    fun tearDown() {
+        reset(navigationActions)
+        reset(userAccountViewModel)
+    }
 }
