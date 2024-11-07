@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     jacoco
@@ -9,10 +12,21 @@ plugins {
 }
 
 android {
+    // Load the API key from local.properties
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(FileInputStream(localPropertiesFile))
+    }
+
+    val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY") ?: ""
+
     namespace = "com.android.sample"
     compileSdk = 34
 
     defaultConfig {
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
+
         applicationId = "com.android.sample"
         minSdk = 29
         targetSdk = 34
@@ -149,6 +163,8 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.intents)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
