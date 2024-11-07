@@ -4,35 +4,29 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.camera.core.CameraSelector
 import androidx.camera.video.FileOutputOptions
-import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.android.sample.model.camera.CameraViewModel
 import io.mockk.*
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.*
 import org.junit.*
-import org.junit.Assert.assertEquals
 import org.junit.runner.RunWith
-import java.io.File
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
 
-  @get:Rule
-  val instantTaskExecutorRule = InstantTaskExecutorRule()
+  @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
 
   private val context: Context = ApplicationProvider.getApplicationContext()
   private lateinit var viewModel: CameraViewModel
   private lateinit var cameraController: LifecycleCameraController
   private val testDispatcher = UnconfinedTestDispatcher()
-
 
   @Before
   fun setup() {
@@ -49,19 +43,20 @@ class CameraTest {
     // Use any() for all arguments in startRecording
     every {
       cameraController.startRecording(
-        any<FileOutputOptions>(), // Specify FileOutputOptions explicitly
-        any(),
-        any(),
-        any()
-      )
-    } answers {
-      recording // Return the mock Recording
-    }
+          any<FileOutputOptions>(), // Specify FileOutputOptions explicitly
+          any(),
+          any(),
+          any())
+    } answers
+        {
+          recording // Return the mock Recording
+        }
 
     viewModel = CameraViewModel(context)
     viewModel._cameraController.value = cameraController
     viewModel._videoFile.value = file
   }
+
   @After
   fun tearDown() {
     Dispatchers.resetMain()
@@ -81,7 +76,8 @@ class CameraTest {
     verify { cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA }
   }
 
-  //Does not call on succes or failure as the user has to lauchn twice record video to create a film (one to start and another to end)
+  // Does not call on succes or failure as the user has to lauchn twice record video to create a
+  // film (one to start and another to end)
   @Test
   fun `recordVideo should start recording and not call onSuccess`() = runTest {
     val file = File(context.filesDir.path + "/record.mp4")
@@ -93,15 +89,9 @@ class CameraTest {
 
     verify {
       cameraController.startRecording(
-        FileOutputOptions.Builder(file).build(),
-        AudioConfig.AUDIO_DISABLED,
-        any(),
-        any()
-      )
+          FileOutputOptions.Builder(file).build(), AudioConfig.AUDIO_DISABLED, any(), any())
     }
     verify(exactly = 0) { onSuccess.invoke() }
     verify(exactly = 0) { onFailure() }
   }
-
-
 }

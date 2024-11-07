@@ -356,7 +356,7 @@ fun WarmUpScreenBody(
                         Switch(
                             checked = cameraRecordAsked,
                             onCheckedChange = { cameraRecordAsked = it },
-                          modifier = Modifier.testTag("recordSwitch"))
+                            modifier = Modifier.testTag("recordSwitch"))
                       }
                       Spacer(Modifier.height(10.dp))
                       Button(
