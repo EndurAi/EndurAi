@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.android.sample.model.camera.CameraViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -46,9 +47,10 @@ class CameraFeedBack {
     private var recording: Recording? = null
 
 
+    @androidx.annotation.OptIn(ExperimentalVideo::class)
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    public fun CameraScreen() {
+    public fun CameraScreen(cameraViewModel: CameraViewModel) {
 
       val cameraPermissionState: PermissionState =
         rememberPermissionState(android.Manifest.permission.CAMERA)
