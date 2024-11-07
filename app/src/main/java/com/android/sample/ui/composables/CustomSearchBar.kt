@@ -13,21 +13,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-
 fun CustomSearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
-    Box(
-        modifier =
-        modifier.clip(RoundedCornerShape(24.dp)).background(Color(0xFFF0F0F0)).padding(8.dp)) {
+  Box(
+      modifier =
+          modifier.clip(RoundedCornerShape(24.dp)).background(Color(0xFFF0F0F0)).padding(8.dp)) {
         BasicTextField(
             value = query,
             onValueChange = onQueryChange,
             modifier = Modifier.fillMaxWidth(),
             decorationBox = { innerTextField ->
-                if (query.isEmpty()) {
-                    androidx.compose.material3.Text(
-                        "Search", color = Color.Gray, modifier = Modifier.padding(start = 8.dp))
-                }
-                innerTextField()
+              if (query.isEmpty()) {
+                androidx.compose.material3.Text(
+                    "Search", color = Color.Gray, modifier = Modifier.padding(start = 8.dp))
+              }
+              innerTextField()
             })
-    }
+      }
 }

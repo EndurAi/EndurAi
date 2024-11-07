@@ -13,40 +13,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.ui.composables.CustomSearchBar
+
+/** Composable part of the Add Friend screen */
 @Composable
 fun NewConnectionsContent(searchQuery: MutableState<String>) {
-    val newConnections = listOf(
-        UserAccount(userId = "1", firstName = "Alice"),
-        UserAccount(userId = "2", firstName = "Bob"),
-        UserAccount(userId = "3", firstName = "Charlie")
-    )
+  val newConnections =
+      listOf(
+          UserAccount(userId = "1", firstName = "Alice"),
+          UserAccount(userId = "2", firstName = "Bob"),
+          UserAccount(userId = "3", firstName = "Charlie"))
 
-    // Filter the list based on the search query
-    val filteredConnections = newConnections.filter { profile ->
+  val filteredConnections =
+      newConnections.filter { profile ->
         profile.firstName.contains(searchQuery.value, ignoreCase = true)
+      }
+
+  Column(modifier = Modifier.fillMaxWidth()) {
+    CustomSearchBar(
+        query = searchQuery.value,
+        onQueryChange = { searchQuery.value = it },
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp))
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+      items(filteredConnections) { profile ->
+        ProfileItemWithRequest(
+            profile = profile, onSendRequestClick = { /* Trigger send request logic */})
+        Spacer(modifier = Modifier.height(8.dp))
+      }
     }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        // Search Bar
-        CustomSearchBar(
-            query = searchQuery.value,
-            onQueryChange = { searchQuery.value = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // List of Profiles
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(filteredConnections) { profile ->
-                ProfileItemWithRequest(
-                    profile = profile,
-                    onSendRequestClick = { /* Trigger send request logic */ }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-    }
+  }
 }

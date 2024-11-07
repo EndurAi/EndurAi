@@ -57,7 +57,6 @@ object Screen {
 
   const val FRIENDS = "Friends Screen"
   const val ADD_FRIEND = "Add Friend Screen"
-
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)

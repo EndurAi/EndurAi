@@ -1,12 +1,12 @@
 package com.android.sample.ui.friends
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,109 +15,92 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.ui.navigation.NavigationActions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import com.android.sample.R
+import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.ui.composables.CustomSearchBar
 import com.android.sample.ui.composables.TopBar
+import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
+/** Screen to view the list of Friends */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
 ) {
-    val searchQuery = remember { mutableStateOf("") }
+  val searchQuery = remember { mutableStateOf("") }
 
-    // Hardcoded list of friends
-    val friendsList = listOf(
-        UserAccount(userId = "1", firstName = "Pierre"),
-        UserAccount(userId = "2", firstName = "Alex"),
-        UserAccount(userId = "3", firstName = "Edouard")
-    )
+  // Hardcoded list of friends
+  val friendsList =
+      listOf(
+          UserAccount(userId = "1", firstName = "Pierre"),
+          UserAccount(userId = "2", firstName = "Alex"),
+          UserAccount(userId = "3", firstName = "Edouard"))
 
-    // Track selected friends
-    val selectedFriends = remember { mutableStateListOf<String>() }
+  val selectedFriends = remember { mutableStateListOf<String>() }
 
-    // Filter the list based on the search query
-    val filteredFriendsList = friendsList.filter { friend ->
+  val filteredFriendsList =
+      friendsList.filter { friend ->
         friend.firstName.contains(searchQuery.value, ignoreCase = true)
-    }
+      }
 
-    Column(modifier = Modifier.padding(16.dp).testTag("friendsScreen")) {
-        // TopBar with Back Button and Title
-        TopBar(navigationActions = navigationActions, title = R.string.friends_title)
+  Column(modifier = Modifier.padding(16.dp).testTag("friendsScreen")) {
+    TopBar(navigationActions = navigationActions, title = R.string.friends_title)
 
-        Spacer(modifier = Modifier.height(16.dp).testTag("Spacer1"))
+    Spacer(modifier = Modifier.height(16.dp).testTag("Spacer1"))
 
-        // Search Bar and Add Button Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .testTag("searchBarRow"),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("searchBarRow"),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween) {
+          CustomSearchBar(
+              query = searchQuery.value,
+              onQueryChange = { searchQuery.value = it },
+              modifier = Modifier.weight(1f).testTag("searchBar"))
 
-            CustomSearchBar(
-                query = searchQuery.value,
-                onQueryChange = { searchQuery.value = it },
-                modifier = Modifier.weight(1f).testTag("searchBar")
-            )
+          Spacer(modifier = Modifier.width(8.dp).testTag("Spacer2"))
 
-            Spacer(modifier = Modifier.width(8.dp).testTag("Spacer2"))
-
-            // Add Friend Button
-            Button(
-                onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
-                modifier = Modifier.testTag("addFriendButton")
-            ) {
+          Button(
+              onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
+              shape = CircleShape,
+              colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+              modifier = Modifier.testTag("addFriendButton")) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Friend")
                 Text("Add", color = Color.Black)
-            }
+              }
         }
 
-        Spacer(modifier = Modifier.height(16.dp).testTag("Spacer3"))
+    Spacer(modifier = Modifier.height(16.dp).testTag("Spacer3"))
 
-        // Friends List
-        LazyColumn(modifier = Modifier.fillMaxWidth().testTag("friendsList")) {
-            items(filteredFriendsList) { friend ->
-                FriendItem(
-                    friend = friend,
-                    isSelected = selectedFriends.contains(friend.userId),
-                    onSelectFriend = {
-                        if (selectedFriends.contains(friend.userId)) {
-                            selectedFriends.remove(friend.userId)
-                        } else {
-                            selectedFriends.add(friend.userId)
-                        }
-                    },
-                    onRemoveClick = { /* Handle remove friend action */ },
-                )
-                Spacer(modifier = Modifier.height(8.dp).testTag("Spacer4"))
-            }
-        }
-
-        // "Invite to a workout" button at the bottom
-        if (selectedFriends.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp).testTag("Spacer5"))
-            Button(
-                onClick = { /* Trigger invite to workout action */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .testTag("inviteButton"),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3A4DA1))
-            ) {
-                Text("Invite to a workout", color = Color.White, fontWeight = FontWeight.Bold)
-            }
-        }
+    // Friends List
+    LazyColumn(modifier = Modifier.fillMaxWidth().testTag("friendsList")) {
+      items(filteredFriendsList) { friend ->
+        FriendItem(
+            friend = friend,
+            isSelected = selectedFriends.contains(friend.userId),
+            onSelectFriend = {
+              if (selectedFriends.contains(friend.userId)) {
+                selectedFriends.remove(friend.userId)
+              } else {
+                selectedFriends.add(friend.userId)
+              }
+            },
+            onRemoveClick = { /* Handle remove friend action */},
+        )
+        Spacer(modifier = Modifier.height(8.dp).testTag("Spacer4"))
+      }
     }
+
+    // "Invite to a workout" button at the bottom if pressed on a card
+    if (selectedFriends.isNotEmpty()) {
+      Spacer(modifier = Modifier.height(16.dp).testTag("Spacer5"))
+      Button(
+          onClick = { /* Trigger invite to workout action */},
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("inviteButton"),
+          shape = RoundedCornerShape(8.dp),
+          colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3A4DA1))) {
+            Text("Invite to a workout", color = Color.White, fontWeight = FontWeight.Bold)
+          }
+    }
+  }
 }
