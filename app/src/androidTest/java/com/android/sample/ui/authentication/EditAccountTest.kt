@@ -183,6 +183,19 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
+  override fun deleteUserAccount(
+      userId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (userAccount != null && userAccount?.userId == userId) {
+      userAccount = null
+      onSuccess()
+    } else {
+      onFailure(Exception("UserAccount not found"))
+    }
+  }
+
   fun setUserAccount(account: UserAccount?) {
     this.userAccount = account
   }

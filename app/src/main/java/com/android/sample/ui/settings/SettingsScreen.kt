@@ -1,5 +1,6 @@
 package com.android.sample.ui.settings
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,10 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.R
 import com.android.sample.ui.composables.ArrowBack
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -28,7 +31,10 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navigationActions: NavigationActions) {
+fun SettingsScreen(
+    navigationActions: NavigationActions,
+    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
+) {
   val context = LocalContext.current
 
   Scaffold(
@@ -72,7 +78,23 @@ fun SettingsScreen(navigationActions: NavigationActions) {
 
               // Delete account button
               Button(
-                  onClick = { /* TODO: Handle Account Deletion */},
+                  onClick = {
+                    userAccountViewModel.deleteAccount(
+                        context,
+                        onSuccess = {
+                          Toast.makeText(
+                                  context, "Account deleted successfully", Toast.LENGTH_SHORT)
+                              .show()
+                          navigationActions.navigateTo("Auth Screen")
+                        },
+                        onFailure = { error ->
+                          Toast.makeText(
+                                  context,
+                                  "Failed to delete account: ${error.message}",
+                                  Toast.LENGTH_LONG)
+                              .show()
+                        })
+                  },
                   modifier =
                       Modifier.fillMaxWidth()
                           .height(48.dp)
@@ -91,17 +113,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
               // https://stackoverflow.com/questions/72563673/google-authentication-with-firebase-and-jetpack-compose
               Button(
                   onClick = {
-                    FirebaseAuth.getInstance().signOut() // Sign out from Firebase
-                    val gso =
-                        GoogleSignInOptions.Builder(
-                                GoogleSignInOptions.DEFAULT_SIGN_IN) // Sign out from Google
-                            .requestIdToken(context.getString(R.string.default_web_client_id))
-                            .requestEmail()
-                            .build()
-                    val googleSignInClient: GoogleSignInClient =
-                        GoogleSignIn.getClient(context, gso)
-                    googleSignInClient.signOut()
-
+                    signOut(context)
                     navigationActions.navigateTo("Auth Screen") // Navigate back to Auth screen
                     Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
                   },
@@ -119,4 +131,16 @@ fun SettingsScreen(navigationActions: NavigationActions) {
                   }
             }
       })
+}
+
+// Function to handle sign-out
+fun signOut(context: Context) {
+  FirebaseAuth.getInstance().signOut() // Sign out from Firebase Auth
+  val gso =
+      GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+          .requestIdToken(context.getString(R.string.default_web_client_id))
+          .requestEmail()
+          .build()
+  val googleSignInClient: GoogleSignInClient = GoogleSignIn.getClient(context, gso)
+  googleSignInClient.signOut() // Sign out from Google
 }
