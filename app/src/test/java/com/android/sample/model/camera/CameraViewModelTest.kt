@@ -1,4 +1,4 @@
-package com.android.sample.model
+package com.android.sample.model.camera
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -8,7 +8,6 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.sample.model.camera.CameraViewModel
 import io.mockk.*
 import java.io.File
 import kotlinx.coroutines.Dispatchers
