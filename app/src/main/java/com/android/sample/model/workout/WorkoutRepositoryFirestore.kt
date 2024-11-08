@@ -8,6 +8,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.moshi.FromJson
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import com.squareup.moshi.Moshi
@@ -19,11 +20,26 @@ import java.time.format.DateTimeFormatter
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 
+/**
+ * Repository implementation for storing and managing `Workout` documents in Firebase Firestore.
+ * Handles CRUD operations with Firestore using Moshi for JSON serialization/deserialization.
+ *
+ * @param T The type of workout model, constrained to classes that extend `Workout`.
+ * @property db Firebase Firestore instance.
+ * @property clazz Class reference for the generic workout model.
+ */
 class WorkoutRepositoryFirestore<T : Workout>(
     private val db: FirebaseFirestore,
     private val clazz: Class<T>
 ) : WorkoutRepository<T> {
 
+  /**
+   * Retrieves the document name for the specified workout model. Expects a companion object
+   * property named `DOCUMENT_NAME` in the workout model class.
+   *
+   * @return The document name for the model.
+   * @throws IllegalStateException if `DOCUMENT_NAME` is not found.
+   */
   fun getDocumentName(): String {
     val companionObject = clazz.kotlin.companionObjectInstance
     val documentNameProperty =
@@ -40,6 +56,7 @@ class WorkoutRepositoryFirestore<T : Workout>(
           .build()
 
   private val adapter = moshi.adapter(clazz)
+
   private val adapterWorkoutID = moshi.adapter(WorkoutID::class.java)
 
   private val collectionPath: String
@@ -54,6 +71,11 @@ class WorkoutRepositoryFirestore<T : Workout>(
 
   private val mainDocumentName = "allworkouts"
 
+  /**
+   * Generates a new unique ID for a workout document in the Firestore.
+   *
+   * @return A new document ID.
+   */
   override fun getNewUid(): String {
     return db.collection(mainDocumentName).document().id
   }
@@ -66,6 +88,13 @@ class WorkoutRepositoryFirestore<T : Workout>(
     }
   }
 
+  /**
+   * Adds a workout document to the Firestore database.
+   *
+   * @param obj Workout object to add.
+   * @param onSuccess Callback triggered upon successful addition.
+   * @param onFailure Callback triggered upon failure with the exception.
+   */
   override fun addDocument(obj: T, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val jsonWorkout = adapter.toJson(obj)
 
@@ -78,12 +107,16 @@ class WorkoutRepositoryFirestore<T : Workout>(
     val dataMapWorkoutID: Map<String, Any> =
         (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
 
+    // add the workout id in user document
+
     db.collection(collectionPath)
         .document(documentToCollectionName)
         .collection(documentName)
         .document(obj.workoutId)
         .set(dataMapWorkoutID)
         .addOnFailureListener { e -> onFailure(e) }
+
+    // add the workout content in allworkouts document
 
     db.collection(mainDocumentName)
         .document(obj.workoutId)
@@ -92,7 +125,15 @@ class WorkoutRepositoryFirestore<T : Workout>(
         .addOnSuccessListener { onSuccess() }
   }
 
+  /**
+   * Retrieves all workout documents for the authenticated user.
+   *
+   * @param onSuccess Callback triggered with the list of workout documents on success.
+   * @param onFailure Callback triggered with an exception on failure.
+   */
   override fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
+
+    // we first get document'ids from user document
     db.collection(collectionPath)
         .document(documentToCollectionName)
         .collection(documentName)
@@ -100,10 +141,13 @@ class WorkoutRepositoryFirestore<T : Workout>(
         .addOnCompleteListener { task ->
           if (task.isSuccessful) {
             val workoutids =
-                task.result?.mapNotNull { document -> documentSnapshotToObjectIds(document) }
-                    ?: emptyList()
+                task.result?.mapNotNull { document ->
+                  documentSnapshotToObject(document, adapterWorkoutID) { it?.workoutid } as? String
+                } ?: emptyList()
             val workouts = mutableListOf<T>()
             val tasks = mutableListOf<Task<DocumentSnapshot>>()
+
+            // for each id we get the content of the workout in "allworkouts" document
 
             for (id in workoutids) {
               val task =
@@ -111,7 +155,8 @@ class WorkoutRepositoryFirestore<T : Workout>(
                       .document(id)
                       .get()
                       .addOnSuccessListener { document ->
-                        documentSnapshotToObject(document)?.let { workouts.add(it) }
+                        val workout = documentSnapshotToObject(document, adapter) as T
+                        workout.let { workouts.add(workout) }
                       }
                       .addOnFailureListener { e ->
                         Log.e("WorkoutRepositoryFirestore", "Error getting workout document", e)
@@ -120,7 +165,7 @@ class WorkoutRepositoryFirestore<T : Workout>(
               tasks.add(task)
             }
 
-            // Wait for all tasks to complete
+            // Wait for all tasks to complete and give all the workouts to "onSuccess"
             Tasks.whenAllComplete(tasks)
                 .addOnSuccessListener { onSuccess(workouts) }
                 .addOnFailureListener { e -> onFailure(e) }
@@ -133,11 +178,20 @@ class WorkoutRepositoryFirestore<T : Workout>(
         }
   }
 
+  /**
+   * Updates a workout document in the Firestore.
+   *
+   * @param obj Workout object to update.
+   * @param onSuccess Callback triggered upon successful update.
+   * @param onFailure Callback triggered upon failure with the exception.
+   */
   override fun updateDocument(obj: T, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val json = adapter.toJson(obj)
 
     val dataMap: Map<String, Any> =
         (moshi.adapter(Map::class.java).fromJson(json) as Map<String, Any>?)!!
+
+    // we just need to update in the "allworkouts" document
 
     db.collection(mainDocumentName)
         .document(obj.workoutId)
@@ -146,13 +200,25 @@ class WorkoutRepositoryFirestore<T : Workout>(
         .addOnFailureListener { e -> onFailure(e) }
   }
 
+  /**
+   * Deletes a workout document from the Firestore.
+   *
+   * @param id The ID of the workout document to delete.
+   * @param onSuccess Callback triggered upon successful deletion.
+   * @param onFailure Callback triggered upon failure with the exception.
+   */
   override fun deleteDocument(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+
+    // we delete the id in user document
+
     db.collection(collectionPath)
         .document(documentToCollectionName)
         .collection(documentName)
         .document(id)
         .delete()
         .addOnFailureListener { e -> onFailure(e) }
+
+    // we delete the content of the workout in "allworkouts" document
 
     db.collection(mainDocumentName)
         .document(id)
@@ -161,34 +227,28 @@ class WorkoutRepositoryFirestore<T : Workout>(
         .addOnSuccessListener { onSuccess() }
   }
 
-  private fun documentSnapshotToObjectIds(doc: DocumentSnapshot): String? {
+  /**
+   * Converts a Firestore `DocumentSnapshot` to an object of type `R`. Serializes the document data
+   * using the provided `JsonAdapter`.
+   *
+   * @param doc The Firestore `DocumentSnapshot`.
+   * @param adapter JsonAdapter for serializing the document data.
+   * @param mapResult Function to map the deserialized object if needed.
+   * @return The mapped object or null if the document does not exist.
+   */
+  private fun <R> documentSnapshotToObject(
+      doc: DocumentSnapshot,
+      adapter: JsonAdapter<R>,
+      mapResult: (R) -> Any? = { it }
+  ): Any? {
     if (!doc.exists()) {
       Log.e("DEB", "The document does not exist")
       return null
     }
     return try {
       val json = moshi.adapter(Map::class.java).toJson(doc.data)
-      adapterWorkoutID.fromJson(json)?.workoutid
-    } catch (e: JsonDataException) {
-      Log.e("Moshi", "Data id error JSON : ${e.message}")
-      throw e
-    } catch (e: JsonEncodingException) {
-      Log.e("Moshi", "Encoding id error JSON : ${e.message}")
-      throw e
-    } catch (e: Exception) {
-      Log.e("Moshi", "Conversion id error : ${e.message}")
-      throw e
-    }
-  }
-
-  private fun documentSnapshotToObject(doc: DocumentSnapshot): T? {
-    if (!doc.exists()) {
-      Log.e("DEB", "The document does not exist")
-      return null
-    }
-    return try {
-      val json = moshi.adapter(Map::class.java).toJson(doc.data)
-      adapter.fromJson(json)
+      val result = adapter.fromJson(json)
+      result?.let { mapResult(it) }
     } catch (e: JsonDataException) {
       Log.e("Moshi", "Data error JSON : ${e.message}")
       throw e
@@ -200,18 +260,19 @@ class WorkoutRepositoryFirestore<T : Workout>(
       throw e
     }
   }
-}
 
-class LocalDateTimeAdapter {
-  private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+  /** Adapter for serializing and deserializing `LocalDateTime` instances to/from JSON strings. */
+  class LocalDateTimeAdapter {
+    private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-  @ToJson
-  fun toJson(dateTime: LocalDateTime): String {
-    return dateTime.format(formatter)
-  }
+    @ToJson
+    fun toJson(dateTime: LocalDateTime): String {
+      return dateTime.format(formatter)
+    }
 
-  @FromJson
-  fun fromJson(dateTimeString: String): LocalDateTime {
-    return LocalDateTime.parse(dateTimeString, formatter)
+    @FromJson
+    fun fromJson(dateTimeString: String): LocalDateTime {
+      return LocalDateTime.parse(dateTimeString, formatter)
+    }
   }
 }
