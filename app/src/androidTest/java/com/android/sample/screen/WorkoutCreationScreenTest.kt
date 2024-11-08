@@ -6,12 +6,11 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.android.sample.model.workout.BodyWeightExerciseType
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.ExerciseType
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
-import com.android.sample.model.workout.YogaExerciseType
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.workout.WorkoutCreationScreen
@@ -71,13 +70,13 @@ class WorkoutCreationScreenTest {
         .assertIsDisplayed()
         .assertHasClickAction()
     composeTestRule.onNodeWithTag("selectExerciseTypeButton").performClick()
-    for (exerciseType in YogaExerciseType.entries) {
+    for (exerciseType in ExerciseType.entries.filter { it.workoutType == WorkoutType.YOGA }) {
       composeTestRule.onNodeWithTag("exerciseType${exerciseType.name}").assertIsDisplayed()
     }
     composeTestRule.onNodeWithTag("exerciseTypeSUN_SALUTATION").performClick()
     composeTestRule
         .onNodeWithTag("selectedExerciseType")
-        .assertTextEquals("Selected Exercise: ${YogaExerciseType.SUN_SALUTATION}")
+        .assertTextEquals("Selected Exercise: ${ExerciseType.SUN_SALUTATION}")
     composeTestRule.onNodeWithTag("timeBasedButton").assertIsDisplayed().assertHasClickAction()
     composeTestRule
         .onNodeWithTag("repetitionBasedButton")
@@ -120,13 +119,14 @@ class WorkoutCreationScreenTest {
         .assertIsDisplayed()
         .assertHasClickAction()
     composeTestRule.onNodeWithTag("selectExerciseTypeButton").performClick()
-    for (exerciseType in BodyWeightExerciseType.entries) {
+    for (exerciseType in
+        ExerciseType.entries.filter { it.workoutType == WorkoutType.BODY_WEIGHT }) {
       composeTestRule.onNodeWithTag("exerciseType${exerciseType.name}").assertIsDisplayed()
     }
     composeTestRule.onNodeWithTag("exerciseTypePUSH_UPS").performClick()
     composeTestRule
         .onNodeWithTag("selectedExerciseType")
-        .assertTextEquals("Selected Exercise: ${BodyWeightExerciseType.PUSH_UPS}")
+        .assertTextEquals("Selected Exercise: ${ExerciseType.PUSH_UPS}")
     composeTestRule.onNodeWithTag("timeBasedButton").assertIsDisplayed().assertHasClickAction()
     composeTestRule
         .onNodeWithTag("repetitionBasedButton")

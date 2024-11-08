@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.*
 open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepository<T>) :
     ViewModel() {
 
-  private val workouts_ = MutableStateFlow<List<T>>(emptyList())
+  val workouts_ = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
   val workouts: StateFlow<List<T>> = workouts_
 
   private val selectedWorkout_ = MutableStateFlow<T?>(null)

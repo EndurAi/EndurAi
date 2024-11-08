@@ -28,7 +28,7 @@ import kotlin.reflect.full.companionObjectInstance
  * @property db Firebase Firestore instance.
  * @property clazz Class reference for the generic workout model.
  */
-class WorkoutRepositoryFirestore<T : Workout>(
+open class WorkoutRepositoryFirestore<T : Workout>(
     private val db: FirebaseFirestore,
     private val clazz: Class<T>
 ) : WorkoutRepository<T> {
