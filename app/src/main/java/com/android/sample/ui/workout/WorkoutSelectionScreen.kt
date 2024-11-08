@@ -49,7 +49,13 @@ fun navigateToWorkoutCreationScreen(
     navigationActions: NavigationActions
 ) {
   when (workout) {
-    is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_IMPORT)
-    is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_IMPORT)
+    is BodyWeightWorkout -> {
+      viewModel.selectWorkout(workout)
+      navigationActions.navigateTo(Screen.BODY_WEIGHT_IMPORT)
+    }
+    is YogaWorkout -> {
+      viewModel.selectWorkout(workout)
+      navigationActions.navigateTo(Screen.YOGA_IMPORT)
+    }
   }
 }

@@ -105,7 +105,7 @@ class ImportWorkoutTest {
   // Test that you can delete an exercise from the workout
   @Test
   fun testDeleteWorkout() {
-    // Set the content of the screen$
+    // Set the content of the screen
     bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value[0])
     composeTestRule.setContent {
       WorkoutCreationScreen(

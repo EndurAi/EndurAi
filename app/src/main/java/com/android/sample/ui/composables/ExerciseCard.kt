@@ -9,7 +9,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -18,7 +17,9 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
+import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Purple20
 
@@ -53,7 +54,7 @@ fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () 
                 Text(
                     text = exercise.type.toString(),
                     fontSize = 18.sp,
-                    color = Color.DarkGray,
+                    color = DarkGrey,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start)
 
@@ -78,7 +79,6 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
           Modifier.padding(start = 8.dp).testTag("detailCard").wrapContentSize().clickable {
             onClick()
           }) {
-        Text(modifier = Modifier.testTag("etailCard"), text = "Details", color = Color.White)
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically) {
@@ -88,13 +88,13 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
                       painter = painterResource(id = R.drawable.pace),
                       contentDescription = "Time Based",
                       modifier = Modifier.size(20.dp),
-                      tint = Color.Black // Black icon
+                      tint = Black // Black icon
                       )
                   Spacer(modifier = Modifier.width(4.dp))
                   Text(
                       text = "${detail.durationInSeconds / 60}′ X ${detail.sets}",
                       fontSize = 14.sp,
-                      color = Color.Black // Black text
+                      color = Black // Black text
                       )
                 }
                 is ExerciseDetail.RepetitionBased -> {
@@ -102,15 +102,14 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
                       painter = painterResource(id = R.drawable.timeline),
                       contentDescription = "Repetition Based",
                       modifier = Modifier.size(20.dp),
-                      tint = Color.Black // Black icon
+                      tint = Black // Black icon
                       )
                   Spacer(modifier = Modifier.width(4.dp))
                   Text(
                       text = "X ${detail.repetitions}",
                       fontSize = 14.sp,
-                      color = Color.Black, // Black text
-                      modifier = Modifier.testTag("repetitionBasedNumber") // Test tag
-                      )
+                      color = Black, // Black text
+                  )
                 }
               }
             }

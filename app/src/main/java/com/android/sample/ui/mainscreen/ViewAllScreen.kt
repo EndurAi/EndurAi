@@ -215,8 +215,6 @@ fun ViewAllCard(
           Modifier.fillMaxWidth()
               .padding(vertical = 4.dp)
               .clickable {
-                viewModel.selectWorkout(workout)
-
                 onClick(workout, viewModel, navigationActions)
 
               /*Navigate to the screen to edit or start the workout*/ }
@@ -259,7 +257,13 @@ private fun navigateToWorkoutScreen(
     navigationActions: NavigationActions
 ) {
   when (workout) {
-    is BodyWeightWorkout -> navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
-    is YogaWorkout -> navigationActions.navigateTo(Screen.YOGA_WORKOUT)
+    is BodyWeightWorkout -> {
+      viewModel.selectWorkout(workout)
+      navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
+    }
+    is YogaWorkout -> {
+      viewModel.selectWorkout(workout)
+      navigationActions.navigateTo(Screen.YOGA_WORKOUT)
+    }
   }
 }
