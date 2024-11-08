@@ -48,6 +48,7 @@ import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.android.sample.ui.workout.WorkoutScreen
+import com.android.sample.ui.workout.WorkoutSelectionScreen
 import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -169,10 +170,39 @@ fun MainApp(startDestination: String = Route.AUTH) {
       }
     }
 
+    // Body Weight Selection Screen
+    navigation(startDestination = Screen.CHOOSE_BODYWEIGHT, route = Route.CHOOSE_BODYWEIGHT) {
+      composable(Screen.CHOOSE_BODYWEIGHT) {
+        WorkoutSelectionScreen(bodyweightWorkoutViewModel, navigationActions)
+      }
+    }
+
+    // Body Weight Import Screen
+    navigation(startDestination = Screen.BODY_WEIGHT_IMPORT, route = Route.BODY_WEIGHT_IMPORT) {
+      composable(Screen.BODY_WEIGHT_IMPORT) {
+        WorkoutCreationScreen(
+            navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, true)
+      }
+    }
+
     // Yoga Creation Screen
     navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
       composable(Screen.YOGA_CREATION) {
         WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+      }
+    }
+
+    // Yoga Selection Screen
+    navigation(startDestination = Screen.CHOOSE_YOGA, route = Route.CHOOSE_YOGA) {
+      composable(Screen.CHOOSE_YOGA) {
+        WorkoutSelectionScreen(yogaWorkoutViewModel, navigationActions)
+      }
+    }
+
+    // Yoga Import Screen
+    navigation(startDestination = Screen.YOGA_IMPORT, route = Route.YOGA_IMPORT) {
+      composable(Screen.YOGA_IMPORT) {
+        WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true)
       }
     }
 
