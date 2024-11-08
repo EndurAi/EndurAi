@@ -12,4 +12,5 @@
     <string name="setting_title">Settings</string>
     <string name="calendar_title">Calendar</string>
     <string name="addButton">+</string>
+    <string name="WorkoutSelectionTitle">Select the workout</string>
 </resources>
