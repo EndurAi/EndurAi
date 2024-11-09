@@ -30,6 +30,7 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.MediumGrey
@@ -153,7 +154,8 @@ fun CalendarScreen(
                   onWorkoutClick = { workout ->
                     selectedWorkout = workout
                     showDialog = true
-                  })
+                  },
+                  navigationActions)
             }
           }
     }
@@ -196,7 +198,8 @@ fun LegendItem(color: Color, label: String, modifier: Modifier = Modifier) {
 fun DaySection(
     date: kotlinx.datetime.LocalDate,
     workouts: List<ColoredWorkout>,
-    onWorkoutClick: (ColoredWorkout) -> Unit
+    onWorkoutClick: (ColoredWorkout) -> Unit,
+    navigationActions: NavigationActions
 ) {
   Row(
       modifier =
@@ -205,7 +208,8 @@ fun DaySection(
               .padding(vertical = 8.dp)
               .background(
                   color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
-              .padding(16.dp),
+              .padding(16.dp)
+              .clickable { navigationActions.navigateTo(Screen.DAY_CALENDAR) },
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier, horizontalAlignment = Alignment.Start) {

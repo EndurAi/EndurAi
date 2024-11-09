@@ -58,6 +58,7 @@ object Screen {
   const val YOGA_IMPORT = "Yoga import screen"
   const val CHOOSE_BODYWEIGHT = "Choose Bodyweight Screen"
   const val CHOOSE_YOGA = "Choose Yoga Screen"
+  const val DAY_CALENDAR = "Day Calendar Screen"
 
   const val ADD_ACCOUNT = "Add Account Screen"
   const val EDIT_ACCOUNT = "Edit Account Screen"
