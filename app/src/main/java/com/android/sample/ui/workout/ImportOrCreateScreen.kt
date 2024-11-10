@@ -37,15 +37,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
 
               // Import Button
               Button(
-                  onClick = {
-                    when (workoutType) {
-                      WorkoutType.BODY_WEIGHT ->
-                          navigationActions.navigateTo(Screen.CHOOSE_BODYWEIGHT)
-                      WorkoutType.YOGA -> navigationActions.navigateTo(Screen.CHOOSE_YOGA)
-                      WorkoutType.RUNNING -> TODO()
-                      WorkoutType.WARMUP -> TODO()
-                    }
-                  },
+                  onClick = { /* Handle import */},
                   shape = RoundedCornerShape(12.dp),
                   colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
                   modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {
