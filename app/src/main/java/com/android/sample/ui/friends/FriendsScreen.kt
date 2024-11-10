@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -21,6 +22,7 @@ import com.android.sample.ui.composables.CustomSearchBar
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.DarkBlue
 
 /** Screen to view the list of Friends */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +34,7 @@ fun FriendsScreen(
 
   // Hardcoded list of friends
   val friendsList =
-      listOf(
+      setOf(
           UserAccount(userId = "1", firstName = "Pierre"),
           UserAccount(userId = "2", firstName = "Alex"),
           UserAccount(userId = "3", firstName = "Edouard"))
@@ -47,7 +49,7 @@ fun FriendsScreen(
   Column(modifier = Modifier.padding(16.dp).testTag("friendsScreen")) {
     TopBar(navigationActions = navigationActions, title = R.string.friends_title)
 
-    Spacer(modifier = Modifier.height(16.dp).testTag("Spacer1"))
+    Spacer(modifier = Modifier.height(16.dp))
 
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("searchBarRow"),
@@ -58,7 +60,7 @@ fun FriendsScreen(
               onQueryChange = { searchQuery.value = it },
               modifier = Modifier.weight(1f).testTag("searchBar"))
 
-          Spacer(modifier = Modifier.width(8.dp).testTag("Spacer2"))
+          Spacer(modifier = Modifier.width(8.dp))
 
           Button(
               onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
@@ -70,7 +72,7 @@ fun FriendsScreen(
               }
         }
 
-    Spacer(modifier = Modifier.height(16.dp).testTag("Spacer3"))
+    Spacer(modifier = Modifier.height(16.dp))
 
     // Friends List
     LazyColumn(modifier = Modifier.fillMaxWidth().testTag("friendsList")) {
@@ -87,19 +89,22 @@ fun FriendsScreen(
             },
             onRemoveClick = { /* Handle remove friend action */},
         )
-        Spacer(modifier = Modifier.height(8.dp).testTag("Spacer4"))
+        Spacer(modifier = Modifier.height(8.dp))
       }
     }
 
     // "Invite to a workout" button at the bottom if pressed on a card
     if (selectedFriends.isNotEmpty()) {
-      Spacer(modifier = Modifier.height(16.dp).testTag("Spacer5"))
+      Spacer(modifier = Modifier.height(16.dp))
       Button(
           onClick = { /* Trigger invite to workout action */},
           modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("inviteButton"),
           shape = RoundedCornerShape(8.dp),
-          colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3A4DA1))) {
-            Text("Invite to a workout", color = Color.White, fontWeight = FontWeight.Bold)
+          colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)) {
+            Text(
+                text = stringResource(R.string.invite_to_workout),
+                color = Color.White,
+                fontWeight = FontWeight.Bold)
           }
     }
   }

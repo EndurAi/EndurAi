@@ -1,5 +1,6 @@
 package com.android.sample.ui.friends
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +17,7 @@ import com.android.sample.ui.composables.CustomSearchBar
 
 /** Composable part of the Add Friend screen */
 @Composable
-fun NewConnectionsContent(searchQuery: MutableState<String>) {
+fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier = Modifier) {
   val newConnections =
       listOf(
           UserAccount(userId = "1", firstName = "Alice"),
@@ -28,19 +29,21 @@ fun NewConnectionsContent(searchQuery: MutableState<String>) {
         profile.firstName.contains(searchQuery.value, ignoreCase = true)
       }
 
-  Column(modifier = Modifier.fillMaxWidth()) {
-    CustomSearchBar(
-        query = searchQuery.value,
-        onQueryChange = { searchQuery.value = it },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp))
+  Box(modifier) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+      CustomSearchBar(
+          query = searchQuery.value,
+          onQueryChange = { searchQuery.value = it },
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp))
 
-    Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.height(16.dp))
 
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-      items(filteredConnections) { profile ->
-        ProfileItemWithRequest(
-            profile = profile, onSendRequestClick = { /* Trigger send request logic */})
-        Spacer(modifier = Modifier.height(8.dp))
+      LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        items(filteredConnections) { profile ->
+          ProfileItemWithRequest(
+              profile = profile, onSendRequestClick = { /* Trigger send request logic */})
+          Spacer(modifier = Modifier.height(8.dp))
+        }
       }
     }
   }

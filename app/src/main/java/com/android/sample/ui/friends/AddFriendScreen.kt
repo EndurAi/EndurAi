@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.theme.DarkBlue
 
 /** Screen for the option to add a friend to the user's friend list. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,7 +27,7 @@ fun AddFriendScreen(
   Column(modifier = Modifier.padding(16.dp).testTag("addFriendScreen")) {
     TopBar(navigationActions = navigationActions, title = R.string.add_friends_title)
 
-    Spacer(modifier = Modifier.height(16.dp).testTag("Spacer1"))
+    Spacer(modifier = Modifier.height(16.dp))
 
     Row(
         modifier = Modifier.fillMaxWidth().testTag("tabButtons"),
@@ -37,7 +38,7 @@ fun AddFriendScreen(
               onClick = { selectedTab = "New Connections" },
               modifier = Modifier.testTag("newConnectionsTabButton"))
 
-          Spacer(modifier = Modifier.width(8.dp).testTag("Spacer2"))
+          Spacer(modifier = Modifier.width(8.dp))
 
           TabButton(
               text = "Invitations",
@@ -46,15 +47,13 @@ fun AddFriendScreen(
               modifier = Modifier.testTag("invitationsTabButton"))
         }
 
-    Spacer(modifier = Modifier.height(16.dp).testTag("Spacer3"))
+    Spacer(modifier = Modifier.height(16.dp))
 
     when (selectedTab) {
-      "New Connections" ->
-          Box(modifier = Modifier.testTag("newConnectionsContent")) {
-            NewConnectionsContent(searchQuery)
-          }
-      "Invitations" ->
-          Box(modifier = Modifier.testTag("invitationsContent")) { InvitationsContent() }
+      "New Connections" -> {
+        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"))
+      }
+      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
     }
   }
 }
@@ -70,7 +69,7 @@ fun TabButton(
       onClick = onClick,
       colors =
           ButtonDefaults.buttonColors(
-              containerColor = if (isSelected) Color(0xFF3A4DA1) else Color.LightGray),
+              containerColor = if (isSelected) DarkBlue else Color.LightGray),
       shape = RoundedCornerShape(12.dp),
       modifier = modifier) {
         Text(

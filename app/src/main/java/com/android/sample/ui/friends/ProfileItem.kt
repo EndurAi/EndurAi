@@ -12,9 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.ui.theme.LightGrey
 
 /** Composable for the Profile cards */
 @Composable
@@ -28,7 +32,7 @@ fun ProfileItem(
           modifier
               .fillMaxWidth()
               .padding(12.dp)
-              .background(Color(0xFFEFEFEF), shape = MaterialTheme.shapes.medium),
+              .background(LightGrey, shape = MaterialTheme.shapes.medium),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -56,8 +60,7 @@ fun ProfileItemWithRequest(profile: UserAccount, onSendRequestClick: () -> Unit)
           requestSent = !requestSent
         },
         colors =
-            ButtonDefaults.buttonColors(
-                containerColor = if (requestSent) Color.Gray else Color(0xFF3A4DA1)),
+            ButtonDefaults.buttonColors(containerColor = if (requestSent) Color.Gray else DarkBlue),
         shape = RoundedCornerShape(8.dp)) {
           Text(if (requestSent) "Request Sent" else "Send Request", color = Color.White)
         }
@@ -77,13 +80,13 @@ fun ProfileItemWithAcceptReject(
           colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
           shape = CircleShape,
           modifier = Modifier.padding(end = 4.dp)) {
-            Text("Accept", color = Color.White)
+            Text(stringResource(R.string.accept_invite), color = Color.White)
           }
       Button(
           onClick = onRejectClick,
           colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
           shape = CircleShape) {
-            Text("Reject", color = Color.White)
+            Text(stringResource(R.string.reject_invite), color = Color.White)
           }
     }
   }
@@ -105,7 +108,7 @@ fun FriendItem(
             onClick = onRemoveClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             shape = CircleShape) {
-              Text("Remove", color = Color.White)
+              Text(stringResource(R.string.remove_friend), color = Color.White)
             }
       }
 }
