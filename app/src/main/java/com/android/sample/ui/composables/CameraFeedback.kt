@@ -35,9 +35,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 
-/**
- * A class that provides composables for displaying and interacting with the camera feed.
- */
+/** A class that provides composables for displaying and interacting with the camera feed. */
 class CameraFeedBack {
 
   companion object {
@@ -57,7 +55,7 @@ class CameraFeedBack {
     public fun CameraScreen(cameraViewModel: CameraViewModel, modifier: Modifier = Modifier) {
 
       val cameraPermissionState: PermissionState =
-        rememberPermissionState(android.Manifest.permission.CAMERA)
+          rememberPermissionState(android.Manifest.permission.CAMERA)
 
       if (cameraPermissionState.status.isGranted) {
         Box(modifier = modifier) { CameraBody(cameraViewModel) }
@@ -78,33 +76,33 @@ class CameraFeedBack {
       val lifecycleOwner = LocalLifecycleOwner.current
 
       Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        floatingActionButton = {
-          FloatingActionButton(
-            onClick = { cameraViewModel.switchCamera() }, modifier = Modifier.size(30.dp)) {
-            Image(
-              painter = painterResource(id = R.drawable.baseline_flip_camera_android_24),
-              contentDescription = "Switch camera")
+          modifier = Modifier.fillMaxSize(),
+          floatingActionButton = {
+            FloatingActionButton(
+                onClick = { cameraViewModel.switchCamera() }, modifier = Modifier.size(30.dp)) {
+                  Image(
+                      painter = painterResource(id = R.drawable.baseline_flip_camera_android_24),
+                      contentDescription = "Switch camera")
+                }
+          }) { pd: PaddingValues ->
+            AndroidView(
+                modifier = Modifier.padding(pd).fillMaxSize(),
+                factory = { context ->
+                  PreviewView(context)
+                      .apply {
+                        layoutParams =
+                            LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT)
+                        setBackgroundColor(android.graphics.Color.BLACK)
+                        scaleType = PreviewView.ScaleType.FIT_CENTER
+                      }
+                      .also { previewView ->
+                        previewView.controller = cameraViewModel.cameraController.value
+                        cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
+                      }
+                })
           }
-        }) { pd: PaddingValues ->
-        AndroidView(
-          modifier = Modifier.padding(pd).fillMaxSize(),
-          factory = { context ->
-            PreviewView(context)
-              .apply {
-                layoutParams =
-                  LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
-                setBackgroundColor(android.graphics.Color.BLACK)
-                scaleType = PreviewView.ScaleType.FIT_CENTER
-              }
-              .also { previewView ->
-                previewView.controller = cameraViewModel.cameraController.value
-                cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
-              }
-          })
-      }
     }
 
     /**
@@ -125,25 +123,25 @@ class CameraFeedBack {
       }
 
       recording =
-        cameraController.startRecording(
-          FileOutputOptions.Builder(outputFile).build(),
-          AudioConfig.AUDIO_DISABLED,
-          ContextCompat.getMainExecutor(context)) { event ->
-          when (event) {
-            is VideoRecordEvent.Finalize -> {
-              if (event.hasError()) {
-                recording?.close()
-                recording = null
-                Toast.makeText(
-                  context, "An error happened while recording.", Toast.LENGTH_SHORT)
-                  .show()
-              } else {
-                Toast.makeText(context, "Video is recorded successfully.", Toast.LENGTH_SHORT)
-                  .show()
+          cameraController.startRecording(
+              FileOutputOptions.Builder(outputFile).build(),
+              AudioConfig.AUDIO_DISABLED,
+              ContextCompat.getMainExecutor(context)) { event ->
+                when (event) {
+                  is VideoRecordEvent.Finalize -> {
+                    if (event.hasError()) {
+                      recording?.close()
+                      recording = null
+                      Toast.makeText(
+                              context, "An error happened while recording.", Toast.LENGTH_SHORT)
+                          .show()
+                    } else {
+                      Toast.makeText(context, "Video is recorded successfully.", Toast.LENGTH_SHORT)
+                          .show()
+                    }
+                  }
+                }
               }
-            }
-          }
-        }
     }
   }
 }
