@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.video.VideoViewModel
@@ -86,6 +87,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
   val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
   val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+  val calendarViewModel = CalendarViewModel()
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -245,10 +247,10 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Calendar Screen
     navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
       composable(Screen.CALENDAR) {
-        CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
       composable(Screen.DAY_CALENDAR) {
-        DayCalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        DayCalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
     }
   }

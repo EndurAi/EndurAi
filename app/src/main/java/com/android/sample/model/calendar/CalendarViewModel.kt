@@ -5,13 +5,17 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 
 class CalendarViewModel : ViewModel() {
-    private val _selectedDate = MutableStateFlow(LocalDateTime.now())
-    val selectedDate: StateFlow<LocalDateTime> = _selectedDate
+    private val _selectedDate = MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
+    val selectedDate: StateFlow<LocalDate> = _selectedDate
 
-    fun updateSelectedDate(date: LocalDateTime) {
+    fun updateSelectedDate(date: LocalDate) {
         viewModelScope.launch {
             _selectedDate.emit(date)
         }
