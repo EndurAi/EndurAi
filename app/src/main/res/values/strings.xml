@@ -19,4 +19,5 @@
     <string name="accept_invite">Accept</string>
     <string name="reject_invite">Reject</string>
     <string name="remove_friend">Remove</string>
+    <string name="WorkoutSelectionTitle">Select the workout</string>
 </resources>
