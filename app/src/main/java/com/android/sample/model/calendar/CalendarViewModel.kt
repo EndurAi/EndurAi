@@ -16,8 +16,6 @@ class CalendarViewModel : ViewModel() {
     val selectedDate: StateFlow<LocalDate> = _selectedDate
 
     fun updateSelectedDate(date: LocalDate) {
-        viewModelScope.launch {
-            _selectedDate.emit(date)
-        }
+        _selectedDate.value = date
     }
 }
