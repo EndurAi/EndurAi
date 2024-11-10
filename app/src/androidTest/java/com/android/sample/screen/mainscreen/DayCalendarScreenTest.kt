@@ -1,5 +1,6 @@
 package com.android.sample.screen.mainscreen
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.sample.model.calendar.CalendarViewModel
@@ -42,7 +43,7 @@ class DayCalendarScreenTest {
                 "Afternoon Push-up Session",
                 "Hold for 60 seconds",
                 false,
-                date = LocalDateTime.now().plusDays(1)))
+                date = LocalDateTime.now().withHour(1)))
 
     val workoutDate = bodyWeightWorkouts[0].date.toLocalDate()
 
@@ -81,12 +82,11 @@ class DayCalendarScreenTest {
   @Test
   fun testEverythingDisplayed() {
     // Check that the necessary tags are displayed on the screen
-    composeTestRule.onNodeWithTag("TopBar").assertExists()
-    composeTestRule.onNodeWithTag("Categories").assertExists()
-    composeTestRule.onNodeWithTag("Date").assertExists()
-    composeTestRule.onNodeWithTag("Hours").assertExists()
-    composeTestRule.onNodeWithTag("WorkoutCard").assertExists()
-    composeTestRule.onNodeWithTag("BottomBar").assertExists()
-    composeTestRule.onNodeWithTag("WorkoutCard").assertExists()
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Categories").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Date").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Hours").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("WorkoutCard").assertIsDisplayed()
   }
 }
