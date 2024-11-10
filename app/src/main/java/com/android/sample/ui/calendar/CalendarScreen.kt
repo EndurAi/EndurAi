@@ -214,8 +214,9 @@ fun DaySection(
                   color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
               .padding(16.dp)
               .clickable {
-                  calendarViewModel.updateSelectedDate(date)
-                  navigationActions.navigateTo(Screen.DAY_CALENDAR) },
+                calendarViewModel.updateSelectedDate(date)
+                navigationActions.navigateTo(Screen.DAY_CALENDAR)
+              },
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier, horizontalAlignment = Alignment.Start) {

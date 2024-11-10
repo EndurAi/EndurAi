@@ -10,25 +10,25 @@ import org.junit.Test
 
 class CalendarViewModelTest {
 
-    private lateinit var calendarViewModel: CalendarViewModel
+  private lateinit var calendarViewModel: CalendarViewModel
 
-    @Before
-    fun setUp() {
-        calendarViewModel = CalendarViewModel()
-    }
+  @Before
+  fun setUp() {
+    calendarViewModel = CalendarViewModel()
+  }
 
-    @Test
-    fun changeSelectedDate() = runBlocking {
-        // Given a new date
-        val newDate = LocalDate(2023, 11, 10)
+  @Test
+  fun changeSelectedDate() = runBlocking {
+    // Given a new date
+    val newDate = LocalDate(2023, 11, 10)
 
-        // When updating the selected date
-        calendarViewModel.updateSelectedDate(newDate)
+    // When updating the selected date
+    calendarViewModel.updateSelectedDate(newDate)
 
-        // Retrieve the updated selected date
-        val selectedDate = calendarViewModel.selectedDate.first()
+    // Retrieve the updated selected date
+    val selectedDate = calendarViewModel.selectedDate.first()
 
-        // Then check that the selected date matches the new date
-        assertThat(selectedDate, `is`(newDate))
-    }
+    // Then check that the selected date matches the new date
+    assertThat(selectedDate, `is`(newDate))
+  }
 }

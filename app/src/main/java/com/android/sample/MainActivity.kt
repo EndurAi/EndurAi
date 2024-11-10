@@ -247,10 +247,12 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Calendar Screen
     navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
       composable(Screen.CALENDAR) {
-        CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
+        CalendarScreen(
+            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
       composable(Screen.DAY_CALENDAR) {
-        DayCalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
+        DayCalendarScreen(
+            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
     }
   }

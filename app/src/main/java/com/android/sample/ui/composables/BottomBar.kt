@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,43 +20,34 @@ import com.android.sample.ui.theme.BottomBarColor
 fun BottomBar(
     navigationActions: NavigationActions,
 ) {
-    val density = LocalDensity.current.density
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+  val density = LocalDensity.current.density
+  val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-    val iconSize = (screenWidth / 5) * density
-    val textSize = (4.sp * density)
+  val iconSize = (screenWidth / 5) * density
+  val textSize = (4.sp * density)
 
-    BottomAppBar(
-        modifier = Modifier.testTag("BottomNavigationBar"),
-        containerColor = BottomBarColor,
-        contentColor = Color.White,
-        tonalElevation = 8.dp
-    ) {
+  BottomAppBar(
+      modifier = Modifier.testTag("BottomBar"),
+      containerColor = BottomBarColor,
+      contentColor = Color.White,
+      tonalElevation = 8.dp) {
         LIST_OF_TOP_LEVEL_DESTINATIONS.forEach { destination ->
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(
-                    onClick = { navigationActions.navigateTo(destination.route) }
-                ) {
-                    Icon(
-                        imageVector = destination.icon,
-                        contentDescription = destination.textId,
-                        tint = Color.White,
-                        modifier = Modifier.size(iconSize)
-                    )
+          Column(
+              modifier = Modifier.weight(1f).padding(vertical = 8.dp),
+              horizontalAlignment = Alignment.CenterHorizontally) {
+                IconButton(onClick = { navigationActions.navigateTo(destination.route) }) {
+                  Icon(
+                      imageVector = destination.icon,
+                      contentDescription = destination.textId,
+                      tint = Color.White,
+                      modifier = Modifier.size(iconSize))
                 }
                 Text(
                     text = destination.textId,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = textSize)
-                )
-            }
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = textSize))
+              }
         }
-    }
+      }
 }
-
