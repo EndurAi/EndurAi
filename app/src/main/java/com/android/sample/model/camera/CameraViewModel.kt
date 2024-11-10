@@ -9,6 +9,7 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
+import androidx.camera.view.video.ExperimentalVideo
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import java.io.File
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @SuppressLint("StaticFieldLeak")
+@ExperimentalVideo
 open class CameraViewModel(private val context: Context) : ViewModel() {
 
   open val _recording = MutableStateFlow<Recording?>(null)

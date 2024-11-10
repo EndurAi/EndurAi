@@ -35,18 +35,11 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 
-/** Provides composables for interacting with the device's camera. */
 class CameraFeedBack {
 
   companion object {
     private var recording: Recording? = null
 
-    /**
-     * Displays a camera preview screen.
-     *
-     * @param cameraViewModel The ViewModel that handles camera operations.
-     * @param modifier The modifier to be applied to the composable.
-     */
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     public fun CameraScreen(cameraViewModel: CameraViewModel, modifier: Modifier = Modifier) {
@@ -61,11 +54,6 @@ class CameraFeedBack {
       }
     }
 
-    /**
-     * Displays the camera preview and a button to switch cameras.
-     *
-     * @param cameraViewModel The ViewModel that handles camera operations.
-     */
     @Composable
     fun CameraBody(cameraViewModel: CameraViewModel) {
 
@@ -102,12 +90,6 @@ class CameraFeedBack {
           }
     }
 
-    /**
-     * Starts or stops recording a video.
-     *
-     * @param cameraController The camera controller used for recording.
-     * @param context The application context.
-     */
     fun recordVideo(cameraController: LifecycleCameraController, context: Context) {
 
       val outputFile = File(context.filesDir.path + "/record.mp4")
