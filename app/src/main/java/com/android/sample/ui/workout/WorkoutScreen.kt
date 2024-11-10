@@ -6,7 +6,6 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.camera.view.video.ExperimentalVideo
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -82,7 +81,6 @@ import kotlinx.coroutines.delay
 // Data class to hold the state of an exercise
 data class ExerciseState(val exercise: Exercise, var isDone: Boolean)
 
-@androidx.annotation.OptIn(ExperimentalVideo::class)
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -461,7 +459,6 @@ fun VideoPlayer(url: String, context: Context) {
 }
 
 /** WorkoutScreen that display the workflow during a workout */
-@androidx.annotation.OptIn(ExperimentalVideo::class)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun WorkoutScreen(
