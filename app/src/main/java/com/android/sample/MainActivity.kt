@@ -3,8 +3,6 @@ package com.android.sample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.OptIn
-import androidx.camera.view.video.ExperimentalVideo
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -71,7 +69,6 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@OptIn(ExperimentalVideo::class)
 @Composable
 fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
