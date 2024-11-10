@@ -18,7 +18,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
-//Check the implementation of the daily calendar screen
+// Check the implementation of the daily calendar screen
 class DayCalendarScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
