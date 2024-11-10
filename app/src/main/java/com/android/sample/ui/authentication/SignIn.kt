@@ -58,20 +58,27 @@ fun SignInScreen(
 ) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
+  var showLoading by remember { mutableStateOf(false) }
+
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   val userAccount by userAccountViewModel.userAccount.collectAsState(initial = null)
 
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
+            showLoading = true // Show loading screen
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
             val userId = result.user?.uid
             if (userId != null) {
               userAccountViewModel.getUserAccount(userId)
 
+              if (showLoading) {
+                navigationActions.navigateTo(Screen.LOADING)
+              }
+
               scope.launch {
                 delay(450) // delay introduced to wait for data to be fetched
-                // TODO: Find a way to modify this with loading screen
+                showLoading = false // Hide loading screen
 
                 // Observe changes in userAccount to know if profile exists
                 userAccountViewModel.userAccount.collect { account ->
@@ -94,6 +101,7 @@ fun SignInScreen(
   val token = stringResource(com.android.sample.R.string.default_web_client_id)
   // The main container for the screen
   // A surface container using the 'background' color from the theme
+
   if (user == null) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),

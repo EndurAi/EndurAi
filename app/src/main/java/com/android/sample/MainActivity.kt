@@ -28,6 +28,7 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.AddAccount
+import com.android.sample.ui.authentication.LoadingScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.mainscreen.MainScreen
@@ -91,6 +92,11 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Auth Screen
     navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
       composable(Screen.AUTH) { SignInScreen(userAccountViewModel, navigationActions) }
+    }
+
+    // Loading Screen
+    navigation(startDestination = Screen.LOADING, route = Route.LOADING) {
+      composable(Screen.LOADING) { LoadingScreen() }
     }
 
     // Add Account Screen
