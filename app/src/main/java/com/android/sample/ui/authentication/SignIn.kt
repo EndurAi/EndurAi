@@ -58,7 +58,7 @@ fun SignInScreen(
 ) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
-  var showLoading by remember { mutableStateOf(false) }
+  var showLoadingDialog by remember { mutableStateOf(false) }
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   val userAccount by userAccountViewModel.userAccount.collectAsState(initial = null)
@@ -66,28 +66,27 @@ fun SignInScreen(
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
-            showLoading = true // Show loading screen
+            showLoadingDialog = true // Show loading screen
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
             val userId = result.user?.uid
             if (userId != null) {
               userAccountViewModel.getUserAccount(userId)
 
-              if (showLoading) {
-                navigationActions.navigateTo(Screen.LOADING)
-              }
-
               scope.launch {
-                delay(450) // delay introduced to wait for data to be fetched
-                showLoading = false // Hide loading screen
+                delay(600) // delay introduced to wait for data to be fetched
 
                 // Observe changes in userAccount to know if profile exists
                 userAccountViewModel.userAccount.collect { account ->
                   if (account != null) {
                     // If account exists, navigate to main screen
                     navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                    delay(600) // delay introduced to wait for data to be fetched
+                    showLoadingDialog = false // Hide loading screen
                   } else {
                     // If no account exists, navigate to AddAccount screen
                     navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+                    delay(600) // delay introduced to wait for data to be fetched
+                    showLoadingDialog = false // Hide loading screen
                   }
                 }
               }
@@ -149,12 +148,33 @@ fun SignInScreen(
   } else {
     // When user is signed in, check if they have an account
     LaunchedEffect(userAccount) {
-      if (userAccount != null) {
-        navigationActions.navigateTo(TopLevelDestinations.MAIN)
-      } else {
-        navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+      showLoadingDialog = true // Show loading screen
+      userAccountViewModel.getUserAccount(Firebase.auth.currentUser!!.uid)
+
+      scope.launch {
+        delay(600) // delay introduced to wait for data to be fetched
+
+        // Observe changes in userAccount to know if profile exists
+        userAccountViewModel.userAccount.collect { account ->
+          if (account != null) {
+            // If account exists, navigate to main screen
+            navigationActions.navigateTo(TopLevelDestinations.MAIN)
+            delay(600) // delay introduced to wait for data to be fetched
+            showLoadingDialog = false // Hide loading screen
+          } else {
+            // If no account exists, navigate to AddAccount screen
+            navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+            delay(600) // delay introduced to wait for data to be fetched
+            showLoadingDialog = false // Hide loading screen
+          }
+        }
       }
     }
+  }
+
+  // Show Loading Dialog if `showLoadingDialog` is true
+  if (showLoadingDialog) {
+    LoadingDialog(onDismissRequest = { showLoadingDialog = false })
   }
 }
 
