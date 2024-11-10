@@ -73,6 +73,14 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
+
+    fun addFriend(userAccount: UserAccount, friendId: String) {
+        repository.addFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+    }
+    fun removeFriend(userAccount: UserAccount, friendId: String) {
+        repository.removeFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+    }
+
   // Factory for creating instances of the ViewModel
   companion object {
     val Factory: ViewModelProvider.Factory =

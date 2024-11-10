@@ -14,7 +14,8 @@ data class UserAccount(
     val weightUnit: WeightUnit = WeightUnit.KG,
     val gender: Gender = Gender.MALE,
     val birthDate: Timestamp = Timestamp(Date()), // Default to current time
-    var profileImageUrl: String = "" // URL to the image stored on firebase
+    var profileImageUrl: String = "", // URL to the image stored on firebase
+    val friends: Set<String> = setOf() // Set of user IDs of friends
 )
 
 // Enum for height units
