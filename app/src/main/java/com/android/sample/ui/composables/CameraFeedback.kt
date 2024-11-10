@@ -10,7 +10,6 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.camera.view.video.AudioConfig
-import androidx.camera.view.video.ExperimentalVideo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,7 +40,6 @@ class CameraFeedBack {
   companion object {
     private var recording: Recording? = null
 
-    @androidx.annotation.OptIn(ExperimentalVideo::class)
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     public fun CameraScreen(cameraViewModel: CameraViewModel, modifier: Modifier = Modifier) {
@@ -56,7 +54,6 @@ class CameraFeedBack {
       }
     }
 
-    @androidx.annotation.OptIn(ExperimentalVideo::class)
     @Composable
     fun CameraBody(cameraViewModel: CameraViewModel) {
 
@@ -93,7 +90,6 @@ class CameraFeedBack {
           }
     }
 
-    @androidx.annotation.OptIn(ExperimentalVideo::class)
     fun recordVideo(cameraController: LifecycleCameraController, context: Context) {
 
       val outputFile = File(context.filesDir.path + "/record.mp4")

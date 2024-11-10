@@ -197,13 +197,14 @@ dependencies {
     implementation(libs.coil.compose)
 //    implementation(libs.coil.core)
 
-    val camerax_version = "1.3.0-alpha07"
-    //// CAMERA STUFF ////
-    implementation("androidx.camera:camera-camera2:$camerax_version")
-    implementation ("androidx.camera:camera-lifecycle:$camerax_version")
-    implementation ("androidx.camera:camera-view:$camerax_version")
-    implementation ("androidx.camera:camera-extensions:$camerax_version")
+    val camerax_version = "1.5.0-alpha03"
 
+    implementation("androidx.camera:camera-core:$camerax_version")
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation("androidx.camera:camera-video:$camerax_version")
+
+    implementation("androidx.camera:camera-view:$camerax_version")
     //// ACCOMPANIST ////
 implementation("com.google.accompanist:accompanist-permissions:0.30.1")
 
