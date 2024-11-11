@@ -42,7 +42,7 @@ fun SettingsScreen(
     navigationActions: NavigationActions,
     userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier.testTag("settingsScreen"),

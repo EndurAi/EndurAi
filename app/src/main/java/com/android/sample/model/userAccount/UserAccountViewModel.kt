@@ -1,12 +1,20 @@
 package com.android.sample.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
+import com.android.sample.ui.settings.signOut
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.Firebase
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -15,7 +23,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-open class UserAccountViewModel(private val repository: UserAccountRepository) : ViewModel() {
+open class UserAccountViewModel(
+    private val repository: UserAccountRepository,
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+) : ViewModel() {
 
   private val _userAccount = MutableStateFlow<UserAccount?>(null)
   val userAccount: StateFlow<UserAccount?>
@@ -73,6 +84,70 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
+  fun deleteAccount(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    val user = firebaseAuth?.currentUser ?: FirebaseAuth.getInstance().currentUser
+    val userId = user?.uid
+
+    if (userId != null) {
+      // Delete user data from the repository
+      repository.deleteUserAccount(
+          userId = userId,
+          onSuccess = {
+            // Attempt to delete the Firebase Auth account
+            user
+                .delete()
+                .addOnSuccessListener {
+                  signOut(context) // Log out from Firebase Auth
+                  onSuccess()
+                }
+                .addOnFailureListener { error ->
+                  // Check if the error is due to needing re-authentication
+                  if (error is FirebaseAuthRecentLoginRequiredException) {
+                    // Re-authenticate and retry deletion if necessary
+                    reAuthenticateUser(context, user) { reAuthError ->
+                      if (reAuthError == null) {
+                        // Retry deletion after re-authentication
+                        user
+                            .delete()
+                            .addOnSuccessListener {
+                              signOut(context)
+                              onSuccess()
+                            }
+                            .addOnFailureListener(onFailure)
+                      } else {
+                        onFailure(reAuthError)
+                      }
+                    }
+                  } else {
+                    onFailure(error)
+                  }
+                }
+          },
+          onFailure = onFailure)
+    } else {
+      onFailure(Exception("User not logged in"))
+    }
+  }
+
+  private fun reAuthenticateUser(
+      context: Context,
+      user: FirebaseUser,
+      callback: (Exception?) -> Unit
+  ) {
+    val googleSignInAccount = GoogleSignIn.getLastSignedInAccount(context)
+    val idToken = googleSignInAccount?.idToken
+    val accessToken = googleSignInAccount?.serverAuthCode
+    val credential: AuthCredential = GoogleAuthProvider.getCredential(idToken, accessToken)
+
+    user.reauthenticate(credential).addOnCompleteListener { task ->
+      if (task.isSuccessful) {
+        callback(null) // Re-authentication successful
+      } else {
+        callback(task.exception) // Pass the error to the callback
+      }
+    }
+  }
+
   // Factory for creating instances of the ViewModel
   companion object {
     val Factory: ViewModelProvider.Factory =
@@ -80,7 +155,8 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return UserAccountViewModel(
-                UserAccountRepositoryFirestore(FirebaseFirestore.getInstance()))
+                UserAccountRepositoryFirestore(FirebaseFirestore.getInstance()),
+                FirebaseAuth.getInstance())
                 as T
           }
         }
