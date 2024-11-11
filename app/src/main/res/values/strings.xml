@@ -22,4 +22,8 @@
     <string name="WorkoutSelectionTitle">Select the workout</string>
     <string name="Delete_Account">Delete Account</string>
     <string name="Logout">Logout</string>
+    <string name="UserData">User Data</string>
+    <string name="Preferences">Preferences</string>
+    <string name="SuccesfulDeleteMessage">Account deleted successfully</string>
+    <string name="LogoutMessage">Logged out successfully</string>
 </resources>

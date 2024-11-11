@@ -58,13 +58,13 @@ fun SettingsScreen(
                 BlueButton(
                     onClick = { navigationActions.navigateTo(Screen.EDIT_ACCOUNT) },
                     modifier = Modifier.testTag("userDataButton"),
-                    title = R.string.Delete_Account
+                    title = R.string.UserData
                 )
 
                 BlueButton(
                     onClick = { navigationActions.navigateTo(Screen.PREFERENCES) },
                     modifier = Modifier.testTag("preferencesButton"),
-                    title = R.string.Logout
+                    title = R.string.Preferences
                 )
 
                 Column(
@@ -79,7 +79,7 @@ fun SettingsScreen(
                             userAccountViewModel.deleteAccount(
                                 context,
                                 onSuccess = {
-                                    Toast.makeText(context, "Account deleted successfully", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, R.string.SuccesfulDeleteMessage, Toast.LENGTH_SHORT).show()
                                     navigationActions.navigateTo("Auth Screen")
                                 },
                                 onFailure = { error ->
@@ -100,7 +100,7 @@ fun SettingsScreen(
                         onClick = {
                             signOut(context)
                             navigationActions.navigateTo("Auth Screen")
-                            Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.LogoutMessage,Toast.LENGTH_SHORT).show()
                         },
                         image = Icons.Outlined.ExitToApp,
                         title = R.string.Logout,
@@ -146,7 +146,9 @@ fun RedButton(
             .border(BorderStroke(2.dp, Color.Red), RoundedCornerShape(8.dp))
             .background(Color.Red.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp)),
         colors = ButtonDefaults.buttonColors(
-            contentColor = Color.Red
+            contentColor = Color.Red,
+            containerColor = Color.Transparent
+
         )
     ) {
         Icon(
