@@ -16,15 +16,11 @@ object Route {
   const val PREFERENCES = "Preferences"
   const val SETTINGS = "Settings"
   const val BODY_WEIGHT_CREATION = "BodyWeightTraining"
-  const val BODY_WEIGHT_IMPORT = "BodyWeightImport"
   const val RUNNING_CREATION = "RunningTraining"
   const val YOGA_CREATION = "YogaTraining"
-  const val YOGA_IMPORT = "YogaImport"
   const val SESSIONSELECTION = "Session Selection"
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga"
-  const val CHOOSE_BODYWEIGHT = "Choose Bodyweight"
-  const val CHOOSE_YOGA = "Choose Yoga"
   const val TEST = "Test"
   const val WARMUP_WORKOUT = "Warmup workout"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout"
@@ -32,6 +28,7 @@ object Route {
   const val CALENDAR = "Calendar"
   const val ADD_ACCOUNT = "Add Account"
   const val EDIT_ACCOUNT = "Edit Account"
+  const val FRIENDS = "Friends"
 }
 
 object Screen {
@@ -53,14 +50,14 @@ object Screen {
   const val TEST = "Test Screen"
   const val WARMUP_WORKOUT = "Warmup workout screen"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout screen"
-  const val BODY_WEIGHT_IMPORT = "BodyWeight import screen"
   const val YOGA_WORKOUT = "Yoga workout screen"
-  const val YOGA_IMPORT = "Yoga import screen"
-  const val CHOOSE_BODYWEIGHT = "Choose Bodyweight Screen"
-  const val CHOOSE_YOGA = "Choose Yoga Screen"
+  const val DAY_CALENDAR = "Day Calendar Screen"
 
   const val ADD_ACCOUNT = "Add Account Screen"
   const val EDIT_ACCOUNT = "Edit Account Screen"
+
+  const val FRIENDS = "Friends Screen"
+  const val ADD_FRIEND = "Add Friend Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)

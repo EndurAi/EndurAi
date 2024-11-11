@@ -85,16 +85,15 @@ fun WorkoutCreationScreen(
   var name by remember { mutableStateOf(selectedWorkout?.name ?: "") }
   var description by remember { mutableStateOf(selectedWorkout?.description ?: "") }
   var warmup by remember { mutableStateOf(selectedWorkout?.warmup ?: false) }
-  var selectedDateTime by remember { mutableStateOf(selectedWorkout?.date ?: LocalDateTime.now()) }
+  var selectedDateTime by remember { mutableStateOf<LocalDateTime?>(null) }
   var exerciseList by remember {
     mutableStateOf(
         (selectedWorkout as? YogaWorkout)?.exercises
             ?: (selectedWorkout as? BodyWeightWorkout)?.exercises
-            ?: mutableListOf())
+            ?: emptyList())
   }
   var showNameDescriptionScreen by remember { mutableStateOf(true) }
   var showExerciseDialog by remember { mutableStateOf(false) }
-  var selectedExercise by remember { mutableStateOf<Exercise?>(null) }
   var selectedExerciseType by remember { mutableStateOf<ExerciseType?>(null) }
   var exerciseDetail by remember { mutableStateOf<ExerciseDetail?>(null) }
   var isDropdownExpanded by remember { mutableStateOf(false) }
@@ -145,14 +144,7 @@ fun WorkoutCreationScreen(
                     Spacer(Modifier.height(16.dp))
 
                     Button(
-                        onClick = {
-                          if (selectedDateTime != null) { // User need to select a date
-                            showNameDescriptionScreen = false
-                          } else {
-                            Toast.makeText(context, "Please select a date", Toast.LENGTH_SHORT)
-                                .show()
-                          }
-                        },
+                        onClick = { showNameDescriptionScreen = false },
                         modifier = Modifier.testTag("nextButton")) {
                           Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("Next")
@@ -196,19 +188,7 @@ fun WorkoutCreationScreen(
                         }
                   }
 
-                  items(exerciseList) { exercise ->
-                    ExerciseCard(
-                        exercise,
-                        onCardClick = {
-                          showExerciseDialog = true
-                          selectedExercise = exercise
-                          selectedExerciseType = exercise.type
-                          exerciseDetail = exercise.detail
-                        },
-                        onDetailClick = {
-                          // Open a dialog to edit the exercise details, following the figma design
-                        })
-                  }
+                  items(exerciseList) { exercise -> ExerciseCard(exercise) }
 
                   item {
                     // Vertical line connecting the cards
@@ -285,12 +265,7 @@ fun WorkoutCreationScreen(
 
   if (showExerciseDialog) {
     AlertDialog(
-        onDismissRequest = {
-          showExerciseDialog = false
-          selectedExercise = null
-          selectedExerciseType = null
-          exerciseDetail = null
-        },
+        onDismissRequest = { showExerciseDialog = false },
         title = { Text("Add Exercise") },
         text = {
           Column {
@@ -399,51 +374,21 @@ fun WorkoutCreationScreen(
           Button(
               onClick = {
                 if (selectedExerciseType != null && exerciseDetail != null) {
-                  if (selectedExercise != null) {
-                    val index = exerciseList.indexOf(selectedExercise!!)
-                    val newEx =
-                        Exercise(
-                            id = workoutViewModel.getNewUid(),
-                            type = selectedExerciseType!!,
-                            detail = exerciseDetail!!)
-                    exerciseList[index] = newEx
-                  } else {
-                    exerciseList =
-                        (exerciseList +
-                                Exercise(
-                                    id = workoutViewModel.getNewUid(),
-                                    type = selectedExerciseType!!,
-                                    detail = exerciseDetail!!))
-                            .toMutableList()
-                  }
+                  exerciseList =
+                      exerciseList +
+                          Exercise(
+                              id = workoutViewModel.getNewUid(),
+                              type = selectedExerciseType!!,
+                              detail = exerciseDetail!!)
+
                   showExerciseDialog = false
-                  selectedExercise = null
-                  selectedExerciseType = null
-                  exerciseDetail = null
                 }
               },
               modifier = Modifier.testTag("addExerciseConfirmButton")) {
-                if (selectedExercise != null) {
-                  Text("Update")
-                } else {
-                  Text("Add")
-                }
+                Text("Add")
               }
         },
         dismissButton = {
-          if (selectedExercise != null) {
-            Button(
-                onClick = {
-                  exerciseList.remove(selectedExercise!!)
-                  showExerciseDialog = false
-                  selectedExercise = null
-                  selectedExerciseType = null
-                  exerciseDetail = null
-                },
-                modifier = Modifier.testTag("deleteExerciseButton")) {
-                  Text("Delete")
-                }
-          }
           Button(
               onClick = { showExerciseDialog = false },
               modifier = Modifier.testTag("addExerciseCancelButton")) {
