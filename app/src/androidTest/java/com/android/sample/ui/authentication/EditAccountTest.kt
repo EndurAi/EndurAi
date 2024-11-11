@@ -183,7 +183,52 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
-  fun setUserAccount(account: UserAccount?) {
+    override fun addFriend(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        // not needed here
+    }
+
+    override fun removeFriend(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        // not needed here
+    }
+
+    override fun sendFriendRequest(
+        fromUser: UserAccount,
+        toUserId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        // not needed here
+    }
+
+    override fun acceptFriendRequest(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        // not needed here
+    }
+
+    override fun rejectFriendRequest(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        // not needed here
+    }
+
+    fun setUserAccount(account: UserAccount?) {
     this.userAccount = account
   }
 }
