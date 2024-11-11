@@ -28,7 +28,6 @@ object Route {
   const val CALENDAR = "Calendar"
   const val ADD_ACCOUNT = "Add Account"
   const val EDIT_ACCOUNT = "Edit Account"
-  const val FRIENDS = "Friends"
 }
 
 object Screen {
@@ -51,13 +50,9 @@ object Screen {
   const val WARMUP_WORKOUT = "Warmup workout screen"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout screen"
   const val YOGA_WORKOUT = "Yoga workout screen"
-  const val DAY_CALENDAR = "Day Calendar Screen"
 
   const val ADD_ACCOUNT = "Add Account Screen"
   const val EDIT_ACCOUNT = "Edit Account Screen"
-
-  const val FRIENDS = "Friends Screen"
-  const val ADD_FRIEND = "Add Friend Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
