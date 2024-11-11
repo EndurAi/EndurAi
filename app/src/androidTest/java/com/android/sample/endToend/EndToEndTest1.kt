@@ -8,6 +8,7 @@ import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.core.content.ContextCompat.startActivity
 import androidx.test.core.app.ApplicationProvider
 import com.android.sample.MainActivity
@@ -36,7 +37,7 @@ class EndToEndTest1 {
     // check that everything is displayed
     mainScreenIsWellDisplayed()
     // Go to the achievement screen
-    composeTestRule.onNodeWithTag("AchievementButton").performClick()
+    composeTestRule.onNodeWithTag("AchievementButton").performScrollTo().performClick()
     achievementScreenIsWellDisplayed()
     // go back to the main screen
     composeTestRule.onNodeWithTag("Main").performClick()
