@@ -15,7 +15,9 @@ data class UserAccount(
     val gender: Gender = Gender.MALE,
     val birthDate: Timestamp = Timestamp(Date()), // Default to current time
     var profileImageUrl: String = "", // URL to the image stored on firebase
-    val friends: Set<String> = setOf() // Set of user IDs of friends
+    val friends: Set<String> = setOf(), // Set of user IDs of friends
+    val sentRequests: Set<String> = setOf(),       // IDs of users to whom this user has sent friend requests
+    val receivedRequests: Set<String> = setOf()   // IDs of users who sent friend requests to this user
 )
 
 // Enum for height units

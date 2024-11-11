@@ -81,6 +81,42 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
         repository.removeFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
     }
 
+
+
+
+    fun sendFriendRequest(toUserId: String) {
+        userAccount.value?.let { currentUser ->
+            repository.sendFriendRequest(
+                fromUser = currentUser,
+                toUserId = toUserId,
+                onSuccess = { getUserAccount(currentUser.userId) },
+                onFailure = { /* Handle error */ }
+            )
+        }
+    }
+
+    fun acceptFriendRequest(friendId: String) {
+        userAccount.value?.let { currentUser ->
+            repository.acceptFriendRequest(
+                userAccount = currentUser,
+                friendId = friendId,
+                onSuccess = { getUserAccount(currentUser.userId) },
+                onFailure = { /* Handle error */ }
+            )
+        }
+    }
+
+    fun rejectFriendRequest(friendId: String) {
+        userAccount.value?.let { currentUser ->
+            repository.rejectFriendRequest(
+                userAccount = currentUser,
+                friendId = friendId,
+                onSuccess = { getUserAccount(currentUser.userId) },
+                onFailure = { /* Handle error */ }
+            )
+        }
+    }
+
   // Factory for creating instances of the ViewModel
   companion object {
     val Factory: ViewModelProvider.Factory =

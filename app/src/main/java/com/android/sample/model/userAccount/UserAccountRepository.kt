@@ -75,4 +75,35 @@ interface UserAccountRepository {
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     )
+
+
+    /**
+     * Sends a friend request from one user to another.
+     */
+    fun sendFriendRequest(
+        fromUser: UserAccount,
+        toUserId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    )
+
+    /**
+     * Accepts a friend request.
+     */
+    fun acceptFriendRequest(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    )
+
+    /**
+     * Rejects a friend request.
+     */
+    fun rejectFriendRequest(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    )
 }

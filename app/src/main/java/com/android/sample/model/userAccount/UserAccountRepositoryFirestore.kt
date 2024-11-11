@@ -89,4 +89,85 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAc
         )
         updateUserAccount(updatedUserAccount, onSuccess, onFailure)
     }
+
+
+
+
+    override fun sendFriendRequest(
+        fromUser: UserAccount,
+        toUserId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        // Update fromUser's sentRequests and toUser's receivedRequests
+        val updatedFromUser = fromUser.copy(sentRequests = fromUser.sentRequests + toUserId)
+        val toUserRef = db.collection(collectionPath).document(toUserId)
+
+        db.runTransaction { transaction ->
+            val toUserSnapshot = transaction.get(toUserRef)
+            val toUser = toUserSnapshot.toObject(UserAccount::class.java)
+                ?: throw Exception("User not found")
+
+            val updatedToUser = toUser.copy(receivedRequests = toUser.receivedRequests + fromUser.userId)
+            transaction.set(toUserRef, updatedToUser)
+            transaction.set(db.collection(collectionPath).document(fromUser.userId), updatedFromUser)
+        }
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+    override fun acceptFriendRequest(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val updatedUserAccount = userAccount.copy(
+            friends = userAccount.friends + friendId,
+            receivedRequests = userAccount.receivedRequests - friendId
+        )
+        val friendRef = db.collection(collectionPath).document(friendId)
+
+        db.runTransaction { transaction ->
+            val friendSnapshot = transaction.get(friendRef)
+            val friend = friendSnapshot.toObject(UserAccount::class.java)
+                ?: throw Exception("Friend not found")
+
+            val updatedFriend = friend.copy(
+                friends = friend.friends + userAccount.userId,
+                sentRequests = friend.sentRequests - userAccount.userId
+            )
+            transaction.set(friendRef, updatedFriend)
+            transaction.set(db.collection(collectionPath).document(userAccount.userId), updatedUserAccount)
+        }
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+    override fun rejectFriendRequest(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val updatedUserAccount = userAccount.copy(
+            receivedRequests = userAccount.receivedRequests - friendId
+        )
+        val friendRef = db.collection(collectionPath).document(friendId)
+
+        db.runTransaction { transaction ->
+            val friendSnapshot = transaction.get(friendRef)
+            val friend = friendSnapshot.toObject(UserAccount::class.java)
+                ?: throw Exception("Friend not found")
+
+            val updatedFriend = friend.copy(
+                sentRequests = friend.sentRequests - userAccount.userId
+            )
+            transaction.set(friendRef, updatedFriend)
+            transaction.set(db.collection(collectionPath).document(userAccount.userId), updatedUserAccount)
+        }
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
 }
