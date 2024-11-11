@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -103,6 +104,11 @@ class CameraFeedBack {
                       }
                 })
           }
+      DisposableEffect(Unit) {
+        onDispose {
+          cameraViewModel.cameraController.value.unbind()
+        }
+      }
     }
 
     /**
