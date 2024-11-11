@@ -118,6 +118,26 @@ fun CountDownTimer(
 
           canvas.nativeCanvas.drawPath(path, paint.apply { color = android.graphics.Color.BLACK })
           canvas.restore()
+        } else {
+          // Draw the pause button (double bars)
+          val barWidth = 12f
+          val barHeight = 35f
+          val barSpacing = 4f
+          val yOffset = 80
+
+          canvas.nativeCanvas.drawRect(
+              width / 2 - barSpacing - barWidth,
+              height / 2 - barHeight / 2 + yOffset,
+              width / 2 - barSpacing,
+              height / 2 + barHeight / 2 + yOffset,
+              paint)
+
+          canvas.nativeCanvas.drawRect(
+              width / 2 + barSpacing,
+              height / 2 - barHeight / 2 + yOffset,
+              width / 2 + barSpacing + barWidth,
+              height / 2 + barHeight / 2 + yOffset,
+              paint)
         }
       } else {
 
