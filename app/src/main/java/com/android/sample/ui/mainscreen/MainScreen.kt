@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -22,11 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.android.sample.R
-import com.android.sample.model.userAccount.Gender
-import com.android.sample.model.userAccount.HeightUnit
 import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
@@ -40,8 +39,7 @@ import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.SoftGrey
-import com.google.firebase.Timestamp
-import java.util.Date
+import com.android.sample.viewmodel.UserAccountViewModel
 
 /**
  * Main composable function that sets up the main screen layout.
@@ -53,21 +51,10 @@ fun MainScreen(
     navigationActions: NavigationActions,
     bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
+    userAccountViewModel: UserAccountViewModel
 ) {
   // Configuration temporaire pour tester
-  val account =
-      UserAccount(
-          "",
-          "Micheal",
-          "Phelps",
-          1.8f,
-          HeightUnit.METER,
-          70f,
-          WeightUnit.KG,
-          Gender.MALE,
-          Timestamp(Date()),
-          "")
-  val profile = R.drawable.homme
+  val account = userAccountViewModel.userAccount.collectAsState().value
   val bodyWeightWorkouts = bodyWeightViewModel.workouts.collectAsState()
   val yogaWorkouts = yogaViewModel.workouts.collectAsState()
 
@@ -80,16 +67,14 @@ fun MainScreen(
 
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
-      topBar = {
-        ProfileSection(account = account, profile = profile, navigationActions = navigationActions)
-      },
+      topBar = { ProfileSection(account = account, navigationActions = navigationActions) },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding),
             verticalArrangement = Arrangement.SpaceBetween) {
               WorkoutSessionsSection(
                   workout = workoutDisplayed,
-                  profile = profile,
+                  profile = account?.profileImageUrl ?: "",
                   navigationActions = navigationActions)
               QuickWorkoutSection(navigationActions = navigationActions)
               NewWorkoutSection(navigationActions = navigationActions)
@@ -106,7 +91,7 @@ fun MainScreen(
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun ProfileSection(account: UserAccount, profile: Int, navigationActions: NavigationActions) {
+fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) {
   Row(
       modifier =
           Modifier.fillMaxWidth()
@@ -117,12 +102,13 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp)) {
               Image(
-                  painter = painterResource(id = profile),
+                  painter = rememberImagePainter(data = account?.profileImageUrl ?: ""),
                   contentDescription = "Profile",
+                  contentScale = ContentScale.Crop,
                   modifier = Modifier.size(40.dp).clip(CircleShape).testTag("ProfilePicture"))
               Spacer(modifier = Modifier.width(8.dp))
               Text(
-                  text = stringResource(id = R.string.welcome_message, account.firstName),
+                  text = stringResource(id = R.string.welcome_message, account?.firstName ?: ""),
                   style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp),
                   color = Color.White,
                   modifier = Modifier.testTag("WelcomeText"))
@@ -149,7 +135,11 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun WorkoutSessionsSection(workout: Workout?, profile: Int, navigationActions: NavigationActions) {
+fun WorkoutSessionsSection(
+    workout: Workout?,
+    profile: String,
+    navigationActions: NavigationActions
+) {
   Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
     Text(
         text = "My workout sessions",
@@ -254,7 +244,7 @@ fun QuickWorkoutButton(iconId: Int, navigationActions: NavigationActions, button
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationActions) {
+fun WorkoutCard(workout: Workout, profile: String, navigationActions: NavigationActions) {
   Card(
       shape = RoundedCornerShape(12.dp),
       modifier =
@@ -273,9 +263,10 @@ fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationAct
                     style = MaterialTheme.typography.titleSmall.copy(fontSize = 17.sp))
                 Text(text = workout.description, style = MaterialTheme.typography.bodyMedium)
                 Image(
-                    painter = painterResource(id = profile),
-                    contentDescription = "Participant",
-                    modifier = Modifier.size(20.dp))
+                    painter = rememberImagePainter(data = profile),
+                    contentDescription = "Profile",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(20.dp).clip(CircleShape))
               }
               Image(
                   painter =
