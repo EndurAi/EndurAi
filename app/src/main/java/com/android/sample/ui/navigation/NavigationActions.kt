@@ -69,10 +69,7 @@ object TopLevelDestinations {
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
-    listOf(
-        TopLevelDestinations.MAIN,
-        TopLevelDestinations.VIDEO,
-        TopLevelDestinations.CALENDAR)
+    listOf(TopLevelDestinations.MAIN, TopLevelDestinations.VIDEO, TopLevelDestinations.CALENDAR)
 
 open class NavigationActions(private val navController: NavHostController) {
   /**

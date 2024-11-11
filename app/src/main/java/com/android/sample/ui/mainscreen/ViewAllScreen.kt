@@ -66,7 +66,7 @@ fun ViewAllScreen(
   Scaffold(
       modifier = Modifier.testTag("ViewAllScreen"),
       topBar = { TopBar(navigationActions, R.string.ViewAllTitle) },
-      bottomBar = { BottomBar(navigationActions)},
+      bottomBar = { BottomBar(navigationActions) },
       content = { pd ->
         Column(modifier = Modifier.padding(pd)) {
           Tabs(selectedTab) { index -> selectedTab = index }

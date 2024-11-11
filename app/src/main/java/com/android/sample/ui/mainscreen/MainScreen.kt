@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -31,8 +33,6 @@ import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.BottomBar
-import com.android.sample.ui.navigation.BottomNavigationMenu
-import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
@@ -71,7 +71,8 @@ fun MainScreen(
       topBar = { ProfileSection(account = account, navigationActions = navigationActions) },
       content = { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier =
+                Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween) {
               WorkoutSessionsSection(
                   workout = workoutDisplayed,
@@ -144,71 +145,67 @@ fun WorkoutSessionsSection(
     profile: String,
     navigationActions: NavigationActions
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
-        Text(
-            text = "My workout sessions",
-            style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp),
-            modifier = Modifier.padding(vertical = 8.dp))
-        Column(
-            modifier =
+  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
+    Text(
+        text = "My workout sessions",
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp),
+        modifier = Modifier.padding(vertical = 8.dp))
+    Column(
+        modifier =
             Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .background(SoftGrey)
                 .height(300.dp)
                 .padding(8.dp)) {
-            if (workout != null) {
-                Box(modifier = Modifier.padding(vertical = 4.dp)) {
-                    WorkoutCard(workout, profile, navigationActions)
-                }
-            } else {
-                Text(
-                    modifier = Modifier.fillMaxWidth().padding(10.dp),
-                    textAlign = TextAlign.Center,
-                    text = "No workouts yet",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
+          if (workout != null) {
+            Box(modifier = Modifier.padding(vertical = 4.dp)) {
+              WorkoutCard(workout, profile, navigationActions)
             }
+          } else {
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                textAlign = TextAlign.Center,
+                text = "No workouts yet",
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
+          }
 
-            Spacer(modifier = Modifier.weight(1f))
+          Spacer(modifier = Modifier.weight(1f))
 
-            Box(
-                modifier =
-                Modifier.fillMaxWidth()
-                    .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
-                    .padding(vertical = 16.dp, horizontal = 12.dp)
-                    .height(48.dp)
-                    .background(Blue, RoundedCornerShape(20.dp))
-                    .testTag("NewWorkoutButton"),
-                contentAlignment = Alignment.Center) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Icon(
-                        imageVector = Icons.Outlined.Add,
-                        contentDescription = "New Workout",
-                        tint = Color.Black,
-                        modifier = Modifier.size(28.dp))
-                    Text(
-                        stringResource(id = R.string.NewWorkout),
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+          Box(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
+                      .padding(vertical = 16.dp, horizontal = 12.dp)
+                      .height(48.dp)
+                      .background(Blue, RoundedCornerShape(20.dp))
+                      .testTag("NewWorkoutButton"),
+              contentAlignment = Alignment.Center) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                  Icon(
+                      imageVector = Icons.Outlined.Add,
+                      contentDescription = "New Workout",
+                      tint = Color.Black,
+                      modifier = Modifier.size(28.dp))
+                  Text(
+                      stringResource(id = R.string.NewWorkout),
+                      modifier = Modifier.padding(horizontal = 12.dp),
+                      style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
                 }
-
-            }
-            Button(
-                onClick = { navigationActions.navigateTo(Screen.VIEW_ALL) },
-                modifier =
-                Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("ViewAllButton"),
-                colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = DarkBlue2, contentColor = Color.White)) {
+              }
+          Button(
+              onClick = { navigationActions.navigateTo(Screen.VIEW_ALL) },
+              modifier =
+                  Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("ViewAllButton"),
+              colors =
+                  ButtonDefaults.buttonColors(
+                      containerColor = DarkBlue2, contentColor = Color.White)) {
                 Text(
                     text = "View all",
                     style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
-            }
+              }
         }
-    }
+  }
 }
-
 
 /**
  * Composable function that displays the quick workout section.
@@ -334,22 +331,18 @@ fun AchievementsSection(navigationActions: NavigationActions) {
                 .padding(vertical = 16.dp, horizontal = 12.dp)
                 .height(80.dp)
                 .background(LightGrey, RoundedCornerShape(20.dp))
-                .testTag("NewWorkoutButton"),
+                .testTag("AchievementButton"),
         contentAlignment = Alignment.Center) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Image(
-                    painter = painterResource(id = R.drawable.trophy),
-                    contentDescription = "Trophy",
-                    modifier =
-                    Modifier.size(40.dp))
-                Text(
-                    stringResource(id = R.string.View),
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 23.sp))
-            }
-
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(id = R.drawable.trophy),
+                contentDescription = "Trophy",
+                modifier = Modifier.size(40.dp))
+            Text(
+                stringResource(id = R.string.View),
+                modifier = Modifier.padding(horizontal = 12.dp),
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 23.sp))
+          }
         }
   }
 }

@@ -155,12 +155,19 @@ class MainScreenTest {
 
     // Simulate clicking on the New Workout Plan section
     composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
-    // Future test can be written here when it will navigate to creation screen
+    verify(navigationActions).navigateTo(Screen.SESSIONSELECTION)
+  }
+
+  @Test
+  fun testAchievemetsSectionIsDisplayed() {
+    composeTestRule.onNodeWithTag("AchievementButton").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AchievementButton").performClick()
+    verify(navigationActions).navigateTo(Screen.ACHIEVEMENTS)
   }
 
   @Test
   fun testBottomNavigationBarIsDisplayed() {
     // Check that the BottomNavigationBar is displayed
-    composeTestRule.onNodeWithTag("BottomNavigationBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
   }
 }
