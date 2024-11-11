@@ -4,7 +4,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="welcome_message">What\'s up %1$s?</string>
-    <string name="ViewAllTitle">All Workouts</string>
+    <string name="ViewAllTitle">View All</string>
     <string name="noWorkouts">You have no Workouts yet.</string>
     <string name="TitleTabBody">BodyWeight</string>
     <string name="TitleTabYoga">Yoga</string>
@@ -26,4 +26,7 @@
     <string name="Preferences">Preferences</string>
     <string name="SuccesfulDeleteMessage">Account deleted successfully</string>
     <string name="LogoutMessage">Logged out successfully</string>
+    <string name="NewWorkout">New Workout</string>
+    <string name="AchievementsTitle">My Achievements</string>
+    <string name="View">View</string>
 </resources>

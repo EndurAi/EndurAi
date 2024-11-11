@@ -37,6 +37,7 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.composables.ImageComposable
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
@@ -65,6 +66,7 @@ fun ViewAllScreen(
   Scaffold(
       modifier = Modifier.testTag("ViewAllScreen"),
       topBar = { TopBar(navigationActions, R.string.ViewAllTitle) },
+      bottomBar = { BottomBar(navigationActions)},
       content = { pd ->
         Column(modifier = Modifier.padding(pd)) {
           Tabs(selectedTab) { index -> selectedTab = index }

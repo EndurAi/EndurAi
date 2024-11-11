@@ -30,6 +30,7 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
@@ -77,10 +78,10 @@ fun MainScreen(
                   profile = account?.profileImageUrl ?: "",
                   navigationActions = navigationActions)
               QuickWorkoutSection(navigationActions = navigationActions)
-              NewWorkoutSection(navigationActions = navigationActions)
+              AchievementsSection(navigationActions = navigationActions)
             }
       },
-      bottomBar = { BottomNavigationBar(navigationActions = navigationActions) })
+      bottomBar = { BottomBar(navigationActions = navigationActions) })
 }
 
 /**
@@ -143,43 +144,71 @@ fun WorkoutSessionsSection(
     profile: String,
     navigationActions: NavigationActions
 ) {
-  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
-    Text(
-        text = "My workout sessions",
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp),
-        modifier = Modifier.padding(vertical = 8.dp))
-    Column(
-        modifier =
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
+        Text(
+            text = "My workout sessions",
+            style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp),
+            modifier = Modifier.padding(vertical = 8.dp))
+        Column(
+            modifier =
             Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .background(SoftGrey)
+                .height(300.dp)
                 .padding(8.dp)) {
-          if (workout != null) {
-            Box(modifier = Modifier.padding(vertical = 4.dp)) {
-              WorkoutCard(workout, profile, navigationActions)
+            if (workout != null) {
+                Box(modifier = Modifier.padding(vertical = 4.dp)) {
+                    WorkoutCard(workout, profile, navigationActions)
+                }
+            } else {
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(10.dp),
+                    textAlign = TextAlign.Center,
+                    text = "No workouts yet",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
             }
-          } else {
-            Text(
-                modifier = Modifier.fillMaxWidth().padding(10.dp),
-                textAlign = TextAlign.Center,
-                text = "No workouts yet",
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
-          }
 
-          Button(
-              onClick = { navigationActions.navigateTo(Screen.VIEW_ALL) },
-              modifier =
-                  Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("ViewAllButton"),
-              colors =
-                  ButtonDefaults.buttonColors(
-                      containerColor = DarkBlue2, contentColor = Color.White)) {
+            Spacer(modifier = Modifier.weight(1f))
+
+            Box(
+                modifier =
+                Modifier.fillMaxWidth()
+                    .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
+                    .padding(vertical = 16.dp, horizontal = 12.dp)
+                    .height(48.dp)
+                    .background(Blue, RoundedCornerShape(20.dp))
+                    .testTag("NewWorkoutButton"),
+                contentAlignment = Alignment.Center) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = "New Workout",
+                        tint = Color.Black,
+                        modifier = Modifier.size(28.dp))
+                    Text(
+                        stringResource(id = R.string.NewWorkout),
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                }
+
+            }
+            Button(
+                onClick = { navigationActions.navigateTo(Screen.VIEW_ALL) },
+                modifier =
+                Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("ViewAllButton"),
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = DarkBlue2, contentColor = Color.White)) {
                 Text(
                     text = "View all",
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 14.sp))
-              }
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
+            }
         }
-  }
+    }
 }
+
 
 /**
  * Composable function that displays the quick workout section.
@@ -287,49 +316,40 @@ fun WorkoutCard(workout: Workout, profile: String, navigationActions: Navigation
 }
 
 /**
- * Composable function that displays the button to create a new workout plan.
+ * Composable function that the button to navigate to the achievements
  *
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun NewWorkoutSection(navigationActions: NavigationActions) {
+fun AchievementsSection(navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth()) {
     Text(
-        "New workout plan",
+        stringResource(id = R.string.AchievementsTitle),
         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
         style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp))
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
+                .clickable { navigationActions.navigateTo(Screen.ACHIEVEMENTS) }
                 .padding(vertical = 16.dp, horizontal = 12.dp)
-                .height(48.dp)
+                .height(80.dp)
                 .background(LightGrey, RoundedCornerShape(20.dp))
                 .testTag("NewWorkoutButton"),
         contentAlignment = Alignment.Center) {
-          Icon(
-              imageVector = Icons.Outlined.Add,
-              contentDescription = "New Workout",
-              tint = Color.Black,
-              modifier = Modifier.size(28.dp))
-        }
-  }
-}
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Image(
+                    painter = painterResource(id = R.drawable.trophy),
+                    contentDescription = "Trophy",
+                    modifier =
+                    Modifier.size(40.dp))
+                Text(
+                    stringResource(id = R.string.View),
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 23.sp))
+            }
 
-/**
- * Composable function that displays the bottom navigation bar.
- *
- * @param navigationActions Actions for navigating between screens.
- */
-@Composable
-fun BottomNavigationBar(navigationActions: NavigationActions) {
-  Column(
-      modifier = Modifier.background(Blue).testTag("BottomNavigationBar"),
-  ) {
-    BottomNavigationMenu(
-        onTabSelect = { route -> navigationActions.navigateTo(route) },
-        tabList = LIST_OF_TOP_LEVEL_DESTINATIONS,
-        selectedItem = navigationActions.currentRoute(),
-    )
+        }
   }
 }
