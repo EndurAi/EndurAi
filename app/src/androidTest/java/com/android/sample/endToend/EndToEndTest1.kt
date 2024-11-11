@@ -36,7 +36,7 @@ class EndToEndTest1 {
     // check that everything is displayed
     mainScreenIsWellDisplayed()
     // Go to the achievement screen
-    composeTestRule.onNodeWithTag("Achievements").performClick()
+    composeTestRule.onNodeWithTag("AchievementButton").performClick()
     achievementScreenIsWellDisplayed()
     // go back to the main screen
     composeTestRule.onNodeWithTag("Main").performClick()
@@ -95,9 +95,6 @@ class EndToEndTest1 {
     }
     if (composeTestRule.onNodeWithTag("Video").isNotDisplayed()) {
       throw Exception("Video not displayed in mainScreenIsWellDisplayed")
-    }
-    if (composeTestRule.onNodeWithTag("Achievements").isNotDisplayed()) {
-      throw Exception("Achievements not displayed in mainScreenIsWellDisplayed")
     }
     if (composeTestRule.onNodeWithTag("SettingsButton").isNotDisplayed()) {
       throw Exception("SettingsButton not displayed in mainScreenIsWellDisplayed")

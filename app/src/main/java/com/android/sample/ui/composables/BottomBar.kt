@@ -28,7 +28,9 @@ fun BottomBar(
           Column(
               modifier = Modifier.weight(1f).padding(vertical = 8.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
-                IconButton(onClick = { navigationActions.navigateTo(destination.route) }) {
+                IconButton(
+                    modifier = Modifier.testTag(destination.textId),
+                    onClick = { navigationActions.navigateTo(destination.route) }) {
                   Icon(
                       imageVector = destination.icon,
                       contentDescription = destination.textId,
