@@ -20,4 +20,6 @@
     <string name="reject_invite">Reject</string>
     <string name="remove_friend">Remove</string>
     <string name="WorkoutSelectionTitle">Select the workout</string>
+    <string name="Delete_Account">Delete Account</string>
+    <string name="Logout">Logout</string>
 </resources>

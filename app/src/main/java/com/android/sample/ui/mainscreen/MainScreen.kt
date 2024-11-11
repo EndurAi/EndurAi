@@ -101,12 +101,16 @@ fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp)) {
-              Image(
-                  painter = rememberImagePainter(data = account?.profileImageUrl ?: ""),
-                  contentDescription = "Profile",
-                  contentScale = ContentScale.Crop,
-                  modifier = Modifier.size(40.dp).clip(CircleShape).testTag("ProfilePicture"))
-              Spacer(modifier = Modifier.width(8.dp))
+            Image(
+                painter = rememberImagePainter(data = account?.profileImageUrl ?: ""),
+                contentDescription = "Profile",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .testTag("ProfilePicture")
+                    .clickable { navigationActions.navigateTo(Screen.FRIENDS) })
+            Spacer(modifier = Modifier.width(8.dp))
               Text(
                   text = stringResource(id = R.string.welcome_message, account?.firstName ?: ""),
                   style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp),
