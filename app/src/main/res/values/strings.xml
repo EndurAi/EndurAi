@@ -11,11 +11,11 @@
     <string name="TitleTabRunning">Running</string>
     <string name="setting_title">Settings</string>
     <string name="calendar_title">Calendar</string>
+    <string name="addButton">+</string>
     <string name="friends_title">Friends</string>
     <string name="add_friends_title">Add a new Friend</string>
     <string name="welcome_message_invitations">Hey %1$s, someone sent you a friend request!</string >
     <string name="invite_to_workout">Invite to a workout</string>
-    <string name="addButton">+</string>
     <string name="accept_invite">Accept</string>
     <string name="reject_invite">Reject</string>
     <string name="remove_friend">Remove</string>
