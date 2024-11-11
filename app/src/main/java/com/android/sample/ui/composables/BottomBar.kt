@@ -6,8 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,11 +18,6 @@ import com.android.sample.ui.theme.BottomBarColor
 fun BottomBar(
     navigationActions: NavigationActions,
 ) {
-  val density = LocalDensity.current.density
-  val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
-  val iconSize = (screenWidth / 5) * density
-  val textSize = (4.sp * density)
 
   BottomAppBar(
       modifier = Modifier.testTag("BottomBar"),
@@ -40,13 +33,13 @@ fun BottomBar(
                       imageVector = destination.icon,
                       contentDescription = destination.textId,
                       tint = Color.White,
-                      modifier = Modifier.size(iconSize))
+                      modifier = Modifier.size(30.dp))
                 }
                 Text(
                     text = destination.textId,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = textSize))
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp))
               }
         }
       }
