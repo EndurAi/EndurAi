@@ -31,12 +31,12 @@ fun BottomBar(
                 IconButton(
                     modifier = Modifier.testTag(destination.textId),
                     onClick = { navigationActions.navigateTo(destination.route) }) {
-                  Icon(
-                      imageVector = destination.icon,
-                      contentDescription = destination.textId,
-                      tint = Color.White,
-                      modifier = Modifier.size(30.dp))
-                }
+                      Icon(
+                          imageVector = destination.icon,
+                          contentDescription = destination.textId,
+                          tint = Color.White,
+                          modifier = Modifier.size(30.dp))
+                    }
                 Text(
                     text = destination.textId,
                     color = Color.White,
