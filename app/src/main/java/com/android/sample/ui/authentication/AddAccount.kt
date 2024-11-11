@@ -58,6 +58,9 @@ fun AddAccount(
   var weightUnit by remember { mutableStateOf(WeightUnit.KG) }
   var gender by remember { mutableStateOf(Gender.MALE) }
   var birthDate by remember { mutableStateOf("") }
+    var friends by remember { mutableStateOf(listOf<String>()) }
+    var sentRequests by remember { mutableStateOf(listOf<String>()) }
+    var receivedRequests by remember { mutableStateOf(listOf<String>()) }
 
   // Retrieve current user UID from Firebase Auth
   val actualUserId = userId ?: return // Ensure user is signed in
@@ -93,6 +96,9 @@ fun AddAccount(
           profileImageUri = null
           originalProfileImageUri = null
         }
+          friends = it.friends
+          sentRequests = it.sentRequests
+          receivedRequests = it.receivedRequests
       }
     }
   }
@@ -139,6 +145,9 @@ fun AddAccount(
             birthDate = birthDate,
             profileImageUri = profileImageUri,
             originalProfileImageUri = if (accountExists) originalProfileImageUri else null,
+            friends = friends,
+            sentRequests = sentRequests,
+            receivedRequests = receivedRequests,
             context = context)
       },
       isButtonEnabled = firstName.isNotBlank(),
@@ -289,7 +298,10 @@ fun saveAccount(
     birthDate: String,
     profileImageUri: Uri?,
     originalProfileImageUri: Uri?,
-    context: android.content.Context
+    context: android.content.Context,
+    friends: List<String>,
+    sentRequests: List<String>,
+    receivedRequests: List<String>
 ) {
   val calendar = GregorianCalendar()
   val parts = birthDate.split("/")
@@ -309,7 +321,10 @@ fun saveAccount(
               weightUnit = weightUnit,
               gender = gender,
               birthDate = Timestamp(calendar.time),
-              profileImageUrl = profileImageUrl)
+              profileImageUrl = profileImageUrl,
+              friends = friends,
+              sentRequests = sentRequests,
+              receivedRequests = receivedRequests)
 
       if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
         userAccountViewModel.uploadProfileImage(
