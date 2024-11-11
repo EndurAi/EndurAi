@@ -119,7 +119,11 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
               Image(
                   painter = painterResource(id = profile),
                   contentDescription = "Profile",
-                  modifier = Modifier.size(40.dp).clip(CircleShape).testTag("ProfilePicture"))
+                  modifier =
+                      Modifier.size(40.dp)
+                          .clip(CircleShape)
+                          .clickable { navigationActions.navigateTo(Screen.FRIENDS) }
+                          .testTag("ProfilePicture"))
               Spacer(modifier = Modifier.width(8.dp))
               Text(
                   text = stringResource(id = R.string.welcome_message, account.firstName),
