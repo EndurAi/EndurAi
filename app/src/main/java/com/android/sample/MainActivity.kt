@@ -32,6 +32,8 @@ import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
+import com.android.sample.ui.friends.AddFriendScreen
+import com.android.sample.ui.friends.FriendsScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -109,6 +111,13 @@ fun MainApp(startDestination: String = Route.AUTH) {
       composable(Screen.VIEW_ALL) {
         ViewAllScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
       }
+    }
+
+    // Friends Screen
+
+    navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
+      composable(Screen.FRIENDS) { FriendsScreen(navigationActions) }
+      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions) }
     }
 
     // Video Screen
