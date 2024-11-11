@@ -14,12 +14,14 @@ import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.viewmodel.UserAccountViewModel
 
 /** Screen for the option to add a friend to the user's friend list. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFriendScreen(
     navigationActions: NavigationActions,
+    userAccountViewModel: UserAccountViewModel
 ) {
   var selectedTab by remember { mutableStateOf("New Connections") }
   val searchQuery = remember { mutableStateOf("") }
@@ -51,9 +53,9 @@ fun AddFriendScreen(
 
     when (selectedTab) {
       "New Connections" -> {
-        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"))
+        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"), userAccountViewModel)
       }
-      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
+      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"), userAccountViewModel)
     }
   }
 }

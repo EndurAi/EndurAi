@@ -1,5 +1,6 @@
 package com.android.sample.ui.friends
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,28 +24,29 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.viewmodel.UserAccountViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /** Screen to view the list of Friends */
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsScreen(
-    navigationActions: NavigationActions,
+    navigationActions: NavigationActions, userAccountViewModel: UserAccountViewModel,
 ) {
   val searchQuery = remember { mutableStateOf("") }
 
-  // Hardcoded list of friends
-  val friendsList =
-      setOf(
-          UserAccount(userId = "1", firstName = "Pierre"),
-          UserAccount(userId = "2", firstName = "Alex"),
-          UserAccount(userId = "3", firstName = "Edouard"))
+    val userAccount by userAccountViewModel.userAccount.collectAsState()
+
 
   val selectedFriends = remember { mutableStateListOf<String>() }
 
-  val filteredFriendsList =
-      friendsList.filter { friend ->
-        friend.firstName.contains(searchQuery.value, ignoreCase = true)
-      }
+    val filteredFriendsList = remember(userAccount, searchQuery.value) {
+        userAccountViewModel.getFriends().filter { friend ->
+            friend.firstName.contains(searchQuery.value, ignoreCase = true)
+        }
+    }
 
   Column(modifier = Modifier.padding(16.dp).testTag("friendsScreen")) {
     TopBar(navigationActions = navigationActions, title = R.string.friends_title)
@@ -87,7 +89,7 @@ fun FriendsScreen(
                 selectedFriends.add(friend.userId)
               }
             },
-            onRemoveClick = { /* Handle remove friend action */},
+            onRemoveClick = { userAccount?.let { userAccountViewModel.removeFriend(it, friend.userId) } },
         )
         Spacer(modifier = Modifier.height(8.dp))
       }

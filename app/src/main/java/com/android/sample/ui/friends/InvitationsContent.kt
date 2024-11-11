@@ -23,11 +23,12 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.ui.theme.Purple20
+import com.android.sample.viewmodel.UserAccountViewModel
 
 /** Composable part of the Add Friend screen */
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun InvitationsContent(modifier: Modifier) {
+fun InvitationsContent(modifier: Modifier, userAccountViewModel: UserAccountViewModel) {
   // Hardcoded list of invitations
   val invitations =
       listOf(

@@ -283,6 +283,7 @@ fun ActionButton(text: String, onClick: () -> Unit, enabled: Boolean) {
       }
 }
 
+
 fun saveAccount(
     isNewAccount: Boolean,
     userAccountViewModel: UserAccountViewModel,
@@ -303,59 +304,59 @@ fun saveAccount(
     sentRequests: List<String>,
     receivedRequests: List<String>
 ) {
-  val calendar = GregorianCalendar()
-  val parts = birthDate.split("/")
-  if (parts.size == 3) {
-    try {
-      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-      val profileImageUrl = profileImageUri?.toString() ?: ""
+    val calendar = GregorianCalendar()
+    val parts = birthDate.split("/")
+    if (parts.size == 3) {
+        try {
+            calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+            val profileImageUrl = profileImageUri?.toString() ?: ""
 
-      val accountData =
-          UserAccount(
-              userId = userId,
-              firstName = firstName,
-              lastName = lastName,
-              height = height.toFloatOrNull() ?: 0f,
-              heightUnit = heightUnit,
-              weight = weight.toFloatOrNull() ?: 0f,
-              weightUnit = weightUnit,
-              gender = gender,
-              birthDate = Timestamp(calendar.time),
-              profileImageUrl = profileImageUrl,
-              friends = friends,
-              sentRequests = sentRequests,
-              receivedRequests = receivedRequests)
+            val accountData = UserAccount(
+                userId = userId,
+                firstName = firstName,
+                lastName = lastName,
+                height = height.toFloatOrNull() ?: 0f,
+                heightUnit = heightUnit,
+                weight = weight.toFloatOrNull() ?: 0f,
+                weightUnit = weightUnit,
+                gender = gender,
+                birthDate = Timestamp(calendar.time),
+                profileImageUrl = profileImageUrl,
+                friends = friends,
+                sentRequests = sentRequests,
+                receivedRequests = receivedRequests
+            )
 
-      if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
-        userAccountViewModel.uploadProfileImage(
-            profileImageUri,
-            userId,
-            onSuccess = { downloadUrl ->
-              accountData.profileImageUrl = downloadUrl
-              if (isNewAccount) {
-                userAccountViewModel.createUserAccount(accountData)
-                navigationActions.navigateTo(TopLevelDestinations.MAIN)
-              } else {
-                userAccountViewModel.updateUserAccount(accountData)
-                navigationActions.goBack()
-              }
-            },
-            onFailure = {
-              Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
-            })
-      } else {
-        if (isNewAccount) {
-          userAccountViewModel.createUserAccount(accountData)
-          navigationActions.navigateTo(TopLevelDestinations.MAIN)
-        } else {
-          userAccountViewModel.updateUserAccount(accountData)
-          navigationActions.goBack()
+            if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
+                userAccountViewModel.uploadProfileImage(
+                    profileImageUri,
+                    userId,
+                    onSuccess = { downloadUrl ->
+                        accountData.profileImageUrl = downloadUrl
+                        if (isNewAccount) {
+                            userAccountViewModel.createUserAccount(accountData)
+                            navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                        } else {
+                            userAccountViewModel.updateUserAccount(accountData)
+                            navigationActions.goBack()
+                        }
+                    },
+                    onFailure = {
+                        Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                    })
+            } else {
+                if (isNewAccount) {
+                    userAccountViewModel.createUserAccount(accountData)
+                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                } else {
+                    userAccountViewModel.updateUserAccount(accountData)
+                    navigationActions.goBack()
+                }
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
         }
-      }
-    } catch (e: Exception) {
-      Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
     }
-  }
 }
 
 @Composable
