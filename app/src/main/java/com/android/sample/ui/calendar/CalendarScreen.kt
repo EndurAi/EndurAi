@@ -25,11 +25,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.MediumGrey
@@ -52,7 +54,8 @@ data class ColoredWorkout(val workout: Workout, val backgroundColor: Color, val 
 fun CalendarScreen(
     navigationActions: NavigationActions,
     bodyworkoutViewModel: WorkoutViewModel<Workout>,
-    yogaworkoutViewModel: WorkoutViewModel<Workout>
+    yogaworkoutViewModel: WorkoutViewModel<Workout>,
+    calendarViewModel: CalendarViewModel
 ) {
   val workoutsBody by bodyworkoutViewModel.workouts.collectAsState(emptyList())
   val workoutsYoga by yogaworkoutViewModel.workouts.collectAsState(emptyList())
@@ -153,7 +156,9 @@ fun CalendarScreen(
                   onWorkoutClick = { workout ->
                     selectedWorkout = workout
                     showDialog = true
-                  })
+                  },
+                  navigationActions,
+                  calendarViewModel)
             }
           }
     }
@@ -196,7 +201,9 @@ fun LegendItem(color: Color, label: String, modifier: Modifier = Modifier) {
 fun DaySection(
     date: kotlinx.datetime.LocalDate,
     workouts: List<ColoredWorkout>,
-    onWorkoutClick: (ColoredWorkout) -> Unit
+    onWorkoutClick: (ColoredWorkout) -> Unit,
+    navigationActions: NavigationActions,
+    calendarViewModel: CalendarViewModel
 ) {
   Row(
       modifier =
@@ -205,7 +212,11 @@ fun DaySection(
               .padding(vertical = 8.dp)
               .background(
                   color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
-              .padding(16.dp),
+              .padding(16.dp)
+              .clickable {
+                calendarViewModel.updateSelectedDate(date)
+                navigationActions.navigateTo(Screen.DAY_CALENDAR)
+              },
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier, horizontalAlignment = Alignment.Start) {
@@ -274,7 +285,7 @@ private fun getMonthName(monthNumber: Int): String {
   }
 }
 
-private fun formatTime(dateTime: LocalDateTime): String {
+fun formatTime(dateTime: LocalDateTime): String {
   val hour = dateTime.hour.toString().padStart(2, '0')
   val minute = dateTime.minute.toString().padStart(2, '0')
   return "$hour:$minute"
