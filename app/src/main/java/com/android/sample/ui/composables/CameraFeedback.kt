@@ -104,11 +104,7 @@ class CameraFeedBack {
                       }
                 })
           }
-      DisposableEffect(Unit) {
-        onDispose {
-          cameraViewModel.cameraController.value.unbind()
-        }
-      }
+      DisposableEffect(Unit) { onDispose { cameraViewModel.cameraController.value.unbind() } }
     }
 
     /**
