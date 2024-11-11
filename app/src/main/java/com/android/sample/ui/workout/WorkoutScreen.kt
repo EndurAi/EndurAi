@@ -408,9 +408,9 @@ fun WarmUpScreenBody(
                       Spacer(Modifier.size(25.dp))
                       Button(
                           onClick = {
-                            if (cameraRecordAsked) {
+                            if (cameraRecordAsked && userHasRecorded) {
                               comparisonVideoIsDisplayed = true
-                              cameraRecordAsked = false
+                              cameraRecordAsked = false // acknowledge the record demand
                             } else {
                               nextExercise()
                             }

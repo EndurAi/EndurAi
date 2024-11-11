@@ -100,11 +100,17 @@ class CameraFeedBack {
                       }
                       .also { previewView ->
                         previewView.controller = cameraViewModel.cameraController.value
-                        cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
+                        // cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
                       }
                 })
           }
-      DisposableEffect(Unit) { onDispose { cameraViewModel.cameraController.value.unbind() } }
+
+      // Bind the camera feedback stream to the composable and unbind when it the composable is no
+      // longer displayed
+      DisposableEffect(lifecycleOwner) {
+        cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
+        onDispose { cameraViewModel.cameraController.value.unbind() }
+      }
     }
 
     /**
