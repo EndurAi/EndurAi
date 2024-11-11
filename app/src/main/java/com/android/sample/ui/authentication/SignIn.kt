@@ -80,12 +80,12 @@ fun SignInScreen(
                   if (account != null) {
                     // If account exists, navigate to main screen
                     navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                    delay(600) // delay introduced to wait for data to be fetched
+                    delay(600)
                     showLoadingDialog = false // Hide loading screen
                   } else {
                     // If no account exists, navigate to AddAccount screen
                     navigationActions.navigateTo(Screen.ADD_ACCOUNT)
-                    delay(600) // delay introduced to wait for data to be fetched
+                    delay(600)
                     showLoadingDialog = false // Hide loading screen
                   }
                 }
@@ -152,19 +152,19 @@ fun SignInScreen(
       userAccountViewModel.getUserAccount(Firebase.auth.currentUser!!.uid)
 
       scope.launch {
-        delay(600) // delay introduced to wait for data to be fetched
+        delay(600) // Wait for data to be fetched
 
         // Observe changes in userAccount to know if profile exists
         userAccountViewModel.userAccount.collect { account ->
           if (account != null) {
             // If account exists, navigate to main screen
             navigationActions.navigateTo(TopLevelDestinations.MAIN)
-            delay(600) // delay introduced to wait for data to be fetched
+            delay(600)
             showLoadingDialog = false // Hide loading screen
           } else {
             // If no account exists, navigate to AddAccount screen
             navigationActions.navigateTo(Screen.ADD_ACCOUNT)
-            delay(600) // delay introduced to wait for data to be fetched
+            delay(600)
             showLoadingDialog = false // Hide loading screen
           }
         }

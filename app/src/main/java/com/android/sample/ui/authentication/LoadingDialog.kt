@@ -22,7 +22,7 @@ fun LoadingDialog(onDismissRequest: () -> Unit) {
             contentAlignment = Alignment.Center,
             modifier =
                 Modifier.fillMaxSize()
-                    .background(Color.DarkGray) // Semi-transparent full-screen background
+                    .background(Color.DarkGray)
                     .testTag("loadingDialog")) {
               CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
