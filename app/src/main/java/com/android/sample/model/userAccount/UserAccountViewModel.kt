@@ -117,6 +117,35 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
         }
     }
 
+
+    fun getFriends(): List<UserAccount> {
+        val friends = mutableListOf<UserAccount>()
+        userAccount.value?.friends?.forEach { friendId ->
+            repository.getUserAccount(friendId, onSuccess = { friends.add(it) }, onFailure = { /* Handle error */ })
+        }
+        return friends
+    }
+
+    fun getSentRequests(): List<UserAccount> {
+        val sentRequests = mutableListOf<UserAccount>()
+        userAccount.value?.sentRequests?.forEach { requestId ->
+            repository.getUserAccount(
+                requestId,
+                onSuccess = { sentRequests.add(it) },
+                onFailure = { /* Handle error */ })
+        }
+        return sentRequests
+    }
+
+    fun getReceivedRequests(): List<UserAccount> {
+        val receivedRequests = mutableListOf<UserAccount>()
+        userAccount.value?.receivedRequests?.forEach { requestId ->
+            repository.getUserAccount(requestId, onSuccess = { receivedRequests.add(it) }, onFailure = { /* Handle error */ })
+        }
+        return receivedRequests
+    }
+
+
   // Factory for creating instances of the ViewModel
   companion object {
     val Factory: ViewModelProvider.Factory =
