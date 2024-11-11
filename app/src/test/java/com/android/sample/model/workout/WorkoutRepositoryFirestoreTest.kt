@@ -30,14 +30,21 @@ import org.robolectric.Shadows.shadowOf
 class WorkoutRepositoryFirestoreTest {
 
   @Mock private lateinit var mockFirestore: FirebaseFirestore
-  @Mock private lateinit var mockCollectionReference: CollectionReference
-  @Mock private lateinit var mockDocumentReference: DocumentReference
+  @Mock private lateinit var mockCollectionPath: CollectionReference
+  @Mock private lateinit var mockDocumentWorkoutID: DocumentReference
+  @Mock private lateinit var mockMainDocumentName: CollectionReference
+  @Mock private lateinit var mockDocumentToCollectionName: DocumentReference
+  @Mock private lateinit var mockDocumentWorkout: DocumentReference
+  @Mock private lateinit var mockCollectionDocumentName: CollectionReference
   @Mock private lateinit var mockUser: FirebaseUser
   @Mock private lateinit var mockAuth: FirebaseAuth
   private lateinit var firebaseAuthMock: MockedStatic<FirebaseAuth>
 
   private lateinit var workoutRepositoryFirestore1: WorkoutRepositoryFirestore<BodyWeightWorkout>
   private lateinit var workoutRepositoryFirestore2: WorkoutRepositoryFirestore<YogaWorkout>
+
+  private val mainDocumentName = "allworkouts"
+  private val collectionPath: String = "mocked-uid"
 
   private val bodyWeightWorkout =
       BodyWeightWorkout(
@@ -75,9 +82,13 @@ class WorkoutRepositoryFirestoreTest {
     workoutRepositoryFirestore1 =
         WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
 
-    `when`(mockFirestore.collection(any())).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(any())).thenReturn(mockDocumentReference)
-    `when`(mockDocumentReference.collection(any())).thenReturn(mockCollectionReference)
+    `when`(mockFirestore.collection(collectionPath)).thenReturn(mockCollectionPath)
+    `when`(mockCollectionPath.document(any())).thenReturn(mockDocumentToCollectionName)
+    `when`(mockDocumentToCollectionName.collection(any())).thenReturn(mockCollectionDocumentName)
+    `when`(mockCollectionDocumentName.document(any())).thenReturn(mockDocumentWorkoutID)
+
+    `when`(mockFirestore.collection(mainDocumentName)).thenReturn(mockMainDocumentName)
+    `when`(mockMainDocumentName.document(any())).thenReturn(mockDocumentWorkout)
   }
 
   @After
@@ -93,14 +104,16 @@ class WorkoutRepositoryFirestoreTest {
   @Test
   fun addDocument_shouldCallFirestoreSet() {
 
-    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
+    `when`(mockDocumentWorkout.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
+    `when`(mockDocumentWorkoutID.set(any())).thenReturn(Tasks.forResult(null))
 
     workoutRepositoryFirestore1.addDocument(bodyWeightWorkout, onSuccess = {}, onFailure = {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
     // Verify that the document reference's set method was called
-    verify(mockDocumentReference).set(any())
+    verify(mockDocumentWorkout).set(any())
+    verify(mockDocumentWorkoutID).set(any())
   }
 
   /**
@@ -114,7 +127,7 @@ class WorkoutRepositoryFirestoreTest {
     val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
 
     // Mock behavior for the collection reference to return a QuerySnapshot containing the document
-    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockCollectionDocumentName.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     // Mock behavior for the QuerySnapshot to return a list of DocumentSnapshots
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
 
@@ -126,7 +139,7 @@ class WorkoutRepositoryFirestoreTest {
         onFailure = { fail("Failure callback should not be called") })
 
     // Verify that the collection reference's get method was called
-    verify(mockCollectionReference).get()
+    verify(mockCollectionDocumentName).get()
   }
 
   /**
@@ -136,14 +149,16 @@ class WorkoutRepositoryFirestoreTest {
   @Test
   fun deleteDocument_shouldCallFirestoreDelete() {
 
-    `when`(mockDocumentReference.delete()).thenReturn(Tasks.forResult(null))
+    `when`(mockDocumentWorkout.delete()).thenReturn(Tasks.forResult(null)) // Simulate success
+    `when`(mockDocumentWorkoutID.delete()).thenReturn(Tasks.forResult(null))
 
     workoutRepositoryFirestore1.deleteDocument("workout-1", onSuccess = {}, onFailure = {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
     // Verify that the document reference's delete method was called
-    verify(mockDocumentReference).delete()
+    verify(mockDocumentWorkoutID).delete()
+    verify(mockDocumentWorkout).delete()
   }
 
   /**
@@ -153,14 +168,14 @@ class WorkoutRepositoryFirestoreTest {
   @Test
   fun updateDocument_shouldCallFirestoreSet() {
 
-    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
+    `when`(mockDocumentWorkout.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
 
     workoutRepositoryFirestore1.updateDocument(bodyWeightWorkout, onSuccess = {}, onFailure = {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
     // Verify that the document reference's set method was called
-    verify(mockDocumentReference).set(any())
+    verify(mockDocumentWorkout).set(any())
   }
 
   /**
@@ -169,36 +184,18 @@ class WorkoutRepositoryFirestoreTest {
    */
   @Test
   fun addYogaWorkout_shouldCallFirestoreSet() {
-
     // Change the repository to YogaWorkout for this test
     workoutRepositoryFirestore2 = WorkoutRepositoryFirestore(mockFirestore, YogaWorkout::class.java)
-    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
+
+    `when`(mockDocumentWorkout.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
+    `when`(mockDocumentWorkoutID.set(any())).thenReturn(Tasks.forResult(null))
 
     workoutRepositoryFirestore2.addDocument(yogaWorkout, onSuccess = {}, onFailure = {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
     // Verify that the document reference's set method was called
-    verify(mockDocumentReference).set(any())
-  }
-
-  /**
-   * This test verifies that when we add a BodyWeightWorkout, the Firestore `set()` is called on the
-   * document reference. This does NOT CHECK the actual data being added
-   */
-  @Test
-  fun addBodyWeightWorkout_shouldCallFirestoreSet() {
-
-    // Change the repository to YogaWorkout for this test
-    workoutRepositoryFirestore1 =
-        WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
-    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
-
-    workoutRepositoryFirestore1.addDocument(bodyWeightWorkout, onSuccess = {}, onFailure = {})
-
-    shadowOf(Looper.getMainLooper()).idle()
-
-    // Verify that the document reference's set method was called
-    verify(mockDocumentReference).set(any())
+    verify(mockDocumentWorkout).set(any())
+    verify(mockDocumentWorkoutID).set(any())
   }
 }
