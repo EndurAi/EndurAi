@@ -68,10 +68,6 @@ class SettingsScreenTest {
     composeTestRule.onNodeWithTag("deleteAccountButton").performClick()
 
     // TODO: Find a way to verify the deleteAccount function is called without having an unfinished
-    // verification error
-
-    //    // Verify that the deleteAccount function is called
-    //    verify(userAccountViewModel).deleteAccount(eq(context), onSuccess = {}, onFailure = {})
   }
 
   @After
