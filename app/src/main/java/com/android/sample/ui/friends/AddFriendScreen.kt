@@ -14,50 +14,48 @@ import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.DarkBlue
-import com.android.sample.viewmodel.UserAccountViewModel
 
 /** Screen for the option to add a friend to the user's friend list. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFriendScreen(
     navigationActions: NavigationActions,
-    userAccountViewModel: UserAccountViewModel
 ) {
-  var selectedTab by remember { mutableStateOf("New Connections") }
-  val searchQuery = remember { mutableStateOf("") }
+    var selectedTab by remember { mutableStateOf("New Connections") }
+    val searchQuery = remember { mutableStateOf("") }
 
-  Column(modifier = Modifier.padding(16.dp).testTag("addFriendScreen")) {
-    TopBar(navigationActions = navigationActions, title = R.string.add_friends_title)
+    Column(modifier = Modifier.padding(16.dp).testTag("addFriendScreen")) {
+        TopBar(navigationActions = navigationActions, title = R.string.add_friends_title)
 
-    Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Row(
-        modifier = Modifier.fillMaxWidth().testTag("tabButtons"),
-        horizontalArrangement = Arrangement.SpaceEvenly) {
-          TabButton(
-              text = "New Connections",
-              isSelected = selectedTab == "New Connections",
-              onClick = { selectedTab = "New Connections" },
-              modifier = Modifier.testTag("newConnectionsTabButton"))
+        Row(
+            modifier = Modifier.fillMaxWidth().testTag("tabButtons"),
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+            TabButton(
+                text = "New Connections",
+                isSelected = selectedTab == "New Connections",
+                onClick = { selectedTab = "New Connections" },
+                modifier = Modifier.testTag("newConnectionsTabButton"))
 
-          Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-          TabButton(
-              text = "Invitations",
-              isSelected = selectedTab == "Invitations",
-              onClick = { selectedTab = "Invitations" },
-              modifier = Modifier.testTag("invitationsTabButton"))
+            TabButton(
+                text = "Invitations",
+                isSelected = selectedTab == "Invitations",
+                onClick = { selectedTab = "Invitations" },
+                modifier = Modifier.testTag("invitationsTabButton"))
         }
 
-    Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-    when (selectedTab) {
-      "New Connections" -> {
-        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"), userAccountViewModel)
-      }
-      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"), userAccountViewModel)
+        when (selectedTab) {
+            "New Connections" -> {
+                NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"))
+            }
+            "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
+        }
     }
-  }
 }
 
 @Composable
@@ -67,16 +65,16 @@ fun TabButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-  Button(
-      onClick = onClick,
-      colors =
-          ButtonDefaults.buttonColors(
-              containerColor = if (isSelected) DarkBlue else Color.LightGray),
-      shape = RoundedCornerShape(12.dp),
-      modifier = modifier) {
+    Button(
+        onClick = onClick,
+        colors =
+        ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) DarkBlue else Color.LightGray),
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier) {
         Text(
             text,
             color = if (isSelected) Color.White else Color.Black,
             fontWeight = FontWeight.Bold)
-      }
+    }
 }

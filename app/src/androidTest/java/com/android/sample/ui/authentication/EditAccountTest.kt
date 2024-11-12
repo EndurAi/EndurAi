@@ -184,23 +184,6 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
-    override fun addFriend(
-        userAccount: UserAccount,
-        friendId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        // not needed here
-    }
-
-    override fun removeFriend(
-        userAccount: StateFlow<UserAccount?>,
-        friendId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        // not needed here
-    }
 
     override fun sendFriendRequest(
         fromUser: UserAccount,
@@ -212,6 +195,15 @@ class FakeUserAccountRepository : UserAccountRepository {
     }
 
     override fun acceptFriendRequest(
+        userAccount: UserAccount,
+        friendId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        // not needed here
+    }
+
+    override fun removeFriend(
         userAccount: UserAccount,
         friendId: String,
         onSuccess: () -> Unit,
