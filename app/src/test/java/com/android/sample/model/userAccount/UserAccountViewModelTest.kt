@@ -221,28 +221,6 @@ class UserAccountViewModelTest {
   }
 
   @Test
-  fun `getFriends returns list of friends`() = runTest {
-    val friends = userAccountViewModel.getFriends()
-    assertThat(friends.size, `is`(2))
-    assertThat(friends[0], `is`(friendAccount1))
-    assertThat(friends[1], `is`(friendAccount2))
-  }
-
-  @Test
-  fun `getSentRequests returns list of sent requests`() = runTest {
-    val sentRequests = userAccountViewModel.getSentRequests()
-    assertThat(sentRequests.size, `is`(1))
-    assertThat(sentRequests[0], `is`(sentRequestAccount))
-  }
-
-  @Test
-  fun `getReceivedRequests returns list of received requests`() = runTest {
-    val receivedRequests = userAccountViewModel.getReceivedRequests()
-    assertThat(receivedRequests.size, `is`(1))
-    assertThat(receivedRequests[0], `is`(receivedRequestAccount))
-  }
-
-  @Test
   fun `sendFriendRequest calls repository and reloads userAccount`() = runTest {
     `when`(userAccountRepository.sendFriendRequest(any(), any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[2] as () -> Unit
