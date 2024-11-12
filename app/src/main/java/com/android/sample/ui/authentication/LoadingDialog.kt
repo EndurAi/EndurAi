@@ -20,10 +20,7 @@ fun LoadingDialog(onDismissRequest: () -> Unit) {
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier =
-                Modifier.fillMaxSize()
-                    .background(Color.DarkGray)
-                    .testTag("loadingDialog")) {
+            modifier = Modifier.fillMaxSize().background(Color.DarkGray).testTag("loadingDialog")) {
               CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
       }
