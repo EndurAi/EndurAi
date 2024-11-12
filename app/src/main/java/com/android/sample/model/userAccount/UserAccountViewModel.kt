@@ -4,7 +4,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountLocalCache
 import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
 import com.android.sample.ui.settings.signOut
@@ -22,9 +24,11 @@ import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 open class UserAccountViewModel(
     private val repository: UserAccountRepository,
+    private val localCache: UserAccountLocalCache,
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : ViewModel() {
 
@@ -38,31 +42,61 @@ open class UserAccountViewModel(
     get() = _isLoading.asStateFlow()
 
   init {
-    repository.init { Firebase.auth.currentUser?.let { user -> getUserAccount(user.uid) } }
+loadCachedUserAccount()
   }
 
-  fun getUserAccount(userId: String) {
-    _isLoading.value = true
-    repository.getUserAccount(
-        userId = userId,
-        onSuccess = {
-          _userAccount.value = it
-          _isLoading.value = false
-        },
-        onFailure = {
-          _userAccount.value = null
-          _isLoading.value = false
-        })
+    private fun loadCachedUserAccount() {
+        viewModelScope.launch {
+            localCache.getUserAccount().collect { cachedAccount ->
+                if (cachedAccount != null) {
+                    _userAccount.value = cachedAccount
+                } else {
+                    // Fetch from repository if no cache exists
+                    Firebase.auth.currentUser?.uid?.let { userId ->
+                        getUserAccount(userId)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getUserAccount(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.getUserAccount(
+                userId = userId,
+                onSuccess = {
+                    _userAccount.value = it
+                    _isLoading.value = false
+                },
+                onFailure = {
+                    _userAccount.value = null
+                    _isLoading.value = false
+                }
+            )
+        }
   }
 
   fun createUserAccount(userAccount: UserAccount) {
-    repository.createUserAccount(
-        userAccount, onSuccess = { _userAccount.value = userAccount }, onFailure = {})
+      viewModelScope.launch {
+          repository.createUserAccount(
+              userAccount,
+              onSuccess = { _userAccount.value = userAccount },
+              onFailure = {}
+          )
+      }
   }
 
   fun updateUserAccount(userAccount: UserAccount) {
-    repository.updateUserAccount(
-        userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+      viewModelScope.launch {
+          repository.updateUserAccount(
+              userAccount,
+              onSuccess = {
+                  getUserAccount(userAccount.userId)
+              },
+              onFailure = {}
+          )
+      }
   }
 
   fun uploadProfileImage(
@@ -93,6 +127,8 @@ open class UserAccountViewModel(
       repository.deleteUserAccount(
           userId = userId,
           onSuccess = {
+              // Clear the local cache and Firebase Auth account
+              clearCacheOnLogout()
             // Attempt to delete the Firebase Auth account
             user
                 .delete()
@@ -129,6 +165,14 @@ open class UserAccountViewModel(
     }
   }
 
+    // Clears the local cache on logout
+    fun clearCacheOnLogout() {
+        viewModelScope.launch {
+            localCache.clearUserAccount()
+            _userAccount.value = null // Reset the userAccount in ViewModel
+        }
+    }
+
   private fun reAuthenticateUser(
       context: Context,
       user: FirebaseUser,
@@ -150,15 +194,14 @@ open class UserAccountViewModel(
 
   // Factory for creating instances of the ViewModel
   companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return UserAccountViewModel(
-                UserAccountRepositoryFirestore(FirebaseFirestore.getInstance()),
-                FirebaseAuth.getInstance())
-                as T
+      fun provideFactory(context: Context): ViewModelProvider.Factory {
+          return object : ViewModelProvider.Factory {
+              override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                  val firestore = FirebaseFirestore.getInstance()
+                  val repository = UserAccountRepositoryFirestore(firestore, UserAccountLocalCache(context))
+                  return UserAccountViewModel(repository, UserAccountLocalCache(context)) as T
+              }
           }
-        }
+      }
   }
 }

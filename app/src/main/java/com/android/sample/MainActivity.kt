@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
 fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-  val userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
+  val userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 

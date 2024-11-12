@@ -33,7 +33,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun SettingsScreen(
     navigationActions: NavigationActions,
-    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
+    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
 ) {
   val context = LocalContext.current
 
@@ -113,7 +113,8 @@ fun SettingsScreen(
               // https://stackoverflow.com/questions/72563673/google-authentication-with-firebase-and-jetpack-compose
               Button(
                   onClick = {
-                    signOut(context)
+                      userAccountViewModel.clearCacheOnLogout() // Clear local cache on logout
+                      signOut(context)
                     navigationActions.navigateTo("Auth Screen") // Navigate back to Auth screen
                     Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
                   },

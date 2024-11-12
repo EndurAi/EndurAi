@@ -153,7 +153,7 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
-  override fun getUserAccount(
+  override suspend fun getUserAccount(
       userId: String,
       onSuccess: (UserAccount) -> Unit,
       onFailure: (Exception) -> Unit
