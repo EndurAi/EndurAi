@@ -1,6 +1,5 @@
 package com.android.sample.model.userAccount
 
-import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -214,4 +213,21 @@ class UserAccountViewModelTest {
   }
 
 
+  @Test
+  fun `sendFriendRequest calls repository and reloads userAccount`() = runTest {
+    `when`(userAccountRepository.sendFriendRequest(any(), any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[2] as () -> Unit
+      onSuccess()
+    }
+    `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as (UserAccount) -> Unit
+      onSuccess(userAccount)
+    }
+
+    userAccountViewModel.getUserAccount("1")
+    userAccountViewModel.sendFriendRequest("friendId")
+
+    verify(userAccountRepository).sendFriendRequest(eq(userAccount), eq("friendId"), any(), any())
+    assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
+  }
 }

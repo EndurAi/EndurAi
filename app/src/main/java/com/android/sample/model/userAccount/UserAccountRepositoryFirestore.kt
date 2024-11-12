@@ -66,23 +66,6 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAc
         }
   }
 
-    // Add a friend in an immutable way
-
-//    useless
-
-
-//    override fun addFriend(
-//        userAccount: UserAccount,
-//        friendId: String,
-//        onSuccess: () -> Unit,
-//        onFailure: (Exception) -> Unit
-//    ) {
-//        val updatedUserAccount = userAccount.copy(
-//            friends = userAccount.friends + friendId
-//        )
-//        updateUserAccount(updatedUserAccount, onSuccess, onFailure)
-//
-
     // Remove a friend in an immutable way
     override fun removeFriend(
         userAccount: UserAccount,

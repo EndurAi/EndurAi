@@ -47,7 +47,7 @@ import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.android.sample.ui.workout.WorkoutScreen
 import com.android.sample.ui.workout.WorkoutSelectionScreen
-import com.android.sample.viewmodel.UserAccountViewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -113,8 +113,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Friends Screen
 
     navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
-      composable(Screen.FRIENDS) { FriendsScreen(navigationActions, userAccountViewModel) }
-      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions, userAccountViewModel) }
+      composable(Screen.FRIENDS) { FriendsScreen(navigationActions) }
+      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions) }
     }
 
     // Video Screen

@@ -27,7 +27,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.android.sample.model.userAccount.*
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.viewmodel.UserAccountViewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth

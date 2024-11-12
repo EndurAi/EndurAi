@@ -1,11 +1,9 @@
-package com.android.sample.viewmodel
+package com.android.sample.model.userAccount
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.model.userAccount.UserAccountRepository
-import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -74,18 +72,13 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
   }
 
 
-//    fun addFriend(userAccount: UserAccount, friendId: String) {
-//        repository.addFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
-//    }
-
-
     fun removeFriend(friendId: String) {
         userAccount.value?.let { currentUser ->
             repository.removeFriend(
                 userAccount = currentUser,
                 friendId = friendId,
                 onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { /* Handle error */ }
+                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to remove friend", exception) }
             )
         }
     }
@@ -96,7 +89,7 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
                 fromUser = currentUser,
                 toUserId = toUserId,
                 onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { /* Handle error */ }
+                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to send friend request", exception) }
             )
         }
     }
@@ -107,8 +100,7 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
                 userAccount = currentUser,
                 friendId = friendId,
                 onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { /* Handle error */ }
-            )
+                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to accept friend request", exception) }            )
         }
     }
 
@@ -118,8 +110,7 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
                 userAccount = currentUser,
                 friendId = friendId,
                 onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { /* Handle error */ }
-            )
+                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to reject friend request", exception) }            )
         }
     }
 
@@ -127,7 +118,7 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
     fun getFriends(): List<UserAccount> {
         val friends = mutableListOf<UserAccount>()
         userAccount.value?.friends?.forEach { friendId ->
-            repository.getUserAccount(friendId, onSuccess = { friends.add(it) }, onFailure = { /* Handle error */ })
+            repository.getUserAccount(friendId, onSuccess = { friends.add(it) }, onFailure = {exception -> Log.e("UserAccountViewModel", "Failed to get the list of friends", exception)  })
         }
         return friends
     }
@@ -138,7 +129,7 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
             repository.getUserAccount(
                 requestId,
                 onSuccess = { sentRequests.add(it) },
-                onFailure = { /* Handle error */ })
+                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)   })
         }
         return sentRequests
     }
@@ -146,7 +137,7 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
     fun getReceivedRequests(): List<UserAccount> {
         val receivedRequests = mutableListOf<UserAccount>()
         userAccount.value?.receivedRequests?.forEach { requestId ->
-            repository.getUserAccount(requestId, onSuccess = { receivedRequests.add(it) }, onFailure = { /* Handle error */ })
+            repository.getUserAccount(requestId, onSuccess = { receivedRequests.add(it) }, onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)   })
         }
         return receivedRequests
     }
