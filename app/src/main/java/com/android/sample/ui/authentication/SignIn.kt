@@ -47,6 +47,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -68,27 +69,9 @@ fun SignInScreen(
           onAuthComplete = { result ->
             showLoadingDialog = true // Show loading screen
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
-            val userId = result.user?.uid
-            if (userId != null) {
-              userAccountViewModel.getUserAccount(userId)
-
-              scope.launch {
-                delay(600) // delay introduced to wait for data to be fetched
-
-                // Observe changes in userAccount to know if profile exists
-                userAccountViewModel.userAccount.collect { account ->
-                  if (account != null) {
-                    // If account exists, navigate to main screen
-                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                    delay(600)
-                    showLoadingDialog = false // Hide loading screen
-                  } else {
-                    // If no account exists, navigate to AddAccount screen
-                    navigationActions.navigateTo(Screen.ADD_ACCOUNT)
-                    delay(600)
-                    showLoadingDialog = false // Hide loading screen
-                  }
-                }
+            result.user?.uid?.let { userId ->
+              checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope) {
+                showLoadingDialog = false // Hide loading screen
               }
             }
             Toast.makeText(context, "Login successful!", Toast.LENGTH_LONG).show()
@@ -149,24 +132,9 @@ fun SignInScreen(
     // When user is signed in, check if they have an account
     LaunchedEffect(userAccount) {
       showLoadingDialog = true // Show loading screen
-      userAccountViewModel.getUserAccount(Firebase.auth.currentUser!!.uid)
-
-      scope.launch {
-        delay(600) // Wait for data to be fetched
-
-        // Observe changes in userAccount to know if profile exists
-        userAccountViewModel.userAccount.collect { account ->
-          if (account != null) {
-            // If account exists, navigate to main screen
-            navigationActions.navigateTo(TopLevelDestinations.MAIN)
-            delay(600)
-            showLoadingDialog = false // Hide loading screen
-          } else {
-            // If no account exists, navigate to AddAccount screen
-            navigationActions.navigateTo(Screen.ADD_ACCOUNT)
-            delay(600)
-            showLoadingDialog = false // Hide loading screen
-          }
+      Firebase.auth.currentUser?.uid?.let { userId ->
+        checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope) {
+          showLoadingDialog = false // Hide loading screen
         }
       }
     }
@@ -175,6 +143,33 @@ fun SignInScreen(
   // Show Loading Dialog if `showLoadingDialog` is true
   if (showLoadingDialog) {
     LoadingDialog(onDismissRequest = { showLoadingDialog = false })
+  }
+}
+
+fun checkUserAccountAndNavigate(
+    userId: String,
+    userAccountViewModel: UserAccountViewModel,
+    navigationActions: NavigationActions,
+    scope: CoroutineScope,
+    onComplete: () -> Unit
+) {
+  userAccountViewModel.getUserAccount(userId)
+
+  scope.launch {
+    delay(600) // Wait for data to be fetched
+
+    // Observe changes in userAccount to know if profile exists
+    userAccountViewModel.userAccount.collect { account ->
+      if (account != null) {
+        // If account exists, navigate to main screen
+        navigationActions.navigateTo(TopLevelDestinations.MAIN)
+      } else {
+        // If no account exists, navigate to AddAccount screen
+        navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+      }
+      delay(600)
+      onComplete()
+    }
   }
 }
 
