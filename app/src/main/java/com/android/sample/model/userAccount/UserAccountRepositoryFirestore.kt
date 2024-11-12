@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.StateFlow
 
 class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAccountRepository {
 
@@ -66,17 +67,22 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAc
   }
 
     // Add a friend in an immutable way
-    override fun addFriend(
-        userAccount: UserAccount,
-        friendId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val updatedUserAccount = userAccount.copy(
-            friends = userAccount.friends + friendId
-        )
-        updateUserAccount(updatedUserAccount, onSuccess, onFailure)
-    }
+
+//    useless
+
+
+//    override fun addFriend(
+//        userAccount: UserAccount,
+//        friendId: String,
+//        onSuccess: () -> Unit,
+//        onFailure: (Exception) -> Unit
+//    ) {
+//        val updatedUserAccount = userAccount.copy(
+//            friends = userAccount.friends + friendId
+//        )
+//        updateUserAccount(updatedUserAccount, onSuccess, onFailure)
+//
+
     // Remove a friend in an immutable way
     override fun removeFriend(
         userAccount: UserAccount,
@@ -87,11 +93,22 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAc
         val updatedUserAccount = userAccount.copy(
             friends = userAccount.friends - friendId
         )
-        updateUserAccount(updatedUserAccount, onSuccess, onFailure)
+        val friendRef = db.collection(collectionPath).document(friendId)
+
+        db.runTransaction { transaction ->
+            val friendSnapshot = transaction.get(friendRef)
+            val friend = friendSnapshot.toObject(UserAccount::class.java)
+                ?: throw Exception("Friend not found")
+
+            val updatedFriend = friend.copy(
+                friends = friend.friends - userAccount.userId
+            )
+            transaction.set(friendRef, updatedFriend)
+            transaction.set(db.collection(collectionPath).document(userAccount.userId), updatedUserAccount)
+        }
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
     }
-
-
-
 
     override fun sendFriendRequest(
         fromUser: UserAccount,

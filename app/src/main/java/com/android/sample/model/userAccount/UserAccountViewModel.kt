@@ -74,15 +74,21 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
   }
 
 
-    fun addFriend(userAccount: UserAccount, friendId: String) {
-        repository.addFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+//    fun addFriend(userAccount: UserAccount, friendId: String) {
+//        repository.addFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
+//    }
+
+
+    fun removeFriend(friendId: String) {
+        userAccount.value?.let { currentUser ->
+            repository.removeFriend(
+                userAccount = currentUser,
+                friendId = friendId,
+                onSuccess = { getUserAccount(currentUser.userId) },
+                onFailure = { /* Handle error */ }
+            )
+        }
     }
-    fun removeFriend(userAccount: UserAccount, friendId: String) {
-        repository.removeFriend(userAccount, friendId, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
-    }
-
-
-
 
     fun sendFriendRequest(toUserId: String) {
         userAccount.value?.let { currentUser ->

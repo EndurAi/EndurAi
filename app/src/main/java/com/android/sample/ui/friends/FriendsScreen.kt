@@ -89,7 +89,7 @@ fun FriendsScreen(
                 selectedFriends.add(friend.userId)
               }
             },
-            onRemoveClick = { userAccount?.let { userAccountViewModel.removeFriend(it, friend.userId) } },
+            onRemoveClick = { "not yet implemented" },
         )
         Spacer(modifier = Modifier.height(8.dp))
       }

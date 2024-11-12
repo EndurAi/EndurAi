@@ -1,5 +1,7 @@
 package com.android.sample.model.userAccount
 
+import kotlinx.coroutines.flow.StateFlow
+
 interface UserAccountRepository {
   /**
    * Initializes the repository.
@@ -47,20 +49,6 @@ interface UserAccountRepository {
       onFailure: (Exception) -> Unit
   )
 
-    /**
-     * Adds a friend to the user account.
-     *
-     * @param userAccount The UserAccount object to be updated.
-     * @param friendId The ID of the friend to be added.
-     * @param onSuccess Callback function to be invoked when the update is successful.
-     * @param onFailure Callback function to be invoked with an Exception if the update fails.
-     */
-    fun addFriend(
-        userAccount: UserAccount,
-        friendId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    )
     /**
      * Removes a friend from the user account.
      *
