@@ -71,17 +71,11 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 object TopLevelDestinations {
   val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
   val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
-  val ACHIEVEMENTS =
-      TopLevelDestination(Route.ACHIEVEMENTS, Icons.Outlined.DateRange, textId = "Achievements")
   val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
-    listOf(
-        TopLevelDestinations.MAIN,
-        TopLevelDestinations.VIDEO,
-        TopLevelDestinations.ACHIEVEMENTS,
-        TopLevelDestinations.CALENDAR)
+    listOf(TopLevelDestinations.MAIN, TopLevelDestinations.VIDEO, TopLevelDestinations.CALENDAR)
 
 open class NavigationActions(private val navController: NavHostController) {
   /**

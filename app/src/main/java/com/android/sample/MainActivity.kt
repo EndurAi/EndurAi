@@ -110,7 +110,11 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Main Screen
     navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
       composable(Screen.MAIN) {
-        MainScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        MainScreen(
+            navigationActions,
+            bodyweightWorkoutViewModel,
+            yogaWorkoutViewModel,
+            userAccountViewModel)
       }
       composable(Screen.VIEW_ALL) {
         ViewAllScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
