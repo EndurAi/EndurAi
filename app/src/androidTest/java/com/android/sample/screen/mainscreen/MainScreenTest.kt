@@ -6,6 +6,7 @@ import com.android.sample.model.userAccount.Gender
 import com.android.sample.model.userAccount.HeightUnit
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountRepository
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepository
@@ -15,7 +16,7 @@ import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.viewmodel.UserAccountViewModel
+
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 import java.util.Date

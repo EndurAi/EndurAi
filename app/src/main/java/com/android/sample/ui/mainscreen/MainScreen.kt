@@ -40,7 +40,7 @@ import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.SoftGrey
-import com.android.sample.viewmodel.UserAccountViewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 
 /**
  * Main composable function that sets up the main screen layout.

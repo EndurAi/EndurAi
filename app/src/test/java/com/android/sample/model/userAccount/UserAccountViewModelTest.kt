@@ -2,7 +2,6 @@ package com.android.sample.model.userAccount
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
