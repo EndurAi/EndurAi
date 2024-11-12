@@ -1,6 +1,8 @@
 package com.android.sample.model.userAccount
 
 import com.google.firebase.Timestamp
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -13,8 +15,6 @@ import org.mockito.Mockito.*
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
 
 class UserAccountViewModelTest {
 
@@ -22,29 +22,29 @@ class UserAccountViewModelTest {
   private lateinit var userAccountViewModel: UserAccountViewModel
 
   private val userAccount =
-    UserAccount(
-      userId = "1",
-      firstName = "John",
-      lastName = "Doe",
-      height = 180f,
-      weight = 75f,
-      birthDate = Timestamp.now(),
-      profileImageUrl = "profile_image_url",
-      friends = listOf("2", "3"),
-      sentRequests = listOf("4"),
-      receivedRequests = listOf("5"))
-
+      UserAccount(
+          userId = "1",
+          firstName = "John",
+          lastName = "Doe",
+          height = 180f,
+          weight = 75f,
+          birthDate = Timestamp.now(),
+          profileImageUrl = "profile_image_url",
+          friends = listOf("2", "3"),
+          sentRequests = listOf("4"),
+          receivedRequests = listOf("5"))
 
   private val friendAccount1 = UserAccount(userId = "2", firstName = "Friend1", lastName = "Last1")
   private val friendAccount2 = UserAccount(userId = "3", firstName = "Friend2", lastName = "Last2")
-  private val sentRequestAccount = UserAccount(userId = "4", firstName = "Sent", lastName = "Request")
-  private val receivedRequestAccount = UserAccount(userId = "5", firstName = "Received", lastName = "Request")
+  private val sentRequestAccount =
+      UserAccount(userId = "4", firstName = "Sent", lastName = "Request")
+  private val receivedRequestAccount =
+      UserAccount(userId = "5", firstName = "Received", lastName = "Request")
+
   @Before
   fun setUp() {
     userAccountRepository = mock(UserAccountRepository::class.java)
     userAccountViewModel = UserAccountViewModel(userAccountRepository)
-
-
 
     `when`(userAccountRepository.getUserAccount(eq("2"), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as (UserAccount) -> Unit
@@ -63,12 +63,12 @@ class UserAccountViewModelTest {
       onSuccess(receivedRequestAccount)
     }
 
-
     // Use reflection to set the private _userAccount property
-    val userAccountProperty = UserAccountViewModel::class.declaredMemberProperties
-      .first { it.name == "_userAccount" }
+    val userAccountProperty =
+        UserAccountViewModel::class.declaredMemberProperties.first { it.name == "_userAccount" }
     userAccountProperty.isAccessible = true
-    (userAccountProperty.get(userAccountViewModel) as MutableStateFlow<UserAccount?>).value = userAccount
+    (userAccountProperty.get(userAccountViewModel) as MutableStateFlow<UserAccount?>).value =
+        userAccount
   }
 
   @Test
@@ -131,8 +131,6 @@ class UserAccountViewModelTest {
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
   }
 
-
-
   @Test
   fun `removeFriend updates userAccount and isLoading`() = runTest {
     `when`(userAccountRepository.removeFriend(any(), any(), any(), any())).thenAnswer {
@@ -151,8 +149,6 @@ class UserAccountViewModelTest {
     assertThat(userAccountViewModel.isLoading.first(), `is`(false))
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
   }
-
-
 
   @Test
   fun `acceptFriendRequest calls repository and reloads userAccount`() = runTest {
@@ -211,7 +207,6 @@ class UserAccountViewModelTest {
     assertThat(receivedRequests.size, `is`(1))
     assertThat(receivedRequests[0], `is`(receivedRequestAccount))
   }
-
 
   @Test
   fun `sendFriendRequest calls repository and reloads userAccount`() = runTest {

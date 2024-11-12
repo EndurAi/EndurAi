@@ -71,77 +71,92 @@ open class UserAccountViewModel(private val repository: UserAccountRepository) :
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-
-    fun removeFriend(friendId: String) {
-        userAccount.value?.let { currentUser ->
-            repository.removeFriend(
-                userAccount = currentUser,
-                friendId = friendId,
-                onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to remove friend", exception) }
-            )
-        }
+  fun removeFriend(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.removeFriend(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to remove friend", exception)
+          })
     }
+  }
 
-    fun sendFriendRequest(toUserId: String) {
-        userAccount.value?.let { currentUser ->
-            repository.sendFriendRequest(
-                fromUser = currentUser,
-                toUserId = toUserId,
-                onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to send friend request", exception) }
-            )
-        }
+  fun sendFriendRequest(toUserId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.sendFriendRequest(
+          fromUser = currentUser,
+          toUserId = toUserId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to send friend request", exception)
+          })
     }
+  }
 
-    fun acceptFriendRequest(friendId: String) {
-        userAccount.value?.let { currentUser ->
-            repository.acceptFriendRequest(
-                userAccount = currentUser,
-                friendId = friendId,
-                onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to accept friend request", exception) }            )
-        }
+  fun acceptFriendRequest(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.acceptFriendRequest(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to accept friend request", exception)
+          })
     }
+  }
 
-    fun rejectFriendRequest(friendId: String) {
-        userAccount.value?.let { currentUser ->
-            repository.rejectFriendRequest(
-                userAccount = currentUser,
-                friendId = friendId,
-                onSuccess = { getUserAccount(currentUser.userId) },
-                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to reject friend request", exception) }            )
-        }
+  fun rejectFriendRequest(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.rejectFriendRequest(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to reject friend request", exception)
+          })
     }
+  }
 
-
-    fun getFriends(): List<UserAccount> {
-        val friends = mutableListOf<UserAccount>()
-        userAccount.value?.friends?.forEach { friendId ->
-            repository.getUserAccount(friendId, onSuccess = { friends.add(it) }, onFailure = {exception -> Log.e("UserAccountViewModel", "Failed to get the list of friends", exception)  })
-        }
-        return friends
+  fun getFriends(): List<UserAccount> {
+    val friends = mutableListOf<UserAccount>()
+    userAccount.value?.friends?.forEach { friendId ->
+      repository.getUserAccount(
+          friendId,
+          onSuccess = { friends.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of friends", exception)
+          })
     }
+    return friends
+  }
 
-    fun getSentRequests(): List<UserAccount> {
-        val sentRequests = mutableListOf<UserAccount>()
-        userAccount.value?.sentRequests?.forEach { requestId ->
-            repository.getUserAccount(
-                requestId,
-                onSuccess = { sentRequests.add(it) },
-                onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)   })
-        }
-        return sentRequests
+  fun getSentRequests(): List<UserAccount> {
+    val sentRequests = mutableListOf<UserAccount>()
+    userAccount.value?.sentRequests?.forEach { requestId ->
+      repository.getUserAccount(
+          requestId,
+          onSuccess = { sentRequests.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+          })
     }
+    return sentRequests
+  }
 
-    fun getReceivedRequests(): List<UserAccount> {
-        val receivedRequests = mutableListOf<UserAccount>()
-        userAccount.value?.receivedRequests?.forEach { requestId ->
-            repository.getUserAccount(requestId, onSuccess = { receivedRequests.add(it) }, onFailure = { exception -> Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)   })
-        }
-        return receivedRequests
+  fun getReceivedRequests(): List<UserAccount> {
+    val receivedRequests = mutableListOf<UserAccount>()
+    userAccount.value?.receivedRequests?.forEach { requestId ->
+      repository.getUserAccount(
+          requestId,
+          onSuccess = { receivedRequests.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+          })
     }
-
+    return receivedRequests
+  }
 
   // Factory for creating instances of the ViewModel
   companion object {

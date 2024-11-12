@@ -16,8 +16,10 @@ data class UserAccount(
     val birthDate: Timestamp = Timestamp(Date()), // Default to current time
     var profileImageUrl: String = "", // URL to the image stored on firebase
     val friends: List<String> = listOf<String>(), // Set of user IDs of friends
-    val sentRequests: List<String> = listOf<String>(),       // IDs of users to whom this user has sent friend requests
-    val receivedRequests: List<String> = listOf<String>()   // IDs of users who sent friend requests to this user
+    val sentRequests: List<String> =
+        listOf<String>(), // IDs of users to whom this user has sent friend requests
+    val receivedRequests: List<String> =
+        listOf<String>() // IDs of users who sent friend requests to this user
 )
 
 // Enum for height units

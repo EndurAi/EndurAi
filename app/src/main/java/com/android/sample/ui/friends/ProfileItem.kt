@@ -27,44 +27,44 @@ fun ProfileItem(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    Row(
-        modifier =
-        modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .background(LightGrey, shape = MaterialTheme.shapes.medium),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween) {
+  Row(
+      modifier =
+          modifier
+              .fillMaxWidth()
+              .padding(12.dp)
+              .background(LightGrey, shape = MaterialTheme.shapes.medium),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Filled.Person,
-                contentDescription = "Profile Picture",
-                modifier =
-                Modifier.size(48.dp).background(Color.Gray, shape = CircleShape).padding(8.dp),
-                tint = Color.White)
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(profile.firstName, style = MaterialTheme.typography.bodyLarge, fontSize = 18.sp)
+          Icon(
+              imageVector = Icons.Filled.Person,
+              contentDescription = "Profile Picture",
+              modifier =
+                  Modifier.size(48.dp).background(Color.Gray, shape = CircleShape).padding(8.dp),
+              tint = Color.White)
+          Spacer(modifier = Modifier.width(12.dp))
+          Text(profile.firstName, style = MaterialTheme.typography.bodyLarge, fontSize = 18.sp)
         }
         content()
-    }
+      }
 }
 
 @Composable
 fun ProfileItemWithRequest(profile: UserAccount, onSendRequestClick: () -> Unit) {
-    var requestSent by remember { mutableStateOf(false) }
+  var requestSent by remember { mutableStateOf(false) }
 
-    ProfileItem(profile = profile) {
-        Button(
-            onClick = {
-                onSendRequestClick()
-                requestSent = !requestSent
-            },
-            colors =
+  ProfileItem(profile = profile) {
+    Button(
+        onClick = {
+          onSendRequestClick()
+          requestSent = !requestSent
+        },
+        colors =
             ButtonDefaults.buttonColors(containerColor = if (requestSent) Color.Gray else DarkBlue),
-            shape = RoundedCornerShape(8.dp)) {
-            Text(if (requestSent) "Request Sent" else "Send Request", color = Color.White)
+        shape = RoundedCornerShape(8.dp)) {
+          Text(if (requestSent) "Request Sent" else "Send Request", color = Color.White)
         }
-    }
+  }
 }
 
 @Composable
@@ -73,23 +73,23 @@ fun ProfileItemWithAcceptReject(
     onAcceptClick: () -> Unit,
     onRejectClick: () -> Unit
 ) {
-    ProfileItem(profile = profile) {
-        Row {
-            Button(
-                onClick = onAcceptClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
-                shape = CircleShape,
-                modifier = Modifier.padding(end = 4.dp)) {
-                Text(stringResource(R.string.accept_invite), color = Color.White)
-            }
-            Button(
-                onClick = onRejectClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                shape = CircleShape) {
-                Text(stringResource(R.string.reject_invite), color = Color.White)
-            }
-        }
+  ProfileItem(profile = profile) {
+    Row {
+      Button(
+          onClick = onAcceptClick,
+          colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+          shape = CircleShape,
+          modifier = Modifier.padding(end = 4.dp)) {
+            Text(stringResource(R.string.accept_invite), color = Color.White)
+          }
+      Button(
+          onClick = onRejectClick,
+          colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+          shape = CircleShape) {
+            Text(stringResource(R.string.reject_invite), color = Color.White)
+          }
     }
+  }
 }
 
 @Composable
@@ -99,16 +99,16 @@ fun FriendItem(
     onSelectFriend: () -> Unit,
     onRemoveClick: () -> Unit
 ) {
-    ProfileItem(
-        profile = friend,
-        modifier =
-        Modifier.clickable(onClick = onSelectFriend)
-            .background(if (isSelected) Color.LightGray else Color.Transparent)) {
+  ProfileItem(
+      profile = friend,
+      modifier =
+          Modifier.clickable(onClick = onSelectFriend)
+              .background(if (isSelected) Color.LightGray else Color.Transparent)) {
         Button(
             onClick = onRemoveClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             shape = CircleShape) {
-            Text(stringResource(R.string.remove_friend), color = Color.White)
-        }
-    }
+              Text(stringResource(R.string.remove_friend), color = Color.White)
+            }
+      }
 }

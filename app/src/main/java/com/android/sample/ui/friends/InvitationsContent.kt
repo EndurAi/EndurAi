@@ -28,39 +28,39 @@ import com.android.sample.ui.theme.Purple20
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun InvitationsContent(modifier: Modifier) {
-    // Hardcoded list of invitations
-    val invitations =
-        listOf(
-            UserAccount(userId = "4", firstName = "David"),
-            UserAccount(userId = "5", firstName = "Emma"))
+  // Hardcoded list of invitations
+  val invitations =
+      listOf(
+          UserAccount(userId = "4", firstName = "David"),
+          UserAccount(userId = "5", firstName = "Emma"))
 
-    Box(modifier) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier =
-                Modifier.fillMaxWidth()
-                    .padding(8.dp)
-                    .background(Purple20, shape = RoundedCornerShape(8.dp))
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(id = R.string.welcome_message_invitations, "Michael"),
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    fontSize = 16.sp)
-            }
+  Box(modifier) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+      Box(
+          modifier =
+              Modifier.fillMaxWidth()
+                  .padding(8.dp)
+                  .background(Purple20, shape = RoundedCornerShape(8.dp))
+                  .padding(16.dp),
+          contentAlignment = Alignment.Center) {
+            Text(
+                text = stringResource(id = R.string.welcome_message_invitations, "Michael"),
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 16.sp)
+          }
 
-            Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(invitations) { profile ->
-                    ProfileItemWithAcceptReject(
-                        profile = profile,
-                        onAcceptClick = { /* Trigger accept logic */},
-                        onRejectClick = { /* Trigger reject logic */})
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
+      LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        items(invitations) { profile ->
+          ProfileItemWithAcceptReject(
+              profile = profile,
+              onAcceptClick = { /* Trigger accept logic */},
+              onRejectClick = { /* Trigger reject logic */})
+          Spacer(modifier = Modifier.height(8.dp))
         }
+      }
     }
+  }
 }

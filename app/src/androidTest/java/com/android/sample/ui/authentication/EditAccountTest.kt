@@ -3,8 +3,8 @@ package com.android.sample.ui.authentication
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.model.userAccount.*
-import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.ui.navigation.NavigationActions
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -183,44 +183,43 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
+  override fun sendFriendRequest(
+      fromUser: UserAccount,
+      toUserId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
 
-    override fun sendFriendRequest(
-        fromUser: UserAccount,
-        toUserId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        // not needed here
-    }
+  override fun acceptFriendRequest(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
 
-    override fun acceptFriendRequest(
-        userAccount: UserAccount,
-        friendId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        // not needed here
-    }
+  override fun removeFriend(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
 
-    override fun removeFriend(
-        userAccount: UserAccount,
-        friendId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        // not needed here
-    }
+  override fun rejectFriendRequest(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
 
-    override fun rejectFriendRequest(
-        userAccount: UserAccount,
-        friendId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        // not needed here
-    }
-
-    fun setUserAccount(account: UserAccount?) {
+  fun setUserAccount(account: UserAccount?) {
     this.userAccount = account
   }
 }

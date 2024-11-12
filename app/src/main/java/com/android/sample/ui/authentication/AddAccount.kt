@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.model.userAccount.*
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.model.userAccount.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
@@ -58,9 +58,9 @@ fun AddAccount(
   var weightUnit by remember { mutableStateOf(WeightUnit.KG) }
   var gender by remember { mutableStateOf(Gender.MALE) }
   var birthDate by remember { mutableStateOf("") }
-    var friends by remember { mutableStateOf(listOf<String>()) }
-    var sentRequests by remember { mutableStateOf(listOf<String>()) }
-    var receivedRequests by remember { mutableStateOf(listOf<String>()) }
+  var friends by remember { mutableStateOf(listOf<String>()) }
+  var sentRequests by remember { mutableStateOf(listOf<String>()) }
+  var receivedRequests by remember { mutableStateOf(listOf<String>()) }
 
   // Retrieve current user UID from Firebase Auth
   val actualUserId = userId ?: return // Ensure user is signed in
@@ -96,9 +96,9 @@ fun AddAccount(
           profileImageUri = null
           originalProfileImageUri = null
         }
-          friends = it.friends
-          sentRequests = it.sentRequests
-          receivedRequests = it.receivedRequests
+        friends = it.friends
+        sentRequests = it.sentRequests
+        receivedRequests = it.receivedRequests
       }
     }
   }
@@ -283,7 +283,6 @@ fun ActionButton(text: String, onClick: () -> Unit, enabled: Boolean) {
       }
 }
 
-
 fun saveAccount(
     isNewAccount: Boolean,
     userAccountViewModel: UserAccountViewModel,
@@ -304,59 +303,59 @@ fun saveAccount(
     sentRequests: List<String>,
     receivedRequests: List<String>
 ) {
-    val calendar = GregorianCalendar()
-    val parts = birthDate.split("/")
-    if (parts.size == 3) {
-        try {
-            calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-            val profileImageUrl = profileImageUri?.toString() ?: ""
+  val calendar = GregorianCalendar()
+  val parts = birthDate.split("/")
+  if (parts.size == 3) {
+    try {
+      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+      val profileImageUrl = profileImageUri?.toString() ?: ""
 
-            val accountData = UserAccount(
-                userId = userId,
-                firstName = firstName,
-                lastName = lastName,
-                height = height.toFloatOrNull() ?: 0f,
-                heightUnit = heightUnit,
-                weight = weight.toFloatOrNull() ?: 0f,
-                weightUnit = weightUnit,
-                gender = gender,
-                birthDate = Timestamp(calendar.time),
-                profileImageUrl = profileImageUrl,
-                friends = friends,
-                sentRequests = sentRequests,
-                receivedRequests = receivedRequests
-            )
+      val accountData =
+          UserAccount(
+              userId = userId,
+              firstName = firstName,
+              lastName = lastName,
+              height = height.toFloatOrNull() ?: 0f,
+              heightUnit = heightUnit,
+              weight = weight.toFloatOrNull() ?: 0f,
+              weightUnit = weightUnit,
+              gender = gender,
+              birthDate = Timestamp(calendar.time),
+              profileImageUrl = profileImageUrl,
+              friends = friends,
+              sentRequests = sentRequests,
+              receivedRequests = receivedRequests)
 
-            if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
-                userAccountViewModel.uploadProfileImage(
-                    profileImageUri,
-                    userId,
-                    onSuccess = { downloadUrl ->
-                        accountData.profileImageUrl = downloadUrl
-                        if (isNewAccount) {
-                            userAccountViewModel.createUserAccount(accountData)
-                            navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                        } else {
-                            userAccountViewModel.updateUserAccount(accountData)
-                            navigationActions.goBack()
-                        }
-                    },
-                    onFailure = {
-                        Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
-                    })
-            } else {
-                if (isNewAccount) {
-                    userAccountViewModel.createUserAccount(accountData)
-                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                } else {
-                    userAccountViewModel.updateUserAccount(accountData)
-                    navigationActions.goBack()
-                }
-            }
-        } catch (e: Exception) {
-            Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
+      if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
+        userAccountViewModel.uploadProfileImage(
+            profileImageUri,
+            userId,
+            onSuccess = { downloadUrl ->
+              accountData.profileImageUrl = downloadUrl
+              if (isNewAccount) {
+                userAccountViewModel.createUserAccount(accountData)
+                navigationActions.navigateTo(TopLevelDestinations.MAIN)
+              } else {
+                userAccountViewModel.updateUserAccount(accountData)
+                navigationActions.goBack()
+              }
+            },
+            onFailure = {
+              Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
+            })
+      } else {
+        if (isNewAccount) {
+          userAccountViewModel.createUserAccount(accountData)
+          navigationActions.navigateTo(TopLevelDestinations.MAIN)
+        } else {
+          userAccountViewModel.updateUserAccount(accountData)
+          navigationActions.goBack()
         }
+      }
+    } catch (e: Exception) {
+      Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show()
     }
+  }
 }
 
 @Composable

@@ -21,41 +21,41 @@ import com.android.sample.ui.theme.DarkBlue
 fun AddFriendScreen(
     navigationActions: NavigationActions,
 ) {
-    var selectedTab by remember { mutableStateOf("New Connections") }
-    val searchQuery = remember { mutableStateOf("") }
+  var selectedTab by remember { mutableStateOf("New Connections") }
+  val searchQuery = remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp).testTag("addFriendScreen")) {
-        TopBar(navigationActions = navigationActions, title = R.string.add_friends_title)
+  Column(modifier = Modifier.padding(16.dp).testTag("addFriendScreen")) {
+    TopBar(navigationActions = navigationActions, title = R.string.add_friends_title)
 
-        Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth().testTag("tabButtons"),
-            horizontalArrangement = Arrangement.SpaceEvenly) {
-            TabButton(
-                text = "New Connections",
-                isSelected = selectedTab == "New Connections",
-                onClick = { selectedTab = "New Connections" },
-                modifier = Modifier.testTag("newConnectionsTabButton"))
+    Row(
+        modifier = Modifier.fillMaxWidth().testTag("tabButtons"),
+        horizontalArrangement = Arrangement.SpaceEvenly) {
+          TabButton(
+              text = "New Connections",
+              isSelected = selectedTab == "New Connections",
+              onClick = { selectedTab = "New Connections" },
+              modifier = Modifier.testTag("newConnectionsTabButton"))
 
-            Spacer(modifier = Modifier.width(8.dp))
+          Spacer(modifier = Modifier.width(8.dp))
 
-            TabButton(
-                text = "Invitations",
-                isSelected = selectedTab == "Invitations",
-                onClick = { selectedTab = "Invitations" },
-                modifier = Modifier.testTag("invitationsTabButton"))
+          TabButton(
+              text = "Invitations",
+              isSelected = selectedTab == "Invitations",
+              onClick = { selectedTab = "Invitations" },
+              modifier = Modifier.testTag("invitationsTabButton"))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
-        when (selectedTab) {
-            "New Connections" -> {
-                NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"))
-            }
-            "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
-        }
+    when (selectedTab) {
+      "New Connections" -> {
+        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"))
+      }
+      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
     }
+  }
 }
 
 @Composable
@@ -65,16 +65,16 @@ fun TabButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Button(
-        onClick = onClick,
-        colors =
-        ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) DarkBlue else Color.LightGray),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier) {
+  Button(
+      onClick = onClick,
+      colors =
+          ButtonDefaults.buttonColors(
+              containerColor = if (isSelected) DarkBlue else Color.LightGray),
+      shape = RoundedCornerShape(12.dp),
+      modifier = modifier) {
         Text(
             text,
             color = if (isSelected) Color.White else Color.Black,
             fontWeight = FontWeight.Bold)
-    }
+      }
 }

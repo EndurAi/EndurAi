@@ -30,82 +30,82 @@ import com.android.sample.ui.theme.DarkBlue
 fun FriendsScreen(
     navigationActions: NavigationActions,
 ) {
-    val searchQuery = remember { mutableStateOf("") }
+  val searchQuery = remember { mutableStateOf("") }
 
-    // Hardcoded list of friends
-    val friendsList =
-        setOf(
-            UserAccount(userId = "1", firstName = "Pierre"),
-            UserAccount(userId = "2", firstName = "Alex"),
-            UserAccount(userId = "3", firstName = "Edouard"))
+  // Hardcoded list of friends
+  val friendsList =
+      setOf(
+          UserAccount(userId = "1", firstName = "Pierre"),
+          UserAccount(userId = "2", firstName = "Alex"),
+          UserAccount(userId = "3", firstName = "Edouard"))
 
-    val selectedFriends = remember { mutableStateListOf<String>() }
+  val selectedFriends = remember { mutableStateListOf<String>() }
 
-    val filteredFriendsList =
-        friendsList.filter { friend ->
-            friend.firstName.contains(searchQuery.value, ignoreCase = true)
-        }
+  val filteredFriendsList =
+      friendsList.filter { friend ->
+        friend.firstName.contains(searchQuery.value, ignoreCase = true)
+      }
 
-    Column(modifier = Modifier.padding(16.dp).testTag("friendsScreen")) {
-        TopBar(navigationActions = navigationActions, title = R.string.friends_title)
+  Column(modifier = Modifier.padding(16.dp).testTag("friendsScreen")) {
+    TopBar(navigationActions = navigationActions, title = R.string.friends_title)
 
-        Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("searchBarRow"),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            CustomSearchBar(
-                query = searchQuery.value,
-                onQueryChange = { searchQuery.value = it },
-                modifier = Modifier.weight(1f).testTag("searchBar"))
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("searchBarRow"),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween) {
+          CustomSearchBar(
+              query = searchQuery.value,
+              onQueryChange = { searchQuery.value = it },
+              modifier = Modifier.weight(1f).testTag("searchBar"))
 
-            Spacer(modifier = Modifier.width(8.dp))
+          Spacer(modifier = Modifier.width(8.dp))
 
-            Button(
-                onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
-                modifier = Modifier.testTag("addFriendButton")) {
+          Button(
+              onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
+              shape = CircleShape,
+              colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+              modifier = Modifier.testTag("addFriendButton")) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Friend")
                 Text("Add", color = Color.Black)
-            }
+              }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
-        // Friends List
-        LazyColumn(modifier = Modifier.fillMaxWidth().testTag("friendsList")) {
-            items(filteredFriendsList) { friend ->
-                FriendItem(
-                    friend = friend,
-                    isSelected = selectedFriends.contains(friend.userId),
-                    onSelectFriend = {
-                        if (selectedFriends.contains(friend.userId)) {
-                            selectedFriends.remove(friend.userId)
-                        } else {
-                            selectedFriends.add(friend.userId)
-                        }
-                    },
-                    onRemoveClick = { /* Handle remove friend action */},
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-
-        // "Invite to a workout" button at the bottom if pressed on a card
-        if (selectedFriends.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { /* Trigger invite to workout action */},
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("inviteButton"),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)) {
-                Text(
-                    text = stringResource(R.string.invite_to_workout),
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold)
-            }
-        }
+    // Friends List
+    LazyColumn(modifier = Modifier.fillMaxWidth().testTag("friendsList")) {
+      items(filteredFriendsList) { friend ->
+        FriendItem(
+            friend = friend,
+            isSelected = selectedFriends.contains(friend.userId),
+            onSelectFriend = {
+              if (selectedFriends.contains(friend.userId)) {
+                selectedFriends.remove(friend.userId)
+              } else {
+                selectedFriends.add(friend.userId)
+              }
+            },
+            onRemoveClick = { /* Handle remove friend action */},
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+      }
     }
+
+    // "Invite to a workout" button at the bottom if pressed on a card
+    if (selectedFriends.isNotEmpty()) {
+      Spacer(modifier = Modifier.height(16.dp))
+      Button(
+          onClick = { /* Trigger invite to workout action */},
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("inviteButton"),
+          shape = RoundedCornerShape(8.dp),
+          colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)) {
+            Text(
+                text = stringResource(R.string.invite_to_workout),
+                color = Color.White,
+                fontWeight = FontWeight.Bold)
+          }
+    }
+  }
 }
