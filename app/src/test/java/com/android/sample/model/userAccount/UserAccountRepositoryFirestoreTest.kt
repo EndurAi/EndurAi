@@ -302,4 +302,39 @@ class UserAccountRepositoryFirestoreTest {
     verify(mockFirestore).runTransaction(any<Transaction.Function<Void>>())
     assertTrue("Failure callback should be called", failureCalled)
   }
+
+  @Test
+  fun deleteUserAccount_success() {
+    `when`(mockDocumentReference.delete()).thenReturn(Tasks.forResult(null))
+
+    var successCalled = false
+
+    userAccountRepositoryFirestore.deleteUserAccount(
+        "1",
+        onSuccess = { successCalled = true },
+        onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockDocumentReference).delete()
+    assertTrue("Success callback should be called", successCalled)
+  }
+
+  @Test
+  fun deleteUserAccount_failure() {
+    val exception = RuntimeException("Failed to delete user account")
+    `when`(mockDocumentReference.delete()).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+
+    userAccountRepositoryFirestore.deleteUserAccount(
+        "1",
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockDocumentReference).delete()
+    assertTrue("Failure callback should be called", failureCalled)
+  }
 }

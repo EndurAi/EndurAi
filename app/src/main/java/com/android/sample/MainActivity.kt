@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.sample.model.calendar.CalendarViewModel
+import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
@@ -31,6 +34,7 @@ import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
+import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.friends.AddFriendScreen
 import com.android.sample.ui.friends.FriendsScreen
 import com.android.sample.ui.mainscreen.MainScreen
@@ -87,6 +91,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
   val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
   val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+  val calendarViewModel = CalendarViewModel()
+
+  val cameraViewModel = CameraViewModel(context = LocalContext.current)
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -103,7 +110,11 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Main Screen
     navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
       composable(Screen.MAIN) {
-        MainScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        MainScreen(
+            navigationActions,
+            bodyweightWorkoutViewModel,
+            yogaWorkoutViewModel,
+            userAccountViewModel)
       }
       composable(Screen.VIEW_ALL) {
         ViewAllScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
@@ -223,7 +234,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             bodyweightViewModel = bodyweightWorkoutViewModel,
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.BODY_WEIGHT)
+            workoutType = WorkoutType.BODY_WEIGHT,
+            cameraViewModel = cameraViewModel)
       }
     }
     // Yoga Workout
@@ -234,7 +246,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             bodyweightViewModel = bodyweightWorkoutViewModel,
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.YOGA)
+            workoutType = WorkoutType.YOGA,
+            cameraViewModel = cameraViewModel)
       }
     }
 
@@ -246,14 +259,20 @@ fun MainApp(startDestination: String = Route.AUTH) {
             bodyweightViewModel = bodyweightWorkoutViewModel,
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.WARMUP)
+            workoutType = WorkoutType.WARMUP,
+            cameraViewModel = cameraViewModel)
       }
     }
 
     // Calendar Screen
     navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
       composable(Screen.CALENDAR) {
-        CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        CalendarScreen(
+            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
+      }
+      composable(Screen.DAY_CALENDAR) {
+        DayCalendarScreen(
+            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
     }
   }

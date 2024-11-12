@@ -1,9 +1,20 @@
 package com.android.sample.model.userAccount
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import com.android.sample.viewmodel.UserAccountViewModel
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.Timestamp
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.fail
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
@@ -11,15 +22,21 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class UserAccountViewModelTest {
 
-  private lateinit var userAccountRepository: UserAccountRepository
-  private lateinit var userAccountViewModel: UserAccountViewModel
+  @Mock private lateinit var userAccountRepository: UserAccountRepository
+  @Mock private lateinit var userAccountViewModel: UserAccountViewModel
+  @Mock private lateinit var mockFirebaseAuth: FirebaseAuth
+  @Mock private lateinit var mockFirebaseUser: FirebaseUser
 
   private val userAccount =
       UserAccount(
@@ -43,6 +60,23 @@ class UserAccountViewModelTest {
 
   @Before
   fun setUp() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    if (FirebaseApp.getApps(context).isEmpty()) {
+      val options =
+          FirebaseOptions.Builder()
+              .setApplicationId("1:1234567890:android:abcde12345") // Fake App ID for testing
+              .setApiKey("fake-api-key") // Fake API key
+              .setProjectId("test-project-id") // Fake Project ID
+              .build()
+      FirebaseApp.initializeApp(context, options)
+    }
+
+    mockFirebaseAuth = mock(FirebaseAuth::class.java)
+    mockFirebaseUser = mock(FirebaseUser::class.java)
+
+    `when`(mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser)
+    `when`(mockFirebaseUser.uid).thenReturn("testUserId")
+
     userAccountRepository = mock(UserAccountRepository::class.java)
     userAccountViewModel = UserAccountViewModel(userAccountRepository)
 
@@ -69,6 +103,7 @@ class UserAccountViewModelTest {
     userAccountProperty.isAccessible = true
     (userAccountProperty.get(userAccountViewModel) as MutableStateFlow<UserAccount?>).value =
         userAccount
+    userAccountViewModel = UserAccountViewModel(userAccountRepository, mockFirebaseAuth)
   }
 
   @Test
@@ -224,5 +259,46 @@ class UserAccountViewModelTest {
 
     verify(userAccountRepository).sendFriendRequest(eq(userAccount), eq("friendId"), any(), any())
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
+  }
+
+  @Test
+  fun `deleteAccount calls deleteUserAccount method on repository`() = runTest {
+    val mockContext = mock(Context::class.java)
+    val mockDeleteTask: Task<Void> = Tasks.forResult(null) // Successful delete task
+
+    `when`(mockFirebaseUser.delete()).thenReturn(mockDeleteTask)
+
+    `when`(userAccountRepository.deleteUserAccount(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
+
+    userAccountViewModel.deleteAccount(context = mockContext, onSuccess = {}, onFailure = {})
+
+    verify(userAccountRepository).deleteUserAccount(eq("testUserId"), any(), any())
+  }
+
+  @Test
+  fun `deleteAccount calls onFailure when deletion fails`() = runTest {
+    val mockContext = mock(Context::class.java)
+    val exception = RuntimeException("Failed to delete user account")
+    val mockDeleteTask: Task<Void> = Tasks.forException(exception) // Failed delete task
+
+    `when`(mockFirebaseUser.delete()).thenReturn(mockDeleteTask)
+
+    `when`(userAccountRepository.deleteUserAccount(any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
+      onFailure(exception)
+    }
+
+    var failureCalled = false
+
+    userAccountViewModel.deleteAccount(
+        context = mockContext,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    verify(userAccountRepository).deleteUserAccount(eq("testUserId"), any(), any())
+    assertTrue("Failure callback should be called", failureCalled)
   }
 }

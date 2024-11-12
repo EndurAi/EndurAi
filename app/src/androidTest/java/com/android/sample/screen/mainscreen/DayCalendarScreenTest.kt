@@ -1,26 +1,26 @@
 package com.android.sample.screen.mainscreen
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
-import com.android.sample.ui.calendar.CalendarScreen
+import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.navigation.NavigationActions
 import java.time.LocalDateTime
+import kotlinx.datetime.toKotlinLocalDate
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import org.mockito.kotlin.verify
 
-class CalendarScreenTest {
+// Check the implementation of the daily calendar screen
+class DayCalendarScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
   private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
@@ -34,15 +34,21 @@ class CalendarScreenTest {
   fun setUp() {
     bodyWeightRepo = mock()
     yogaRepo = mock()
+    calendarViewModel = CalendarViewModel()
 
     val bodyWeightWorkouts =
         listOf(
             BodyWeightWorkout(
-                "2",
-                "NightSes",
+                "1",
+                "Afternoon Push-up Session",
                 "Hold for 60 seconds",
                 false,
-                date = LocalDateTime.now().plusDays(1)))
+                date = LocalDateTime.now().withHour(1)))
+
+    val workoutDate = bodyWeightWorkouts[0].date.toLocalDate()
+
+    calendarViewModel.updateSelectedDate(workoutDate.toKotlinLocalDate())
+
     val yogaWorkouts: List<YogaWorkout> = listOf()
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
@@ -59,77 +65,28 @@ class CalendarScreenTest {
 
     bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
     yogaViewModel = WorkoutViewModel(yogaRepo)
-    calendarViewModel = CalendarViewModel()
 
-    // Mock the NavigationActions
     navigationActions = mock(NavigationActions::class.java)
 
     bodyWeightViewModel.getWorkouts()
-  }
 
-  /*
-    @Test
-    fun displayAllComponents() {
-      composeTestRule.setContent {
-        CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel)
-      }
-
-      sleep(10000)
-
-      // Check if the top bar, legend, and lazy column are displayed
-      composeTestRule.onNodeWithTag("workoutItem").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("legendYoga").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("legendBodyweight").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("lazyColumn").assertIsDisplayed()
-    }
-  */
-
-  @Test
-  fun testNavigationOnBack() {
     composeTestRule.setContent {
-      CalendarScreen(
+      DayCalendarScreen(
           navigationActions = navigationActions,
           bodyworkoutViewModel = bodyWeightViewModel,
           yogaworkoutViewModel = yogaViewModel,
           calendarViewModel = calendarViewModel)
     }
-
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-
-    verify(navigationActions).goBack()
   }
 
-  /*@Test
-  fun testWorkoutClickShowsDialog() {
-
-    composeTestRule.setContent {
-      CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel)
-    }
-
-    bodyWeightViewModel.getWorkouts()
-
-    // Simulate a workout click and ensure the dialog shows up
-    composeTestRule.onNodeWithTag("workoutItem").performClick()
-    composeTestRule.onNodeWithTag("alertDialog").assertIsDisplayed()
-
-    // Simulate click on the 'Edit' button
-    composeTestRule.onNodeWithTag("editButton").performClick()
-
-    // Verify that the dialog is dismissed
-    composeTestRule.onNodeWithTag("alertDialog").assertDoesNotExist()
-  }*/
-
   @Test
-  fun testDisplayMoreThan3Days() {
-    composeTestRule.setContent {
-      CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel, calendarViewModel)
-    }
-
-    // Find all nodes with the testTag "daySection"
-    val dayNodes = composeTestRule.onAllNodesWithTag("daySection", useUnmergedTree = true)
-
-    // Assert that there are 3 day sections displayed
-    assert(3 < dayNodes.fetchSemanticsNodes().size)
+  fun testEverythingDisplayed() {
+    // Check that the necessary tags are displayed on the screen
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Categories").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Date").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Hours").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("WorkoutCard").assertIsDisplayed()
   }
 }

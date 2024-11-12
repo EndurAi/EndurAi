@@ -31,13 +31,13 @@ class AchievementsScreenTest {
 
   @Test
   fun hasNavigationBar() {
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
   }
 
   @Test
   fun hasNavigationDestinations() {
     composeTestRule.onNodeWithTag("Main").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Video").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Achievements").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Calendar").assertIsDisplayed()
   }
 }

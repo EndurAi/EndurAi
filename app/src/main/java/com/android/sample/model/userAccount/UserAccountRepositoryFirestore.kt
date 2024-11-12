@@ -168,4 +168,19 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAc
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { onFailure(it) }
   }
+
+  override fun deleteUserAccount(
+      userId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(collectionPath)
+        .document(userId)
+        .delete()
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { exception ->
+          Log.e("UserAccountRepo", "Error deleting user account", exception)
+          onFailure(exception)
+        }
+  }
 }
