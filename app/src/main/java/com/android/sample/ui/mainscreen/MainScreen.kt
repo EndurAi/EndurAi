@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -15,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -22,17 +25,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.android.sample.R
-import com.android.sample.model.userAccount.Gender
-import com.android.sample.model.userAccount.HeightUnit
 import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
-import com.android.sample.ui.navigation.BottomNavigationMenu
-import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
+import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
@@ -40,8 +40,7 @@ import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.SoftGrey
-import com.google.firebase.Timestamp
-import java.util.Date
+import com.android.sample.viewmodel.UserAccountViewModel
 
 /**
  * Main composable function that sets up the main screen layout.
@@ -53,21 +52,10 @@ fun MainScreen(
     navigationActions: NavigationActions,
     bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
+    userAccountViewModel: UserAccountViewModel
 ) {
   // Configuration temporaire pour tester
-  val account =
-      UserAccount(
-          "",
-          "Micheal",
-          "Phelps",
-          1.8f,
-          HeightUnit.METER,
-          70f,
-          WeightUnit.KG,
-          Gender.MALE,
-          Timestamp(Date()),
-          "")
-  val profile = R.drawable.homme
+  val account = userAccountViewModel.userAccount.collectAsState().value
   val bodyWeightWorkouts = bodyWeightViewModel.workouts.collectAsState()
   val yogaWorkouts = yogaViewModel.workouts.collectAsState()
 
@@ -80,22 +68,21 @@ fun MainScreen(
 
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
-      topBar = {
-        ProfileSection(account = account, profile = profile, navigationActions = navigationActions)
-      },
+      topBar = { ProfileSection(account = account, navigationActions = navigationActions) },
       content = { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier =
+                Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween) {
               WorkoutSessionsSection(
                   workout = workoutDisplayed,
-                  profile = profile,
+                  profile = account?.profileImageUrl ?: "",
                   navigationActions = navigationActions)
               QuickWorkoutSection(navigationActions = navigationActions)
-              NewWorkoutSection(navigationActions = navigationActions)
+              AchievementsSection(navigationActions = navigationActions)
             }
       },
-      bottomBar = { BottomNavigationBar(navigationActions = navigationActions) })
+      bottomBar = { BottomBar(navigationActions = navigationActions) })
 }
 
 /**
@@ -106,7 +93,7 @@ fun MainScreen(
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun ProfileSection(account: UserAccount, profile: Int, navigationActions: NavigationActions) {
+fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) {
   Row(
       modifier =
           Modifier.fillMaxWidth()
@@ -117,16 +104,16 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp)) {
               Image(
-                  painter = painterResource(id = profile),
+                  painter = rememberImagePainter(data = account?.profileImageUrl ?: ""),
                   contentDescription = "Profile",
+                  contentScale = ContentScale.Crop,
                   modifier =
-                      Modifier.size(40.dp)
-                          .clip(CircleShape)
-                          .clickable { navigationActions.navigateTo(Screen.FRIENDS) }
-                          .testTag("ProfilePicture"))
+                      Modifier.size(40.dp).clip(CircleShape).testTag("ProfilePicture").clickable {
+                        navigationActions.navigateTo(Screen.FRIENDS)
+                      })
               Spacer(modifier = Modifier.width(8.dp))
               Text(
-                  text = stringResource(id = R.string.welcome_message, account.firstName),
+                  text = stringResource(id = R.string.welcome_message, account?.firstName ?: ""),
                   style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp),
                   color = Color.White,
                   modifier = Modifier.testTag("WelcomeText"))
@@ -153,7 +140,11 @@ fun ProfileSection(account: UserAccount, profile: Int, navigationActions: Naviga
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun WorkoutSessionsSection(workout: Workout?, profile: Int, navigationActions: NavigationActions) {
+fun WorkoutSessionsSection(
+    workout: Workout?,
+    profile: String,
+    navigationActions: NavigationActions
+) {
   Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("WorkoutSection")) {
     Text(
         text = "My workout sessions",
@@ -164,6 +155,7 @@ fun WorkoutSessionsSection(workout: Workout?, profile: Int, navigationActions: N
             Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .background(SoftGrey)
+                .height(300.dp)
                 .padding(8.dp)) {
           if (workout != null) {
             Box(modifier = Modifier.padding(vertical = 4.dp)) {
@@ -177,6 +169,29 @@ fun WorkoutSessionsSection(workout: Workout?, profile: Int, navigationActions: N
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
           }
 
+          Spacer(modifier = Modifier.weight(1f))
+
+          Box(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
+                      .padding(vertical = 16.dp, horizontal = 12.dp)
+                      .height(48.dp)
+                      .background(Blue, RoundedCornerShape(20.dp))
+                      .testTag("NewWorkoutButton"),
+              contentAlignment = Alignment.Center) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                  Icon(
+                      imageVector = Icons.Outlined.Add,
+                      contentDescription = "New Workout",
+                      tint = Color.Black,
+                      modifier = Modifier.size(28.dp))
+                  Text(
+                      stringResource(id = R.string.NewWorkout),
+                      modifier = Modifier.padding(horizontal = 12.dp),
+                      style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                }
+              }
           Button(
               onClick = { navigationActions.navigateTo(Screen.VIEW_ALL) },
               modifier =
@@ -186,7 +201,7 @@ fun WorkoutSessionsSection(workout: Workout?, profile: Int, navigationActions: N
                       containerColor = DarkBlue2, contentColor = Color.White)) {
                 Text(
                     text = "View all",
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 14.sp))
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
               }
         }
   }
@@ -258,7 +273,7 @@ fun QuickWorkoutButton(iconId: Int, navigationActions: NavigationActions, button
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationActions) {
+fun WorkoutCard(workout: Workout, profile: String, navigationActions: NavigationActions) {
   Card(
       shape = RoundedCornerShape(12.dp),
       modifier =
@@ -277,9 +292,10 @@ fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationAct
                     style = MaterialTheme.typography.titleSmall.copy(fontSize = 17.sp))
                 Text(text = workout.description, style = MaterialTheme.typography.bodyMedium)
                 Image(
-                    painter = painterResource(id = profile),
-                    contentDescription = "Participant",
-                    modifier = Modifier.size(20.dp))
+                    painter = rememberImagePainter(data = profile),
+                    contentDescription = "Profile",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(20.dp).clip(CircleShape))
               }
               Image(
                   painter =
@@ -297,49 +313,36 @@ fun WorkoutCard(workout: Workout, profile: Int, navigationActions: NavigationAct
 }
 
 /**
- * Composable function that displays the button to create a new workout plan.
+ * Composable function that the button to navigate to the achievements
  *
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun NewWorkoutSection(navigationActions: NavigationActions) {
+fun AchievementsSection(navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth()) {
     Text(
-        "New workout plan",
+        stringResource(id = R.string.AchievementsTitle),
         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
         style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp))
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) }
+                .clickable { navigationActions.navigateTo(Screen.ACHIEVEMENTS) }
                 .padding(vertical = 16.dp, horizontal = 12.dp)
-                .height(48.dp)
+                .height(80.dp)
                 .background(LightGrey, RoundedCornerShape(20.dp))
-                .testTag("NewWorkoutButton"),
+                .testTag("AchievementButton"),
         contentAlignment = Alignment.Center) {
-          Icon(
-              imageVector = Icons.Outlined.Add,
-              contentDescription = "New Workout",
-              tint = Color.Black,
-              modifier = Modifier.size(28.dp))
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(id = R.drawable.trophy),
+                contentDescription = "Trophy",
+                modifier = Modifier.size(40.dp))
+            Text(
+                stringResource(id = R.string.View),
+                modifier = Modifier.padding(horizontal = 12.dp),
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 23.sp))
+          }
         }
-  }
-}
-
-/**
- * Composable function that displays the bottom navigation bar.
- *
- * @param navigationActions Actions for navigating between screens.
- */
-@Composable
-fun BottomNavigationBar(navigationActions: NavigationActions) {
-  Column(
-      modifier = Modifier.background(Blue).testTag("BottomNavigationBar"),
-  ) {
-    BottomNavigationMenu(
-        onTabSelect = { route -> navigationActions.navigateTo(route) },
-        tabList = LIST_OF_TOP_LEVEL_DESTINATIONS,
-        selectedItem = navigationActions.currentRoute(),
-    )
   }
 }

@@ -2,11 +2,12 @@ package com.android.sample.ui.settings
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.*
@@ -14,15 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.R
-import com.android.sample.ui.composables.ArrowBack
+import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Blue
 import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -38,99 +41,98 @@ fun SettingsScreen(
   val context = LocalContext.current
 
   Scaffold(
-      topBar = {
-        TopAppBar(
-            title = { Text("Settings", fontSize = 20.sp) },
-            navigationIcon = { ArrowBack(navigationActions) },
-            modifier = Modifier.testTag("settingsScreen") // Add testTag for the screen itself
-            )
-      },
+      modifier = Modifier.testTag("settingsScreen"),
+      topBar = { TopBar(navigationActions, R.string.setting_title) },
       content = { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 24.dp),
+            modifier =
+                Modifier.fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 24.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
               // User data button
-              Button(
+              BlueButton(
                   onClick = { navigationActions.navigateTo(Screen.EDIT_ACCOUNT) },
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .height(60.dp)
-                          .background(Color.LightGray, RoundedCornerShape(10.dp))
-                          .testTag("userDataButton"), // Test tag for User Data button
-                  colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)) {
-                    Text("User data", color = Color.Black)
-                  }
+                  modifier = Modifier.testTag("userDataButton"),
+                  title = R.string.UserData)
 
-              // Preferences button
-              Button(
+              BlueButton(
                   onClick = { navigationActions.navigateTo(Screen.PREFERENCES) },
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .height(60.dp)
-                          .background(Color.LightGray, RoundedCornerShape(10.dp))
-                          .testTag("preferencesButton"), // Test tag for Preferences button
-                  colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)) {
-                    Text("Preferences", color = Color.Black)
-                  }
+                  modifier = Modifier.testTag("preferencesButton"),
+                  title = R.string.Preferences)
 
-              Spacer(modifier = Modifier.height(200.dp)) // Adjust this height as needed
-
-              // Delete account button
-              Button(
-                  onClick = {
-                    userAccountViewModel.deleteAccount(
-                        context,
-                        onSuccess = {
-                          Toast.makeText(
-                                  context, "Account deleted successfully", Toast.LENGTH_SHORT)
-                              .show()
-                          navigationActions.navigateTo("Auth Screen")
+              Column(
+                  modifier = Modifier.fillMaxSize().padding(16.dp),
+                  verticalArrangement = Arrangement.Bottom,
+                  horizontalAlignment = Alignment.CenterHorizontally) {
+                    RedButton(
+                        onClick = {
+                          userAccountViewModel.deleteAccount(
+                              context,
+                              onSuccess = {
+                                Toast.makeText(
+                                        context,
+                                        R.string.SuccesfulDeleteMessage,
+                                        Toast.LENGTH_SHORT)
+                                    .show()
+                                navigationActions.navigateTo("Auth Screen")
+                              },
+                              onFailure = { error ->
+                                Toast.makeText(
+                                        context,
+                                        "Failed to delete account: ${error.message}",
+                                        Toast.LENGTH_LONG)
+                                    .show()
+                              })
                         },
-                        onFailure = { error ->
-                          Toast.makeText(
-                                  context,
-                                  "Failed to delete account: ${error.message}",
-                                  Toast.LENGTH_LONG)
-                              .show()
-                        })
-                  },
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .height(48.dp)
-                          .testTag("deleteAccountButton"), // Test tag for Delete Account button
-                  colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete Account",
-                        tint = Color.White)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Delete account", color = Color.White)
-                  }
+                        image = Icons.Outlined.Delete,
+                        title = R.string.Delete_Account,
+                        modifier = Modifier.fillMaxWidth().testTag("deleteAccountButton"))
 
-              // Logout button
-              // Code taken from :
-              // https://stackoverflow.com/questions/72563673/google-authentication-with-firebase-and-jetpack-compose
-              Button(
-                  onClick = {
-                    signOut(context)
-                    navigationActions.navigateTo("Auth Screen") // Navigate back to Auth screen
-                    Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
-                  },
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .height(48.dp)
-                          .testTag("logoutButton"), // Test tag for Logout button
-                  colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
-                    Icon(
-                        imageVector = Icons.Outlined.ExitToApp,
-                        contentDescription = "Logout",
-                        tint = Color.White)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Logout", color = Color.White)
+                    Spacer(modifier = Modifier.height(16.dp)) // Space between buttons
+
+                    RedButton(
+                        onClick = {
+                          signOut(context)
+                          navigationActions.navigateTo("Auth Screen")
+                          Toast.makeText(context, R.string.LogoutMessage, Toast.LENGTH_SHORT).show()
+                        },
+                        image = Icons.Outlined.ExitToApp,
+                        title = R.string.Logout,
+                        modifier = Modifier.fillMaxWidth().testTag("logoutButton"))
                   }
             }
       })
+}
+
+@Composable
+fun BlueButton(onClick: () -> Unit, modifier: Modifier = Modifier, title: Int) {
+  Button(
+      onClick = onClick,
+      modifier = modifier.fillMaxWidth().height(60.dp).background(Blue, RoundedCornerShape(10.dp)),
+      colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)) {
+        Text(text = stringResource(id = title), color = Color.Black)
+      }
+}
+
+@Composable
+fun RedButton(onClick: () -> Unit, image: ImageVector, title: Int, modifier: Modifier = Modifier) {
+  Button(
+      onClick = onClick,
+      modifier =
+          modifier
+              .fillMaxWidth()
+              .height(48.dp)
+              .border(BorderStroke(2.dp, Color.Red), RoundedCornerShape(8.dp))
+              .background(Color.Red.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp)),
+      colors =
+          ButtonDefaults.buttonColors(
+              contentColor = Color.Red, containerColor = Color.Transparent)) {
+        Icon(imageVector = image, contentDescription = stringResource(title), tint = Color.Red)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = stringResource(title), color = Color.Red)
+      }
 }
 
 // Function to handle sign-out
