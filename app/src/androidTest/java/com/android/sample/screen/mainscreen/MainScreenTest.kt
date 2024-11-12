@@ -16,7 +16,6 @@ import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
-
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 import java.util.Date

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
@@ -40,7 +41,6 @@ import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.SoftGrey
-import com.android.sample.model.userAccount.UserAccountViewModel
 
 /**
  * Main composable function that sets up the main screen layout.

@@ -5,9 +5,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.model.userAccount.UserAccountRepository
-import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
 import com.android.sample.ui.settings.signOut
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.Firebase

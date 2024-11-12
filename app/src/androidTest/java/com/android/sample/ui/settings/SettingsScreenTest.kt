@@ -8,7 +8,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.navigation.NavigationActions
-
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
