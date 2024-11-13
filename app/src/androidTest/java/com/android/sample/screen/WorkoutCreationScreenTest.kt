@@ -77,16 +77,10 @@ class WorkoutCreationScreenTest {
     composeTestRule
         .onNodeWithTag("selectedExerciseType")
         .assertTextEquals("Selected Exercise: ${ExerciseType.SUN_SALUTATION}")
-    composeTestRule.onNodeWithTag("timeBasedButton").assertIsDisplayed().assertHasClickAction()
-    composeTestRule
-        .onNodeWithTag("repetitionBasedButton")
-        .assertIsDisplayed()
-        .assertHasClickAction()
-    composeTestRule.onNodeWithTag("timeBasedButton").performClick()
+
+
     composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("repetitionBasedButton").performClick()
-    composeTestRule.onNodeWithTag("repetitionsTextField").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("addExerciseConfirmButton")
         .assertIsDisplayed()
@@ -127,15 +121,15 @@ class WorkoutCreationScreenTest {
     composeTestRule
         .onNodeWithTag("selectedExerciseType")
         .assertTextEquals("Selected Exercise: ${ExerciseType.PUSH_UPS}")
-    composeTestRule.onNodeWithTag("timeBasedButton").assertIsDisplayed().assertHasClickAction()
-    composeTestRule
-        .onNodeWithTag("repetitionBasedButton")
-        .assertIsDisplayed()
-        .assertHasClickAction()
-    composeTestRule.onNodeWithTag("timeBasedButton").performClick()
-    composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("repetitionBasedButton").performClick()
+
+    //check that PushUps is a repetition based exercise
+
+
+    //composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
+    //composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
+    //composeTestRule.onNodeWithTag("repetitionBasedButton").performClick()
+    composeTestRule.onNodeWithTag("repetitionsTextField").assertIsDisplayed()
+    //check default value
     composeTestRule.onNodeWithTag("repetitionsTextField").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("addExerciseConfirmButton")
