@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -76,7 +77,8 @@ fun WorkoutCreationScreen(
     navigationActions: NavigationActions,
     workoutType: WorkoutType,
     workoutViewModel: WorkoutViewModel<Workout>,
-    isImported: Boolean
+    isImported: Boolean,
+    editing: Boolean = false
 ) {
   val context = LocalContext.current
   val selectedWorkout =
@@ -92,7 +94,7 @@ fun WorkoutCreationScreen(
             ?: (selectedWorkout as? BodyWeightWorkout)?.exercises
             ?: mutableListOf())
   }
-  var showNameDescriptionScreen by remember { mutableStateOf(true) }
+  var showNameDescriptionScreen by remember { mutableStateOf(!editing) } //If you are editing, you don't need to show the name and description screen
   var showExerciseDialog by remember { mutableStateOf(false) }
   var selectedExercise by remember { mutableStateOf<Exercise?>(null) }
   var selectedExerciseType by remember { mutableStateOf<ExerciseType?>(null) }
@@ -104,7 +106,11 @@ fun WorkoutCreationScreen(
         TopAppBar(
             title = { Text(workoutType.toString(), modifier = Modifier.testTag("workoutTopBar")) },
             navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
+              IconButton(onClick = {
+                  if (!showNameDescriptionScreen) {
+                        showNameDescriptionScreen = true
+                  } else {navigationActions.goBack()}
+              }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
               }
             })
@@ -195,20 +201,15 @@ fun WorkoutCreationScreen(
                               }
                         }
                   }
+                    exerciseListItems(exerciseList, onCardClick =  {
+                            exercise ->
+                        showExerciseDialog = true
+                        selectedExercise = exercise
+                        selectedExerciseType = exercise.type
+                        exerciseDetail = exercise.detail
+                    },
+                        onDetailClick = { })
 
-                  items(exerciseList) { exercise ->
-                    ExerciseCard(
-                        exercise,
-                        onCardClick = {
-                          showExerciseDialog = true
-                          selectedExercise = exercise
-                          selectedExerciseType = exercise.type
-                          exerciseDetail = exercise.detail
-                        },
-                        onDetailClick = {
-                          // Open a dialog to edit the exercise details, following the figma design
-                        })
-                  }
 
                   item {
                     // Vertical line connecting the cards
@@ -249,32 +250,46 @@ fun WorkoutCreationScreen(
                         onSaveClick = {
                           when (workoutType) {
                             WorkoutType.YOGA -> {
-                              workoutViewModel.addWorkout(
-                                  YogaWorkout(
-                                      workoutId = workoutViewModel.getNewUid(),
-                                      name = name,
-                                      description = description,
-                                      warmup = warmup,
-                                      date = selectedDateTime!!,
-                                      exercises =
-                                          exerciseList.toMutableList() as MutableList<Exercise>))
+                                val yogaWorkout = YogaWorkout(
+                                    workoutId = workoutViewModel.getNewUid(),
+                                    name = name,
+                                    description = description,
+                                    warmup = warmup,
+                                    date = selectedDateTime!!,
+                                    exercises =
+                                    exerciseList.toMutableList() as MutableList<Exercise>)
+                                if (editing) {
+                                  workoutViewModel.updateWorkout(yogaWorkout)
+                                    workoutViewModel.selectWorkout(yogaWorkout)
+                                } else {
+                                  workoutViewModel.addWorkout(yogaWorkout)
+                                }
                             }
                             WorkoutType.BODY_WEIGHT -> {
-                              workoutViewModel.addWorkout(
-                                  BodyWeightWorkout(
-                                      workoutId = workoutViewModel.getNewUid(),
-                                      name = name,
-                                      description = description,
-                                      warmup = warmup,
-                                      date = selectedDateTime!!,
-                                      exercises =
-                                          exerciseList.toMutableList() as MutableList<Exercise>))
+                                val bodyWeightWorkout = BodyWeightWorkout(
+                                    workoutId = workoutViewModel.getNewUid(),
+                                    name = name,
+                                    description = description,
+                                    warmup = warmup,
+                                    date = selectedDateTime!!,
+                                    exercises =
+                                    exerciseList.toMutableList() as MutableList<Exercise>)
+                                if (editing) {
+                                    workoutViewModel.updateWorkout(bodyWeightWorkout)
+                                    workoutViewModel.selectWorkout(bodyWeightWorkout)
+                                    } else {
+                                    workoutViewModel.addWorkout(bodyWeightWorkout)
+                                }
                             }
                             else -> {}
                           }
-                          Toast.makeText(context, "Workout successfully added", Toast.LENGTH_SHORT)
+                          Toast.makeText(context, "Workout successfully saved", Toast.LENGTH_SHORT)
                               .show()
-                          navigationActions.navigateTo(Screen.MAIN)
+                            if (editing) {
+                              navigationActions.goBack()
+                            } else {
+                              navigationActions.navigateTo(Screen.MAIN)
+                            }
                         },
                         "saveButton")
                   }
@@ -451,4 +466,27 @@ fun WorkoutCreationScreen(
               }
         })
   }
+}
+/**
+ * Adds a list of exercise items to a LazyColumn.
+ * The list of exercises is displayed as cards.
+ *
+ * You need to use this inside a [LazyColumn], it would replace an [items] call.
+ *
+ * @param exerciseList The list of exercises to display.
+ * @param onCardClick Callback function to be invoked when an exercise card is clicked.
+ * @param onDetailClick Callback function to be invoked when the detail button of an exercise card is clicked.
+ */
+fun LazyListScope.exerciseListItems(
+    exerciseList: List<Exercise>,
+    onCardClick: (Exercise) -> Unit,
+    onDetailClick: (Exercise) -> Unit
+) {
+    items(exerciseList) { exercise ->
+        ExerciseCard(
+            exercise,
+            onCardClick = { onCardClick(exercise) },
+            onDetailClick = { onDetailClick(exercise) }
+        )
+    }
 }
