@@ -116,7 +116,6 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
       }
 }
 
-
 fun formatTime(time: Int): String {
   val minutes = time / 60
   val seconds = time % 60
