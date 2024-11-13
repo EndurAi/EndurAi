@@ -123,7 +123,7 @@ fun WarmUpScreenBody(
           )
   // the goalCenterBox contains either the image of the exercise or the timer
   var goalCounterBoxIsDisplayed by remember { mutableStateOf(false) }
-  var countDownTimerIsPaused by remember { mutableStateOf(false) }
+  var countDownTimerIsPaused by remember { mutableStateOf(true) }
   var comparisonVideoIsDisplayed by remember { mutableStateOf(false) }
   // Setting a countdown or not before the time based exercises begins
   var isCountdownTime by remember {
@@ -180,6 +180,7 @@ fun WarmUpScreenBody(
   if (!exerciseIsRepetitionBased) {
     val rawDetail = exerciseState.exercise.detail as ExerciseDetail.TimeBased
     isCountdownTime = true
+    countDownTimerIsPaused = true
     timeLimit = rawDetail.durationInSeconds * rawDetail.sets
     timer = timeLimit
 
@@ -403,7 +404,7 @@ fun WarmUpScreenBody(
                                   else if (userHasRecorded) "Record again" else "Tap to record")
                             }
                       }
-
+                      Spacer(Modifier.size(25.dp))
                       SkipButton(onClick = { nextExercise() })
                       Spacer(Modifier.size(25.dp))
                       Button(

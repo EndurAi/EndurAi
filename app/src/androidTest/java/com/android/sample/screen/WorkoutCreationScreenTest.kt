@@ -78,7 +78,6 @@ class WorkoutCreationScreenTest {
         .onNodeWithTag("selectedExerciseType")
         .assertTextEquals("Selected Exercise: ${ExerciseType.SUN_SALUTATION}")
 
-
     composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
     composeTestRule
@@ -122,14 +121,13 @@ class WorkoutCreationScreenTest {
         .onNodeWithTag("selectedExerciseType")
         .assertTextEquals("Selected Exercise: ${ExerciseType.PUSH_UPS}")
 
-    //check that PushUps is a repetition based exercise
+    // check that PushUps is a repetition based exercise
 
-
-    //composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
-    //composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
-    //composeTestRule.onNodeWithTag("repetitionBasedButton").performClick()
+    // composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
+    // composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
+    // composeTestRule.onNodeWithTag("repetitionBasedButton").performClick()
     composeTestRule.onNodeWithTag("repetitionsTextField").assertIsDisplayed()
-    //check default value
+    // check default value
     composeTestRule.onNodeWithTag("repetitionsTextField").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("addExerciseConfirmButton")
