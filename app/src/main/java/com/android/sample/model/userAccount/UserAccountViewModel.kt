@@ -1,12 +1,10 @@
-package com.android.sample.viewmodel
+package com.android.sample.model.userAccount
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.model.userAccount.UserAccountRepository
-import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
 import com.android.sample.ui.settings.signOut
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.Firebase
@@ -82,6 +80,93 @@ open class UserAccountViewModel(
           }
         }
         .addOnFailureListener { exception -> onFailure(exception) }
+  }
+
+  fun removeFriend(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.removeFriend(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to remove friend", exception)
+          })
+    }
+  }
+
+  fun sendFriendRequest(toUserId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.sendFriendRequest(
+          fromUser = currentUser,
+          toUserId = toUserId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to send friend request", exception)
+          })
+    }
+  }
+
+  fun acceptFriendRequest(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.acceptFriendRequest(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to accept friend request", exception)
+          })
+    }
+  }
+
+  fun rejectFriendRequest(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.rejectFriendRequest(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to reject friend request", exception)
+          })
+    }
+  }
+
+  fun getFriends(): List<UserAccount> {
+    val friends = mutableListOf<UserAccount>()
+    userAccount.value?.friends?.forEach { friendId ->
+      repository.getUserAccount(
+          friendId,
+          onSuccess = { friends.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of friends", exception)
+          })
+    }
+    return friends
+  }
+
+  fun getSentRequests(): List<UserAccount> {
+    val sentRequests = mutableListOf<UserAccount>()
+    userAccount.value?.sentRequests?.forEach { requestId ->
+      repository.getUserAccount(
+          requestId,
+          onSuccess = { sentRequests.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+          })
+    }
+    return sentRequests
+  }
+
+  fun getReceivedRequests(): List<UserAccount> {
+    val receivedRequests = mutableListOf<UserAccount>()
+    userAccount.value?.receivedRequests?.forEach { requestId ->
+      repository.getUserAccount(
+          requestId,
+          onSuccess = { receivedRequests.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+          })
+    }
+    return receivedRequests
   }
 
   fun deleteAccount(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {

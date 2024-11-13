@@ -20,6 +20,7 @@ import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WarmUp
@@ -51,7 +52,6 @@ import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.android.sample.ui.workout.WorkoutScreen
 import com.android.sample.ui.workout.WorkoutSelectionScreen
-import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
