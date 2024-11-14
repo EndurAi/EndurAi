@@ -320,7 +320,8 @@ class WorkoutScreenTest {
     bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type?.let {
       composeTestRule.onNodeWithTag("ExerciseDescription").assertTextEquals(it.getInstruction())
     }
-
+    composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("StartButton").performClick()
     // Check that the presentation specific components are hidden
     // startButton is not displayed
     composeTestRule.onNodeWithTag("StartButton").assertIsNotDisplayed()
