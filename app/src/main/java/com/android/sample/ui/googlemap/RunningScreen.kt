@@ -17,61 +17,44 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Polyline
 
 @Composable
-fun RunningScreen(
-    onStartClick: () -> Unit,
-    navigationActions: NavigationActions
-) {
+fun RunningScreen(onStartClick: () -> Unit, navigationActions: NavigationActions) {
 
-    val currentLocation = LocationService.userLocation.collectAsState()
-    val pathPoints = LocationService.pathPoints.collectAsState(initial = emptyList())
-    val cameraPositionState = LocationService.camera.collectAsState()
+  val currentLocation = LocationService.userLocation.collectAsState()
+  val pathPoints = LocationService.pathPoints.collectAsState(initial = emptyList())
+  val cameraPositionState = LocationService.camera.collectAsState()
 
-    Scaffold(topBar = { TopBar(navigationActions, R.string.runningTitle) }) {
-            innerPadding ->
+  Scaffold(topBar = { TopBar(navigationActions, R.string.runningTitle) }) { innerPadding ->
+    Column(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(
+                    innerPadding) // Utilisez `innerPadding` pour éviter que la carte soit collée à
+                                  // la TopBar
+                .padding(horizontal = 16.dp)) {
+          Spacer(Modifier.height(32.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding) // Utilisez `innerPadding` pour éviter que la carte soit collée à la TopBar
-                .padding(horizontal = 16.dp)
-        ) {
-
-            Spacer(Modifier.height(32.dp))
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                GoogleMap(
-                    modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = cameraPositionState.value
-                ) {
-                    // Ajouter Polyline pour le tracé
-                    if (pathPoints.value.isNotEmpty()) {
-                        Polyline(
-                            points = pathPoints.value,
-                            color = Color.Blue, // Couleur du tracé
-                            width = 16f // Épaisseur du tracé
+          Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState.value) {
+                  // Ajouter Polyline pour le tracé
+                  if (pathPoints.value.isNotEmpty()) {
+                    Polyline(
+                        points = pathPoints.value,
+                        color = Color.Blue, // Couleur du tracé
+                        width = 16f // Épaisseur du tracé
                         )
-                    }
+                  }
                 }
-            }
+          }
 
-            Spacer(modifier = Modifier.weight(0.5f))
+          Spacer(modifier = Modifier.weight(0.5f))
 
+          Button(onClick = onStartClick, modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+            Text(text = "Start")
+          }
 
-
-            Button(
-                onClick = onStartClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) {
-                Text(text = "Start")
-            }
-
-            Spacer(Modifier.height(96.dp))
+          Spacer(Modifier.height(96.dp))
         }
-    }
+  }
 }

@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.sample.model.location.LocationService
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.video.VideoViewModel
@@ -33,7 +34,6 @@ import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
-import com.android.sample.model.location.LocationService
 import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
@@ -57,17 +57,14 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     ActivityCompat.requestPermissions(
-      this,
-      arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.POST_NOTIFICATIONS
-      ),
-      0
-    )
+        this,
+        arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.POST_NOTIFICATIONS),
+        0)
 
     setContent {
-
       val navController = rememberNavController()
       val navigationActions = NavigationActions(navController)
       SampleAppTheme {
@@ -76,12 +73,14 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
               val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
-              RunningScreen(onStartClick = {
-                Intent(applicationContext, LocationService::class.java).apply {
-                  action = LocationService.ACTION_START
-                  startService(this)
-                }
-              },navigationActions)
+              RunningScreen(
+                  onStartClick = {
+                    Intent(applicationContext, LocationService::class.java).apply {
+                      action = LocationService.ACTION_START
+                      startService(this)
+                    }
+                  },
+                  navigationActions)
             }
       }
     }
@@ -200,9 +199,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Running Screen
     navigation(startDestination = Screen.RUNNING_SCREEN, route = Route.RUNNING_SCREEN) {
-      composable(Screen.RUNNING_SCREEN) {
-        RunningScreen(onStartClick = {}, navigationActions)
-      }
+      composable(Screen.RUNNING_SCREEN) { RunningScreen(onStartClick = {}, navigationActions) }
     }
 
     // Body Weight Workout
