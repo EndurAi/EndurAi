@@ -50,6 +50,7 @@ import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
+import com.android.sample.ui.workout.WorkoutOverviewScreen
 import com.android.sample.ui.workout.WorkoutScreen
 import com.android.sample.ui.workout.WorkoutSelectionScreen
 import com.google.firebase.Firebase
@@ -223,6 +224,48 @@ fun MainApp(startDestination: String = Route.AUTH) {
     navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
       composable(Screen.YOGA_CREATION) {
         WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+      }
+    }
+
+    // Body Weight Overview Screen
+    navigation(startDestination = Screen.BODY_WEIGHT_OVERVIEW, route = Route.BODY_WEIGHT_OVERVIEW) {
+      composable(Screen.BODY_WEIGHT_OVERVIEW) {
+        WorkoutOverviewScreen(
+            navigationActions = navigationActions,
+            bodyweightViewModel = bodyweightWorkoutViewModel,
+            yogaViewModel = yogaWorkoutViewModel,
+            workoutTye = WorkoutType.BODY_WEIGHT)
+      }
+    }
+
+    // Body Weight Edit Screen
+    navigation(startDestination = Screen.BODY_WEIGHT_EDIT, route = Route.BODY_WEIGHT_EDIT) {
+      composable(Screen.BODY_WEIGHT_EDIT) {
+        WorkoutCreationScreen(
+            navigationActions,
+            WorkoutType.BODY_WEIGHT,
+            bodyweightWorkoutViewModel,
+            true,
+            editing = true)
+      }
+    }
+
+    // Yoga Edit Screen
+    navigation(startDestination = Screen.YOGA_EDIT, route = Route.YOGA_EDIT) {
+      composable(Screen.YOGA_EDIT) {
+        WorkoutCreationScreen(
+            navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true, editing = true)
+      }
+    }
+
+    // Yoga Overview Screen
+    navigation(startDestination = Screen.YOGA_OVERVIEW, route = Route.YOGA_OVERVIEW) {
+      composable(Screen.YOGA_OVERVIEW) {
+        WorkoutOverviewScreen(
+            navigationActions = navigationActions,
+            bodyweightViewModel = bodyweightWorkoutViewModel,
+            yogaViewModel = yogaWorkoutViewModel,
+            workoutTye = WorkoutType.YOGA)
       }
     }
 

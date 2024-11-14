@@ -33,6 +33,10 @@ object Route {
   const val CHOOSE_BODYWEIGHT = "Choose Bodyweight"
   const val YOGA_IMPORT = "YogaImport"
   const val CHOOSE_YOGA = "Choose Yoga"
+  const val BODY_WEIGHT_OVERVIEW = "BodyWeightOverview"
+  const val YOGA_OVERVIEW = "YogaOverview"
+  const val BODY_WEIGHT_EDIT = "BodyWeightEdit"
+  const val YOGA_EDIT = "YogaEdit"
 }
 
 object Screen {
@@ -64,6 +68,10 @@ object Screen {
   const val CHOOSE_BODYWEIGHT = "Choose Bodyweight Screen"
   const val CHOOSE_YOGA = "Choose Yoga Screen"
   const val BODY_WEIGHT_IMPORT = "BodyWeight import screen"
+  const val BODY_WEIGHT_OVERVIEW = "BodyWeight overview screen"
+  const val YOGA_OVERVIEW = "Yoga overview screen"
+  const val BODY_WEIGHT_EDIT = "BodyWeight edit screen"
+  const val YOGA_EDIT = "Yoga edit screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
