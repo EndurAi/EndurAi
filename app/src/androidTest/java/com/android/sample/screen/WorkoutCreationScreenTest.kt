@@ -67,8 +67,7 @@ class WorkoutCreationScreenTest {
       val workout = it.getArgument<BodyWeightWorkout>(0)
       bodyWeightWorkouts.add(2, workout)
     }
-    `when`(mockBodyWeightWorkoutRepository.updateDocument(any(), any(), any())).then {
-    }
+    `when`(mockBodyWeightWorkoutRepository.updateDocument(any(), any(), any())).then {}
 
     `when`(mockYogaWorkoutRepository.getNewUid()).thenReturn("mocked-yoga-uid")
     `when`(mockBodyWeightWorkoutRepository.getNewUid()).thenReturn("mocked-bodyweight-uid")
