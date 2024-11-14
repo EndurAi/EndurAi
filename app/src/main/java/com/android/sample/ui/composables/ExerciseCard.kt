@@ -92,7 +92,7 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
                       )
                   Spacer(modifier = Modifier.width(4.dp))
                   Text(
-                      text = "${detail.durationInSeconds / 60}′ X ${detail.sets}",
+                      text = "${formatTime(detail.durationInSeconds)} X ${detail.sets}",
                       fontSize = 14.sp,
                       color = Black // Black text
                       )
@@ -114,4 +114,20 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
               }
             }
       }
+}
+
+fun formatTime(time: Int): String {
+  val minutes = time / 60
+  val seconds = time % 60
+  val secondSimbol = "s"
+  val minuteSimbol = "m"
+  return if (minutes == 0 && seconds > 0) {
+    "${seconds}${secondSimbol}"
+  } else if (seconds == 0 && minutes > 0) {
+    "${minutes}${minuteSimbol}"
+  } else if (minutes == 0 && seconds == 0) {
+    "0${minuteSimbol}0${secondSimbol}"
+  } else {
+    "${minutes}${minuteSimbol}${seconds}${secondSimbol}"
+  }
 }
