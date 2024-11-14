@@ -272,7 +272,98 @@ class WorkoutScreenTest {
     // ex3 (last one)
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performClick()
+    // Skip the summary
+    composeTestRule.onNodeWithTag("FinishButton").performClick()
 
     verify(navigationActions).navigateTo(Screen.MAIN)
+  }
+
+  @Test
+  fun loadingCircleIsDisplayedDuringFetching() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel2)
+    }
+
+    composeTestRule.onNodeWithTag("LoadingIndicator").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("videoPlayer").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun startingWorkoutCallsLoadVideos() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel)
+    }
+    // Check that on launching the composable, the videoViewModel tries to fetch the videos on
+    // firestore
+    verify(mockVideoRepository, atLeastOnce()).getVideos(any(), any())
+  }
+
+  @Test
+  fun summaryScreenIsWellDisplayed() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel)
+    }
+    // ex1
+    composeTestRule.onNodeWithTag("StartButton").performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performClick()
+    // ex2
+    composeTestRule.onNodeWithTag("StartButton").performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performClick()
+    // ex3 (last one is skipped)
+    composeTestRule.onNodeWithTag("SkipButton").performClick()
+
+    // Check that the summaryscreen is well displayed
+    composeTestRule.onNodeWithTag("WorkoutSummaryScreen").assertIsDisplayed()
+
+    // exercises should appear
+    // ex1
+    composeTestRule.onNodeWithTag("ExerciseCardID1").assertIsDisplayed()
+    // ex2
+    composeTestRule.onNodeWithTag("ExerciseCardID2").assertIsDisplayed()
+    // ex3
+    composeTestRule.onNodeWithTag("ExerciseCardID3").assertIsDisplayed()
+
+    // Check their text in the information box
+    // ex1
+    composeTestRule
+        .onNodeWithTag("InnerTextExerciseCardID1", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .assertTextEquals("X 3")
+    // ex2
+    composeTestRule
+        .onNodeWithTag("InnerTextExerciseCardID2", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .assertTextEquals("30s X 1")
+    // ex3
+    composeTestRule
+        .onNodeWithTag("InnerTextExerciseCardID3", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .assertTextEquals("Skipped")
+
+    // Click on a skipped exercise show the details
+
+    composeTestRule.onNodeWithTag("InnerTextExerciseCardID3", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag("InnerTextExerciseCardID3", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .assertTextEquals("X 3")
   }
 }
