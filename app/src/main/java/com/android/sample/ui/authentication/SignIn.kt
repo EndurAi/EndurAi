@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,7 +59,7 @@ fun SignInScreen(
 ) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
-  var showLoadingDialog by remember { mutableStateOf(false) }
+    val isLoading by userAccountViewModel.isLoading.collectAsState() // Directly observe isLoading from ViewModel
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   val userAccount by userAccountViewModel.userAccount.collectAsState(initial = null)
@@ -66,12 +67,9 @@ fun SignInScreen(
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
-            showLoadingDialog = true // Show loading screen
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
             result.user?.uid?.let { userId ->
-              checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope) {
-                showLoadingDialog = false // Hide loading screen
-              }
+              checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope)
             }
             Toast.makeText(context, "Login successful!", Toast.LENGTH_LONG).show()
           },
@@ -130,18 +128,15 @@ fun SignInScreen(
   } else {
     // When user is signed in, check if they have an account
     LaunchedEffect(userAccount) {
-      showLoadingDialog = true // Show loading screen
       Firebase.auth.currentUser?.uid?.let { userId ->
-        checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope) {
-          showLoadingDialog = false // Hide loading screen
-        }
+        checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope)
       }
     }
   }
 
-  // Show Loading Dialog if `showLoadingDialog` is true
-  if (showLoadingDialog) {
-    LoadingDialog(onDismissRequest = { showLoadingDialog = false })
+  // Show Loading Dialog if `isLoading` is true
+  if (isLoading) {
+    LoadingDialog()
   }
 }
 
@@ -149,26 +144,26 @@ fun checkUserAccountAndNavigate(
     userId: String,
     userAccountViewModel: UserAccountViewModel,
     navigationActions: NavigationActions,
-    scope: CoroutineScope,
-    onComplete: () -> Unit
+    scope: CoroutineScope
 ) {
   userAccountViewModel.getUserAccount(userId)
 
   scope.launch {
-    delay(600) // Wait for data to be fetched
-
-    // Observe changes in userAccount to know if profile exists
-    userAccountViewModel.userAccount.collect { account ->
-      if (account != null) {
-        // If account exists, navigate to main screen
-        navigationActions.navigateTo(TopLevelDestinations.MAIN)
-      } else {
-        // If no account exists, navigate to AddAccount screen
-        navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+      userAccountViewModel.isLoading.collect{ isLoading ->
+        if (!isLoading) {
+            // Observe changes in userAccount to know if profile exists
+            userAccountViewModel.userAccount.collect { account ->
+                if (account != null) {
+                    // If account exists, navigate to main screen
+                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+                } else {
+                    // If no account exists, navigate to AddAccount screen
+                    navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+                }
+            return@collect
+            }
+        }
       }
-      delay(600)
-      onComplete()
-    }
   }
 }
 

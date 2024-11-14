@@ -14,13 +14,16 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
 @Composable
-fun LoadingDialog(onDismissRequest: () -> Unit) {
+fun LoadingDialog() {
   Dialog(
-      onDismissRequest = onDismissRequest,
+      onDismissRequest = {},
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize().background(Color.DarkGray).testTag("loadingDialog")) {
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.DarkGray)
+                .testTag("loadingDialog")) {
               CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
       }

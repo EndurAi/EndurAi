@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.android.sample.ui.settings.signOut
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.Firebase
@@ -16,10 +17,14 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 open class UserAccountViewModel(
     private val repository: UserAccountRepository,
@@ -35,23 +40,46 @@ open class UserAccountViewModel(
   val isLoading: StateFlow<Boolean>
     get() = _isLoading.asStateFlow()
 
+    // Minimum display time for loading dialog in milliseconds
+    private val minimumLoadingTime = 1500L // 1,5 seconds but could be changed
+
   init {
     repository.init { Firebase.auth.currentUser?.let { user -> getUserAccount(user.uid) } }
   }
 
-  fun getUserAccount(userId: String) {
-    _isLoading.value = true
-    repository.getUserAccount(
-        userId = userId,
-        onSuccess = {
-          _userAccount.value = it
-          _isLoading.value = false
-        },
-        onFailure = {
-          _userAccount.value = null
-          _isLoading.value = false
-        })
-  }
+    fun getUserAccount(userId: String) {
+        _isLoading.value = true
+
+        viewModelScope.launch {
+            // Start both the delay and the repository operation concurrently
+            val delayJob = async {
+                delay(minimumLoadingTime)
+                true // Return true to indicate the delay has completed
+            }
+
+            val repositoryJob = async {
+                var result = false
+                repository.getUserAccount(
+                    userId = userId,
+                    onSuccess = {
+                        _userAccount.value = it
+                        result = true
+                    },
+                    onFailure = {
+                        _userAccount.value = null
+                        result = true
+                    }
+                )
+                result // Return true after repository fetch completes
+            }
+
+            // Wait for both delay and repository operation to complete
+            awaitAll(delayJob, repositoryJob)
+
+            // After both are done, set isLoading to false
+            _isLoading.value = false
+        }
+    }
 
   fun createUserAccount(userAccount: UserAccount) {
     repository.createUserAccount(
