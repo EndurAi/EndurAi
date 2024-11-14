@@ -130,7 +130,7 @@ class ImportWorkoutTest {
   }
 
   @Test
-  fun editExercise() {
+  fun testEditExercise() {
     bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value[0])
     composeTestRule.setContent {
       WorkoutCreationScreen(
