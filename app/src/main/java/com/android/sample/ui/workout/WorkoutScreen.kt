@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +63,8 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
 import com.android.sample.model.camera.CameraViewModel
+import com.android.sample.model.video.Video
+import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -89,7 +92,8 @@ fun WarmUpScreenBody(
     exerciseStateList: List<ExerciseState>?,
     workoutName: String,
     navigationActions: NavigationActions,
-    cameraViewModel: CameraViewModel
+    cameraViewModel: CameraViewModel,
+    videoViewModel: VideoViewModel
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
@@ -113,6 +117,9 @@ fun WarmUpScreenBody(
   var isRecordingInCamera by remember { mutableStateOf(cameraViewModel.recording.value != null) }
   var cameraRecordAsked by remember { mutableStateOf(false) }
   var userHasRecorded by remember { mutableStateOf(false) }
+  var currentExerciseUrl by remember { mutableStateOf("") }
+  val videoList by videoViewModel.videos.collectAsState(initial = emptyList())
+  LaunchedEffect(Unit) { videoViewModel.loadVideos() }
 
   // current angle of the camera logo
   val angle by
@@ -263,6 +270,7 @@ fun WarmUpScreenBody(
 
               // Box for the video player
               if (videoBoxIsDisplayed) {
+                Toast.makeText(context,videoList.size.toString(),Toast.LENGTH_SHORT).show()
                 Box(
                     modifier =
                         Modifier.size(width = 350.dp, height = 200.dp).testTag("VideoPlayer")) {
@@ -471,7 +479,8 @@ fun WorkoutScreen(
     bodyweightViewModel: WorkoutViewModel<BodyWeightWorkout>,
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
     workoutType: WorkoutType,
-    cameraViewModel: CameraViewModel = CameraViewModel(LocalContext.current)
+    cameraViewModel: CameraViewModel = CameraViewModel(LocalContext.current),
+    videoViewModel: VideoViewModel
 ) {
   // Get the selected workout based on the workout type
   val selectedWorkout =
@@ -497,6 +506,7 @@ fun WorkoutScreen(
         exerciseStateList,
         workoutName = it,
         navigationActions = navigationActions,
-        cameraViewModel = cameraViewModel)
+        cameraViewModel = cameraViewModel,
+      videoViewModel = videoViewModel)
   }
 }
