@@ -63,7 +63,6 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
 import com.android.sample.model.camera.CameraViewModel
-import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
@@ -265,32 +264,36 @@ fun WarmUpScreenBody(
                   }
 
               // URL for the video demonstration (this should be dynamic)
-             // val URL =
-              //    "https://firebasestorage.googleapis.com/v0/b/endurai-92811.appspot.com/o/template_videos%2FPush%20Up.mp4?alt=media&token=2677215b-59a4-47c8-854b-a3326532e8af"
+              // val URL =
+              //
+              // "https://firebasestorage.googleapis.com/v0/b/endurai-92811.appspot.com/o/template_videos%2FPush%20Up.mp4?alt=media&token=2677215b-59a4-47c8-854b-a3326532e8af"
               // Box for the video player
               if (videoBoxIsDisplayed) {
-                Toast.makeText(context,videoList.size.toString(),Toast.LENGTH_SHORT).show()
-                URL = if (videoList.isNotEmpty()) videoList.first { it.title == exerciseState.exercise.type.toString() }.url else ""
-                Toast.makeText(context,URL,Toast.LENGTH_SHORT).show()
-if (URL.isNotEmpty()) {
-  Box(
-    modifier = Modifier.size(width = 350.dp, height = 200.dp).testTag("VideoPlayer")
-  ) {
-    VideoPlayer(context = LocalContext.current, url = URL)
-    Spacer(Modifier.height(5.dp))
-  }
-} else {
-  //Show a progress circle if the video list is not yet fetched
-  Box(
-    modifier = Modifier.size(width = 350.dp, height = 200.dp).testTag("LoadingIndicator"),
-    contentAlignment = Alignment.Center
-  ) {
-    androidx.compose.material3.CircularProgressIndicator(
-      modifier = Modifier.size(50.dp).padding(16.dp),
-      color = MaterialTheme.colorScheme.primary
-    )
-  }
-}
+                Toast.makeText(context, videoList.size.toString(), Toast.LENGTH_SHORT).show()
+                URL =
+                    if (videoList.isNotEmpty())
+                        videoList.first { it.title == exerciseState.exercise.type.toString() }.url
+                    else ""
+                Toast.makeText(context, URL, Toast.LENGTH_SHORT).show()
+                if (URL.isNotEmpty()) {
+                  Box(
+                      modifier =
+                          Modifier.size(width = 350.dp, height = 200.dp).testTag("VideoPlayer")) {
+                        VideoPlayer(context = LocalContext.current, url = URL)
+                        Spacer(Modifier.height(5.dp))
+                      }
+                } else {
+                  // Show a progress circle if the video list is not yet fetched
+                  Box(
+                      modifier =
+                          Modifier.size(width = 350.dp, height = 200.dp)
+                              .testTag("LoadingIndicator"),
+                      contentAlignment = Alignment.Center) {
+                        androidx.compose.material3.CircularProgressIndicator(
+                            modifier = Modifier.size(50.dp).padding(16.dp),
+                            color = MaterialTheme.colorScheme.primary)
+                      }
+                }
               }
 
               // Column for displaying exercise goals (repetitions or timer)
@@ -521,6 +524,6 @@ fun WorkoutScreen(
         workoutName = it,
         navigationActions = navigationActions,
         cameraViewModel = cameraViewModel,
-      videoViewModel = videoViewModel)
+        videoViewModel = videoViewModel)
   }
 }
