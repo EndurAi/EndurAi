@@ -5,19 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -39,8 +33,8 @@ import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
-import com.android.sample.ui.googlemap.LocationService
-import com.android.sample.ui.googlemap.SimpleMap
+import com.android.sample.model.location.LocationService
+import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -56,7 +50,6 @@ import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.android.sample.ui.workout.WorkoutScreen
 import com.android.sample.viewmodel.UserAccountViewModel
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -74,32 +67,21 @@ class MainActivity : ComponentActivity() {
     )
 
     setContent {
+
+      val navController = rememberNavController()
+      val navigationActions = NavigationActions(navController)
       SampleAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
               val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
-              Column {
-                Button(onClick = {
-                  Intent(applicationContext,LocationService::class.java).apply {
-                    action = LocationService.ACTION_START
-                    startService(this)
-                  }
-
-                }) { Text(text = "Start") }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(onClick = {
-
-                  Intent(applicationContext,LocationService::class.java).apply {
-                    action = LocationService.ACTION_STOP
-                    startService(this)
-                  }
-
-                }) { Text(text = "Stop") }
-              }
+              RunningScreen(onStartClick = {
+                Intent(applicationContext, LocationService::class.java).apply {
+                  action = LocationService.ACTION_START
+                  startService(this)
+                }
+              },navigationActions)
             }
       }
     }
@@ -213,6 +195,13 @@ fun MainApp(startDestination: String = Route.AUTH) {
     navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
       composable(Screen.YOGA_CREATION) {
         WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+      }
+    }
+
+    // Running Screen
+    navigation(startDestination = Screen.RUNNING_SCREEN, route = Route.RUNNING_SCREEN) {
+      composable(Screen.RUNNING_SCREEN) {
+        RunningScreen(onStartClick = {}, navigationActions)
       }
     }
 
