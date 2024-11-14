@@ -2,11 +2,13 @@ package com.android.sample.screen
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.ExerciseType
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutType
@@ -122,11 +124,6 @@ class WorkoutCreationScreenTest {
         .assertTextEquals("Selected Exercise: ${ExerciseType.PUSH_UPS}")
 
     // check that PushUps is a repetition based exercise
-
-    // composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
-    // composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
-    // composeTestRule.onNodeWithTag("repetitionBasedButton").performClick()
-    composeTestRule.onNodeWithTag("repetitionsTextField").assertIsDisplayed()
     // check default value
     composeTestRule.onNodeWithTag("repetitionsTextField").assertIsDisplayed()
     composeTestRule
@@ -136,5 +133,119 @@ class WorkoutCreationScreenTest {
     composeTestRule.onNodeWithTag("addExerciseConfirmButton").performClick()
     composeTestRule.onNodeWithTag("exerciseCard").assertIsDisplayed()
     composeTestRule.onNodeWithTag("saveButton").assertIsDisplayed().assertHasClickAction()
+  }
+
+  @Test
+  fun createDefaultBodyWeightExerciseWhenNoChangesRequested() {
+    composeTestRule.setContent {
+      WorkoutCreationScreen(
+          navigationActions = mockNavHostController,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          workoutViewModel = mockBodyWeightWorkoutViewModel,
+          isImported = false)
+    }
+
+    composeTestRule.onNodeWithTag("nextButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("nextButton").assertTextEquals("Next")
+    composeTestRule.onNodeWithTag("nextButton").performClick()
+
+    composeTestRule.onNodeWithTag("addExerciseButton").performClick()
+
+    ExerciseType.entries
+        .filter { it.workoutType == WorkoutType.BODY_WEIGHT }
+        .forEach { exerciseType ->
+          composeTestRule.onNodeWithTag("selectExerciseTypeButton").performClick()
+          // Select the exercise
+          composeTestRule.onNodeWithTag("exerciseType${exerciseType.name}").performClick()
+          composeTestRule
+              .onNodeWithTag("selectedExerciseType")
+              .assertTextEquals("Selected Exercise: ${exerciseType.toString()}")
+
+          // check that default value are displayed
+          when (exerciseType.detail) {
+            is ExerciseDetail.RepetitionBased -> {
+              composeTestRule
+                  .onNodeWithTag("repetitionsTextField")
+                  .assertIsDisplayed()
+                  .assertTextContains(
+                      (exerciseType.detail as ExerciseDetail.RepetitionBased)
+                          .repetitions
+                          .toString()) // default value of the repetition
+            }
+            is ExerciseDetail.TimeBased -> {
+              composeTestRule
+                  .onNodeWithTag("durationTextField")
+                  .assertIsDisplayed()
+                  .assertTextContains(
+                      (exerciseType.detail as ExerciseDetail.TimeBased)
+                          .durationInSeconds
+                          .toString()) // default value of the duration in second
+              composeTestRule
+                  .onNodeWithTag("setsTextField")
+                  .assertIsDisplayed()
+                  .assertTextContains(
+                      (exerciseType.detail as ExerciseDetail.TimeBased)
+                          .sets
+                          .toString()) // default value of the duration in second
+            }
+          }
+        }
+  }
+
+  @Test
+  fun createDefaultYogaExerciseWhenNoChangesRequested() {
+    composeTestRule.setContent {
+      WorkoutCreationScreen(
+          navigationActions = mockNavHostController,
+          workoutType = WorkoutType.YOGA,
+          workoutViewModel = mockYogaWorkoutViewModel,
+          isImported = false)
+    }
+
+    composeTestRule.onNodeWithTag("nextButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("nextButton").assertTextEquals("Next")
+    composeTestRule.onNodeWithTag("nextButton").performClick()
+
+    composeTestRule.onNodeWithTag("addExerciseButton").performClick()
+
+    ExerciseType.entries
+        .filter { it.workoutType == WorkoutType.YOGA }
+        .forEach { exerciseType ->
+          composeTestRule.onNodeWithTag("selectExerciseTypeButton").performClick()
+          // Select the  exercise
+          composeTestRule.onNodeWithTag("exerciseType${exerciseType.name}").performClick()
+          composeTestRule
+              .onNodeWithTag("selectedExerciseType")
+              .assertTextEquals("Selected Exercise: ${exerciseType.toString()}")
+
+          // check that default value are displayed
+          when (exerciseType.detail) {
+            is ExerciseDetail.RepetitionBased -> {
+              composeTestRule
+                  .onNodeWithTag("repetitionsTextField")
+                  .assertIsDisplayed()
+                  .assertTextContains(
+                      (exerciseType.detail as ExerciseDetail.RepetitionBased)
+                          .repetitions
+                          .toString()) // default value of the repetition
+            }
+            is ExerciseDetail.TimeBased -> {
+              composeTestRule
+                  .onNodeWithTag("durationTextField")
+                  .assertIsDisplayed()
+                  .assertTextContains(
+                      (exerciseType.detail as ExerciseDetail.TimeBased)
+                          .durationInSeconds
+                          .toString()) // default value of the duration in second
+              composeTestRule
+                  .onNodeWithTag("setsTextField")
+                  .assertIsDisplayed()
+                  .assertTextContains(
+                      (exerciseType.detail as ExerciseDetail.TimeBased)
+                          .sets
+                          .toString()) // default value of the duration in second
+            }
+          }
+        }
   }
 }

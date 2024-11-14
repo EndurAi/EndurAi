@@ -313,6 +313,7 @@ fun WorkoutCreationScreen(
                             DropdownMenuItem(
                                 onClick = {
                                   selectedExerciseType = type
+                                  exerciseDetail = type.detail
                                   isDropdownExpanded = false
                                 },
                                 modifier = Modifier.testTag("exerciseType${type.name}"),
@@ -326,6 +327,7 @@ fun WorkoutCreationScreen(
                             DropdownMenuItem(
                                 onClick = {
                                   selectedExerciseType = type
+                                  exerciseDetail = type.detail
                                   isDropdownExpanded = false
                                 },
                                 modifier = Modifier.testTag("exerciseType${type.name}"),
@@ -345,18 +347,18 @@ fun WorkoutCreationScreen(
 
               when (seletedExerciseTypeDetail) {
                 is ExerciseDetail.TimeBased -> {
-                  durationInSeconds_input =
-                      (exerciseDetail as? ExerciseDetail.TimeBased)?.durationInSeconds.toString()
-                  sets_input = (exerciseDetail as? ExerciseDetail.TimeBased)?.sets.toString()
-
-                  exerciseDetail =
-                      (exerciseDetail as? ExerciseDetail.TimeBased)
-                          ?: seletedExerciseTypeDetail.copy()
                   // Duration
                   OutlinedTextField(
-                      value = if (durationInSeconds_input != "0") durationInSeconds_input else "",
+                      value =
+                          if ((exerciseDetail as ExerciseDetail.TimeBased)
+                              .durationInSeconds
+                              .toString() == "0")
+                              ""
+                          else
+                              (exerciseDetail as ExerciseDetail.TimeBased)
+                                  .durationInSeconds
+                                  .toString(),
                       onValueChange = {
-                        durationInSeconds_input = it
                         val newValue = it.toIntOrNull()
                         exerciseDetail =
                             (exerciseDetail as ExerciseDetail.TimeBased).copy(
@@ -366,9 +368,11 @@ fun WorkoutCreationScreen(
                       modifier = Modifier.testTag("durationTextField"))
                   // nb of sets
                   OutlinedTextField(
-                      value = if (sets_input != "0") sets_input else "",
+                      value =
+                          if ((exerciseDetail as ExerciseDetail.TimeBased).sets.toString() == "0")
+                              ""
+                          else (exerciseDetail as ExerciseDetail.TimeBased).sets.toString(),
                       onValueChange = {
-                        durationInSeconds_input = it
                         val newValue = it.toIntOrNull()
                         exerciseDetail =
                             (exerciseDetail as ExerciseDetail.TimeBased).copy(sets = newValue ?: 0)
@@ -377,20 +381,19 @@ fun WorkoutCreationScreen(
                       modifier = Modifier.testTag("setsTextField"))
                 }
                 is ExerciseDetail.RepetitionBased -> {
-                  repetitions_input =
-                      (exerciseDetail as? ExerciseDetail.RepetitionBased)?.repetitions.toString()
-                  exerciseDetail =
-                      (exerciseDetail as? ExerciseDetail.RepetitionBased)
-                          ?: seletedExerciseTypeDetail.copy()
-
                   OutlinedTextField(
-                      value = if (repetitions_input != "0") repetitions_input else "",
+                      value =
+                          if ((exerciseDetail as ExerciseDetail.RepetitionBased)
+                              .repetitions
+                              .toString() == "0")
+                              ""
+                          else
+                              (exerciseDetail as ExerciseDetail.RepetitionBased)
+                                  .repetitions
+                                  .toString(),
                       onValueChange = {
-                        durationInSeconds_input = it
                         val newValue = it.toIntOrNull()
-                        exerciseDetail =
-                            (exerciseDetail as ExerciseDetail.RepetitionBased).copy(
-                                repetitions = newValue ?: 0)
+                        exerciseDetail = ExerciseDetail.RepetitionBased(repetitions = newValue ?: 0)
                       },
                       label = { Text("Repetitions") },
                       modifier = Modifier.testTag("repetitionsTextField"))
