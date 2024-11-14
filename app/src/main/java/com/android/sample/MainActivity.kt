@@ -227,53 +227,46 @@ fun MainApp(startDestination: String = Route.AUTH) {
       }
     }
 
-      // Body Weight Overview Screen
+    // Body Weight Overview Screen
     navigation(startDestination = Screen.BODY_WEIGHT_OVERVIEW, route = Route.BODY_WEIGHT_OVERVIEW) {
-        composable(Screen.BODY_WEIGHT_OVERVIEW) {
-            WorkoutOverviewScreen(
-                navigationActions = navigationActions,
-                bodyweightViewModel = bodyweightWorkoutViewModel,
-                yogaViewModel = yogaWorkoutViewModel,
-                workoutTye = WorkoutType.BODY_WEIGHT)
-
-        }
+      composable(Screen.BODY_WEIGHT_OVERVIEW) {
+        WorkoutOverviewScreen(
+            navigationActions = navigationActions,
+            bodyweightViewModel = bodyweightWorkoutViewModel,
+            yogaViewModel = yogaWorkoutViewModel,
+            workoutTye = WorkoutType.BODY_WEIGHT)
+      }
     }
 
-      // Body Weight Edit Screen
+    // Body Weight Edit Screen
     navigation(startDestination = Screen.BODY_WEIGHT_EDIT, route = Route.BODY_WEIGHT_EDIT) {
-        composable(Screen.BODY_WEIGHT_EDIT) {
-            WorkoutCreationScreen(
-                navigationActions,
-                WorkoutType.BODY_WEIGHT,
-                bodyweightWorkoutViewModel,
-                true,
-                editing = true
-            )
-        }
+      composable(Screen.BODY_WEIGHT_EDIT) {
+        WorkoutCreationScreen(
+            navigationActions,
+            WorkoutType.BODY_WEIGHT,
+            bodyweightWorkoutViewModel,
+            true,
+            editing = true)
+      }
     }
 
-        // Yoga Edit Screen
+    // Yoga Edit Screen
     navigation(startDestination = Screen.YOGA_EDIT, route = Route.YOGA_EDIT) {
-        composable(Screen.YOGA_EDIT) {
-            WorkoutCreationScreen(
-                navigationActions,
-                WorkoutType.YOGA,
-                yogaWorkoutViewModel,
-                true,
-                editing = true
-            )
-        }
+      composable(Screen.YOGA_EDIT) {
+        WorkoutCreationScreen(
+            navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true, editing = true)
+      }
     }
 
     // Yoga Overview Screen
     navigation(startDestination = Screen.YOGA_OVERVIEW, route = Route.YOGA_OVERVIEW) {
-        composable(Screen.YOGA_OVERVIEW) {
-            WorkoutOverviewScreen(
-                navigationActions = navigationActions,
-                bodyweightViewModel = bodyweightWorkoutViewModel,
-                yogaViewModel = yogaWorkoutViewModel,
-                workoutTye = WorkoutType.YOGA)
-        }
+      composable(Screen.YOGA_OVERVIEW) {
+        WorkoutOverviewScreen(
+            navigationActions = navigationActions,
+            bodyweightViewModel = bodyweightWorkoutViewModel,
+            yogaViewModel = yogaWorkoutViewModel,
+            workoutTye = WorkoutType.YOGA)
+      }
     }
 
     // Body Weight Workout

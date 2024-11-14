@@ -7,7 +7,6 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -21,6 +20,7 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,132 +28,127 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
-import java.time.LocalDateTime
 
 class WorkoutOverviewScreenTest {
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
-    private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
-    private lateinit var navigationActions: NavigationActions
-    private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
-    private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
+  private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
+  private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
+  private lateinit var navigationActions: NavigationActions
+  private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
+  private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
 
-    @Before
-    fun setUp() {
-        bodyWeightRepo = mock()
-        yogaRepo = mock()
+  @Before
+  fun setUp() {
+    bodyWeightRepo = mock()
+    yogaRepo = mock()
 
-        val bodyWeightWorkouts =
-            mutableListOf(
-                BodyWeightWorkout(
-                    "1",
-                    "NopainNogain",
-                    "Do 20 push-ups",
-                    false,
-                    date = LocalDateTime.of(2024, 11, 1, 0, 42),
-                    exercises =
+    val bodyWeightWorkouts =
+        mutableListOf(
+            BodyWeightWorkout(
+                "1",
+                "NopainNogain",
+                "Do 20 push-ups",
+                false,
+                date = LocalDateTime.of(2024, 11, 1, 0, 42),
+                exercises =
                     mutableListOf(
                         Exercise("1", ExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(20)),
                         Exercise(
-                            "2", ExerciseType.JUMPING_JACKS, ExerciseDetail.RepetitionBased(10))
-                    )),
-                BodyWeightWorkout(
-                    "2",
-                    "NightSes",
-                    "Hold for 60 seconds",
-                    false,
-                    date = LocalDateTime.of(2024, 11, 1, 0, 43))
-            )
-        val yogaWorkouts: List<YogaWorkout> = listOf()
+                            "2", ExerciseType.JUMPING_JACKS, ExerciseDetail.RepetitionBased(10)))),
+            BodyWeightWorkout(
+                "2",
+                "NightSes",
+                "Hold for 60 seconds",
+                false,
+                date = LocalDateTime.of(2024, 11, 1, 0, 43)))
+    val yogaWorkouts: List<YogaWorkout> = listOf()
 
-        `when`(bodyWeightRepo.getDocuments(any(), any())).then {
-            it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
-        }
-
-        `when`(yogaRepo.getDocuments(any(), any())).then {
-            it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
-        }
-        `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
-        `when`(bodyWeightRepo.addDocument(any(), any(), any())).then {
-            val workout = it.getArgument<BodyWeightWorkout>(0)
-            bodyWeightWorkouts.add(2, workout)
-        }
-        bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-        yogaViewModel = WorkoutViewModel(yogaRepo)
-
-        navigationActions = mock(NavigationActions::class.java)
-        bodyWeightViewModel.getWorkouts()
+    `when`(bodyWeightRepo.getDocuments(any(), any())).then {
+      it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
     }
 
-    @Test
-    fun testWorkoutOverviewScreenDisplaysCorrectly() {
-        // Select the first workout
-        bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value.first())
-
-        composeTestRule.setContent {
-            WorkoutOverviewScreen(
-                navigationActions = navigationActions,
-                bodyweightViewModel = bodyWeightViewModel,
-                yogaViewModel = yogaViewModel,
-                workoutTye = WorkoutType.BODY_WEIGHT
-            )
-        }
-        composeTestRule.onNodeWithTag("WorkoutOverviewScreen").assertIsDisplayed()
-        // Verify the workout name is displayed
-        composeTestRule.onNodeWithText("NopainNogain").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("editButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("editButton").assertHasClickAction()
-
-        // Verify the warmup icon is displayed and correct
-        composeTestRule.onNodeWithTag("warmupCard").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Warmup").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("warmupGreenIcon").assertIsNotDisplayed()
-        composeTestRule.onNodeWithTag("warmupRedIcon").assertIsDisplayed()
-        composeTestRule.onAllNodesWithTag("exerciseCard").assertCountEquals(2)
-        composeTestRule.onNodeWithTag("startButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("startButton").assertTextEquals("Start")
-        composeTestRule.onNodeWithTag("startButton").assertHasClickAction()
+    `when`(yogaRepo.getDocuments(any(), any())).then {
+      it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
     }
-    @Test
-    fun testStartButtonNavigatesToBodyWeightWorkout() {
-        // Select the first workout
-        bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value.first())
+    `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
+    `when`(bodyWeightRepo.addDocument(any(), any(), any())).then {
+      val workout = it.getArgument<BodyWeightWorkout>(0)
+      bodyWeightWorkouts.add(2, workout)
+    }
+    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
+    yogaViewModel = WorkoutViewModel(yogaRepo)
 
-        composeTestRule.setContent {
-            WorkoutOverviewScreen(
-                navigationActions = navigationActions,
-                bodyweightViewModel = bodyWeightViewModel,
-                yogaViewModel = yogaViewModel,
-                workoutTye = WorkoutType.BODY_WEIGHT
-            )
-        }
+    navigationActions = mock(NavigationActions::class.java)
+    bodyWeightViewModel.getWorkouts()
+  }
 
-        // Click the start button
-        composeTestRule.onNodeWithTag("startButton").performClick()
+  @Test
+  fun testWorkoutOverviewScreenDisplaysCorrectly() {
+    // Select the first workout
+    bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value.first())
 
-        // Verify navigation to BODY_WEIGHT_WORKOUT
-        verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_WORKOUT)
+    composeTestRule.setContent {
+      WorkoutOverviewScreen(
+          navigationActions = navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          workoutTye = WorkoutType.BODY_WEIGHT)
+    }
+    composeTestRule.onNodeWithTag("WorkoutOverviewScreen").assertIsDisplayed()
+    // Verify the workout name is displayed
+    composeTestRule.onNodeWithText("NopainNogain").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editButton").assertHasClickAction()
+
+    // Verify the warmup icon is displayed and correct
+    composeTestRule.onNodeWithTag("warmupCard").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Warmup").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("warmupGreenIcon").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag("warmupRedIcon").assertIsDisplayed()
+    composeTestRule.onAllNodesWithTag("exerciseCard").assertCountEquals(2)
+    composeTestRule.onNodeWithTag("startButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("startButton").assertTextEquals("Start")
+    composeTestRule.onNodeWithTag("startButton").assertHasClickAction()
+  }
+
+  @Test
+  fun testStartButtonNavigatesToBodyWeightWorkout() {
+    // Select the first workout
+    bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value.first())
+
+    composeTestRule.setContent {
+      WorkoutOverviewScreen(
+          navigationActions = navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          workoutTye = WorkoutType.BODY_WEIGHT)
     }
 
-    @Test
-    fun testEditButtonNavigatesToBodyWeightEdit() {
-        // Select the first workout
-        bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value.first())
+    // Click the start button
+    composeTestRule.onNodeWithTag("startButton").performClick()
 
-        composeTestRule.setContent {
-            WorkoutOverviewScreen(
-                navigationActions = navigationActions,
-                bodyweightViewModel = bodyWeightViewModel,
-                yogaViewModel = yogaViewModel,
-                workoutTye = WorkoutType.BODY_WEIGHT
-            )
-        }
+    // Verify navigation to BODY_WEIGHT_WORKOUT
+    verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_WORKOUT)
+  }
 
-        // Click the edit button
-        composeTestRule.onNodeWithTag("editButton").performClick()
+  @Test
+  fun testEditButtonNavigatesToBodyWeightEdit() {
+    // Select the first workout
+    bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value.first())
 
-        // Verify navigation to BODY_WEIGHT_EDIT
-        verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_EDIT)
+    composeTestRule.setContent {
+      WorkoutOverviewScreen(
+          navigationActions = navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          workoutTye = WorkoutType.BODY_WEIGHT)
     }
+
+    // Click the edit button
+    composeTestRule.onNodeWithTag("editButton").performClick()
+
+    // Verify navigation to BODY_WEIGHT_EDIT
+    verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_EDIT)
+  }
 }

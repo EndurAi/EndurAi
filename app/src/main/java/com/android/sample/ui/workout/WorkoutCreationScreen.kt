@@ -94,7 +94,9 @@ fun WorkoutCreationScreen(
             ?: (selectedWorkout as? BodyWeightWorkout)?.exercises
             ?: mutableListOf())
   }
-  var showNameDescriptionScreen by remember { mutableStateOf(!editing) } //If you are editing, you don't need to show the name and description screen
+  var showNameDescriptionScreen by remember {
+    mutableStateOf(!editing)
+  } // If you are editing, you don't need to show the name and description screen
   var showExerciseDialog by remember { mutableStateOf(false) }
   var selectedExercise by remember { mutableStateOf<Exercise?>(null) }
   var selectedExerciseType by remember { mutableStateOf<ExerciseType?>(null) }
@@ -106,13 +108,16 @@ fun WorkoutCreationScreen(
         TopAppBar(
             title = { Text(workoutType.toString(), modifier = Modifier.testTag("workoutTopBar")) },
             navigationIcon = {
-              IconButton(onClick = {
-                  if (!showNameDescriptionScreen) {
-                        showNameDescriptionScreen = true
-                  } else {navigationActions.goBack()}
-              }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-              }
+              IconButton(
+                  onClick = {
+                    if (!showNameDescriptionScreen) {
+                      showNameDescriptionScreen = true
+                    } else {
+                      navigationActions.goBack()
+                    }
+                  }) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                  }
             })
       },
       content = { paddingValues ->
@@ -201,15 +206,15 @@ fun WorkoutCreationScreen(
                               }
                         }
                   }
-                    exerciseListItems(exerciseList, onCardClick =  {
-                            exercise ->
+                  exerciseListItems(
+                      exerciseList,
+                      onCardClick = { exercise ->
                         showExerciseDialog = true
                         selectedExercise = exercise
                         selectedExerciseType = exercise.type
                         exerciseDetail = exercise.detail
-                    },
-                        onDetailClick = { })
-
+                      },
+                      onDetailClick = {})
 
                   item {
                     // Vertical line connecting the cards
@@ -250,46 +255,48 @@ fun WorkoutCreationScreen(
                         onSaveClick = {
                           when (workoutType) {
                             WorkoutType.YOGA -> {
-                                val yogaWorkout = YogaWorkout(
-                                    workoutId = workoutViewModel.getNewUid(),
-                                    name = name,
-                                    description = description,
-                                    warmup = warmup,
-                                    date = selectedDateTime!!,
-                                    exercises =
-                                    exerciseList.toMutableList() as MutableList<Exercise>)
-                                if (editing) {
-                                  workoutViewModel.updateWorkout(yogaWorkout)
-                                    workoutViewModel.selectWorkout(yogaWorkout)
-                                } else {
-                                  workoutViewModel.addWorkout(yogaWorkout)
-                                }
+                              val yogaWorkout =
+                                  YogaWorkout(
+                                      workoutId = workoutViewModel.getNewUid(),
+                                      name = name,
+                                      description = description,
+                                      warmup = warmup,
+                                      date = selectedDateTime!!,
+                                      exercises =
+                                          exerciseList.toMutableList() as MutableList<Exercise>)
+                              if (editing) {
+                                workoutViewModel.updateWorkout(yogaWorkout)
+                                workoutViewModel.selectWorkout(yogaWorkout)
+                              } else {
+                                workoutViewModel.addWorkout(yogaWorkout)
+                              }
                             }
                             WorkoutType.BODY_WEIGHT -> {
-                                val bodyWeightWorkout = BodyWeightWorkout(
-                                    workoutId = workoutViewModel.getNewUid(),
-                                    name = name,
-                                    description = description,
-                                    warmup = warmup,
-                                    date = selectedDateTime!!,
-                                    exercises =
-                                    exerciseList.toMutableList() as MutableList<Exercise>)
-                                if (editing) {
-                                    workoutViewModel.updateWorkout(bodyWeightWorkout)
-                                    workoutViewModel.selectWorkout(bodyWeightWorkout)
-                                    } else {
-                                    workoutViewModel.addWorkout(bodyWeightWorkout)
-                                }
+                              val bodyWeightWorkout =
+                                  BodyWeightWorkout(
+                                      workoutId = workoutViewModel.getNewUid(),
+                                      name = name,
+                                      description = description,
+                                      warmup = warmup,
+                                      date = selectedDateTime!!,
+                                      exercises =
+                                          exerciseList.toMutableList() as MutableList<Exercise>)
+                              if (editing) {
+                                workoutViewModel.updateWorkout(bodyWeightWorkout)
+                                workoutViewModel.selectWorkout(bodyWeightWorkout)
+                              } else {
+                                workoutViewModel.addWorkout(bodyWeightWorkout)
+                              }
                             }
                             else -> {}
                           }
                           Toast.makeText(context, "Workout successfully saved", Toast.LENGTH_SHORT)
                               .show()
-                            if (editing) {
-                              navigationActions.goBack()
-                            } else {
-                              navigationActions.navigateTo(Screen.MAIN)
-                            }
+                          if (editing) {
+                            navigationActions.goBack()
+                          } else {
+                            navigationActions.navigateTo(Screen.MAIN)
+                          }
                         },
                         "saveButton")
                   }
@@ -468,25 +475,24 @@ fun WorkoutCreationScreen(
   }
 }
 /**
- * Adds a list of exercise items to a LazyColumn.
- * The list of exercises is displayed as cards.
+ * Adds a list of exercise items to a LazyColumn. The list of exercises is displayed as cards.
  *
  * You need to use this inside a [LazyColumn], it would replace an [items] call.
  *
  * @param exerciseList The list of exercises to display.
  * @param onCardClick Callback function to be invoked when an exercise card is clicked.
- * @param onDetailClick Callback function to be invoked when the detail button of an exercise card is clicked.
+ * @param onDetailClick Callback function to be invoked when the detail button of an exercise card
+ *   is clicked.
  */
 fun LazyListScope.exerciseListItems(
     exerciseList: List<Exercise>,
     onCardClick: (Exercise) -> Unit,
     onDetailClick: (Exercise) -> Unit
 ) {
-    items(exerciseList) { exercise ->
-        ExerciseCard(
-            exercise,
-            onCardClick = { onCardClick(exercise) },
-            onDetailClick = { onDetailClick(exercise) }
-        )
-    }
+  items(exerciseList) { exercise ->
+    ExerciseCard(
+        exercise,
+        onCardClick = { onCardClick(exercise) },
+        onDetailClick = { onDetailClick(exercise) })
+  }
 }
