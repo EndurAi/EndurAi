@@ -11,15 +11,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -121,7 +118,6 @@ class UserAccountViewModelTest {
     verify(userAccountRepository).getUserAccount(eq("1"), any(), any())
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
   }
-
 
   @Test
   fun `createUserAccount calls repository and updates userAccount`() = runTest {
