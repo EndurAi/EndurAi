@@ -1,4 +1,4 @@
-package com.android.sample.ui.googlemap
+package com.android.sample.model.location
 
 import android.app.NotificationManager
 import android.app.Service
@@ -6,14 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.MutableLiveData
 import com.android.sample.R
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,7 +25,15 @@ import kotlinx.coroutines.flow.onEach
 class LocationService: Service() {
 
     companion object {
-        val pathPoints = MutableLiveData<MutableList<LatLng>>()
+
+        private val camera_ = MutableStateFlow<CameraPositionState>(CameraPositionState(CameraPosition.fromLatLngZoom(LatLng(46.27432, 6.34173), 10f)))
+        val camera: StateFlow<CameraPositionState> = camera_.asStateFlow()
+
+        private val userLocation_ = MutableStateFlow<LatLng?>(null)
+        val userLocation: StateFlow<LatLng?> = userLocation_.asStateFlow()
+
+        private val pathPoints_ = MutableStateFlow<MutableList<LatLng>>(mutableListOf())
+        val pathPoints: StateFlow<MutableList<LatLng>> = pathPoints_.asStateFlow()
 
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
@@ -30,7 +42,8 @@ class LocationService: Service() {
     private val intervalOfUpdate = 5000L // 5 seconds
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private lateinit var locationClient: LocationClient
+    lateinit var locationClient: LocationClient
+
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -72,21 +85,13 @@ class LocationService: Service() {
             .onEach { location ->
                 val lat = location.latitude.toString()
                 val long = location.longitude.toString()
-
                 val loc = LatLng(location.latitude,location.longitude)
 
-                pathPoints.value?.apply {
-                    add(loc)
-                    pathPoints.postValue(this)
-                }
+                userLocation_.value = loc
 
+                pathPoints_.value = pathPoints_.value.toMutableList().apply { add(loc) }
 
-
-
-
-
-
-
+                camera_.value = CameraPositionState(position = CameraPosition.fromLatLngZoom(loc,18f))
 
                 val updatedNotification = notification.setContentText("Location: ($lat, $long)")
                 notificationManager.notify(1,updatedNotification.build())
