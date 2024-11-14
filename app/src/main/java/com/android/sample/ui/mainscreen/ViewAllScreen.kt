@@ -261,11 +261,11 @@ private fun navigateToWorkoutScreen(
   when (workout) {
     is BodyWeightWorkout -> {
       viewModel.selectWorkout(workout)
-      navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
+      navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
     }
     is YogaWorkout -> {
       viewModel.selectWorkout(workout)
-      navigationActions.navigateTo(Screen.YOGA_WORKOUT)
+      navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
     }
   }
 }
