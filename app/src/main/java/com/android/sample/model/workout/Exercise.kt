@@ -2,19 +2,19 @@ package com.android.sample.model.workout
 
 data class Exercise(val id: String, val type: ExerciseType, val detail: ExerciseDetail) {}
 
-enum class ExerciseType(val workoutType: WorkoutType) {
-  DOWNWARD_DOG(WorkoutType.YOGA),
-  TREE_POSE(WorkoutType.YOGA),
-  SUN_SALUTATION(WorkoutType.YOGA),
-  WARRIOR_II(WorkoutType.YOGA),
-  PUSH_UPS(WorkoutType.BODY_WEIGHT),
-  SQUATS(WorkoutType.BODY_WEIGHT),
-  PLANK(WorkoutType.BODY_WEIGHT),
-  CHAIR(WorkoutType.BODY_WEIGHT),
-  JUMPING_JACKS(WorkoutType.WARMUP),
-  LEG_SWINGS(WorkoutType.WARMUP),
-  ARM_CIRCLES(WorkoutType.WARMUP),
-  ARM_WRIST_CIRCLES(WorkoutType.WARMUP);
+enum class ExerciseType(val workoutType: WorkoutType, val detail: ExerciseDetail) {
+  DOWNWARD_DOG(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
+  TREE_POSE(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
+  SUN_SALUTATION(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(60, sets = 2)),
+  WARRIOR_II(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
+  PUSH_UPS(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.RepetitionBased(10)),
+  SQUATS(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.RepetitionBased(15)),
+  PLANK(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.TimeBased(60, sets = 1)),
+  CHAIR(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.TimeBased(60, sets = 1)),
+  JUMPING_JACKS(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(20)),
+  LEG_SWINGS(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(15)),
+  ARM_CIRCLES(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(20)),
+  ARM_WRIST_CIRCLES(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(20));
 
   fun getInstruction(): String {
     return when (this) {
