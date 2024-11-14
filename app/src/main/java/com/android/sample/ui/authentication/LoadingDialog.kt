@@ -15,16 +15,11 @@ import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun LoadingDialog() {
-  Dialog(
-      onDismissRequest = {},
-      properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.DarkGray)
-                .testTag("loadingDialog")) {
-              CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            }
-      }
+  Dialog(onDismissRequest = {}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize().background(Color.DarkGray).testTag("loadingDialog")) {
+          CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        }
+  }
 }

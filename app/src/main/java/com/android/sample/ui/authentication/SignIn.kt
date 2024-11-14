@@ -48,7 +48,6 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -59,7 +58,8 @@ fun SignInScreen(
 ) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
-    val isLoading by userAccountViewModel.isLoading.collectAsState() // Directly observe isLoading from ViewModel
+  val isLoading by
+      userAccountViewModel.isLoading.collectAsState() // Directly observe isLoading from ViewModel
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   val userAccount by userAccountViewModel.userAccount.collectAsState(initial = null)
@@ -149,21 +149,21 @@ fun checkUserAccountAndNavigate(
   userAccountViewModel.getUserAccount(userId)
 
   scope.launch {
-      userAccountViewModel.isLoading.collect{ isLoading ->
-        if (!isLoading) {
-            // Observe changes in userAccount to know if profile exists
-            userAccountViewModel.userAccount.collect { account ->
-                if (account != null) {
-                    // If account exists, navigate to main screen
-                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                } else {
-                    // If no account exists, navigate to AddAccount screen
-                    navigationActions.navigateTo(Screen.ADD_ACCOUNT)
-                }
-            return@collect
-            }
+    userAccountViewModel.isLoading.collect { isLoading ->
+      if (!isLoading) {
+        // Observe changes in userAccount to know if profile exists
+        userAccountViewModel.userAccount.collect { account ->
+          if (account != null) {
+            // If account exists, navigate to main screen
+            navigationActions.navigateTo(TopLevelDestinations.MAIN)
+          } else {
+            // If no account exists, navigate to AddAccount screen
+            navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+          }
+          return@collect
         }
       }
+    }
   }
 }
 
