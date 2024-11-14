@@ -1,4 +1,4 @@
-package com.android.sample.ui.googlemap
+package com.android.sample.model.location
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultLocationClient(
     private val context: Context,
     private val client:FusedLocationProviderClient
-) : LocationClient{
+) : LocationClient {
 
 
     @SuppressLint("MissingPermission")
@@ -41,7 +41,6 @@ class DefaultLocationClient(
                 override fun onLocationResult(result: LocationResult) {
                     super.onLocationResult(result)
                     result.locations.lastOrNull()?.let { location ->
-                        println(location.toString())
                         launch { send(location) }
                     }
                 }

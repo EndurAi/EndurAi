@@ -1,4 +1,4 @@
-package com.android.sample.ui.googlemap
+package com.android.sample.model.location
 
 import android.app.Application
 import android.app.NotificationChannel

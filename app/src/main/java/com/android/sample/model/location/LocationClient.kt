@@ -1,4 +1,4 @@
-package com.android.sample.ui.googlemap
+package com.android.sample.model.location
 
 import android.location.Location
 import kotlinx.coroutines.flow.Flow
