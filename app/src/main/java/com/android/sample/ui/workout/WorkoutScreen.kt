@@ -269,12 +269,12 @@ fun WarmUpScreenBody(
               // "https://firebasestorage.googleapis.com/v0/b/endurai-92811.appspot.com/o/template_videos%2FPush%20Up.mp4?alt=media&token=2677215b-59a4-47c8-854b-a3326532e8af"
               // Box for the video player
               if (videoBoxIsDisplayed) {
-                Toast.makeText(context, videoList.size.toString(), Toast.LENGTH_SHORT).show()
+
                 URL =
                     if (videoList.isNotEmpty())
                         videoList.first { it.title == exerciseState.exercise.type.toString() }.url
                     else ""
-                Toast.makeText(context, URL, Toast.LENGTH_SHORT).show()
+
                 if (URL.isNotEmpty()) {
                   Box(
                       modifier =
