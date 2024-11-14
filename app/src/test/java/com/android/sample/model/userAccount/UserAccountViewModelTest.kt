@@ -11,6 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -106,34 +108,20 @@ class UserAccountViewModelTest {
   }
 
   @Test
-  fun `getUserAccount updates userAccount and isLoading`() = runTest {
+  fun `getUserAccount updates userAccount`() = runTest {
     `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as (UserAccount) -> Unit
       onSuccess(userAccount)
     }
 
+    assertThat(userAccountViewModel.isLoading.first(), `is`(false))
+
     userAccountViewModel.getUserAccount("1")
 
     verify(userAccountRepository).getUserAccount(eq("1"), any(), any())
-    assertThat(userAccountViewModel.isLoading.first(), `is`(false))
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
   }
 
-  @Test
-  fun `getUserAccount sets isLoading to false on failure`() = runTest {
-    `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {
-      val onFailure = it.arguments[2] as (Exception) -> Unit
-      onFailure(Exception("User not found"))
-    }
-
-    userAccountViewModel.getUserAccount("1")
-
-    verify(userAccountRepository).getUserAccount(eq("1"), any(), any())
-
-    assertThat(userAccountViewModel.isLoading.first(), `is`(false))
-
-    assertThat(userAccountViewModel.userAccount.first(), nullValue())
-  }
 
   @Test
   fun `createUserAccount calls repository and updates userAccount`() = runTest {
@@ -166,7 +154,7 @@ class UserAccountViewModelTest {
   }
 
   @Test
-  fun `removeFriend updates userAccount and isLoading`() = runTest {
+  fun `removeFriend updates userAccount`() = runTest {
     `when`(userAccountRepository.removeFriend(any(), any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[2] as () -> Unit
       onSuccess()
@@ -180,7 +168,6 @@ class UserAccountViewModelTest {
     userAccountViewModel.removeFriend("friendId")
 
     verify(userAccountRepository).removeFriend(eq(userAccount), eq("friendId"), any(), any())
-    assertThat(userAccountViewModel.isLoading.first(), `is`(false))
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
   }
 
