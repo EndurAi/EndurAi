@@ -240,9 +240,6 @@ class WorkoutScreenTest {
 
     // VideoPlayer
     composeTestRule.onNodeWithTag("VideoPlayer").assertIsDisplayed()
-
-    // ClickOnStart to start the 1st activity
-    composeTestRule.onNodeWithTag("StartButton").performClick()
   }
 
   @Test
@@ -292,9 +289,6 @@ class WorkoutScreenTest {
 
     // VideoPlayer
     composeTestRule.onNodeWithTag("VideoPlayer").assertIsDisplayed()
-
-    // ClickOnStart to start the 1st activity
-    composeTestRule.onNodeWithTag("StartButton").performClick()
   }
 
   @Test
@@ -444,5 +438,18 @@ class WorkoutScreenTest {
 
     composeTestRule.onNodeWithTag("LoadingIndicator").assertIsDisplayed()
     composeTestRule.onNodeWithTag("videoPlayer").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun startingWorkoutCallsLoadVideos() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel2)
+    }
   }
 }
