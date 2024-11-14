@@ -14,7 +14,7 @@ class LoadingDialogTest {
 
   @Test
   fun loadingDialog_isDisplayed() {
-    composeTestRule.setContent { LoadingDialog(onDismissRequest = {}) }
+    composeTestRule.setContent { LoadingDialog() }
 
     composeTestRule.onNodeWithTag("loadingDialog").assertIsDisplayed()
   }
