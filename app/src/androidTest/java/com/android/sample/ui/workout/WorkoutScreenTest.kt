@@ -6,6 +6,9 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.sample.model.video.Video
+import com.android.sample.model.video.VideoRepository
+import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -26,6 +29,10 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.times
+import org.mockito.kotlin.whenever
 
 class WorkoutScreenTest {
   private lateinit var navigationActions: NavigationActions
@@ -35,6 +42,10 @@ class WorkoutScreenTest {
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var warmUpRepo: WorkoutRepository<WarmUp>
+  private val mockVideoRepository = mock(VideoRepository::class.java)
+  private val mockVideoRepository2 = mock(VideoRepository::class.java)
+  private val mockVideoViewModel = VideoViewModel(mockVideoRepository)
+  private val mockVideoViewModel2 = VideoViewModel(mockVideoRepository2)
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -69,7 +80,18 @@ class WorkoutScreenTest {
                 false,
                 exercises = exerciseList,
                 date = LocalDateTime.of(2024, 11, 10, 2, 1)))
-    val yogaWorkouts: List<YogaWorkout> = listOf()
+
+    val yogaWorkouts: List<YogaWorkout> =
+        listOf(
+            YogaWorkout(
+                "2",
+                "MyWorkout",
+                "Hold for 60 seconds",
+                false,
+                exercises = exerciseList,
+                date = LocalDateTime.of(2024, 11, 10, 2, 1)))
+    val warmups: List<WarmUp> =
+        listOf(WarmUp("2", "MyWorkout", "Hold for 60 seconds", exercises = exerciseList))
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
@@ -79,8 +101,8 @@ class WorkoutScreenTest {
       it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
     }
 
-    `when`(yogaRepo.getDocuments(any(), any())).then {
-      it.getArgument<(List<YogaWorkout>) -> Unit>(0)(listOf())
+    `when`(warmUpRepo.getDocuments(any(), any())).then {
+      it.getArgument<(List<WarmUp>) -> Unit>(0)(warmups)
     }
 
     bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
@@ -91,12 +113,37 @@ class WorkoutScreenTest {
     // Mock the NavigationActions
     navigationActions = mock(NavigationActions::class.java)
 
+    yogaViewModel.getWorkouts()
+    yogaViewModel.selectWorkout(yogaViewModel.workouts.value[0])
+
+    warmUpViewModel.getWorkouts()
+    warmUpViewModel.selectWorkout(warmUpViewModel.workouts.value[0])
+
     bodyWeightViewModel.getWorkouts()
     bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value[0])
+
+    // Sample video data
+    val sampleVideos =
+        ExerciseType.entries.map { exerciseType ->
+          Video(
+              title = exerciseType.toString(),
+              tag = exerciseType.workoutType.toString(),
+              url = "sampleUrl")
+        }
+
+    // Mock the videos flow
+    whenever(mockVideoRepository.getVideos(anyOrNull(), anyOrNull())).thenAnswer {
+      val onSuccess = it.getArgument<Function1<List<Video>, Unit>>(0)
+      onSuccess(sampleVideos)
+    }
+    whenever(mockVideoRepository2.getVideos(anyOrNull(), anyOrNull())).thenAnswer {
+      val onSuccess = it.getArgument<Function1<List<Video>, Unit>>(0)
+      onSuccess(listOf())
+    }
   }
 
   @Test
-  fun presentationIsDisplayed() {
+  fun presentationIsDisplayedBodyWeight() {
     composeTestRule.setContent {
       WorkoutScreen(
           navigationActions,
@@ -104,7 +151,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-      )
+          videoViewModel = mockVideoViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -148,6 +195,104 @@ class WorkoutScreenTest {
   }
 
   @Test
+  fun presentationIsDisplayedYoga() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.YOGA,
+          videoViewModel = mockVideoViewModel)
+    }
+    // ArrowBack
+    composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
+
+    // Test if the presentation screen is well displayed
+    // Workout Name
+    composeTestRule.onNodeWithTag("WorkoutName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("WorkoutName").assertTextEquals("MyWorkout")
+    // Exercise name
+    composeTestRule.onNodeWithTag("ExerciseName").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("ExerciseName")
+        .assertTextEquals(
+            bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type.toString())
+    // Exercise description
+    composeTestRule.onNodeWithTag("ExerciseDescription").assertIsDisplayed()
+    bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type?.let {
+      composeTestRule.onNodeWithTag("ExerciseDescription").assertTextEquals(it.getInstruction())
+    }
+
+    // Goal Icon and value
+
+    composeTestRule.onNodeWithTag("GoalIcon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("GoalValue").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("GoalValue").assertTextEquals("3 Rep.")
+
+    // Skip and start button are displayed
+
+    composeTestRule.onNodeWithTag("SkipButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SkipButton").assertTextEquals("Skip")
+
+    composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("StartButton").assertTextEquals("Start")
+    composeTestRule.onNodeWithTag("recordSwitch").assertIsDisplayed()
+
+    // VideoPlayer
+    composeTestRule.onNodeWithTag("VideoPlayer").assertIsDisplayed()
+  }
+
+  @Test
+  fun presentationIsDisplayedWarmup() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.YOGA,
+          videoViewModel = mockVideoViewModel)
+    }
+    // ArrowBack
+    composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
+
+    // Test if the presentation screen is well displayed
+    // Workout Name
+    composeTestRule.onNodeWithTag("WorkoutName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("WorkoutName").assertTextEquals("MyWorkout")
+    // Exercise name
+    composeTestRule.onNodeWithTag("ExerciseName").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("ExerciseName")
+        .assertTextEquals(
+            bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type.toString())
+    // Exercise description
+    composeTestRule.onNodeWithTag("ExerciseDescription").assertIsDisplayed()
+    bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type?.let {
+      composeTestRule.onNodeWithTag("ExerciseDescription").assertTextEquals(it.getInstruction())
+    }
+
+    // Goal Icon and value
+
+    composeTestRule.onNodeWithTag("GoalIcon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("GoalValue").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("GoalValue").assertTextEquals("3 Rep.")
+
+    // Skip and start button are displayed
+
+    composeTestRule.onNodeWithTag("SkipButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SkipButton").assertTextEquals("Skip")
+
+    composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("StartButton").assertTextEquals("Start")
+    composeTestRule.onNodeWithTag("recordSwitch").assertIsDisplayed()
+
+    // VideoPlayer
+    composeTestRule.onNodeWithTag("VideoPlayer").assertIsDisplayed()
+  }
+
+  @Test
   fun startingExerciseIsDisplayed() {
     composeTestRule.setContent {
       WorkoutScreen(
@@ -155,12 +300,9 @@ class WorkoutScreenTest {
           bodyweightViewModel = bodyWeightViewModel,
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
-          workoutType = WorkoutType.BODY_WEIGHT)
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel)
     }
-
-    // ClickOnStart to start the 1st activity
-    composeTestRule.onNodeWithTag("StartButton").performClick()
-
     // check that permanent composable are still there
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -178,7 +320,8 @@ class WorkoutScreenTest {
     bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type?.let {
       composeTestRule.onNodeWithTag("ExerciseDescription").assertTextEquals(it.getInstruction())
     }
-
+    composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("StartButton").performClick()
     // Check that the presentation specific components are hidden
     // startButton is not displayed
     composeTestRule.onNodeWithTag("StartButton").assertIsNotDisplayed()
@@ -198,7 +341,8 @@ class WorkoutScreenTest {
           bodyweightViewModel = bodyWeightViewModel,
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
-          workoutType = WorkoutType.BODY_WEIGHT)
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel)
     }
 
     // Exercise name
@@ -229,7 +373,8 @@ class WorkoutScreenTest {
           bodyweightViewModel = bodyWeightViewModel,
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
-          workoutType = WorkoutType.BODY_WEIGHT)
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel)
     }
 
     // Exercise name
@@ -261,7 +406,8 @@ class WorkoutScreenTest {
           bodyweightViewModel = bodyWeightViewModel,
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
-          workoutType = WorkoutType.BODY_WEIGHT)
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel)
     }
     // ex1
     composeTestRule.onNodeWithTag("StartButton").performClick()

@@ -278,7 +278,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
             workoutType = WorkoutType.BODY_WEIGHT,
-            cameraViewModel = cameraViewModel)
+            cameraViewModel = cameraViewModel,
+            videoViewModel = videoViewModel)
       }
     }
     // Yoga Workout
@@ -290,7 +291,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
             workoutType = WorkoutType.YOGA,
-            cameraViewModel = cameraViewModel)
+            cameraViewModel = cameraViewModel,
+            videoViewModel = videoViewModel)
       }
     }
 
@@ -303,7 +305,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
             workoutType = WorkoutType.WARMUP,
-            cameraViewModel = cameraViewModel)
+            cameraViewModel = cameraViewModel,
+            videoViewModel = videoViewModel)
       }
     }
 
