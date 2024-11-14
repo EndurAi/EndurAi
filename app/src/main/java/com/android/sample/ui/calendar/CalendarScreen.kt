@@ -104,7 +104,16 @@ fun CalendarScreen(
               modifier = Modifier.fillMaxWidth().padding(8.dp),
               horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
-                    onClick = { showDialog = false },
+                    onClick = {
+                      showDialog = false
+                      when (selectedWorkout!!.type) {
+                        WorkoutType.BODY_WEIGHT ->
+                            navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+                        WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
+                        WorkoutType.WARMUP -> TODO()
+                        WorkoutType.RUNNING -> TODO()
+                      }
+                    },
                     colors = ButtonDefaults.outlinedButtonColors(),
                     modifier = Modifier.testTag("editButton"),
                     border = BorderStroke(2.dp, Yellow)) {
