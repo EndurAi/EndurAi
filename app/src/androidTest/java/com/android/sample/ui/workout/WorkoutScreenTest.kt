@@ -30,7 +30,8 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
-import org.mockito.kotlin.atLeast
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.times
 import org.mockito.kotlin.whenever
 
 class WorkoutScreenTest {
@@ -302,10 +303,6 @@ class WorkoutScreenTest {
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel)
     }
-
-    // ClickOnStart to start the 1st activity
-    composeTestRule.onNodeWithTag("StartButton").performClick()
-    verify(mockVideoRepository, atLeast(1)).getVideos(any(), any())
     // check that permanent composable are still there
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -449,7 +446,10 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel2)
+          videoViewModel = mockVideoViewModel)
     }
+    // Check that on launching the composable, the videoViewModel tries to fetch the videos on
+    // firestore
+    verify(mockVideoRepository, atLeastOnce()).getVideos(any(), any())
   }
 }
