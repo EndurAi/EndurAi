@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,7 +25,8 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
       topBar = {
         TopAppBar(
             title = { Text("New Session") }, navigationIcon = { ArrowBack(navigationActions) })
-      }) { paddingValues ->
+      },
+      modifier = Modifier.testTag("ImportOrCreateScreen")) { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
