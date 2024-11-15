@@ -33,7 +33,10 @@ fun DualVideoPlayer(file: File, url: String, context: Context) {
     // Video from File
     val exoPlayer1 = remember { ExoPlayer.Builder(context).build() }
     AndroidView(
-        modifier = Modifier.weight(1f).fillMaxWidth().testTag("VideoFromFile"), // Each video takes half the screen height
+        modifier =
+            Modifier.weight(1f)
+                .fillMaxWidth()
+                .testTag("VideoFromFile"), // Each video takes half the screen height
         factory = {
           PlayerView(context).apply {
             player =

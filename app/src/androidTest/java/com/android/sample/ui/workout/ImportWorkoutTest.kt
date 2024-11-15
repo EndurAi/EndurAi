@@ -19,7 +19,6 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Screen
 import java.time.LocalDateTime
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
@@ -103,11 +102,12 @@ class ImportWorkoutTest {
     // Check that the body weight workout is clickable
     composeTestRule.onAllNodesWithTag("WorkoutCard").assertAll(hasClickAction())
     // Click on the first workout
-      nodes[0].performClick()
+    nodes[0].performClick()
     // Check that the workout is selected
-    assertThat(bodyWeightViewModel.selectedWorkout.value, `is`(bodyWeightViewModel.workouts.value[0]))
-      //Check that navigation action is called
-    verify(navigationActions).navigateTo(screen =any())
+    assertThat(
+        bodyWeightViewModel.selectedWorkout.value, `is`(bodyWeightViewModel.workouts.value[0]))
+    // Check that navigation action is called
+    verify(navigationActions).navigateTo(screen = any())
   }
 
   // Test that you can delete an exercise from the workout
