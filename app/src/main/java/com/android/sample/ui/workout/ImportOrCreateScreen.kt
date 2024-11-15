@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,15 +21,18 @@ import com.android.sample.ui.navigation.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: WorkoutType) {
-  Scaffold(topBar = { TopBar(navigationActions, R.string.new_session) }) { paddingValues ->
-    Column(
-        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-          Text(
-              text = "Do you want to create a new program from scratch or from an existing one?",
-              style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-              modifier = Modifier.padding(bottom = 24.dp).align(Alignment.CenterHorizontally))
+  Scaffold(
+      topBar = { TopBar(navigationActions, R.string.new_session) },
+      modifier = Modifier.testTag("ImportOrCreateScreen")) { paddingValues ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+              Text(
+                  text =
+                      "Do you want to create a new program from scratch or from an existing one?",
+                  style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                  modifier = Modifier.padding(bottom = 24.dp).align(Alignment.CenterHorizontally))
 
           // Import Button
           Button(

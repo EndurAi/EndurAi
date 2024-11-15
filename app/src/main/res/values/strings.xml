@@ -32,4 +32,5 @@
     <string name="BodyWeightWorkoutTitle">BodyWeight</string>
     <string name="YogaWorkoutTitle">Yoga</string>
     <string name="new_session">New Session</string>
+    <string name="SkippedTextCard">Skipped</string>
 </resources>
