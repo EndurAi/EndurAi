@@ -21,10 +21,12 @@ class ImportOrCreateScreenTest {
   fun displaysScreenCorrectly() {
     val navigationActions = mock(NavigationActions::class.java)
 
+    // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
+    // Check that the screen is displayed
     composeTestRule.onNodeWithTag("ImportOrCreateScreen").assertIsDisplayed()
   }
 
@@ -32,10 +34,12 @@ class ImportOrCreateScreenTest {
   fun displaysTitleCorrectly() {
     val navigationActions = mock(NavigationActions::class.java)
 
+    // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
+    // Check that the title is displayed correctly
     composeTestRule.onNodeWithText("New Session").assertExists()
   }
 
@@ -43,53 +47,71 @@ class ImportOrCreateScreenTest {
   fun displaysPromptMessageCorrectly() {
     val navigationActions = mock(NavigationActions::class.java)
 
+    // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(navigationActions = navigationActions, workoutType = WorkoutType.YOGA)
     }
+    // Check that the prompt message is displayed correctly
     composeTestRule
-        .onNodeWithText("Do you want to create a new program from scratch or from an existing one?")
-        .assertExists()
+      .onNodeWithText("Do you want to create a new program from scratch or from an existing one?")
+      .assertExists()
   }
 
   @Test
   fun navigatesToChooseBodyweightScreenOnImportClick() {
     val navigationActions = mock(NavigationActions::class.java)
+
+    // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
+    // Perform click on the "Import" button
     composeTestRule.onNodeWithText("Import").performClick()
+    // Verify that the navigation action is called
     verify(navigationActions).navigateTo(Screen.CHOOSE_BODYWEIGHT)
   }
 
   @Test
   fun navigatesToBodyweightCreationScreenOnCreateFromScratchClick() {
     val navigationActions = mock(NavigationActions::class.java)
+
+    // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
+    // Perform click on the "Create from scratch" button
     composeTestRule.onNodeWithText("Create from scratch").performClick()
+    // Verify that the navigation action is called
     verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_CREATION)
   }
 
   @Test
   fun navigatesToChooseYogaScreenOnImportClick() {
     val navigationActions = mock(NavigationActions::class.java)
+
+    // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(navigationActions = navigationActions, workoutType = WorkoutType.YOGA)
     }
+    // Perform click on the "Import" button
     composeTestRule.onNodeWithText("Import").performClick()
+    // Verify that the navigation action is called
     verify(navigationActions).navigateTo(Screen.CHOOSE_YOGA)
   }
 
   @Test
   fun navigatesToYogaCreationScreenOnCreateFromScratchClick() {
     val navigationActions = mock(NavigationActions::class.java)
+
+    // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(navigationActions = navigationActions, workoutType = WorkoutType.YOGA)
     }
+    // Perform click on the "Create from scratch" button
     composeTestRule.onNodeWithText("Create from scratch").performClick()
+    // Verify that the navigation action is called
     verify(navigationActions).navigateTo(Screen.YOGA_CREATION)
   }
 }
