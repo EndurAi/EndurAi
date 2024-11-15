@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
@@ -32,7 +33,10 @@ fun DualVideoPlayer(file: File, url: String, context: Context) {
     // Video from File
     val exoPlayer1 = remember { ExoPlayer.Builder(context).build() }
     AndroidView(
-        modifier = Modifier.weight(1f).fillMaxWidth(), // Each video takes half the screen height
+        modifier =
+            Modifier.weight(1f)
+                .fillMaxWidth()
+                .testTag("VideoFromFile"), // Each video takes half the screen height
         factory = {
           PlayerView(context).apply {
             player =
@@ -55,7 +59,7 @@ fun DualVideoPlayer(file: File, url: String, context: Context) {
     // Video from URL
     val exoPlayer2 = remember { ExoPlayer.Builder(context).build() }
     AndroidView(
-        modifier = Modifier.weight(1f).fillMaxWidth(),
+        modifier = Modifier.weight(1f).fillMaxWidth().testTag("VideoFromUrl"),
         factory = {
           PlayerView(context).apply {
             player =
