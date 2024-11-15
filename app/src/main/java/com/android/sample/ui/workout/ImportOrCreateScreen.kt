@@ -34,38 +34,39 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                   style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
                   modifier = Modifier.padding(bottom = 24.dp).align(Alignment.CenterHorizontally))
 
-          // Import Button
-          Button(
-              onClick = {
-                when (workoutType) {
-                  WorkoutType.BODY_WEIGHT -> navigationActions.navigateTo(Screen.CHOOSE_BODYWEIGHT)
-                  WorkoutType.YOGA -> navigationActions.navigateTo(Screen.CHOOSE_YOGA)
-                  WorkoutType.RUNNING -> TODO()
-                  WorkoutType.WARMUP -> TODO()
-                }
-              },
-              shape = RoundedCornerShape(12.dp),
-              colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
-              modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {
-                Text(text = "Import", color = Color.Black, fontSize = 16.sp)
-              }
+              // Import Button
+              Button(
+                  onClick = {
+                    when (workoutType) {
+                      WorkoutType.BODY_WEIGHT ->
+                          navigationActions.navigateTo(Screen.CHOOSE_BODYWEIGHT)
+                      WorkoutType.YOGA -> navigationActions.navigateTo(Screen.CHOOSE_YOGA)
+                      WorkoutType.RUNNING -> TODO()
+                      WorkoutType.WARMUP -> TODO()
+                    }
+                  },
+                  shape = RoundedCornerShape(12.dp),
+                  colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
+                  modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {
+                    Text(text = "Import", color = Color.Black, fontSize = 16.sp)
+                  }
 
-          // Create from Scratch Button
-          Button(
-              onClick = {
-                when (workoutType) {
-                  WorkoutType.BODY_WEIGHT ->
-                      navigationActions.navigateTo(Screen.BODY_WEIGHT_CREATION)
-                  WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_CREATION)
-                  WorkoutType.RUNNING -> TODO()
-                  WorkoutType.WARMUP -> TODO()
-                }
-              },
-              shape = RoundedCornerShape(12.dp),
-              colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
-              modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {
-                Text(text = "Create from scratch", color = Color.Black, fontSize = 16.sp)
-              }
-        }
-  }
+              // Create from Scratch Button
+              Button(
+                  onClick = {
+                    when (workoutType) {
+                      WorkoutType.BODY_WEIGHT ->
+                          navigationActions.navigateTo(Screen.BODY_WEIGHT_CREATION)
+                      WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_CREATION)
+                      WorkoutType.RUNNING -> TODO()
+                      WorkoutType.WARMUP -> TODO()
+                    }
+                  },
+                  shape = RoundedCornerShape(12.dp),
+                  colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
+                  modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {
+                    Text(text = "Create from scratch", color = Color.Black, fontSize = 16.sp)
+                  }
+            }
+      }
 }
