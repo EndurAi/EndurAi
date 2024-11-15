@@ -78,7 +78,10 @@ fun MainScreen(
                   workout = workoutDisplayed,
                   profile = account?.profileImageUrl ?: "",
                   navigationActions = navigationActions)
-              QuickWorkoutSection(navigationActions = navigationActions)
+              QuickWorkoutSection(
+                  navigationActions = navigationActions,
+                  bodyWeightViewModel = bodyWeightViewModel,
+                  yogaViewModel = yogaViewModel)
               AchievementsSection(navigationActions = navigationActions)
             }
       },
@@ -213,7 +216,11 @@ fun WorkoutSessionsSection(
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun QuickWorkoutSection(navigationActions: NavigationActions) {
+fun QuickWorkoutSection(
+    navigationActions: NavigationActions,
+    bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
+    yogaViewModel: WorkoutViewModel<YogaWorkout>
+) {
   val context = LocalContext.current
   val metrics = context.resources.displayMetrics
   val screenWidth = metrics.widthPixels
@@ -234,10 +241,30 @@ fun QuickWorkoutSection(navigationActions: NavigationActions) {
           Row(
               modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
-                QuickWorkoutButton(R.drawable.running_man, navigationActions, buttonSizeDp)
-                QuickWorkoutButton(R.drawable.pushups, navigationActions, buttonSizeDp)
-                QuickWorkoutButton(R.drawable.yoga, navigationActions, buttonSizeDp)
-                QuickWorkoutButton(R.drawable.dumbbell, navigationActions, buttonSizeDp)
+                QuickWorkoutButton(
+                    R.drawable.running_man,
+                    navigationActions,
+                    bodyWeightViewModel,
+                    yogaViewModel,
+                    buttonSizeDp)
+                QuickWorkoutButton(
+                    R.drawable.pushups,
+                    navigationActions,
+                    bodyWeightViewModel,
+                    yogaViewModel,
+                    buttonSizeDp)
+                QuickWorkoutButton(
+                    R.drawable.yoga,
+                    navigationActions,
+                    bodyWeightViewModel,
+                    yogaViewModel,
+                    buttonSizeDp)
+                QuickWorkoutButton(
+                    R.drawable.dumbbell,
+                    navigationActions,
+                    bodyWeightViewModel,
+                    yogaViewModel,
+                    buttonSizeDp)
               }
         }
   }
@@ -250,13 +277,38 @@ fun QuickWorkoutSection(navigationActions: NavigationActions) {
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun QuickWorkoutButton(iconId: Int, navigationActions: NavigationActions, buttonSize: Int) {
+fun QuickWorkoutButton(
+    iconId: Int,
+    navigationActions: NavigationActions,
+    bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
+    yogaViewModel: WorkoutViewModel<YogaWorkout>,
+    buttonSize: Int
+) {
   Box(
       modifier =
           Modifier.size(buttonSize.dp)
               .aspectRatio(1f)
               .background(Blue, CircleShape)
-              .clickable { /* Navigate to the screen associated with QuickWorkout */}
+              .clickable {
+                when (iconId) {
+                  R.drawable.running_man -> {
+                    bodyWeightViewModel.selectWorkout(BodyWeightWorkout.WARMUP_WORKOUT)
+                    navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+                  }
+                  R.drawable.pushups -> {
+                    bodyWeightViewModel.selectWorkout(BodyWeightWorkout.WORKOUT_PUSH_UPS)
+                    navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+                  }
+                  R.drawable.yoga -> {
+                    yogaViewModel.selectWorkout(YogaWorkout.QUICK_YOGA_WORKOUT)
+                    navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
+                  }
+                  R.drawable.dumbbell -> {
+                    bodyWeightViewModel.selectWorkout(BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
+                    navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+                  }
+                }
+              }
               .testTag("QuickWorkoutButton"),
       contentAlignment = Alignment.Center) {
         Image(
