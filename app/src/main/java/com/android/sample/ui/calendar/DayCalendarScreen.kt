@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -108,7 +107,6 @@ fun DayCalendarScreen(
         }
       }
 }
-
 
 /**
  * Displays a block representing a specific hour with a list of workouts scheduled for that hour.

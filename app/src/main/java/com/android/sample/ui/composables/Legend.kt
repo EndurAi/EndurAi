@@ -28,22 +28,22 @@ import com.android.sample.ui.theme.YogaTag
  */
 @Composable
 fun LegendItem(color: Color, text: String) {
-    Box(
-        modifier =
-        Modifier.background(color, shape = MaterialTheme.shapes.medium)
-            .padding(horizontal = 12.dp, vertical = 4.dp)) {
+  Box(
+      modifier =
+          Modifier.background(color, shape = MaterialTheme.shapes.medium)
+              .padding(horizontal = 12.dp, vertical = 4.dp)) {
         Text(text = text, color = Color.Black, fontWeight = FontWeight.Bold)
-    }
+      }
 }
 
 /** Displays a row of workout type legends (e.g., Bodyweight, Yoga, Running). */
 @Composable
 fun Legend() {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("Categories"),
-        horizontalArrangement = Arrangement.SpaceEvenly) {
+  Row(
+      modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("Categories"),
+      horizontalArrangement = Arrangement.SpaceEvenly) {
         LegendItem(BodyWeightTag, stringResource(R.string.TitleTabBody))
         LegendItem(YogaTag, stringResource(R.string.TitleTabYoga))
         LegendItem(RunningTag, stringResource(R.string.TitleTabRunning))
-    }
+      }
 }

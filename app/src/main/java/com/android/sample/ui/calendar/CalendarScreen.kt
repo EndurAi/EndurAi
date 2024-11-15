@@ -151,33 +151,34 @@ fun CalendarScreen(
 
   val workoutsByDate = workouts.groupBy { it.workout.date.toLocalDate().toKotlinLocalDate() }
 
-  Scaffold(topBar = { TopBar(navigationActions, R.string.calendar_title) },
+  Scaffold(
+      topBar = { TopBar(navigationActions, R.string.calendar_title) },
       bottomBar = { BottomBar(navigationActions) }) { innerPadding ->
-    Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-      Legend()
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+          Legend()
 
-        Divider(
-            color = Color.LightGray,
-            thickness = 1.dp,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+          Divider(
+              color = Color.LightGray,
+              thickness = 1.dp,
+              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
-      LazyColumn(
-          state = lazyListState,
-          modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
-            items(dates) { date ->
-              DaySection(
-                  date = date,
-                  workouts = workoutsByDate[date] ?: emptyList(),
-                  onWorkoutClick = { workout ->
-                    selectedWorkout = workout
-                    showDialog = true
-                  },
-                  navigationActions,
-                  calendarViewModel)
-            }
-          }
-    }
-  }
+          LazyColumn(
+              state = lazyListState,
+              modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
+                items(dates) { date ->
+                  DaySection(
+                      date = date,
+                      workouts = workoutsByDate[date] ?: emptyList(),
+                      onWorkoutClick = { workout ->
+                        selectedWorkout = workout
+                        showDialog = true
+                      },
+                      navigationActions,
+                      calendarViewModel)
+                }
+              }
+        }
+      }
 }
 
 private fun generateDateRange(

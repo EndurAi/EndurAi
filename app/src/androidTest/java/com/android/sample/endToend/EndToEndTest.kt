@@ -23,7 +23,6 @@ import com.android.sample.ui.navigation.Route
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestName
 
 class EndToEndTest {
   private lateinit var navigationActions: NavigationActions
@@ -38,13 +37,13 @@ class EndToEndTest {
     context.startActivity(intent)
   }
 
-  private fun nodeControl(testTag : String, testName : String) {
+  private fun nodeControl(testTag: String, testName: String) {
     if (composeTestRule.onNodeWithTag(testTag).isNotDisplayed()) {
       throw Exception("$testTag not displayed in $testName")
     }
   }
 
-  private fun nodeControlWithScroll(testTag : String, testName : String) {
+  private fun nodeControlWithScroll(testTag: String, testName: String) {
     if (composeTestRule.onNodeWithTag(testTag).performScrollTo().isNotDisplayed()) {
       throw Exception("$testTag not displayed in $testName")
     }
@@ -88,7 +87,6 @@ class EndToEndTest {
     // test begins at the main screen
     // check that everything is displayed
 
-
     mainScreenIsWellDisplayed()
 
     // bo to the View all Screen
@@ -126,12 +124,12 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
 
     // go to the edit account screen
-    //composeTestRule.onNodeWithTag("userDataButton").performClick()
+    // composeTestRule.onNodeWithTag("userDataButton").performClick()
 
-    //editAccountScreenIsWellDisplayed()
+    // editAccountScreenIsWellDisplayed()
 
     // go back to main
-    //composeTestRule.onNodeWithText("Save Changes").performScrollTo().performClick()
+    // composeTestRule.onNodeWithText("Save Changes").performScrollTo().performClick()
 
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
 
@@ -181,7 +179,6 @@ class EndToEndTest {
 
     // this confirms that we are on main screen
     mainScreenIsWellDisplayed()
-
   }
 
   private fun workoutCreationScreenIsWellDisplayed() {
@@ -203,7 +200,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("selectExerciseTypeButton").performClick()
 
     for (exerciseType in
-    ExerciseType.entries.filter { it.workoutType == WorkoutType.BODY_WEIGHT }) {
+        ExerciseType.entries.filter { it.workoutType == WorkoutType.BODY_WEIGHT }) {
       nodeControl("exerciseType${exerciseType.name}", testName)
     }
 
@@ -211,8 +208,8 @@ class EndToEndTest {
 
     // we check the text
     composeTestRule
-      .onNodeWithTag("selectedExerciseType")
-      .assertTextEquals("Selected Exercise: ${ExerciseType.PUSH_UPS}")
+        .onNodeWithTag("selectedExerciseType")
+        .assertTextEquals("Selected Exercise: ${ExerciseType.PUSH_UPS}")
 
     nodeControl("repetitionsTextField", testName)
     nodeControl("addExerciseConfirmButton", testName)
@@ -228,12 +225,6 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-
-
-
-
-
-
   }
 
   private fun importOrCreateScreenIsWellDisplayed() {
@@ -244,7 +235,6 @@ class EndToEndTest {
     composeTestRule.onNodeWithText("Create from scratch").isDisplayed()
 
     nodeControl("TopBar", testName)
-
   }
 
   private fun workoutSelectionScreenIsWellDisplayed() {
@@ -255,7 +245,6 @@ class EndToEndTest {
     nodeControl("emptyWorkoutPrompt", testName)
 
     nodeControl("TopBar", testName)
-
   }
 
   private fun sessionSelectionScreenIsWellDisplayed() {
@@ -275,8 +264,6 @@ class EndToEndTest {
     composeTestRule.onNodeWithText("Yoga").assertIsDisplayed()
   }
 
-
-
   private fun dayCalendarScreenIsWellDisplayed() {
     val testName = "dayCalendarScreenIsWellDisplayed"
 
@@ -289,11 +276,9 @@ class EndToEndTest {
     nodeControl("Hours", testName)
 
     nodeControl("BottomBar", testName)
-
-
   }
 
-  private fun calendarScreenIsWellDisplayed(){
+  private fun calendarScreenIsWellDisplayed() {
     val testName = "calendarScreenIsWellDisplayed"
 
     nodeControl("TopBar", testName)
@@ -303,10 +288,9 @@ class EndToEndTest {
     nodeControl("lazyColumn", testName)
 
     nodeControl("BottomBar", testName)
-
   }
 
-  private fun videoScreenIsWellDisplayed(){
+  private fun videoScreenIsWellDisplayed() {
     val testName = "videoScreenIsWellDisplayed"
 
     nodeControl("videoScreen", testName)
@@ -322,10 +306,9 @@ class EndToEndTest {
     nodeControl("videoContentBox", testName)
 
     nodeControl("playerView", testName)
-
   }
 
-  private fun videoLibraryScreenIsWellDisplayed(){
+  private fun videoLibraryScreenIsWellDisplayed() {
     val testName = "videoLibraryScreenIsWellDisplayed"
 
     nodeControl("libraryTitle", testName)
@@ -333,11 +316,9 @@ class EndToEndTest {
     nodeControl("searchBar", testName)
 
     nodeControl("tagDropdown", testName)
-
   }
 
-
-  private fun editAccountScreenIsWellDisplayed(){
+  private fun editAccountScreenIsWellDisplayed() {
     val testName = "editAccountScreenIsWellDisplayed"
 
     nodeControl("editScreen", testName)
@@ -361,12 +342,9 @@ class EndToEndTest {
     nodeControlWithScroll("birthday", testName)
 
     nodeControlWithScroll("submit", testName)
-
   }
 
-
-
-  private fun viewAllScreenIsWellDisplayed(){
+  private fun viewAllScreenIsWellDisplayed() {
     val testName = "viewAllScreenIsWellDisplayed"
 
     nodeControl("ViewAllScreen", testName)
@@ -389,7 +367,6 @@ class EndToEndTest {
 
     // we check that the prompt is there
     composeTestRule.onNodeWithTag("emptyWorkoutPrompt").assertIsDisplayed()
-
   }
 
   private fun settingScreenIsWellDisplayed() {
@@ -406,7 +383,6 @@ class EndToEndTest {
     nodeControl("userDataButton", testName)
 
     nodeControl("ArrowBackButton", testName)
-
   }
 
   private fun mainScreenIsWellDisplayed() {
@@ -462,7 +438,6 @@ class EndToEndTest {
     nodeControl("weightUnitMenu", testName)
 
     nodeControl("weightUnitMenuText", testName)
-
   }
 
   private fun preferencesUpdateOnClick() {
@@ -473,7 +448,6 @@ class EndToEndTest {
     nodeControl("unitsSystemButton", testName)
 
     nodeControl("weightUnitButton", testName)
-
 
     // Simulate user changing the system of units and weight unit
     // (metric,kg) -> (imperial,lbs)
@@ -503,6 +477,5 @@ class EndToEndTest {
     nodeControl("sessionCard_Body weight", testName)
 
     nodeControl("sessionCard_Running", testName)
-
   }
 }
