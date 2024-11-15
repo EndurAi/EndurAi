@@ -24,7 +24,7 @@ class ImportOrCreateScreenTest {
     // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
     // Check that the screen is displayed
     composeTestRule.onNodeWithTag("ImportOrCreateScreen").assertIsDisplayed()
@@ -37,7 +37,7 @@ class ImportOrCreateScreenTest {
     // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
     // Check that the title is displayed correctly
     composeTestRule.onNodeWithText("New Session").assertExists()
@@ -53,8 +53,8 @@ class ImportOrCreateScreenTest {
     }
     // Check that the prompt message is displayed correctly
     composeTestRule
-      .onNodeWithText("Do you want to create a new program from scratch or from an existing one?")
-      .assertExists()
+        .onNodeWithText("Do you want to create a new program from scratch or from an existing one?")
+        .assertExists()
   }
 
   @Test
@@ -64,7 +64,7 @@ class ImportOrCreateScreenTest {
     // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
     // Perform click on the "Import" button
     composeTestRule.onNodeWithText("Import").performClick()
@@ -79,7 +79,7 @@ class ImportOrCreateScreenTest {
     // Set the content of the screen
     composeTestRule.setContent {
       ImportOrCreateScreen(
-        navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+          navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
     // Perform click on the "Create from scratch" button
     composeTestRule.onNodeWithText("Create from scratch").performClick()
