@@ -27,6 +27,7 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.BottomBar
+import com.android.sample.ui.composables.Legend
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.BodyWeightTag
@@ -108,33 +109,6 @@ fun DayCalendarScreen(
       }
 }
 
-/** Displays a row of workout type legends (e.g., Bodyweight, Yoga, Running). */
-@Composable
-fun Legend() {
-  Row(
-      modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("Categories"),
-      horizontalArrangement = Arrangement.SpaceEvenly) {
-        LegendItem(BodyWeightTag, stringResource(R.string.TitleTabBody))
-        LegendItem(YogaTag, stringResource(R.string.TitleTabYoga))
-        LegendItem(RunningTag, stringResource(R.string.TitleTabRunning))
-      }
-}
-
-/**
- * Displays an individual legend item with a colored background and text.
- *
- * @param color The color for the legend item.
- * @param text The text description for the workout type.
- */
-@Composable
-fun LegendItem(color: Color, text: String) {
-  Box(
-      modifier =
-          Modifier.background(color, shape = MaterialTheme.shapes.medium)
-              .padding(horizontal = 12.dp, vertical = 4.dp)) {
-        Text(text = text, color = Color.Black, fontWeight = FontWeight.Bold)
-      }
-}
 
 /**
  * Displays a block representing a specific hour with a list of workouts scheduled for that hour.
