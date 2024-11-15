@@ -19,6 +19,7 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import java.time.LocalDateTime
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
@@ -29,6 +30,7 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
 
 class ImportWorkoutTest {
   @get:Rule val composeTestRule = createComposeRule()
@@ -97,9 +99,15 @@ class ImportWorkoutTest {
     // Check that the screen is displayed
     composeTestRule.onNodeWithTag("WorkoutSelectionScreen").assertIsDisplayed()
     // Check that the body weight workout is displayed
-    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(2)
+    val nodes = composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(2)
     // Check that the body weight workout is clickable
     composeTestRule.onAllNodesWithTag("WorkoutCard").assertAll(hasClickAction())
+    // Click on the first workout
+      nodes[0].performClick()
+    // Check that the workout is selected
+    assertThat(bodyWeightViewModel.selectedWorkout.value, `is`(bodyWeightViewModel.workouts.value[0]))
+      //Check that navigation action is called
+    verify(navigationActions).navigateTo(screen =any())
   }
 
   // Test that you can delete an exercise from the workout
