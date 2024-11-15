@@ -113,6 +113,7 @@ fun WorkoutCreationScreen(
             title = { Text(workoutType.toString(), modifier = Modifier.testTag("workoutTopBar")) },
             navigationIcon = {
               IconButton(
+                  modifier = Modifier.testTag("ArrowBackButton"),
                   onClick = {
                     if (!showNameDescriptionScreen) {
                       showNameDescriptionScreen = true

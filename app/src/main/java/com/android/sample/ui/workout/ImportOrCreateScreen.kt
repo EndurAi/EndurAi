@@ -8,12 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.composables.ArrowBack
+import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
@@ -22,18 +25,21 @@ import com.android.sample.ui.navigation.Screen
 fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: WorkoutType) {
   Scaffold(
       topBar = {
-        TopAppBar(
-            title = { Text("New Session") }, navigationIcon = { ArrowBack(navigationActions) })
-      }) { paddingValues ->
+          TopBar(navigationActions, R.string.new_session) }) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
               Text(
                   text =
                       "Do you want to create a new program from scratch or from an existing one?",
                   style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-                  modifier = Modifier.padding(bottom = 24.dp).align(Alignment.CenterHorizontally))
+                  modifier = Modifier
+                      .padding(bottom = 24.dp)
+                      .align(Alignment.CenterHorizontally))
 
               // Import Button
               Button(
@@ -48,7 +54,10 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                   },
                   shape = RoundedCornerShape(12.dp),
                   colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
-                  modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {
+                  modifier = Modifier
+                      .fillMaxWidth()
+                      .padding(8.dp)
+                      .height(60.dp)) {
                     Text(text = "Import", color = Color.Black, fontSize = 16.sp)
                   }
 
@@ -65,7 +74,10 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                   },
                   shape = RoundedCornerShape(12.dp),
                   colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9CBEC8)),
-                  modifier = Modifier.fillMaxWidth().padding(8.dp).height(60.dp)) {
+                  modifier = Modifier
+                      .fillMaxWidth()
+                      .padding(8.dp)
+                      .height(60.dp)) {
                     Text(text = "Create from scratch", color = Color.Black, fontSize = 16.sp)
                   }
             }
