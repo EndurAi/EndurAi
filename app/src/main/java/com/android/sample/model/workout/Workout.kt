@@ -71,4 +71,5 @@ enum class WorkoutType {
       WARMUP -> "Warm-up"
     }
   }
+
 }
