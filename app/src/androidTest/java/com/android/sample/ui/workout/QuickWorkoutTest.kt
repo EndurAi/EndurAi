@@ -86,8 +86,8 @@ class QuickWorkoutTest {
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
     }
-      `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
-      `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
+    `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
+    `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
 
     `when`(yogaRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
@@ -122,19 +122,22 @@ class QuickWorkoutTest {
     val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
     val expectedWorkouts: List<Workout> =
         listOf(
-            BodyWeightWorkout.WARMUP_WORKOUT,
-            BodyWeightWorkout.WORKOUT_PUSH_UPS,
-            YogaWorkout.QUICK_YOGA_WORKOUT,
-            BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT).map {
-            when (it) {
-                is BodyWeightWorkout -> bodyWeightViewModel.copyOf(it) //In this test, the new UID is harcoded
+                BodyWeightWorkout.WARMUP_WORKOUT,
+                BodyWeightWorkout.WORKOUT_PUSH_UPS,
+                YogaWorkout.QUICK_YOGA_WORKOUT,
+                BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
+            .map {
+              when (it) {
+                is BodyWeightWorkout ->
+                    bodyWeightViewModel.copyOf(it) // In this test, the new UID is harcoded
                 is YogaWorkout -> yogaViewModel.copyOf(it)
-                else -> {null as Workout}
+                else -> {
+                  null as Workout
+                }
+              }
             }
-        }
 
-
-      for (i in 0 until nodes.fetchSemanticsNodes().size) {
+    for (i in 0 until nodes.fetchSemanticsNodes().size) {
       nodes[i].performClick()
       when (i) {
         0 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
@@ -145,14 +148,13 @@ class QuickWorkoutTest {
     }
   }
 
-    private fun equals(workout1: Workout, workout2: Workout): Boolean {
-        return workout1.workoutId == workout2.workoutId &&
-            workout1.name == workout2.name &&
-            workout1.description == workout2.description &&
-            workout1.warmup == workout2.warmup &&
-                workout1.date == workout2.date &&
-                workout1.userIdSet == workout2.userIdSet &&
-                workout1.exercises == workout2.exercises
-
-    }
+  private fun equals(workout1: Workout, workout2: Workout): Boolean {
+    return workout1.workoutId == workout2.workoutId &&
+        workout1.name == workout2.name &&
+        workout1.description == workout2.description &&
+        workout1.warmup == workout2.warmup &&
+        workout1.date == workout2.date &&
+        workout1.userIdSet == workout2.userIdSet &&
+        workout1.exercises == workout2.exercises
+  }
 }

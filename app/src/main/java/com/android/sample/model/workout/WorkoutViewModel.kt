@@ -67,29 +67,33 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
   }
 
   /**
-   * Copies a workout object and returns a new instance with all the same properties except for the ID, which is a newly generated unique identifier.
+   * Copies a workout object and returns a new instance with all the same properties except for the
+   * ID, which is a newly generated unique identifier.
+   *
    * @param workout The workout object to be copied. Must be a subclass of [Workout].
    */
   fun <T : Workout> copyOf(workout: T): T {
     return when (workout) {
-      is BodyWeightWorkout -> BodyWeightWorkout(
-        getNewUid(),
-        workout.name,
-        workout.description,
-        workout.warmup,
-        workout.userIdSet,
-        workout.exercises,
-        workout.date
-      ) as T
-      is YogaWorkout -> YogaWorkout(
-        getNewUid(),
-        workout.name,
-        workout.description,
-        workout.warmup,
-        workout.userIdSet,
-        workout.exercises,
-        workout.date
-      ) as T
+      is BodyWeightWorkout ->
+          BodyWeightWorkout(
+              getNewUid(),
+              workout.name,
+              workout.description,
+              workout.warmup,
+              workout.userIdSet,
+              workout.exercises,
+              workout.date)
+              as T
+      is YogaWorkout ->
+          YogaWorkout(
+              getNewUid(),
+              workout.name,
+              workout.description,
+              workout.warmup,
+              workout.userIdSet,
+              workout.exercises,
+              workout.date)
+              as T
       else -> TODO()
     }
   }
