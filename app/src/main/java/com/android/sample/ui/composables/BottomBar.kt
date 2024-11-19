@@ -28,13 +28,15 @@ fun BottomBar(
           Column(
               modifier = Modifier.weight(1f).padding(vertical = 8.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
-                IconButton(onClick = { navigationActions.navigateTo(destination.route) }) {
-                  Icon(
-                      imageVector = destination.icon,
-                      contentDescription = destination.textId,
-                      tint = Color.White,
-                      modifier = Modifier.size(30.dp))
-                }
+                IconButton(
+                    modifier = Modifier.testTag(destination.textId),
+                    onClick = { navigationActions.navigateTo(destination.route) }) {
+                      Icon(
+                          imageVector = destination.icon,
+                          contentDescription = destination.textId,
+                          tint = Color.White,
+                          modifier = Modifier.size(30.dp))
+                    }
                 Text(
                     text = destination.textId,
                     color = Color.White,

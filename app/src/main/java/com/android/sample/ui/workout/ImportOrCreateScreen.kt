@@ -2,18 +2,19 @@ package com.android.sample.ui.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.model.workout.WorkoutType
-import com.android.sample.ui.composables.ArrowBack
+import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
@@ -21,10 +22,8 @@ import com.android.sample.ui.navigation.Screen
 @Composable
 fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: WorkoutType) {
   Scaffold(
-      topBar = {
-        TopAppBar(
-            title = { Text("New Session") }, navigationIcon = { ArrowBack(navigationActions) })
-      }) { paddingValues ->
+      topBar = { TopBar(navigationActions, R.string.new_session) },
+      modifier = Modifier.testTag("ImportOrCreateScreen")) { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

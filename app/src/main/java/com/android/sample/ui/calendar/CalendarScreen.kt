@@ -29,6 +29,8 @@ import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
+import com.android.sample.ui.composables.BottomBar
+import com.android.sample.ui.composables.Legend
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -104,7 +106,16 @@ fun CalendarScreen(
               modifier = Modifier.fillMaxWidth().padding(8.dp),
               horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
-                    onClick = { showDialog = false },
+                    onClick = {
+                      showDialog = false
+                      when (selectedWorkout!!.type) {
+                        WorkoutType.BODY_WEIGHT ->
+                            navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+                        WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
+                        WorkoutType.WARMUP -> TODO()
+                        WorkoutType.RUNNING -> TODO()
+                      }
+                    },
                     colors = ButtonDefaults.outlinedButtonColors(),
                     modifier = Modifier.testTag("editButton"),
                     border = BorderStroke(2.dp, Yellow)) {
@@ -140,29 +151,34 @@ fun CalendarScreen(
 
   val workoutsByDate = workouts.groupBy { it.workout.date.toLocalDate().toKotlinLocalDate() }
 
-  Scaffold(topBar = { TopBar(navigationActions, R.string.calendar_title) }) { innerPadding ->
-    Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-      Spacer(modifier = Modifier.height(8.dp))
+  Scaffold(
+      topBar = { TopBar(navigationActions, R.string.calendar_title) },
+      bottomBar = { BottomBar(navigationActions) }) { innerPadding ->
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+          Legend()
 
-      Legend(modifier = Modifier.testTag("legend"))
+          Divider(
+              color = Color.LightGray,
+              thickness = 1.dp,
+              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
-      LazyColumn(
-          state = lazyListState,
-          modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
-            items(dates) { date ->
-              DaySection(
-                  date = date,
-                  workouts = workoutsByDate[date] ?: emptyList(),
-                  onWorkoutClick = { workout ->
-                    selectedWorkout = workout
-                    showDialog = true
-                  },
-                  navigationActions,
-                  calendarViewModel)
-            }
-          }
-    }
-  }
+          LazyColumn(
+              state = lazyListState,
+              modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
+                items(dates) { date ->
+                  DaySection(
+                      date = date,
+                      workouts = workoutsByDate[date] ?: emptyList(),
+                      onWorkoutClick = { workout ->
+                        selectedWorkout = workout
+                        showDialog = true
+                      },
+                      navigationActions,
+                      calendarViewModel)
+                }
+              }
+        }
+      }
 }
 
 private fun generateDateRange(
@@ -170,31 +186,6 @@ private fun generateDateRange(
     count: Int
 ): List<kotlinx.datetime.LocalDate> {
   return List(count) { daysToAdd -> startDate.plus(daysToAdd.toLong(), DateTimeUnit.DAY) }
-}
-
-@Composable
-fun Legend(modifier: Modifier = Modifier) {
-  Row(
-      modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
-      horizontalArrangement = Arrangement.SpaceEvenly,
-      verticalAlignment = Alignment.CenterVertically) {
-        LegendItem(
-            color = PastelRed,
-            label = "Bodyweight",
-            modifier = Modifier.testTag("legendBodyweight"))
-        LegendItem(color = PastelBlue, label = "Yoga", modifier = Modifier.testTag("legendYoga"))
-      }
-}
-
-@Composable
-fun LegendItem(color: Color, label: String, modifier: Modifier = Modifier) {
-  Row(
-      modifier = modifier,
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(modifier = Modifier.size(16.dp).background(color, shape = MaterialTheme.shapes.small))
-        Text(text = label, style = MaterialTheme.typography.bodySmall)
-      }
 }
 
 @Composable

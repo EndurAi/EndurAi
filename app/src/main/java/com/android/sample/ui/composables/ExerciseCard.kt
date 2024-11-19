@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -29,12 +30,20 @@ import com.android.sample.ui.theme.Purple20
  * @param exercise the [Exercise] data to display in the card.
  */
 @Composable
-fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () -> Unit) {
+fun ExerciseCard(
+    exercise: Exercise,
+    onCardClick: () -> Unit,
+    onDetailClick: () -> Unit,
+    innerColor: Color = Blue,
+    textToDisplay: String = "",
+    modifier: Modifier = Modifier,
+    innerModifier: Modifier = Modifier
+) {
   Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
     // Vertical line connecting the cards
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp)) {
           Box(modifier = Modifier.size(8.dp).background(Purple20, shape = CircleShape))
           Spacer(modifier = Modifier.height(16.dp).width(2.dp).background(Purple20))
         }
@@ -59,7 +68,12 @@ fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () 
                     textAlign = TextAlign.Start)
 
                 // Exercise details (icon and information)
-                ExerciseDetailCard(exercise.detail, onClick = onDetailClick)
+                ExerciseDetailCard(
+                    exercise.detail,
+                    onClick = onDetailClick,
+                    textToDisplay = textToDisplay,
+                    cardColor = innerColor,
+                    modifier = innerModifier)
               }
         }
   }
@@ -71,10 +85,16 @@ fun ExerciseCard(exercise: Exercise, onCardClick: () -> Unit, onDetailClick: () 
  * @param detail the [ExerciseDetail] data to display in the card.
  */
 @Composable
-fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
+fun ExerciseDetailCard(
+    detail: ExerciseDetail,
+    onClick: () -> Unit,
+    cardColor: Color = Blue,
+    textToDisplay: String = "",
+    modifier: Modifier = Modifier
+) {
   Card(
       shape = RoundedCornerShape(12.dp),
-      colors = CardDefaults.cardColors(containerColor = Blue), // Darker blue color
+      colors = CardDefaults.cardColors(containerColor = cardColor), // Darker blue color
       modifier =
           Modifier.padding(start = 8.dp).testTag("detailCard").wrapContentSize().clickable {
             onClick()
@@ -92,10 +112,13 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
                       )
                   Spacer(modifier = Modifier.width(4.dp))
                   Text(
-                      text = "${detail.durationInSeconds / 60}′ X ${detail.sets}",
+                      text =
+                          if (textToDisplay.isBlank())
+                              "${formatTime(detail.durationInSeconds)} X ${detail.sets}"
+                          else textToDisplay,
                       fontSize = 14.sp,
-                      color = Black // Black text
-                      )
+                      color = Black, // Black text
+                      modifier = modifier)
                 }
                 is ExerciseDetail.RepetitionBased -> {
                   Icon(
@@ -106,12 +129,29 @@ fun ExerciseDetailCard(detail: ExerciseDetail, onClick: () -> Unit) {
                       )
                   Spacer(modifier = Modifier.width(4.dp))
                   Text(
-                      text = "X ${detail.repetitions}",
+                      text =
+                          if (textToDisplay.isBlank()) "X ${detail.repetitions}" else textToDisplay,
                       fontSize = 14.sp,
                       color = Black, // Black text
-                  )
+                      modifier = modifier)
                 }
               }
             }
       }
+}
+
+fun formatTime(time: Int): String {
+  val minutes = time / 60
+  val seconds = time % 60
+  val secondSimbol = "s"
+  val minuteSimbol = "m"
+  return if (minutes == 0 && seconds > 0) {
+    "${seconds}${secondSimbol}"
+  } else if (seconds == 0 && minutes > 0) {
+    "${minutes}${minuteSimbol}"
+  } else if (minutes == 0 && seconds == 0) {
+    "0${minuteSimbol}0${secondSimbol}"
+  } else {
+    "${minutes}${minuteSimbol}${seconds}${secondSimbol}"
+  }
 }

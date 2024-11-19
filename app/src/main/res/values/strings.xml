@@ -4,7 +4,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="welcome_message">What\'s up %1$s?</string>
-    <string name="ViewAllTitle">All Workouts</string>
+    <string name="ViewAllTitle">View All</string>
     <string name="noWorkouts">You have no Workouts yet.</string>
     <string name="TitleTabBody">BodyWeight</string>
     <string name="TitleTabYoga">Yoga</string>
@@ -20,4 +20,17 @@
     <string name="reject_invite">Reject</string>
     <string name="remove_friend">Remove</string>
     <string name="WorkoutSelectionTitle">Select the workout</string>
+    <string name="Delete_Account">Delete Account</string>
+    <string name="Logout">Logout</string>
+    <string name="UserData">User Data</string>
+    <string name="Preferences">Preferences</string>
+    <string name="SuccesfulDeleteMessage">Account deleted successfully</string>
+    <string name="LogoutMessage">Logged out successfully</string>
+    <string name="NewWorkout">New Workout</string>
+    <string name="AchievementsTitle">My Achievements</string>
+    <string name="View">View</string>
+    <string name="BodyWeightWorkoutTitle">BodyWeight</string>
+    <string name="YogaWorkoutTitle">Yoga</string>
+    <string name="new_session">New Session</string>
+    <string name="SkippedTextCard">Skipped</string>
 </resources>

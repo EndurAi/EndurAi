@@ -48,6 +48,45 @@ interface UserAccountRepository {
   )
 
   /**
+   * Removes a friend from the user account.
+   *
+   * @param userAccount The UserAccount object to be updated.
+   * @param friendId The ID of the friend to be removed.
+   * @param onSuccess Callback function to be invoked when the update is successful.
+   * @param onFailure Callback function to be invoked with an Exception if the update fails.
+   */
+  fun removeFriend(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /** Sends a friend request from one user to another. */
+  fun sendFriendRequest(
+      fromUser: UserAccount,
+      toUserId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /** Accepts a friend request. */
+  fun acceptFriendRequest(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /** Rejects a friend request. */
+  fun rejectFriendRequest(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /**
    * Deletes a user account.
    *
    * @param userId The ID of the user whose account is to be deleted.

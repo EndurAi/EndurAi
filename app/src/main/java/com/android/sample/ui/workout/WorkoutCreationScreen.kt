@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -76,7 +77,8 @@ fun WorkoutCreationScreen(
     navigationActions: NavigationActions,
     workoutType: WorkoutType,
     workoutViewModel: WorkoutViewModel<Workout>,
-    isImported: Boolean
+    isImported: Boolean,
+    editing: Boolean = false
 ) {
   val context = LocalContext.current
   val selectedWorkout =
@@ -92,21 +94,35 @@ fun WorkoutCreationScreen(
             ?: (selectedWorkout as? BodyWeightWorkout)?.exercises
             ?: mutableListOf())
   }
-  var showNameDescriptionScreen by remember { mutableStateOf(true) }
+  var showNameDescriptionScreen by remember {
+    mutableStateOf(!editing)
+  } // If you are editing, you don't need to show the name and description screen
   var showExerciseDialog by remember { mutableStateOf(false) }
   var selectedExercise by remember { mutableStateOf<Exercise?>(null) }
   var selectedExerciseType by remember { mutableStateOf<ExerciseType?>(null) }
   var exerciseDetail by remember { mutableStateOf<ExerciseDetail?>(null) }
   var isDropdownExpanded by remember { mutableStateOf(false) }
+  // Time-based exercise details to be shown in the input fields
+  var durationInSeconds_input by remember { mutableStateOf("") }
+  var sets_input by remember { mutableStateOf("") }
+  var repetitions_input by remember { mutableStateOf("") }
 
   Scaffold(
       topBar = {
         TopAppBar(
             title = { Text(workoutType.toString(), modifier = Modifier.testTag("workoutTopBar")) },
             navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-              }
+              IconButton(
+                  modifier = Modifier.testTag("ArrowBackButton"),
+                  onClick = {
+                    if (!showNameDescriptionScreen) {
+                      showNameDescriptionScreen = true
+                    } else {
+                      navigationActions.goBack()
+                    }
+                  }) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                  }
             })
       },
       content = { paddingValues ->
@@ -195,20 +211,15 @@ fun WorkoutCreationScreen(
                               }
                         }
                   }
-
-                  items(exerciseList) { exercise ->
-                    ExerciseCard(
-                        exercise,
-                        onCardClick = {
-                          showExerciseDialog = true
-                          selectedExercise = exercise
-                          selectedExerciseType = exercise.type
-                          exerciseDetail = exercise.detail
-                        },
-                        onDetailClick = {
-                          // Open a dialog to edit the exercise details, following the figma design
-                        })
-                  }
+                  exerciseListItems(
+                      exerciseList,
+                      onCardClick = { exercise ->
+                        showExerciseDialog = true
+                        selectedExercise = exercise
+                        selectedExerciseType = exercise.type
+                        exerciseDetail = exercise.detail
+                      },
+                      onDetailClick = {})
 
                   item {
                     // Vertical line connecting the cards
@@ -249,7 +260,7 @@ fun WorkoutCreationScreen(
                         onSaveClick = {
                           when (workoutType) {
                             WorkoutType.YOGA -> {
-                              workoutViewModel.addWorkout(
+                              val yogaWorkout =
                                   YogaWorkout(
                                       workoutId = workoutViewModel.getNewUid(),
                                       name = name,
@@ -257,10 +268,16 @@ fun WorkoutCreationScreen(
                                       warmup = warmup,
                                       date = selectedDateTime!!,
                                       exercises =
-                                          exerciseList.toMutableList() as MutableList<Exercise>))
+                                          exerciseList.toMutableList() as MutableList<Exercise>)
+                              if (editing) {
+                                workoutViewModel.updateWorkout(yogaWorkout)
+                                workoutViewModel.selectWorkout(yogaWorkout)
+                              } else {
+                                workoutViewModel.addWorkout(yogaWorkout)
+                              }
                             }
                             WorkoutType.BODY_WEIGHT -> {
-                              workoutViewModel.addWorkout(
+                              val bodyWeightWorkout =
                                   BodyWeightWorkout(
                                       workoutId = workoutViewModel.getNewUid(),
                                       name = name,
@@ -268,13 +285,23 @@ fun WorkoutCreationScreen(
                                       warmup = warmup,
                                       date = selectedDateTime!!,
                                       exercises =
-                                          exerciseList.toMutableList() as MutableList<Exercise>))
+                                          exerciseList.toMutableList() as MutableList<Exercise>)
+                              if (editing) {
+                                workoutViewModel.updateWorkout(bodyWeightWorkout)
+                                workoutViewModel.selectWorkout(bodyWeightWorkout)
+                              } else {
+                                workoutViewModel.addWorkout(bodyWeightWorkout)
+                              }
                             }
                             else -> {}
                           }
-                          Toast.makeText(context, "Workout successfully added", Toast.LENGTH_SHORT)
+                          Toast.makeText(context, "Workout successfully saved", Toast.LENGTH_SHORT)
                               .show()
-                          navigationActions.navigateTo(Screen.MAIN)
+                          if (editing) {
+                            navigationActions.goBack()
+                          } else {
+                            navigationActions.navigateTo(Screen.MAIN)
+                          }
                         },
                         "saveButton")
                   }
@@ -309,6 +336,7 @@ fun WorkoutCreationScreen(
                             DropdownMenuItem(
                                 onClick = {
                                   selectedExerciseType = type
+                                  exerciseDetail = type.detail
                                   isDropdownExpanded = false
                                 },
                                 modifier = Modifier.testTag("exerciseType${type.name}"),
@@ -322,6 +350,7 @@ fun WorkoutCreationScreen(
                             DropdownMenuItem(
                                 onClick = {
                                   selectedExerciseType = type
+                                  exerciseDetail = type.detail
                                   isDropdownExpanded = false
                                 },
                                 modifier = Modifier.testTag("exerciseType${type.name}"),
@@ -336,41 +365,40 @@ fun WorkoutCreationScreen(
                   "Selected Exercise: ${selectedExerciseType.toString()}",
                   modifier = Modifier.testTag("selectedExerciseType"))
               Text("Goal")
-              Row {
-                Button(
-                    onClick = { exerciseDetail = ExerciseDetail.TimeBased(0, 0) },
-                    modifier = Modifier.testTag("timeBasedButton")) {
-                      Text("TimeBased")
-                    }
-                Button(
-                    onClick = { exerciseDetail = ExerciseDetail.RepetitionBased(0) },
-                    modifier = Modifier.testTag("repetitionBasedButton")) {
-                      Text("RepetitionBased")
-                    }
-              }
-              when (exerciseDetail) {
+
+              val seletedExerciseTypeDetail = selectedExerciseType!!.detail
+
+              when (seletedExerciseTypeDetail) {
                 is ExerciseDetail.TimeBased -> {
+                  // Duration
                   OutlinedTextField(
                       value =
-                          (exerciseDetail as ExerciseDetail.TimeBased).durationInSeconds.toString(),
+                          if ((exerciseDetail as ExerciseDetail.TimeBased)
+                              .durationInSeconds
+                              .toString() == "0")
+                              ""
+                          else
+                              (exerciseDetail as ExerciseDetail.TimeBased)
+                                  .durationInSeconds
+                                  .toString(),
                       onValueChange = {
                         val newValue = it.toIntOrNull()
-                        if (newValue != null) {
-                          exerciseDetail =
-                              (exerciseDetail as ExerciseDetail.TimeBased).copy(
-                                  durationInSeconds = newValue)
-                        }
+                        exerciseDetail =
+                            (exerciseDetail as ExerciseDetail.TimeBased).copy(
+                                durationInSeconds = newValue ?: 0)
                       },
                       label = { Text("Duration (seconds)") },
                       modifier = Modifier.testTag("durationTextField"))
+                  // nb of sets
                   OutlinedTextField(
-                      value = (exerciseDetail as ExerciseDetail.TimeBased).sets.toString(),
+                      value =
+                          if ((exerciseDetail as ExerciseDetail.TimeBased).sets.toString() == "0")
+                              ""
+                          else (exerciseDetail as ExerciseDetail.TimeBased).sets.toString(),
                       onValueChange = {
                         val newValue = it.toIntOrNull()
-                        if (newValue != null) {
-                          exerciseDetail =
-                              (exerciseDetail as ExerciseDetail.TimeBased).copy(sets = newValue)
-                        }
+                        exerciseDetail =
+                            (exerciseDetail as ExerciseDetail.TimeBased).copy(sets = newValue ?: 0)
                       },
                       label = { Text("Sets") },
                       modifier = Modifier.testTag("setsTextField"))
@@ -378,14 +406,17 @@ fun WorkoutCreationScreen(
                 is ExerciseDetail.RepetitionBased -> {
                   OutlinedTextField(
                       value =
-                          (exerciseDetail as ExerciseDetail.RepetitionBased).repetitions.toString(),
+                          if ((exerciseDetail as ExerciseDetail.RepetitionBased)
+                              .repetitions
+                              .toString() == "0")
+                              ""
+                          else
+                              (exerciseDetail as ExerciseDetail.RepetitionBased)
+                                  .repetitions
+                                  .toString(),
                       onValueChange = {
                         val newValue = it.toIntOrNull()
-                        if (newValue != null) {
-                          exerciseDetail =
-                              (exerciseDetail as ExerciseDetail.RepetitionBased).copy(
-                                  repetitions = newValue)
-                        }
+                        exerciseDetail = ExerciseDetail.RepetitionBased(repetitions = newValue ?: 0)
                       },
                       label = { Text("Repetitions") },
                       modifier = Modifier.testTag("repetitionsTextField"))
@@ -450,5 +481,27 @@ fun WorkoutCreationScreen(
                 Text("Cancel")
               }
         })
+  }
+}
+/**
+ * Adds a list of exercise items to a LazyColumn. The list of exercises is displayed as cards.
+ *
+ * You need to use this inside a [LazyColumn], it would replace an [items] call.
+ *
+ * @param exerciseList The list of exercises to display.
+ * @param onCardClick Callback function to be invoked when an exercise card is clicked.
+ * @param onDetailClick Callback function to be invoked when the detail button of an exercise card
+ *   is clicked.
+ */
+fun LazyListScope.exerciseListItems(
+    exerciseList: List<Exercise>,
+    onCardClick: (Exercise) -> Unit,
+    onDetailClick: (Exercise) -> Unit
+) {
+  items(exerciseList) { exercise ->
+    ExerciseCard(
+        exercise,
+        onCardClick = { onCardClick(exercise) },
+        onDetailClick = { onDetailClick(exercise) })
   }
 }

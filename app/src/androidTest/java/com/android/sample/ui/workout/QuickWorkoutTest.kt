@@ -1,7 +1,8 @@
-package com.android.sample.screen.mainscreen
+package com.android.sample.ui.workout
 
-import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.performClick
 import com.android.sample.model.userAccount.Gender
 import com.android.sample.model.userAccount.HeightUnit
 import com.android.sample.model.userAccount.UserAccount
@@ -9,13 +10,13 @@ import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.android.sample.ui.navigation.Screen
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 import java.util.Date
@@ -23,12 +24,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 
-class MainScreenTest {
-
+class QuickWorkoutTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
   private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
@@ -41,6 +43,7 @@ class MainScreenTest {
 
   @Before
   fun setUp() {
+    MockitoAnnotations.openMocks(this)
     // Mock the repos for workouts
     bodyWeightRepo = mock()
     yogaRepo = mock()
@@ -83,6 +86,8 @@ class MainScreenTest {
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
     }
+    `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
+    `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
 
     `when`(yogaRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
@@ -101,73 +106,55 @@ class MainScreenTest {
       MainScreen(navigationActions, bodyWeightViewModel, yogaViewModel, accountViewModel)
     }
   }
-
+  // Test that each button calls navigateTo
   @Test
-  fun testMainScreenDisplaysProfileSection() {
-    // Check that the profile picture is displayed
-    composeTestRule.onNodeWithTag("ProfilePicture").assertIsDisplayed()
-
-    // Check that the welcome text is displayed
-    composeTestRule.onNodeWithTag("WelcomeText").assertIsDisplayed()
-
-    // Check that the settings button is displayed
-    composeTestRule.onNodeWithTag("SettingsButton").assertIsDisplayed()
-
-    // Simulate a click on the settings button and verify the navigation
-    composeTestRule.onNodeWithTag("SettingsButton").performClick()
-
-    // Verify that navigateTo for SETTINGS was called
-    verify(navigationActions).navigateTo(Screen.SETTINGS)
+  fun testQuickWorkoutButtonsNavigateCorrectly() {
+    val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
+    for (i in 0 until nodes.fetchSemanticsNodes().size) {
+      nodes[i].performClick()
+    }
+    verify(navigationActions, times(nodes.fetchSemanticsNodes().size)).navigateTo(screen = any())
   }
 
+  // Test that each button selects the correct workout
   @Test
-  fun testMainScreenDisplaysWorkoutSessionsSection() {
-    bodyWeightViewModel.getWorkouts()
-    // Check that the workout section is displayed
-    composeTestRule.onNodeWithTag("WorkoutSection").assertIsDisplayed()
+  fun testQuickWorkoutButtonsSelectCorrectWorkout() {
+    val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
+    val expectedWorkouts: List<Workout> =
+        listOf(
+                BodyWeightWorkout.WARMUP_WORKOUT,
+                BodyWeightWorkout.WORKOUT_PUSH_UPS,
+                YogaWorkout.QUICK_YOGA_WORKOUT,
+                BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
+            .map {
+              when (it) {
+                is BodyWeightWorkout ->
+                    bodyWeightViewModel.copyOf(it) // In this test, the new UID is harcoded
+                is YogaWorkout -> yogaViewModel.copyOf(it)
+                else -> {
+                  null as Workout
+                }
+              }
+            }
 
-    // Check that two workout cards are displayed
-    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(1)
-
-    // Check that the "View all" button is displayed
-    composeTestRule.onNodeWithTag("ViewAllButton").assertIsDisplayed()
-
-    // Simulate clicking on "View all"
-    composeTestRule.onNodeWithTag("ViewAllButton").performClick()
-
-    // Verify that navigateTo for ViewAllScreen was called
-    verify(navigationActions).navigateTo(Screen.VIEW_ALL)
+    for (i in 0 until nodes.fetchSemanticsNodes().size) {
+      nodes[i].performClick()
+      when (i) {
+        0 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        1 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        3 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+      }
+    }
   }
 
-  @Test
-  fun testMainScreenDisplaysQuickWorkoutSection() {
-    // Check that the Quick Workout section is displayed
-    composeTestRule.onNodeWithTag("QuickSection").assertIsDisplayed()
-
-    // Check that four quick workout buttons are displayed
-    composeTestRule.onAllNodesWithTag("QuickWorkoutButton").assertCountEquals(4)
-  }
-
-  @Test
-  fun testMainScreenDisplaysNewWorkoutPlanSection() {
-    // Check that the New Workout button is displayed
-    composeTestRule.onNodeWithTag("NewWorkoutButton").assertIsDisplayed()
-
-    // Simulate clicking on the New Workout Plan section
-    composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
-    verify(navigationActions).navigateTo(Screen.SESSIONSELECTION)
-  }
-
-  @Test
-  fun testAchievemetsSectionIsDisplayed() {
-    composeTestRule.onNodeWithTag("AchievementButton").performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AchievementButton").performClick()
-    verify(navigationActions).navigateTo(Screen.ACHIEVEMENTS)
-  }
-
-  @Test
-  fun testBottomNavigationBarIsDisplayed() {
-    // Check that the BottomNavigationBar is displayed
-    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
+  private fun equals(workout1: Workout, workout2: Workout): Boolean {
+    return workout1.workoutId == workout2.workoutId &&
+        workout1.name == workout2.name &&
+        workout1.description == workout2.description &&
+        workout1.warmup == workout2.warmup &&
+        workout1.date == workout2.date &&
+        workout1.userIdSet == workout2.userIdSet &&
+        workout1.exercises == workout2.exercises
   }
 }

@@ -1,9 +1,11 @@
-package com.android.sample.viewmodel
+package com.android.sample.model.userAccount
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewModelScope
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountLocalCache
@@ -21,6 +23,9 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +46,9 @@ open class UserAccountViewModel(
   val isLoading: StateFlow<Boolean>
     get() = _isLoading.asStateFlow()
 
+  // Minimum display time for loading dialog in milliseconds
+  private val minimumLoadingTime = 1500L // 1,5 seconds but could be changed
+
   init {
 loadCachedUserAccount()
   }
@@ -60,21 +68,37 @@ loadCachedUserAccount()
         }
     }
 
-    fun getUserAccount(userId: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            repository.getUserAccount(
-                userId = userId,
-                onSuccess = {
-                    _userAccount.value = it
-                    _isLoading.value = false
-                },
-                onFailure = {
-                    _userAccount.value = null
-                    _isLoading.value = false
-                }
-            )
-        }
+  fun getUserAccount(userId: String) {
+    _isLoading.value = true
+
+    viewModelScope.launch {
+      // Start both the delay and the repository operation concurrently
+      val delayJob = async {
+        delay(minimumLoadingTime)
+        true // Return true to indicate the delay has completed
+      }
+
+      val repositoryJob = async {
+        var result = false
+        repository.getUserAccount(
+            userId = userId,
+            onSuccess = {
+              _userAccount.value = it
+              result = true
+            },
+            onFailure = {
+              _userAccount.value = null
+              result = true
+            })
+        result // Return true after repository fetch completes
+      }
+
+      // Wait for both delay and repository operation to complete
+      awaitAll(delayJob, repositoryJob)
+
+      // After both are done, set isLoading to false
+      _isLoading.value = false
+    }
   }
 
   fun createUserAccount(userAccount: UserAccount) {
@@ -116,6 +140,93 @@ loadCachedUserAccount()
           }
         }
         .addOnFailureListener { exception -> onFailure(exception) }
+  }
+
+  fun removeFriend(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.removeFriend(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to remove friend", exception)
+          })
+    }
+  }
+
+  fun sendFriendRequest(toUserId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.sendFriendRequest(
+          fromUser = currentUser,
+          toUserId = toUserId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to send friend request", exception)
+          })
+    }
+  }
+
+  fun acceptFriendRequest(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.acceptFriendRequest(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to accept friend request", exception)
+          })
+    }
+  }
+
+  fun rejectFriendRequest(friendId: String) {
+    userAccount.value?.let { currentUser ->
+      repository.rejectFriendRequest(
+          userAccount = currentUser,
+          friendId = friendId,
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to reject friend request", exception)
+          })
+    }
+  }
+
+  fun getFriends(): List<UserAccount> {
+    val friends = mutableListOf<UserAccount>()
+    userAccount.value?.friends?.forEach { friendId ->
+      repository.getUserAccount(
+          friendId,
+          onSuccess = { friends.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of friends", exception)
+          })
+    }
+    return friends
+  }
+
+  fun getSentRequests(): List<UserAccount> {
+    val sentRequests = mutableListOf<UserAccount>()
+    userAccount.value?.sentRequests?.forEach { requestId ->
+      repository.getUserAccount(
+          requestId,
+          onSuccess = { sentRequests.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+          })
+    }
+    return sentRequests
+  }
+
+  fun getReceivedRequests(): List<UserAccount> {
+    val receivedRequests = mutableListOf<UserAccount>()
+    userAccount.value?.receivedRequests?.forEach { requestId ->
+      repository.getUserAccount(
+          requestId,
+          onSuccess = { receivedRequests.add(it) },
+          onFailure = { exception ->
+            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+          })
+    }
+    return receivedRequests
   }
 
   fun deleteAccount(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
