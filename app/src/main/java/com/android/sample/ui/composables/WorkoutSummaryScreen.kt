@@ -20,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,8 +29,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
+import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.model.userAccount.WeightUnit
+import com.android.sample.model.workout.ExerciseDetail
+import com.android.sample.model.workout.ExerciseType
+import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.theme.Green
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Red
@@ -51,8 +60,10 @@ import com.android.sample.ui.workout.ExerciseState
 fun WorkoutSummaryScreen(
     hasWarmUp: Boolean,
     exerciseList: List<ExerciseState>,
-    onfinishButtonClicked: () -> Unit
+    onfinishButtonClicked: () -> Unit,
+    userAccountViewModel: UserAccountViewModel
 ) {
+    val userAccount by userAccountViewModel.userAccount.collectAsState()
   Column(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Top,
@@ -106,6 +117,7 @@ fun WorkoutSummaryScreen(
       }
 
   Spacer(Modifier.size(25.dp))
+    Text(text = stringResource(R.string.CaloriesMessage, ComputeCalories(exerciseList, userAccount)))
 
   Button(
       onClick = { onfinishButtonClicked() },
@@ -115,3 +127,51 @@ fun WorkoutSummaryScreen(
         Text("Finish", color = Color.Black, fontSize = 20.sp)
       }
 }
+
+fun ComputeCalories(exerciseList: List<ExerciseState>, userAccount: UserAccount?): Int {
+
+    val weightInKg = if (userAccount == null) {
+        70f // Default mean weight
+    } else {
+        when (userAccount.weightUnit) {
+            WeightUnit.KG -> userAccount.weight
+            WeightUnit.LBS -> userAccount.weight * 0.453592
+        }
+    }
+
+    return exerciseList.filter { it.isDone }.sumOf { exerciseState ->
+        val caloriesPerExercise = when (exerciseState.exercise.detail) {
+            is ExerciseDetail.TimeBased -> {
+                val minutes = exerciseState.exercise.detail.durationInSeconds / 60.0
+                // Calories brûlées par minute pour les exercices basés sur le temps
+                minutes * caloriesBurnedPerMinute(exerciseState.exercise.type, weightInKg)
+            }
+            is ExerciseDetail.RepetitionBased -> {
+                // Calories par répétition pour les exercices basés sur les répétitions
+                exerciseState.exercise.detail.repetitions * caloriesBurnedPerRepetition(exerciseState.exercise.type, weightInKg)
+            }
+        }
+        caloriesPerExercise.toInt()
+    }
+}
+
+// Calcule les calories par minute en fonction du type d'exercice
+fun caloriesBurnedPerMinute(exerciseType: ExerciseType, weight: Float): Double {
+    return when (exerciseType.workoutType) {
+        WorkoutType.YOGA -> 3.0 * weight / 60.0 // Exemple: 3 MET pour le yoga
+        WorkoutType.BODY_WEIGHT -> 6.0 * weight / 60.0 // Exemple: 6 MET pour exercices au poids du corps
+        WorkoutType.WARMUP -> 4.0 * weight / 60.0 // Exemple: 4 MET pour échauffement
+        WorkoutType.RUNNING -> TODO()
+    }
+}
+
+// Calcule les calories par répétition en fonction du type d'exercice
+fun caloriesBurnedPerRepetition(exerciseType: ExerciseType, weight: Float): Double {
+    return when (exerciseType.workoutType) {
+        WorkoutType.YOGA -> 0.1 * weight // Exemple: moins intense
+        WorkoutType.BODY_WEIGHT -> 0.5 * weight // Exemple: plus intense
+        WorkoutType.WARMUP -> 0.2 * weight // Exemple: modéré
+        WorkoutType.RUNNING -> TODO()
+    }
+}
+
