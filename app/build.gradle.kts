@@ -151,7 +151,8 @@ dependencies {
     implementation(libs.androidx.espresso.intents)
     implementation(libs.androidx.ui.test.android)
   implementation(libs.androidx.camera.video)
-  testImplementation(libs.junit)
+    implementation(libs.androidx.foundation.layout.android)
+    testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
@@ -223,6 +224,9 @@ implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     }
 
     implementation(libs.kotlinx.datetime)
+
+    //Google ML kit
+    implementation("com.google.mlkit:pose-detection:18.0.0-beta5")
 }
 
 tasks.withType<Test> {
