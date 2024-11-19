@@ -32,7 +32,7 @@ class UserAccountLocalCache(private val context: Context) {
             preferences[userAccountKey]?.let { gson.fromJson(it, UserAccount::class.java) }
         }
 
-    suspend fun saveUserAccount(userAccount: UserAccount) {
+     suspend fun saveUserAccount(userAccount: UserAccount) {
         context.userAccountDataStore.edit { preferences ->
             preferences[userAccountKey] = gson.toJson(userAccount)
         }

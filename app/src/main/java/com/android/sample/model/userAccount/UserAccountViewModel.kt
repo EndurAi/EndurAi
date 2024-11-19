@@ -6,11 +6,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewModelScope
-import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.model.userAccount.UserAccountLocalCache
-import com.android.sample.model.userAccount.UserAccountRepository
-import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
 import com.android.sample.ui.settings.signOut
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.Firebase
@@ -190,10 +185,10 @@ loadCachedUserAccount()
     }
   }
 
-  fun getFriends(): List<UserAccount> {
+  suspend fun getFriends(): List<UserAccount> {
     val friends = mutableListOf<UserAccount>()
     userAccount.value?.friends?.forEach { friendId ->
-      repository.getUserAccount(
+        repository.getUserAccount(
           friendId,
           onSuccess = { friends.add(it) },
           onFailure = { exception ->
@@ -203,7 +198,7 @@ loadCachedUserAccount()
     return friends
   }
 
-  fun getSentRequests(): List<UserAccount> {
+  suspend fun getSentRequests(): List<UserAccount> {
     val sentRequests = mutableListOf<UserAccount>()
     userAccount.value?.sentRequests?.forEach { requestId ->
       repository.getUserAccount(
@@ -216,7 +211,7 @@ loadCachedUserAccount()
     return sentRequests
   }
 
-  fun getReceivedRequests(): List<UserAccount> {
+  suspend fun getReceivedRequests(): List<UserAccount> {
     val receivedRequests = mutableListOf<UserAccount>()
     userAccount.value?.receivedRequests?.forEach { requestId ->
       repository.getUserAccount(
