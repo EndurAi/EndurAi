@@ -63,38 +63,42 @@ loadCachedUserAccount()
         }
     }
 
-  fun getUserAccount(userId: String) {
-    _isLoading.value = true
+    fun getUserAccount(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
 
-    viewModelScope.launch {
-      // Start both the delay and the repository operation concurrently
-      val delayJob = async {
-        delay(minimumLoadingTime)
-        true // Return true to indicate the delay has completed
-      }
+            // Start the delay for a minimum loading time
+            val delayJob = async {
+                delay(minimumLoadingTime)
+            }
 
-      val repositoryJob = async {
-        var result = false
-        repository.getUserAccount(
-            userId = userId,
-            onSuccess = {
-              _userAccount.value = it
-              result = true
-            },
-            onFailure = {
-              _userAccount.value = null
-              result = true
-            })
-        result // Return true after repository fetch completes
-      }
+            // Properly handle the repository job
+            val repositoryJob = launch {
+                try {
+                    repository.getUserAccount(
+                        userId = userId,
+                        onSuccess = { userAccount ->
+                            _userAccount.value = userAccount
+                        },
+                        onFailure = { exception ->
+                            Log.e("UserAccountViewModel", "Failed to fetch user account", exception)
+                            _userAccount.value = null
+                        }
+                    )
+                } catch (e: Exception) {
+                    Log.e("UserAccountViewModel", "Unexpected error fetching user account", e)
+                    _userAccount.value = null
+                }
+            }
 
-      // Wait for both delay and repository operation to complete
-      awaitAll(delayJob, repositoryJob)
+            // Wait for both the delay and repository job to finish
+            delayJob.await()
+            repositoryJob.join()
 
-      // After both are done, set isLoading to false
-      _isLoading.value = false
+            // Set loading to false after both tasks are complete
+            _isLoading.value = false
+        }
     }
-  }
 
   fun createUserAccount(userAccount: UserAccount) {
       viewModelScope.launch {
