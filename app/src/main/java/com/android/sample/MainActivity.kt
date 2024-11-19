@@ -82,6 +82,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
+
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
@@ -125,8 +126,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Friends Screen
 
     navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
-      composable(Screen.FRIENDS) { FriendsScreen(navigationActions) }
-      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions) }
+      composable(Screen.FRIENDS) { FriendsScreen(navigationActions, userAccountViewModel) }
+      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions, userAccountViewModel) }
     }
 
     // Video Screen

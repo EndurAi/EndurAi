@@ -17,6 +17,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -157,12 +158,15 @@ open class UserAccountViewModel(
     }
   }
 
+
+    // synchronous friends
   fun getFriends(): List<UserAccount> {
     val friends = mutableListOf<UserAccount>()
     userAccount.value?.friends?.forEach { friendId ->
       repository.getUserAccount(
           friendId,
-          onSuccess = { friends.add(it) },
+          onSuccess = {
+              friends.add(it) },
           onFailure = { exception ->
             Log.e("UserAccountViewModel", "Failed to get the list of friends", exception)
           })
@@ -170,7 +174,38 @@ open class UserAccountViewModel(
     return friends
   }
 
-  fun getSentRequests(): List<UserAccount> {
+
+    // asynchronous friends
+
+    private val _friends = MutableStateFlow<List<UserAccount>>(emptyList())
+    val friends: StateFlow<List<UserAccount>> get() = _friends.asStateFlow()
+
+
+    private suspend fun getUserAccountAsync(userId: String): UserAccount? {
+        val deferred = CompletableDeferred<UserAccount?>()
+        repository.getUserAccount(
+            userId,
+            onSuccess = { deferred.complete(it) },
+            onFailure = { deferred.complete(null) }
+        )
+        return deferred.await()
+    }
+
+    fun fetchFriends() {
+        viewModelScope.launch {
+            userAccount.value?.let { currentUser ->
+                val friendsList = currentUser.friends.map { friendId ->
+                    async { getUserAccountAsync(friendId) }
+                }.awaitAll().filterNotNull()
+
+                _friends.value = friendsList
+                Log.d("UserAccountViewModel", "Fetched friends list: $friendsList")
+            }
+        }
+    }
+
+
+    fun getSentRequests(): List<UserAccount> {
     val sentRequests = mutableListOf<UserAccount>()
     userAccount.value?.sentRequests?.forEach { requestId ->
       repository.getUserAccount(
