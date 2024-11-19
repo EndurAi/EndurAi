@@ -117,7 +117,7 @@ fun AddAccount(
   Column {
     // Add the TopBar only when editing an account
     if (accountExists) {
-      TopBar(navigationActions = navigationActions, title = R.string.edit_account_title)
+      TopBar(navigationActions = navigationActions, title = R.string.EditAccount)
     }
     AccountForm(
         profileImageUri = profileImageUri,

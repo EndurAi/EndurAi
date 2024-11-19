@@ -17,10 +17,8 @@ class DeleteConfirmationDialogTest {
 
   @Test
   fun dialogDisplaysCorrectText() {
-    // Arrange: Set up the dialog
     composeTestRule.setContent { DeleteConfirmationDialog(onConfirm = {}, onDismiss = {}) }
 
-    // Assert: Check that the title and message are displayed
     composeTestRule
         .onNodeWithText(context.getString(R.string.ConfirmDeleteTitle))
         .assertIsDisplayed()
@@ -33,15 +31,12 @@ class DeleteConfirmationDialogTest {
   fun confirmButtonTriggersAction() {
     var confirmClicked = false
 
-    // Arrange: Set up the dialog
     composeTestRule.setContent {
       DeleteConfirmationDialog(onConfirm = { confirmClicked = true }, onDismiss = {})
     }
 
-    // Act: Click the confirm button
     composeTestRule.onNodeWithText(context.getString(R.string.Confirm)).performClick()
 
-    // Assert: Confirm button action is triggered
     assert(confirmClicked)
   }
 
@@ -49,15 +44,12 @@ class DeleteConfirmationDialogTest {
   fun dismissButtonTriggersAction() {
     var dismissClicked = false
 
-    // Arrange: Set up the dialog
     composeTestRule.setContent {
       DeleteConfirmationDialog(onConfirm = {}, onDismiss = { dismissClicked = true })
     }
 
-    // Act: Click the dismiss button
     composeTestRule.onNodeWithText(context.getString(R.string.Cancel)).performClick()
 
-    // Assert: Dismiss button action is triggered
     assert(dismissClicked)
   }
 }

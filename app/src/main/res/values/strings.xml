@@ -37,5 +37,5 @@
     <string name="ConfirmDeleteMessage">Are you sure you want to delete your account? This action cannot be undone.</string>
     <string name="Confirm">Confirm</string>
     <string name="Cancel">Cancel</string>
-    <string name="edit_account_title">Edit Account</string>
+    <string name="EditAccount">Edit Account</string>
 </resources>
