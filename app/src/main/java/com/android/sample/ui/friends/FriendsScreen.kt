@@ -35,14 +35,6 @@ fun FriendsScreen(
 ) {
   val searchQuery = remember { mutableStateOf("") }
 
-//   Hardcoded list of friends
-//    val friendsList =
-//      setOf(
-//          UserAccount(userId = "1", firstName = "Pierre"),
-//          UserAccount(userId = "2", firstName = "Alex"),
-//          UserAccount(userId = "3", firstName = "Edouard"))
-
-
     LaunchedEffect(Unit) {
         userAccountViewModel.fetchFriends()
     }

@@ -54,7 +54,7 @@ fun AddFriendScreen(
 
     when (selectedTab) {
       "New Connections" -> {
-        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"))
+        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"), userAccountViewModel)
       }
       "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
     }

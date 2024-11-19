@@ -175,6 +175,27 @@ open class UserAccountViewModel(
   }
 
 
+
+
+
+    fun searchUsers(query: String, onResult: (List<UserAccount>) -> Unit, onFailure: (Exception) -> Unit) {
+        if (query.isBlank()) {
+            onResult(emptyList()) // If query is blank, return no results
+            return
+        }
+
+        repository.searchUsers(
+            query = query,
+            onSuccess = { userList ->
+                onResult(userList)
+            },
+            onFailure = { exception ->
+                Log.e("UserAccountViewModel", "Failed to search users", exception)
+                onFailure(exception)
+            }
+        )
+    }
+
     // asynchronous friends
 
     private val _friends = MutableStateFlow<List<UserAccount>>(emptyList())
