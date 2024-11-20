@@ -89,11 +89,13 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
       onFinishRecording: () -> Unit,
       onStarting: () -> Unit = {}
   ) {
+    //disablePoseRecognition()
 
     if (_recording.value != null) {
+
       _recording.value?.stop()
       onFinishRecording()
-      switchVideoCaptureUseCase()
+
 
       _recording.value = null
       return
@@ -111,8 +113,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   if (event.hasError()) {
                     _recording.value?.close()
                     _recording.value = null
+                    resetCameraController()
                     onFailure()
                   } else {
+                    resetCameraController()
                     onSuccess()
                   }
                 }
@@ -122,6 +126,12 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
 
   private fun switchVideoCaptureUseCase() {
     _cameraController.value.setEnabledUseCases(CameraController.VIDEO_CAPTURE)
+  }
+
+  private fun resetCameraController(){
+    _cameraController.value = LifecycleCameraController(context).apply {
+      cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+    }
   }
 
   fun enablePoseRecognition() {
@@ -134,5 +144,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
               Log.d("MLDEB", "enablePoseRecognition: ${poseLandmarks.value.size} ")
               _poseLandMarks.value += it
             }))
+  }
+
+  fun finishPoseRecognition() {
+    _cameraController.value.clearImageAnalysisAnalyzer()
+    _poseLandMarks.value = mutableListOf()
   }
 }
