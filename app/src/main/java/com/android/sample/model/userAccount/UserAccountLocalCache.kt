@@ -8,37 +8,39 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
+import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import java.io.IOException
 
 // Extension for accessing DataStore
-val Context.userAccountDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_account")
+val Context.userAccountDataStore: DataStore<Preferences> by
+    preferencesDataStore(name = "user_account")
 
-class UserAccountLocalCache(private val context: Context) {
-    private val gson = Gson()
-    private val userAccountKey = stringPreferencesKey("user_account")
+open class UserAccountLocalCache(private val context: Context) {
+  private val gson = Gson()
+  private val userAccountKey = stringPreferencesKey("user_account")
 
-    fun getUserAccount(): Flow<UserAccount?> = context.userAccountDataStore.data
-        .catch { exception ->
+  fun getUserAccount(): Flow<UserAccount?> =
+      context.userAccountDataStore.data
+          .catch { exception ->
             if (exception is IOException) {
-                emit(emptyPreferences())
+              emit(emptyPreferences())
             } else {
-                throw exception
+              throw exception
             }
-        }
-        .map { preferences ->
+          }
+          .map { preferences ->
             preferences[userAccountKey]?.let { gson.fromJson(it, UserAccount::class.java) }
-        }
+          }
 
-     suspend fun saveUserAccount(userAccount: UserAccount) {
-        context.userAccountDataStore.edit { preferences ->
-            preferences[userAccountKey] = gson.toJson(userAccount)
-        }
+  suspend fun saveUserAccount(userAccount: UserAccount) {
+    context.userAccountDataStore.edit { preferences ->
+      preferences[userAccountKey] = gson.toJson(userAccount)
     }
+  }
 
-    suspend fun clearUserAccount() {
-        context.userAccountDataStore.edit { it.clear() }
-    }
+  suspend fun clearUserAccount() {
+    context.userAccountDataStore.edit { it.clear() }
+  }
 }

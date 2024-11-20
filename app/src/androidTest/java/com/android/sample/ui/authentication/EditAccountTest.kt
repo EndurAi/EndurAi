@@ -1,7 +1,9 @@
 package com.android.sample.ui.authentication
 
+import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.userAccount.*
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.navigation.NavigationActions
@@ -15,6 +17,7 @@ class EditAccountScreenTest {
   private lateinit var userAccountRepository: UserAccountRepository
   private lateinit var userAccountViewModel: UserAccountViewModel
   private lateinit var navigationActions: NavigationActions
+  private lateinit var localCache: UserAccountLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -33,9 +36,15 @@ class EditAccountScreenTest {
 
   @Before
   fun setUp() {
+    // Get application context for testing
+    val context = ApplicationProvider.getApplicationContext<Context>()
+
+    // Initialize localCache with the context
+    localCache = UserAccountLocalCache(context)
     userAccountRepository = FakeUserAccountRepository()
     navigationActions = mock(NavigationActions::class.java)
-    userAccountViewModel = UserAccountViewModel(userAccountRepository)
+
+    userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
 
     // Initialize the fake repository with a user account for the tests
     (userAccountRepository as FakeUserAccountRepository).setUserAccount(userAccount)

@@ -9,7 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class UserAccountRepositoryFirestore(private val db: FirebaseFirestore, private val localCache: UserAccountLocalCache
+class UserAccountRepositoryFirestore(
+    private val db: FirebaseFirestore,
+    private val localCache: UserAccountLocalCache
 ) : UserAccountRepository {
 
   private val collectionPath = "userAccounts"
@@ -22,42 +24,40 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore, private 
     }
   }
 
-    override suspend fun getUserAccount(
-        userId: String,
-        onSuccess: (UserAccount) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        try {
-            // Use the local cache first
-            val cachedAccount = localCache.getUserAccount().firstOrNull()
-            if (cachedAccount != null) {
-                onSuccess(cachedAccount)
-            } else {
-                // Fetch from Firebase if not in the cache
-                db.collection(collectionPath)
-                    .document(userId)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        val userAccount = document.toObject(UserAccount::class.java)
-                        if (userAccount != null) {
-                            onSuccess(userAccount)
-                            // Save to cache
-                            CoroutineScope(Dispatchers.IO).launch {
-                                localCache.saveUserAccount(userAccount)
-                            }
-                        } else {
-                            onFailure(Exception("UserAccount not found"))
-                        }
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.e("UserAccountRepo", "Error getting user account", exception)
-                        onFailure(exception)
-                    }
+  override suspend fun getUserAccount(
+      userId: String,
+      onSuccess: (UserAccount) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      // Use the local cache first
+      val cachedAccount = localCache.getUserAccount().firstOrNull()
+      if (cachedAccount != null) {
+        onSuccess(cachedAccount)
+      } else {
+        // Fetch from Firebase if not in the cache
+        db.collection(collectionPath)
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+              val userAccount = document.toObject(UserAccount::class.java)
+              if (userAccount != null) {
+                onSuccess(userAccount)
+                // Save to cache
+                CoroutineScope(Dispatchers.IO).launch { localCache.saveUserAccount(userAccount) }
+              } else {
+                onFailure(Exception("UserAccount not found"))
+              }
             }
-        } catch (e: Exception) {
-            onFailure(e)
-        }
+            .addOnFailureListener { exception ->
+              Log.e("UserAccountRepo", "Error getting user account", exception)
+              onFailure(exception)
+            }
+      }
+    } catch (e: Exception) {
+      onFailure(e)
     }
+  }
 
   override fun createUserAccount(
       userAccount: UserAccount,
@@ -68,8 +68,8 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore, private 
         .document(userAccount.userId)
         .set(userAccount)
         .addOnSuccessListener {
-            onSuccess()
-            saveUserAccountToCache(userAccount) // Cache locally
+          onSuccess()
+          saveUserAccountToCache(userAccount) // Cache locally
         }
         .addOnFailureListener { exception ->
           Log.e("UserAccountRepo", "Error creating user account", exception)
@@ -86,8 +86,8 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore, private 
         .document(userAccount.userId)
         .set(userAccount)
         .addOnSuccessListener {
-            onSuccess()
-            saveUserAccountToCache(userAccount) // Cache locally
+          onSuccess()
+          saveUserAccountToCache(userAccount) // Cache locally
         }
         .addOnFailureListener { exception ->
           Log.e("UserAccountRepo", "Error updating user account", exception)
@@ -214,9 +214,7 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore, private 
         }
   }
 
-    private fun saveUserAccountToCache(userAccount: UserAccount) {
-        CoroutineScope(Dispatchers.IO).launch {
-            localCache.saveUserAccount(userAccount)
-        }
-    }
+  private fun saveUserAccountToCache(userAccount: UserAccount) {
+    CoroutineScope(Dispatchers.IO).launch { localCache.saveUserAccount(userAccount) }
+  }
 }
