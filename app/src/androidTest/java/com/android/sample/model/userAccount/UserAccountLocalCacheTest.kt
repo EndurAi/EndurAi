@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.nullValue
 import org.junit.Before
 import org.junit.Test
 
@@ -42,6 +43,6 @@ class UserAccountLocalCacheTest {
     localCache.clearUserAccount()
 
     val cachedAccount = localCache.getUserAccount().first()
-    //        assertThat(cachedAccount, `is`(null))
+    assertThat(cachedAccount, `is`(nullValue()))
   }
 }
