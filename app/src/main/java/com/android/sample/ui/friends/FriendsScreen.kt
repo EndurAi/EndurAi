@@ -90,7 +90,8 @@ fun FriendsScreen(
                 selectedFriends.add(friend.userId)
               }
             },
-            onRemoveClick = { /* Handle remove friend action */},
+            onRemoveClick = { userAccountViewModel.removeFriend(friend.userId)
+                            userAccountViewModel.fetchFriends()},
         )
         Spacer(modifier = Modifier.height(8.dp))
       }

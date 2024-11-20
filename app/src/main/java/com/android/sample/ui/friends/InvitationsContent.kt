@@ -66,8 +66,12 @@ fun InvitationsContent(modifier: Modifier, userAccountViewModel: UserAccountView
         items(invitations) { profile ->
           ProfileItemWithAcceptReject(
               profile = profile,
-              onAcceptClick = { /* Trigger accept logic */},
-              onRejectClick = { /* Trigger reject logic */})
+              onAcceptClick = {
+                  userAccountViewModel.acceptFriendRequest(profile.userId)
+                  userAccountViewModel.fetchReceivedRequests()},
+              onRejectClick = {
+                  userAccountViewModel.rejectFriendRequest(profile.userId)
+                  userAccountViewModel.fetchReceivedRequests()})
           Spacer(modifier = Modifier.height(8.dp))
         }
       }
