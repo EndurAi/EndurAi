@@ -256,11 +256,13 @@ open class UserAccountViewModel(
     fun fetchSentRequests() {
         viewModelScope.launch {
             userAccount.value?.let { currentUser ->
+                _sentRequests.value = emptyList()
                 val sentRequestsList = currentUser.sentRequests.map { requestId ->
                     async { getUserAccountAsync(requestId) }
                 }.awaitAll().filterNotNull()
                 _sentRequests.value = sentRequestsList
                 Log.d("UserAccountViewModel", "Fetched sent requests list: $sentRequestsList")
+                Log.d("UserAccountViewModel", "Fetched sent requests list length: ${sentRequestsList.size}")
             }
         }
     }

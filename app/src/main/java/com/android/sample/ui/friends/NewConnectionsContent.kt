@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -26,6 +28,11 @@ fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier 
 
     val searchResults = remember { mutableStateOf<List<UserAccount>>(emptyList()) }
 
+    LaunchedEffect(Unit) {
+        userAccountViewModel.fetchSentRequests()
+    }
+    val sentRequests by userAccountViewModel.sentRequests.collectAsState()
+
     LaunchedEffect(searchQuery.value) {
         if (searchQuery.value.isNotBlank()) {
             userAccountViewModel.searchUsers(
@@ -34,7 +41,8 @@ fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier 
                 onFailure = { exception -> Log.e("NewConnectionsContent", "Search failed", exception) }
             )
         } else {
-            searchResults.value = emptyList()
+            searchResults.value = sentRequests
+            Log.d("NewConnectionsContent", " Length: ${sentRequests.size}")
         }
     }
 
@@ -49,8 +57,9 @@ fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier 
 
       LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(searchResults.value) { profile ->
+            Log.d("NewConnectionsContent", "Profile: ${profile.firstName} ${profile.lastName}")
           ProfileItemWithRequest(
-              profile = profile, onSendRequestClick = { userAccountViewModel.sendFriendRequest(profile.userId) })
+              profile = profile, sentRequests,onSendRequestClick = { userAccountViewModel.sendFriendRequest(profile.userId) })
           Spacer(modifier = Modifier.height(8.dp))
         }
       }
