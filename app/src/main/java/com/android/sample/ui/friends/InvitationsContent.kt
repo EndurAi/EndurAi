@@ -13,6 +13,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,17 +27,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.theme.Purple20
 
 /** Composable part of the Add Friend screen */
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "StateFlowValueCalledInComposition")
 @Composable
-fun InvitationsContent(modifier: Modifier) {
-  // Hardcoded list of invitations
-  val invitations =
-      listOf(
-          UserAccount(userId = "4", firstName = "David"),
-          UserAccount(userId = "5", firstName = "Emma"))
+fun InvitationsContent(modifier: Modifier, userAccountViewModel: UserAccountViewModel ) {
+
+    LaunchedEffect(Unit) {
+        userAccountViewModel.fetchReceivedRequests()
+    }
+
+
+    val invitations by userAccountViewModel.receivedRequests.collectAsState()
 
   Box(modifier) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -44,7 +52,9 @@ fun InvitationsContent(modifier: Modifier) {
                   .padding(16.dp),
           contentAlignment = Alignment.Center) {
             Text(
-                text = stringResource(id = R.string.welcome_message_invitations, "Michael"),
+                text = userAccountViewModel.userAccount.value?.let {
+                    stringResource(id = R.string.welcome_message_invitations, it.firstName)
+                } ?: "",
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
                 fontSize = 16.sp)

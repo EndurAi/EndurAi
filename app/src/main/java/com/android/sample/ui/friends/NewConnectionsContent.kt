@@ -23,16 +23,8 @@ import com.android.sample.ui.composables.CustomSearchBar
 /** Composable part of the Add Friend screen */
 @Composable
 fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier = Modifier, userAccountViewModel: UserAccountViewModel) {
-//  val newConnections =
-//      listOf(
-//          UserAccount(userId = "1", firstName = "Alice"),
-//          UserAccount(userId = "2", firstName = "Bob"),
-//          UserAccount(userId = "3", firstName = "Charlie"))
-
-
 
     val searchResults = remember { mutableStateOf<List<UserAccount>>(emptyList()) }
-
 
     LaunchedEffect(searchQuery.value) {
         if (searchQuery.value.isNotBlank()) {
@@ -58,7 +50,7 @@ fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier 
       LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(searchResults.value) { profile ->
           ProfileItemWithRequest(
-              profile = profile, onSendRequestClick = { /* Trigger send request logic */})
+              profile = profile, onSendRequestClick = { userAccountViewModel.sendFriendRequest(profile.userId) })
           Spacer(modifier = Modifier.height(8.dp))
         }
       }

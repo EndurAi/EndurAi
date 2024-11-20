@@ -174,10 +174,6 @@ open class UserAccountViewModel(
     return friends
   }
 
-
-
-
-
     fun searchUsers(query: String, onResult: (List<UserAccount>) -> Unit, onFailure: (Exception) -> Unit) {
         if (query.isBlank()) {
             onResult(emptyList()) // If query is blank, return no results
@@ -196,10 +192,43 @@ open class UserAccountViewModel(
         )
     }
 
+
+    fun getSentRequests(): List<UserAccount> {
+        val sentRequests = mutableListOf<UserAccount>()
+        userAccount.value?.sentRequests?.forEach { requestId ->
+            repository.getUserAccount(
+                requestId,
+                onSuccess = { sentRequests.add(it) },
+                onFailure = { exception ->
+                    Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+                })
+        }
+        return sentRequests
+    }
+
+    fun getReceivedRequests(): List<UserAccount> {
+        val receivedRequests = mutableListOf<UserAccount>()
+        userAccount.value?.receivedRequests?.forEach { requestId ->
+            repository.getUserAccount(
+                requestId,
+                onSuccess = { receivedRequests.add(it) },
+                onFailure = { exception ->
+                    Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+                })
+        }
+        return receivedRequests
+    }
+
     // asynchronous friends
 
     private val _friends = MutableStateFlow<List<UserAccount>>(emptyList())
     val friends: StateFlow<List<UserAccount>> get() = _friends.asStateFlow()
+
+    private val _sentRequests = MutableStateFlow<List<UserAccount>>(emptyList())
+    val sentRequests: StateFlow<List<UserAccount>> get() = _sentRequests.asStateFlow()
+
+    private val _receivedRequests = MutableStateFlow<List<UserAccount>>(emptyList())
+    val receivedRequests: StateFlow<List<UserAccount>> get() = _receivedRequests.asStateFlow()
 
 
     private suspend fun getUserAccountAsync(userId: String): UserAccount? {
@@ -224,33 +253,29 @@ open class UserAccountViewModel(
             }
         }
     }
-
-
-    fun getSentRequests(): List<UserAccount> {
-    val sentRequests = mutableListOf<UserAccount>()
-    userAccount.value?.sentRequests?.forEach { requestId ->
-      repository.getUserAccount(
-          requestId,
-          onSuccess = { sentRequests.add(it) },
-          onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
-          })
+    fun fetchSentRequests() {
+        viewModelScope.launch {
+            userAccount.value?.let { currentUser ->
+                val sentRequestsList = currentUser.sentRequests.map { requestId ->
+                    async { getUserAccountAsync(requestId) }
+                }.awaitAll().filterNotNull()
+                _sentRequests.value = sentRequestsList
+                Log.d("UserAccountViewModel", "Fetched sent requests list: $sentRequestsList")
+            }
+        }
     }
-    return sentRequests
-  }
 
-  fun getReceivedRequests(): List<UserAccount> {
-    val receivedRequests = mutableListOf<UserAccount>()
-    userAccount.value?.receivedRequests?.forEach { requestId ->
-      repository.getUserAccount(
-          requestId,
-          onSuccess = { receivedRequests.add(it) },
-          onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
-          })
+    fun fetchReceivedRequests() {
+        viewModelScope.launch {
+            userAccount.value?.let { currentUser ->
+                val receivedRequestsList = currentUser.receivedRequests.map { requestId ->
+                    async { getUserAccountAsync(requestId) }
+                }.awaitAll().filterNotNull()
+                _receivedRequests.value = receivedRequestsList
+                Log.d("UserAccountViewModel", "Fetched received requests list: $receivedRequestsList")
+            }
+        }
     }
-    return receivedRequests
-  }
 
   fun deleteAccount(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val user = firebaseAuth?.currentUser ?: FirebaseAuth.getInstance().currentUser

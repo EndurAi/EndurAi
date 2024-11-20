@@ -56,7 +56,7 @@ fun AddFriendScreen(
       "New Connections" -> {
         NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"), userAccountViewModel)
       }
-      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
+      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"), userAccountViewModel)
     }
   }
 }
