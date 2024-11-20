@@ -248,7 +248,10 @@ fun WorkoutScreenBody(
       }) { innerPadding ->
         Column(
             modifier =
-                Modifier.fillMaxSize().padding(innerPadding).verticalScroll(rememberScrollState()),
+                Modifier.fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .testTag("WorkoutScreenBodyColumn"),
             horizontalAlignment = Alignment.CenterHorizontally) {
               if (summaryScreenIsDisplayed) {
                 WorkoutSummaryScreen(
@@ -383,54 +386,55 @@ fun WorkoutScreenBody(
 
                 // Presentation button box
                 if (presentationButtonBoxIsDisplayed) {
-                  Column(
-                      modifier = Modifier.width(180.dp).fillMaxHeight(),
-                      horizontalAlignment = Alignment.CenterHorizontally,
-                      verticalArrangement = Arrangement.Bottom) {
-                        SkipButton(
-                            onClick = {
-                              exerciseStateList[exerciseIndex].isDone = false
                               nextExercise()
                             })
-                        Spacer(modifier = Modifier.height(50.dp))
-                        // Switch to ask if the user wants to record itself
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier =
-                                Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
-                                    .background(Color.White) // Add background color
                                     .border(
                                         BorderStroke(4.dp, Color.Yellow),
-                                        shape =
-                                            RoundedCornerShape(
-                                                25.dp)) // Add yellow stroke with rounded corners
-                                    .padding(8.dp)) {
-                              Image(
                                   painter = painterResource(id = R.drawable.baseline_camera_24),
                                   contentDescription = "Record Video",
-                                  modifier = Modifier.padding(end = 8.dp).rotate(angle))
 
-                              Text("Record", fontSize = 14.sp) // Add text "Record"
-                              Spacer(modifier = Modifier.width(3.dp))
-                              Switch(
-                                  checked = cameraRecordAsked,
-                                  onCheckedChange = { cameraRecordAsked = it },
-                                  modifier = Modifier.testTag("recordSwitch"))
-                            }
-                        Spacer(Modifier.height(10.dp))
-                        Button(
-                            onClick = {
-                              presentationButtonBoxIsDisplayed = false
-                              goalCounterBoxIsDisplayed = true
-                              finishButtonBoxIsDisplayed = true
-                              videoBoxIsDisplayed = false
-                            },
-                            modifier = Modifier.width(200.dp).height(50.dp).testTag("StartButton"),
-                            colors =
-                                ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
-                            shape = RoundedCornerShape(size = 11.dp)) {
-                              Text("Start", color = Color.Black, fontSize = 20.sp)
-                            }
+                  SkipButton(
+                      onClick = {
+                        exerciseStateList[exerciseIndex].isDone = false
+                        nextExercise()
+                      })
+                  Spacer(modifier = Modifier.height(30.dp))
+                  // Switch to ask if the user wants to record itself
+                  Row(
+                      verticalAlignment = Alignment.CenterVertically,
+                      modifier =
+                          Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
+                              .background(Color.White) // Add background color
+                              .border(
+                                  BorderStroke(4.dp, Color.Yellow),
+                                  shape =
+                                      RoundedCornerShape(
+                                          25.dp)) // Add yellow stroke with rounded corners
+                              .padding(8.dp)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.baseline_camera_24),
+                            contentDescription = "Record Video",
+                            modifier = Modifier.padding(end = 8.dp).rotate(angle))
+
+                        Text("Record", fontSize = 10.sp) // Add text "Record"
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Switch(
+                            checked = cameraRecordAsked,
+                            onCheckedChange = { cameraRecordAsked = it },
+                            modifier = Modifier.testTag("recordSwitch"))
+                      }
+                  Spacer(Modifier.height(10.dp))
+                  Button(
+                      onClick = {
+                        presentationButtonBoxIsDisplayed = false
+                        goalCounterBoxIsDisplayed = true
+                        finishButtonBoxIsDisplayed = true
+                        videoBoxIsDisplayed = false
+                      },
+                      modifier = Modifier.width(200.dp).height(50.dp).testTag("StartButton"),
+                      colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
+                      shape = RoundedCornerShape(size = 11.dp)) {
+                        Text("Start", color = Color.Black, fontSize = 20.sp)
                       }
                 } else if (finishButtonBoxIsDisplayed) {
                   // Finish button box to be displayed during a exercise to be executing

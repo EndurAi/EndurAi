@@ -3,9 +3,11 @@ package com.android.sample.ui.workout
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoRepository
 import com.android.sample.model.video.VideoViewModel
@@ -182,7 +184,9 @@ class WorkoutScreenTest {
 
     composeTestRule.onNodeWithTag("SkipButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("SkipButton").assertTextEquals("Skip")
-
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("StartButton").assertTextEquals("Start")
     composeTestRule.onNodeWithTag("recordSwitch").assertIsDisplayed()
@@ -234,7 +238,9 @@ class WorkoutScreenTest {
 
     composeTestRule.onNodeWithTag("SkipButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("SkipButton").assertTextEquals("Skip")
-
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("StartButton").assertTextEquals("Start")
     composeTestRule.onNodeWithTag("recordSwitch").assertIsDisplayed()
@@ -283,7 +289,9 @@ class WorkoutScreenTest {
 
     composeTestRule.onNodeWithTag("SkipButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("SkipButton").assertTextEquals("Skip")
-
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("StartButton").assertTextEquals("Start")
     composeTestRule.onNodeWithTag("recordSwitch").assertIsDisplayed()
@@ -320,6 +328,9 @@ class WorkoutScreenTest {
     bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type?.let {
       composeTestRule.onNodeWithTag("ExerciseDescription").assertTextEquals(it.getInstruction())
     }
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("StartButton").performClick()
     // Check that the presentation specific components are hidden
@@ -410,12 +421,21 @@ class WorkoutScreenTest {
           videoViewModel = mockVideoViewModel)
     }
     // ex1
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performClick()
     // ex2
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performClick()
     // ex3 (last one)
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performClick()
     // Skip the summary
@@ -468,12 +488,19 @@ class WorkoutScreenTest {
           videoViewModel = mockVideoViewModel)
     }
     // ex1
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performClick()
     // ex2
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performClick()
     // ex3 (last one is skipped)
+
     composeTestRule.onNodeWithTag("SkipButton").performClick()
 
     // Check that the summaryscreen is well displayed
