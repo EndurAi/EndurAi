@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -90,7 +93,7 @@ data class ExerciseState(val exercise: Exercise, var isDone: Boolean)
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WarmUpScreenBody(
+fun WorkoutScreenBody(
     exerciseStateList: List<ExerciseState>?,
     workoutName: String,
     navigationActions: NavigationActions,
@@ -235,7 +238,7 @@ fun WarmUpScreenBody(
                   workoutName,
                   modifier =
                       Modifier.background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
-                          .padding(horizontal = 80.dp)
+                          .padding(horizontal = 10.dp)
                           .padding(1.dp)
                           .testTag("WorkoutName"),
                   fontWeight = FontWeight(500),
@@ -381,7 +384,7 @@ fun WarmUpScreenBody(
                 // Presentation button box
                 if (presentationButtonBoxIsDisplayed) {
                   Column(
-                      modifier = Modifier.size(height = 200.dp, width = 180.dp),
+                      modifier = Modifier.width(180.dp).fillMaxHeight(),
                       horizontalAlignment = Alignment.CenterHorizontally,
                       verticalArrangement = Arrangement.Bottom) {
                         SkipButton(
@@ -391,17 +394,29 @@ fun WarmUpScreenBody(
                             })
                         Spacer(modifier = Modifier.height(50.dp))
                         // Switch to ask if the user wants to record itself
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                          Image(
-                              painter = painterResource(id = R.drawable.baseline_camera_24),
-                              contentDescription = "Record Video",
-                              modifier = Modifier.padding(end = 8.dp).rotate(angle))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
+                                    .background(Color.White) // Add background color
+                                    .border(
+                                        BorderStroke(4.dp, Color.Yellow),
+                                        shape =
+                                            RoundedCornerShape(
+                                                25.dp)) // Add yellow stroke with rounded corners
+                                    .padding(8.dp)) {
+                              Image(
+                                  painter = painterResource(id = R.drawable.baseline_camera_24),
+                                  contentDescription = "Record Video",
+                                  modifier = Modifier.padding(end = 8.dp).rotate(angle))
 
-                          Switch(
-                              checked = cameraRecordAsked,
-                              onCheckedChange = { cameraRecordAsked = it },
-                              modifier = Modifier.testTag("recordSwitch"))
-                        }
+                              Text("Record", fontSize = 14.sp) // Add text "Record"
+                              Spacer(modifier = Modifier.width(3.dp))
+                              Switch(
+                                  checked = cameraRecordAsked,
+                                  onCheckedChange = { cameraRecordAsked = it },
+                                  modifier = Modifier.testTag("recordSwitch"))
+                            }
                         Spacer(Modifier.height(10.dp))
                         Button(
                             onClick = {
@@ -543,7 +558,7 @@ fun WorkoutScreen(
 
   // Display the WarmUpScreenBody with the exercise list and workout name
   selectedWorkout?.name?.let {
-    WarmUpScreenBody(
+    WorkoutScreenBody(
         exerciseStateList,
         workoutName = it,
         navigationActions = navigationActions,

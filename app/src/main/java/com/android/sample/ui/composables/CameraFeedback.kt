@@ -58,7 +58,7 @@ class CameraFeedBack {
     public fun CameraScreen(
         cameraViewModel: CameraViewModel,
         modifier: Modifier = Modifier,
-        poseDetectionRequired: Boolean = false
+        poseDetectionRequired: Boolean = false // Not yet used
     ) {
 
       val cameraPermissionState: PermissionState =

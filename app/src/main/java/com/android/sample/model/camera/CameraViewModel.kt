@@ -21,12 +21,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * A ViewModel that manages camera operations for video recording.
+ * A ViewModel that manages camera operations for video recording and pose detection.
  *
  * This ViewModel provides functionality for:
  * - Controlling the camera (switching between front and back cameras)
  * - Recording videos
  * - Managing the state of the recording
+ * - Enabling and disabling pose detection
+ * - Providing detected pose landmarks
  *
  * @param context The application context.
  */
@@ -47,7 +49,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val videoFile: StateFlow<File>
     get() = _videoFile.asStateFlow()
 
-  /** A MutableStateFlow that holds the LifecycleCameraController. */
+  /**
+   * A MutableStateFlow that holds the LifecycleCameraController. Initialized with the front camera
+   * selected.
+   */
   val _cameraController =
       MutableStateFlow<LifecycleCameraController>(
           LifecycleCameraController(context).apply {
@@ -58,7 +63,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val cameraController: StateFlow<LifecycleCameraController>
     get() = _cameraController.asStateFlow()
 
+  /** A MutableStateFlow that holds the list of detected pose landmarks. */
   val _poseLandMarks = MutableStateFlow<List<PoseLandmark>>(mutableListOf())
+
+  /** A StateFlow that exposes the list of detected pose landmarks. */
   val poseLandmarks: StateFlow<List<PoseLandmark>>
     get() = _poseLandMarks.asStateFlow()
 
@@ -89,14 +97,9 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
       onFinishRecording: () -> Unit,
       onStarting: () -> Unit = {}
   ) {
-    //disablePoseRecognition()
-
     if (_recording.value != null) {
-
       _recording.value?.stop()
       onFinishRecording()
-
-
       _recording.value = null
       return
     }
@@ -124,16 +127,20 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
             }
   }
 
+  /** Switches the camera controller to the video capture use case. */
   private fun switchVideoCaptureUseCase() {
     _cameraController.value.setEnabledUseCases(CameraController.VIDEO_CAPTURE)
   }
 
-  private fun resetCameraController(){
-    _cameraController.value = LifecycleCameraController(context).apply {
-      cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-    }
+  /** Resets the camera controller to its initial state with the front camera selected. */
+  private fun resetCameraController() {
+    _cameraController.value =
+        LifecycleCameraController(context).apply {
+          cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+        }
   }
 
+  /** Enables pose recognition by setting up the image analysis analyzer. */
   fun enablePoseRecognition() {
     _cameraController.value.imageAnalysisTargetSize =
         CameraController.OutputSize(AspectRatio.RATIO_16_9)
@@ -146,6 +153,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
             }))
   }
 
+  /**
+   * Disables pose recognition by clearing the image analysis analyzer and emptying the landMarks
+   * list.
+   */
   fun finishPoseRecognition() {
     _cameraController.value.clearImageAnalysisAnalyzer()
     _poseLandMarks.value = mutableListOf()
