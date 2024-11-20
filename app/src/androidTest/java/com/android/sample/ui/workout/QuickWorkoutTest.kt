@@ -10,6 +10,7 @@ import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
@@ -85,6 +86,8 @@ class QuickWorkoutTest {
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
     }
+    `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
+    `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
 
     `when`(yogaRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
@@ -117,21 +120,41 @@ class QuickWorkoutTest {
   @Test
   fun testQuickWorkoutButtonsSelectCorrectWorkout() {
     val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
-    val expectedWorkouts =
+    val expectedWorkouts: List<Workout> =
         listOf(
-            BodyWeightWorkout.WARMUP_WORKOUT,
-            BodyWeightWorkout.WORKOUT_PUSH_UPS,
-            YogaWorkout.QUICK_YOGA_WORKOUT,
-            BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
+                BodyWeightWorkout.WARMUP_WORKOUT,
+                BodyWeightWorkout.WORKOUT_PUSH_UPS,
+                YogaWorkout.QUICK_YOGA_WORKOUT,
+                BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
+            .map {
+              when (it) {
+                is BodyWeightWorkout ->
+                    bodyWeightViewModel.copyOf(it) // In this test, the new UID is harcoded
+                is YogaWorkout -> yogaViewModel.copyOf(it)
+                else -> {
+                  null as Workout
+                }
+              }
+            }
 
     for (i in 0 until nodes.fetchSemanticsNodes().size) {
       nodes[i].performClick()
       when (i) {
-        0 -> assert(bodyWeightViewModel.selectedWorkout.value == expectedWorkouts[i])
-        1 -> assert(bodyWeightViewModel.selectedWorkout.value == expectedWorkouts[i])
-        2 -> assert(yogaViewModel.selectedWorkout.value == expectedWorkouts[i])
-        3 -> assert(bodyWeightViewModel.selectedWorkout.value == expectedWorkouts[i])
+        0 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        1 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        3 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
       }
     }
+  }
+
+  private fun equals(workout1: Workout, workout2: Workout): Boolean {
+    return workout1.workoutId == workout2.workoutId &&
+        workout1.name == workout2.name &&
+        workout1.description == workout2.description &&
+        workout1.warmup == workout2.warmup &&
+        workout1.date == workout2.date &&
+        workout1.userIdSet == workout2.userIdSet &&
+        workout1.exercises == workout2.exercises
   }
 }

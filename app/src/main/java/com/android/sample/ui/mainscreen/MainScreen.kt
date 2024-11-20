@@ -292,19 +292,23 @@ fun QuickWorkoutButton(
               .clickable {
                 when (iconId) {
                   R.drawable.running_man -> {
-                    bodyWeightViewModel.selectWorkout(BodyWeightWorkout.WARMUP_WORKOUT)
+                    bodyWeightViewModel.selectWorkout(
+                        bodyWeightViewModel.copyOf(BodyWeightWorkout.WARMUP_WORKOUT))
                     navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
                   }
                   R.drawable.pushups -> {
-                    bodyWeightViewModel.selectWorkout(BodyWeightWorkout.WORKOUT_PUSH_UPS)
+                    bodyWeightViewModel.selectWorkout(
+                        bodyWeightViewModel.copyOf(BodyWeightWorkout.WORKOUT_PUSH_UPS))
                     navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
                   }
                   R.drawable.yoga -> {
-                    yogaViewModel.selectWorkout(YogaWorkout.QUICK_YOGA_WORKOUT)
+                    yogaViewModel.selectWorkout(
+                        yogaViewModel.copyOf(YogaWorkout.QUICK_YOGA_WORKOUT))
                     navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
                   }
                   R.drawable.dumbbell -> {
-                    bodyWeightViewModel.selectWorkout(BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
+                    bodyWeightViewModel.selectWorkout(
+                        bodyWeightViewModel.copyOf(BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT))
                     navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
                   }
                 }
