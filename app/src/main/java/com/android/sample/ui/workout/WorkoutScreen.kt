@@ -386,12 +386,6 @@ fun WorkoutScreenBody(
 
                 // Presentation button box
                 if (presentationButtonBoxIsDisplayed) {
-                              nextExercise()
-                            })
-                                    .border(
-                                        BorderStroke(4.dp, Color.Yellow),
-                                  painter = painterResource(id = R.drawable.baseline_camera_24),
-                                  contentDescription = "Record Video",
 
                   SkipButton(
                       onClick = {
