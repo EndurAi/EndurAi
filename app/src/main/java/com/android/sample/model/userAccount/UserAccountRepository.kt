@@ -86,6 +86,13 @@ interface UserAccountRepository {
       onFailure: (Exception) -> Unit
   )
 
+  /** Searches for users based on the given query. */
+  fun searchUsers(
+      query: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
   /**
    * Deletes a user account.
    *

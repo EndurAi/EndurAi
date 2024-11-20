@@ -183,6 +183,14 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
+  override fun searchUsers(
+      query: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
   override fun sendFriendRequest(
       fromUser: UserAccount,
       toUserId: String,
