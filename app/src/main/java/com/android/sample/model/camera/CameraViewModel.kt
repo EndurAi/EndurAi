@@ -2,6 +2,8 @@ package com.android.sample.model.camera
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recording
@@ -11,6 +13,8 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
+import com.google.mlkit.vision.pose.PoseLandmark
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,13 +51,20 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val _cameraController =
       MutableStateFlow<LifecycleCameraController>(
           LifecycleCameraController(context).apply {
-            setEnabledUseCases(CameraController.VIDEO_CAPTURE)
             cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
           })
 
   /** A StateFlow that exposes the LifecycleCameraController. */
   val cameraController: StateFlow<LifecycleCameraController>
     get() = _cameraController.asStateFlow()
+
+
+
+  val _poseLandMarks = MutableStateFlow<List<PoseLandmark>>(mutableListOf() )
+  val poseLandmarks: StateFlow<List<PoseLandmark>>
+    get() = _poseLandMarks.asStateFlow()
+
+
 
   /** Switches between the front and back cameras. */
   fun switchCamera() {
@@ -86,10 +97,14 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     if (_recording.value != null) {
       _recording.value?.stop()
       onFinishRecording()
+      switchVideoCaptureUseCase()
+
       _recording.value = null
       return
     }
+
     onStarting()
+    switchVideoCaptureUseCase()
     _recording.value =
         _cameraController.value.startRecording(
             FileOutputOptions.Builder(_videoFile.value).build(),
@@ -108,4 +123,21 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
               }
             }
   }
+
+
+  private fun switchVideoCaptureUseCase() {
+    _cameraController.value.setEnabledUseCases(CameraController.VIDEO_CAPTURE)
+  }
+
+  fun enablePoseRecognition(){
+    _cameraController.value.imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_16_9)
+    _cameraController.value.setImageAnalysisAnalyzer(
+      ContextCompat.getMainExecutor(context),
+      PoseDetectionAnalyser(onDetectedPoseUpdated = {
+        Log.d("MLDEB", "enablePoseRecognition: ${poseLandmarks.value.size} ")
+        _poseLandMarks.value += it })
+    )
+  }
+
+
 }
