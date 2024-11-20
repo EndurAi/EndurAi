@@ -24,8 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.android.sample.R
 import com.android.sample.model.userAccount.*
 import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.google.firebase.Firebase
@@ -81,8 +83,11 @@ fun AddAccount(
             it.birthDate.let { timestamp ->
               val calendar = Calendar.getInstance()
               calendar.time = timestamp.toDate()
-              "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(
-                            Calendar.YEAR)}"
+              "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${
+                            calendar.get(
+                                Calendar.YEAR
+                            )
+                        }"
             }
         // Check for valid URI before assigning it
         try {
@@ -109,49 +114,55 @@ fun AddAccount(
           contract = ActivityResultContracts.GetContent(),
           onResult = { uri -> profileImageUri = uri })
 
-  AccountForm(
-      profileImageUri = profileImageUri,
-      onImageClick = { imagePickerLauncher.launch("image/*") },
-      firstName = firstName,
-      lastName = lastName,
-      onFirstNameChange = { firstName = it },
-      onLastNameChange = { lastName = it },
-      height = height,
-      weight = weight,
-      heightUnit = heightUnit,
-      weightUnit = weightUnit,
-      onHeightChange = { height = it },
-      onWeightChange = { weight = it },
-      onHeightUnitChange = { heightUnit = it },
-      onWeightUnitChange = { weightUnit = it },
-      gender = gender,
-      onGenderChange = { gender = it },
-      birthDate = birthDate,
-      onBirthDateChange = { birthDate = it },
-      buttonText = if (accountExists) "Save Changes" else "Submit",
-      onButtonClick = {
-        saveAccount(
-            isNewAccount = !accountExists,
-            userAccountViewModel = userAccountViewModel,
-            navigationActions = navigationActions,
-            userId = if (accountExists) userId2 else actualUserId,
-            firstName = firstName,
-            lastName = lastName,
-            height = height,
-            heightUnit = heightUnit,
-            weight = weight,
-            weightUnit = weightUnit,
-            gender = gender,
-            birthDate = birthDate,
-            profileImageUri = profileImageUri,
-            originalProfileImageUri = if (accountExists) originalProfileImageUri else null,
-            friends = friends,
-            sentRequests = sentRequests,
-            receivedRequests = receivedRequests,
-            context = context)
-      },
-      isButtonEnabled = firstName.isNotBlank(),
-      testTag = if (accountExists) "editScreen" else "addScreen")
+  Column {
+    // Add the TopBar only when editing an account
+    if (accountExists) {
+      TopBar(navigationActions = navigationActions, title = R.string.EditAccount)
+    }
+    AccountForm(
+        profileImageUri = profileImageUri,
+        onImageClick = { imagePickerLauncher.launch("image/*") },
+        firstName = firstName,
+        lastName = lastName,
+        onFirstNameChange = { firstName = it },
+        onLastNameChange = { lastName = it },
+        height = height,
+        weight = weight,
+        heightUnit = heightUnit,
+        weightUnit = weightUnit,
+        onHeightChange = { height = it },
+        onWeightChange = { weight = it },
+        onHeightUnitChange = { heightUnit = it },
+        onWeightUnitChange = { weightUnit = it },
+        gender = gender,
+        onGenderChange = { gender = it },
+        birthDate = birthDate,
+        onBirthDateChange = { birthDate = it },
+        buttonText = if (accountExists) "Save Changes" else "Submit",
+        onButtonClick = {
+          saveAccount(
+              isNewAccount = !accountExists,
+              userAccountViewModel = userAccountViewModel,
+              navigationActions = navigationActions,
+              userId = if (accountExists) userId2 else actualUserId,
+              firstName = firstName,
+              lastName = lastName,
+              height = height,
+              heightUnit = heightUnit,
+              weight = weight,
+              weightUnit = weightUnit,
+              gender = gender,
+              birthDate = birthDate,
+              profileImageUri = profileImageUri,
+              originalProfileImageUri = if (accountExists) originalProfileImageUri else null,
+              friends = friends,
+              sentRequests = sentRequests,
+              receivedRequests = receivedRequests,
+              context = context)
+        },
+        isButtonEnabled = firstName.isNotBlank(),
+        testTag = if (accountExists) "editScreen" else "addScreen")
+  }
 }
 
 @Composable
