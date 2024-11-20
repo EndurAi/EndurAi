@@ -50,15 +50,19 @@ fun ProfileItem(
 }
 
 @Composable
-fun ProfileItemWithRequest(profile: UserAccount, sentRequests: List<UserAccount>, onSendRequestClick: () -> Unit) {
-    val requestSent = remember { sentRequests.any { it.userId == profile.userId } }
+fun ProfileItemWithRequest(
+    profile: UserAccount,
+    sentRequests: List<UserAccount>,
+    onSendRequestClick: () -> Unit
+) {
+  val requestSent = remember { sentRequests.any { it.userId == profile.userId } }
 
   ProfileItem(profile = profile) {
     Button(
         onClick = {
-            if (!requestSent) {
-                onSendRequestClick()
-            }
+          if (!requestSent) {
+            onSendRequestClick()
+          }
         },
         enabled = !requestSent,
         colors =

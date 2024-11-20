@@ -24,27 +24,28 @@ import com.android.sample.ui.composables.CustomSearchBar
 
 /** Composable part of the Add Friend screen */
 @Composable
-fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier = Modifier, userAccountViewModel: UserAccountViewModel) {
+fun NewConnectionsContent(
+    searchQuery: MutableState<String>,
+    modifier: Modifier = Modifier,
+    userAccountViewModel: UserAccountViewModel
+) {
 
-    val searchResults = remember { mutableStateOf<List<UserAccount>>(emptyList()) }
+  val searchResults = remember { mutableStateOf<List<UserAccount>>(emptyList()) }
 
-    LaunchedEffect(Unit) {
-        userAccountViewModel.fetchSentRequests()
+  LaunchedEffect(Unit) { userAccountViewModel.fetchSentRequests() }
+  val sentRequests by userAccountViewModel.sentRequests.collectAsState()
+
+  LaunchedEffect(searchQuery.value) {
+    if (searchQuery.value.isNotBlank()) {
+      userAccountViewModel.searchUsers(
+          query = searchQuery.value,
+          onResult = { results -> searchResults.value = results },
+          onFailure = { exception -> Log.e("NewConnectionsContent", "Search failed", exception) })
+    } else {
+      searchResults.value = sentRequests
+      Log.d("NewConnectionsContent", " Length: ${sentRequests.size}")
     }
-    val sentRequests by userAccountViewModel.sentRequests.collectAsState()
-
-    LaunchedEffect(searchQuery.value) {
-        if (searchQuery.value.isNotBlank()) {
-            userAccountViewModel.searchUsers(
-                query = searchQuery.value,
-                onResult = { results -> searchResults.value = results },
-                onFailure = { exception -> Log.e("NewConnectionsContent", "Search failed", exception) }
-            )
-        } else {
-            searchResults.value = sentRequests
-            Log.d("NewConnectionsContent", " Length: ${sentRequests.size}")
-        }
-    }
+  }
 
   Box(modifier) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -57,9 +58,11 @@ fun NewConnectionsContent(searchQuery: MutableState<String>, modifier: Modifier 
 
       LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(searchResults.value) { profile ->
-            Log.d("NewConnectionsContent", "Profile: ${profile.firstName} ${profile.lastName}")
+          Log.d("NewConnectionsContent", "Profile: ${profile.firstName} ${profile.lastName}")
           ProfileItemWithRequest(
-              profile = profile, sentRequests,onSendRequestClick = { userAccountViewModel.sendFriendRequest(profile.userId) })
+              profile = profile,
+              sentRequests,
+              onSendRequestClick = { userAccountViewModel.sendFriendRequest(profile.userId) })
           Spacer(modifier = Modifier.height(8.dp))
         }
       }

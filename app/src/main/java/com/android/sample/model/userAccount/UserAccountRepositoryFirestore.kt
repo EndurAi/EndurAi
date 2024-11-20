@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.auth.FirebaseAuth
 
 class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAccountRepository {
 
@@ -170,25 +169,28 @@ class UserAccountRepositoryFirestore(private val db: FirebaseFirestore) : UserAc
         .addOnFailureListener { onFailure(it) }
   }
 
-
-
-    override fun searchUsers(query: String, onSuccess: (List<UserAccount>) -> Unit, onFailure: (Exception) -> Unit) {
-        val firestore = FirebaseFirestore.getInstance()
-        Log.d("UserAccountRepo", "Searching users with query: $query")
-        firestore.collection("userAccounts")
-            .whereGreaterThanOrEqualTo("firstName", query)
-            .whereLessThan("firstName", query + "\uf8ff") // Firebase query for prefix matching
-            .get()
-            .addOnSuccessListener { result ->
-                val users = result.documents.mapNotNull { it.toObject(UserAccount::class.java) }
-                Log.d("UserAccountRepo", "Found users: $users")
-                onSuccess(users)
-            }
-            .addOnFailureListener { exception ->
-                Log.e("UserAccountRepo", "Error searching users", exception)
-                onFailure(exception)
-            }
-    }
+  override fun searchUsers(
+      query: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val firestore = FirebaseFirestore.getInstance()
+    Log.d("UserAccountRepo", "Searching users with query: $query")
+    firestore
+        .collection("userAccounts")
+        .whereGreaterThanOrEqualTo("firstName", query)
+        .whereLessThan("firstName", query + "\uf8ff") // Firebase query for prefix matching
+        .get()
+        .addOnSuccessListener { result ->
+          val users = result.documents.mapNotNull { it.toObject(UserAccount::class.java) }
+          Log.d("UserAccountRepo", "Found users: $users")
+          onSuccess(users)
+        }
+        .addOnFailureListener { exception ->
+          Log.e("UserAccountRepo", "Error searching users", exception)
+          onFailure(exception)
+        }
+  }
 
   override fun deleteUserAccount(
       userId: String,

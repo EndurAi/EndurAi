@@ -82,7 +82,6 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
-
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
