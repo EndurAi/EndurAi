@@ -280,7 +280,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
             workoutType = WorkoutType.BODY_WEIGHT,
             cameraViewModel = cameraViewModel,
             videoViewModel = videoViewModel,
-          userAccountViewModel = userAccountViewModel)
+            userAccountViewModel = userAccountViewModel)
       }
     }
     // Yoga Workout
