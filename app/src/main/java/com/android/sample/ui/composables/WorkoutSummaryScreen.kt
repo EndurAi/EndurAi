@@ -117,8 +117,15 @@ fun WorkoutSummaryScreen(
       }
 
   Spacer(Modifier.size(25.dp))
-    Text(text = stringResource(R.string.CaloriesMessage, ComputeCalories(exerciseList, userAccount)))
 
+    if(exerciseList.isNotEmpty() && exerciseList[0].exercise.type.workoutType == WorkoutType.BODY_WEIGHT) {
+        Text(
+            text = stringResource(
+                R.string.CaloriesMessage,
+                ComputeCaloriesForBodyWeight(exerciseList, userAccount)
+            )
+        )
+    }
   Button(
       onClick = { onfinishButtonClicked() },
       modifier = Modifier.width(200.dp).height(50.dp).padding().testTag("FinishButton"),
@@ -128,50 +135,58 @@ fun WorkoutSummaryScreen(
       }
 }
 
-fun ComputeCalories(exerciseList: List<ExerciseState>, userAccount: UserAccount?): Int {
-
-    val weightInKg = if (userAccount == null) {
-        70f // Default mean weight
-    } else {
+fun ComputeCaloriesForBodyWeight(exerciseList: List<ExerciseState>, userAccount: UserAccount?): Int {
+    // Récupérer le poids de l'utilisateur en kg ou utiliser une valeur par défaut
+    val weightInKg: Float = if (userAccount?.weight != null && userAccount.weight > 0) {
         when (userAccount.weightUnit) {
             WeightUnit.KG -> userAccount.weight
-            WeightUnit.LBS -> userAccount.weight * 0.453592
+            WeightUnit.LBS -> userAccount.weight * 0.453592f
         }
+    } else {
+        70f //Default value if weight not available
     }
 
     return exerciseList.filter { it.isDone }.sumOf { exerciseState ->
-        val caloriesPerExercise = when (exerciseState.exercise.detail) {
+        val caloriesPerExercise = when (val detail = exerciseState.exercise.detail) {
             is ExerciseDetail.TimeBased -> {
-                val minutes = exerciseState.exercise.detail.durationInSeconds / 60.0
-                // Calories brûlées par minute pour les exercices basés sur le temps
-                minutes * caloriesBurnedPerMinute(exerciseState.exercise.type, weightInKg)
+                // Formule pour les exercices basés sur le temps (planche, chaise)
+                val minutes = detail.durationInSeconds / 60.0
+                caloriesBurnedForTimeBased(exerciseState.exercise.type, weightInKg, minutes)
             }
             is ExerciseDetail.RepetitionBased -> {
-                // Calories par répétition pour les exercices basés sur les répétitions
-                exerciseState.exercise.detail.repetitions * caloriesBurnedPerRepetition(exerciseState.exercise.type, weightInKg)
+                // Formule pour les exercices basés sur les répétitions (pompes, squats)
+                caloriesBurnedForRepetitionBased(exerciseState.exercise.type, weightInKg, detail.repetitions)
             }
+            else -> {0}
         }
         caloriesPerExercise.toInt()
     }
 }
 
-// Calcule les calories par minute en fonction du type d'exercice
-fun caloriesBurnedPerMinute(exerciseType: ExerciseType, weight: Float): Double {
-    return when (exerciseType.workoutType) {
-        WorkoutType.YOGA -> 3.0 * weight / 60.0 // Exemple: 3 MET pour le yoga
-        WorkoutType.BODY_WEIGHT -> 6.0 * weight / 60.0 // Exemple: 6 MET pour exercices au poids du corps
-        WorkoutType.WARMUP -> 4.0 * weight / 60.0 // Exemple: 4 MET pour échauffement
-        WorkoutType.RUNNING -> TODO()
+fun caloriesBurnedForTimeBased(exerciseType: ExerciseType, weight: Float, minutes: Double): Double {
+    return (minutes / 60) * weight * metValues.getOrDefault(exerciseType, 0.0)
+}
+
+fun caloriesBurnedForRepetitionBased(exerciseType: ExerciseType, weight: Float, repetitions: Int): Double {
+    return when (exerciseType) {
+        ExerciseType.PUSH_UPS -> 0.5 * weight * repetitions // In average 3 seconds per push up
+        ExerciseType.SQUATS -> 0.4 * weight * repetitions
+        else -> 0.0
     }
 }
 
-// Calcule les calories par répétition en fonction du type d'exercice
-fun caloriesBurnedPerRepetition(exerciseType: ExerciseType, weight: Float): Double {
-    return when (exerciseType.workoutType) {
-        WorkoutType.YOGA -> 0.1 * weight // Exemple: moins intense
-        WorkoutType.BODY_WEIGHT -> 0.5 * weight // Exemple: plus intense
-        WorkoutType.WARMUP -> 0.2 * weight // Exemple: modéré
-        WorkoutType.RUNNING -> TODO()
-    }
-}
+val metValues: Map<ExerciseType, Double> = mapOf(
+    ExerciseType.PUSH_UPS to 4.0,
+    ExerciseType.SQUATS to 5.0,
+    ExerciseType.PLANK to 5.0,
+    ExerciseType.CHAIR to 4.5,
+
+    // Yoga exercises
+    ExerciseType.DOWNWARD_DOG to 2.5,
+    ExerciseType.TREE_POSE to 2.0,
+    ExerciseType.SUN_SALUTATION to 3.5,
+    ExerciseType.WARRIOR_II to 2.8
+)
+
+
 
