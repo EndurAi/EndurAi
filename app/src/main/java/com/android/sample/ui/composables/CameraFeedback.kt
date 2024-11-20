@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoRecordEvent
-import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.camera.view.video.AudioConfig
@@ -56,15 +55,19 @@ class CameraFeedBack {
     @SuppressLint("StateFlowValueCalledInComposition")
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    public fun CameraScreen(cameraViewModel: CameraViewModel, modifier: Modifier = Modifier, poseDetectionRequired: Boolean = false) {
-
-
+    public fun CameraScreen(
+        cameraViewModel: CameraViewModel,
+        modifier: Modifier = Modifier,
+        poseDetectionRequired: Boolean = false
+    ) {
 
       val cameraPermissionState: PermissionState =
           rememberPermissionState(android.Manifest.permission.CAMERA)
 
       if (cameraPermissionState.status.isGranted) {
-        Box(modifier = modifier) { CameraBody(cameraViewModel, poseDetectionRequired = poseDetectionRequired ) }
+        Box(modifier = modifier) {
+          CameraBody(cameraViewModel, poseDetectionRequired = poseDetectionRequired)
+        }
       } else {
         LaunchedEffect(Unit) { cameraPermissionState.launchPermissionRequest() }
       }
@@ -76,7 +79,7 @@ class CameraFeedBack {
      * @param cameraViewModel The ViewModel that manages the camera state.
      */
     @Composable
-    fun CameraBody(cameraViewModel: CameraViewModel, poseDetectionRequired : Boolean) {
+    fun CameraBody(cameraViewModel: CameraViewModel, poseDetectionRequired: Boolean) {
 
       val context = LocalContext.current
       val lifecycleOwner = LocalLifecycleOwner.current

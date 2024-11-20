@@ -58,13 +58,9 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val cameraController: StateFlow<LifecycleCameraController>
     get() = _cameraController.asStateFlow()
 
-
-
-  val _poseLandMarks = MutableStateFlow<List<PoseLandmark>>(mutableListOf() )
+  val _poseLandMarks = MutableStateFlow<List<PoseLandmark>>(mutableListOf())
   val poseLandmarks: StateFlow<List<PoseLandmark>>
     get() = _poseLandMarks.asStateFlow()
-
-
 
   /** Switches between the front and back cameras. */
   fun switchCamera() {
@@ -124,20 +120,19 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
             }
   }
 
-
   private fun switchVideoCaptureUseCase() {
     _cameraController.value.setEnabledUseCases(CameraController.VIDEO_CAPTURE)
   }
 
-  fun enablePoseRecognition(){
-    _cameraController.value.imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_16_9)
+  fun enablePoseRecognition() {
+    _cameraController.value.imageAnalysisTargetSize =
+        CameraController.OutputSize(AspectRatio.RATIO_16_9)
     _cameraController.value.setImageAnalysisAnalyzer(
-      ContextCompat.getMainExecutor(context),
-      PoseDetectionAnalyser(onDetectedPoseUpdated = {
-        Log.d("MLDEB", "enablePoseRecognition: ${poseLandmarks.value.size} ")
-        _poseLandMarks.value += it })
-    )
+        ContextCompat.getMainExecutor(context),
+        PoseDetectionAnalyser(
+            onDetectedPoseUpdated = {
+              Log.d("MLDEB", "enablePoseRecognition: ${poseLandmarks.value.size} ")
+              _poseLandMarks.value += it
+            }))
   }
-
-
 }
