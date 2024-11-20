@@ -12,6 +12,10 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +43,7 @@ fun SettingsScreen(
     userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
 ) {
   val context = LocalContext.current
+  var showDeleteConfirmation by remember { mutableStateOf(false) }
 
   Scaffold(
       modifier = Modifier.testTag("settingsScreen"),
@@ -67,25 +72,7 @@ fun SettingsScreen(
                   verticalArrangement = Arrangement.Bottom,
                   horizontalAlignment = Alignment.CenterHorizontally) {
                     RedButton(
-                        onClick = {
-                          userAccountViewModel.deleteAccount(
-                              context,
-                              onSuccess = {
-                                Toast.makeText(
-                                        context,
-                                        R.string.SuccesfulDeleteMessage,
-                                        Toast.LENGTH_SHORT)
-                                    .show()
-                                navigationActions.navigateTo("Auth Screen")
-                              },
-                              onFailure = { error ->
-                                Toast.makeText(
-                                        context,
-                                        "Failed to delete account: ${error.message}",
-                                        Toast.LENGTH_LONG)
-                                    .show()
-                              })
-                        },
+                        onClick = { showDeleteConfirmation = true }, // Show the confirmation dialog
                         image = Icons.Outlined.Delete,
                         title = R.string.Delete_Account,
                         modifier = Modifier.fillMaxWidth().testTag("deleteAccountButton"))
@@ -105,6 +92,26 @@ fun SettingsScreen(
                   }
             }
       })
+
+  // Separate composable for the confirmation dialog
+  if (showDeleteConfirmation) {
+    DeleteConfirmationDialog(
+        onConfirm = {
+          userAccountViewModel.deleteAccount(
+              context,
+              onSuccess = {
+                Toast.makeText(context, R.string.SuccesfulDeleteMessage, Toast.LENGTH_SHORT).show()
+                navigationActions.navigateTo("Auth Screen")
+              },
+              onFailure = { error ->
+                Toast.makeText(
+                        context, "Failed to delete account: ${error.message}", Toast.LENGTH_LONG)
+                    .show()
+              })
+          showDeleteConfirmation = false
+        },
+        onDismiss = { showDeleteConfirmation = false })
+  }
 }
 
 @Composable
