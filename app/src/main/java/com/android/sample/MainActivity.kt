@@ -73,14 +73,7 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
               val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
-              RunningScreen(
-                  onStartClick = {
-                    Intent(applicationContext, LocationService::class.java).apply {
-                      action = LocationService.ACTION_START
-                      startService(this)
-                    }
-                  },
-                  navigationActions)
+              MainApp(startDestination)
             }
       }
     }
@@ -199,7 +192,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Running Screen
     navigation(startDestination = Screen.RUNNING_SCREEN, route = Route.RUNNING_SCREEN) {
-      composable(Screen.RUNNING_SCREEN) { RunningScreen(onStartClick = {}, navigationActions) }
+      composable(Screen.RUNNING_SCREEN) { RunningScreen(navigationActions) }
     }
 
     // Body Weight Workout
