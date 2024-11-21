@@ -15,7 +15,7 @@ interface UserAccountRepository {
    * @param onSuccess Callback function to be invoked with the retrieved UserAccount object.
    * @param onFailure Callback function to be invoked with an Exception if the retrieval fails.
    */
-  suspend fun getUserAccount(
+  fun getUserAccount(
       userId: String,
       onSuccess: (UserAccount) -> Unit,
       onFailure: (Exception) -> Unit
