@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.android.sample.R
@@ -22,7 +23,12 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class LocationService : Service() {
+class LocationService(
+
+    private val intervalOfUpdate: Long = 5000L, // 5 seconds
+    private val serviceScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+) : Service() {
 
   companion object {
 
@@ -41,9 +47,9 @@ class LocationService : Service() {
     const val ACTION_STOP = "ACTION_STOP"
   }
 
-  private val intervalOfUpdate = 5000L // 5 seconds
+    var lastLocation : LatLng? = null
 
-  private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
   lateinit var locationClient: LocationClient
 
   override fun onBind(intent: Intent?): IBinder? {
@@ -88,14 +94,21 @@ class LocationService : Service() {
           val long = location.longitude.toString()
           val loc = LatLng(location.latitude, location.longitude)
 
-          userLocation_.value = loc
+            if (lastLocation == null || isDistanceGreaterThanThreshold(lastLocation!!, loc, 10.0)) {
 
-          pathPoints_.value = pathPoints_.value.toMutableList().apply { add(loc) }
+                userLocation_.value = loc
+                lastLocation = loc
 
-          camera_.value = CameraPositionState(position = CameraPosition.fromLatLngZoom(loc, 18f))
 
-          val updatedNotification = notification.setContentText("Location: ($lat, $long)")
-          notificationManager.notify(1, updatedNotification.build())
+
+                pathPoints_.value = pathPoints_.value.toMutableList().apply { add(loc) }
+
+                camera_.value =
+                    CameraPositionState(position = CameraPosition.fromLatLngZoom(loc, 18f))
+
+                val updatedNotification = notification.setContentText("Location: ($lat, $long)")
+                notificationManager.notify(1, updatedNotification.build())
+            }
         }
         .launchIn(serviceScope)
 
@@ -111,4 +124,17 @@ class LocationService : Service() {
     super.onDestroy()
     serviceScope.cancel()
   }
+
+    /**
+     * Calcule si la distance entre deux `LatLng` est supérieure à un seuil.
+     */
+    private fun isDistanceGreaterThanThreshold(lastLocation: LatLng, newLocation: LatLng, threshold: Double): Boolean {
+        val results = FloatArray(1)
+        Location.distanceBetween(
+            lastLocation.latitude, lastLocation.longitude,
+            newLocation.latitude, newLocation.longitude,
+            results
+        )
+        return results[0] > threshold
+    }
 }
