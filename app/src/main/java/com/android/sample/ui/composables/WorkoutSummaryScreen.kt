@@ -242,7 +242,7 @@ object Calories {
    * define the number of calories burned per kilogram of body weight per hour of exercise (kcal /
    * hour * kg).
    */
-  val metValues: Map<ExerciseType, Double> =
+  private val metValues: Map<ExerciseType, Double> =
       mapOf(
           ExerciseType.PUSH_UPS to 4.0,
           ExerciseType.SQUATS to 5.0,

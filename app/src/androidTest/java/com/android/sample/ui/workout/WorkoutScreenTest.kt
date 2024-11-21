@@ -8,7 +8,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountRepository
-import com.android.sample.model.userAccount.UserAccountRepositoryFirestore
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.video.Video
@@ -26,7 +25,6 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
@@ -62,7 +60,7 @@ class WorkoutScreenTest {
     bodyWeightRepo = mock()
     yogaRepo = mock()
     warmUpRepo = mock()
-      userAccountRepository = mock()
+    userAccountRepository = mock()
 
     val exerciseList =
         mutableListOf(
@@ -114,19 +112,19 @@ class WorkoutScreenTest {
       it.getArgument<(List<WarmUp>) -> Unit>(0)(warmups)
     }
 
-      val userAccount = UserAccount(
-          userId = "testUserId",
-          firstName = "John",
-          lastName = "Doe",
-          weight = 80f,
-          weightUnit = WeightUnit.KG
-      )
+    val userAccount =
+        UserAccount(
+            userId = "testUserId",
+            firstName = "John",
+            lastName = "Doe",
+            weight = 80f,
+            weightUnit = WeightUnit.KG)
 
-      `when`(userAccountRepository.getUserAccount(any(), any(), any())).then {
-          it.getArgument<(UserAccount) -> Unit>(0)(userAccount)
-      }
+    `when`(userAccountRepository.getUserAccount(any(), any(), any())).then {
+      it.getArgument<(UserAccount) -> Unit>(0)(userAccount)
+    }
 
-      userAccountViewModel = UserAccountViewModel(userAccountRepository)
+    userAccountViewModel = UserAccountViewModel(userAccountRepository)
     bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
     yogaViewModel = WorkoutViewModel(yogaRepo)
 
@@ -544,6 +542,6 @@ class WorkoutScreenTest {
         .assertIsDisplayed()
         .assertTextEquals("X 3")
 
-      composeTestRule.onNodeWithTag("Calories").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Calories").assertIsDisplayed()
   }
 }
