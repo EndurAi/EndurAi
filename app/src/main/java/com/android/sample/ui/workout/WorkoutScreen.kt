@@ -189,14 +189,17 @@ fun WarmUpScreenBody(
 
   /** State variables for managing the timer */
   var timer by remember { mutableIntStateOf(0) }
+  var currentSet by remember { mutableIntStateOf(0) }
   var timeLimit = 0
+  var numberOfSets = 0 //Number of sets for a time based exercise
 
   // Initialize the timer for time-based exercises
   if (!exerciseIsRepetitionBased) {
     val rawDetail = exerciseState.exercise.detail as ExerciseDetail.TimeBased
     isCountdownTime = true
     countDownTimerIsPaused = true
-    timeLimit = rawDetail.durationInSeconds * rawDetail.sets
+    timeLimit = rawDetail.durationInSeconds
+    numberOfSets = rawDetail.sets
     timer = timeLimit
 
     // Coroutine to decrement the timer every second
@@ -217,7 +220,7 @@ fun WarmUpScreenBody(
               countDownValue = maxCountDownTIme
             }
           } else {
-            if (timer > 0) {
+            if (timer > 0 && currentSet < numberOfSet) {
               timer--
             }
           }
@@ -325,7 +328,7 @@ fun WarmUpScreenBody(
                         Text(
                             text =
                                 (if (exerciseIsRepetitionBased) "$repetitions Rep."
-                                else convertSecondsToTime(timeLimit)),
+                                else "${convertSecondsToTime(timeLimit)} ${if (numberOfSets>1) "x $numberOfSets" else "" }"),
                             fontSize = 20.sp,
                             modifier = Modifier.testTag("GoalValue"))
                       }
