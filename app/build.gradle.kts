@@ -154,6 +154,7 @@ dependencies {
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.pose.detection.common)
 
+    implementation(libs.androidx.datastore.core.android)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)

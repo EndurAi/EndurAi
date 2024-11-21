@@ -1,5 +1,6 @@
 package com.android.sample.ui.workout
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -8,7 +9,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountLocalCache
 import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
@@ -27,7 +30,9 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDateTime
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,6 +49,7 @@ class WorkoutScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
   private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
+  private lateinit var localCache: UserAccountLocalCache
   private lateinit var warmUpViewModel: WarmUpViewModel
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
@@ -54,15 +60,19 @@ class WorkoutScreenTest {
   private val mockVideoRepository2 = mock(VideoRepository::class.java)
   private val mockVideoViewModel = VideoViewModel(mockVideoRepository)
   private val mockVideoViewModel2 = VideoViewModel(mockVideoRepository2)
+  private lateinit var mockFirebaseAuth: FirebaseAuth
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
-  fun setUp() {
+  fun setUp() = runTest {
+    val context = ApplicationProvider.getApplicationContext<Context>()
     bodyWeightRepo = mock()
     yogaRepo = mock()
     warmUpRepo = mock()
-    userAccountRepository = mock()
+    userAccountRepository = mock(UserAccountRepository::class.java)
+    localCache = UserAccountLocalCache(context)
+    mockFirebaseAuth = mock(FirebaseAuth::class.java)
 
     val exerciseList =
         mutableListOf(
@@ -77,8 +87,7 @@ class WorkoutScreenTest {
             Exercise(
                 id = "3",
                 type = ExerciseType.SQUATS,
-                ExerciseDetail.RepetitionBased(repetitions = 3)),
-        )
+                ExerciseDetail.RepetitionBased(repetitions = 3)))
 
     val bodyWeightWorkouts =
         listOf(
@@ -90,7 +99,7 @@ class WorkoutScreenTest {
                 exercises = exerciseList,
                 date = LocalDateTime.of(2024, 11, 10, 2, 1)))
 
-    val yogaWorkouts: List<YogaWorkout> =
+    val yogaWorkouts =
         listOf(
             YogaWorkout(
                 "2",
@@ -99,8 +108,8 @@ class WorkoutScreenTest {
                 false,
                 exercises = exerciseList,
                 date = LocalDateTime.of(2024, 11, 10, 2, 1)))
-    val warmups: List<WarmUp> =
-        listOf(WarmUp("2", "MyWorkout", "Hold for 60 seconds", exercises = exerciseList))
+
+    val warmups = listOf(WarmUp("2", "MyWorkout", "Hold for 60 seconds", exercises = exerciseList))
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
@@ -122,17 +131,11 @@ class WorkoutScreenTest {
             weight = 80f,
             weightUnit = WeightUnit.KG)
 
-    `when`(userAccountRepository.getUserAccount(any(), any(), any())).then {
-      it.getArgument<(UserAccount) -> Unit>(0)(userAccount)
-    }
-
-    userAccountViewModel = UserAccountViewModel(userAccountRepository)
+    userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
     bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
     yogaViewModel = WorkoutViewModel(yogaRepo)
-
     warmUpViewModel = WarmUpViewModel(repository = warmUpRepo)
 
-    // Mock the NavigationActions
     navigationActions = mock(NavigationActions::class.java)
 
     yogaViewModel.getWorkouts()
@@ -144,7 +147,6 @@ class WorkoutScreenTest {
     bodyWeightViewModel.getWorkouts()
     bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value[0])
 
-    // Sample video data
     val sampleVideos =
         ExerciseType.entries.map { exerciseType ->
           Video(
@@ -153,7 +155,6 @@ class WorkoutScreenTest {
               url = "sampleUrl")
         }
 
-    // Mock the videos flow
     whenever(mockVideoRepository.getVideos(anyOrNull(), anyOrNull())).thenAnswer {
       val onSuccess = it.getArgument<Function1<List<Video>, Unit>>(0)
       onSuccess(sampleVideos)
