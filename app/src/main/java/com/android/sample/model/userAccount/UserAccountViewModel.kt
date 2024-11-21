@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +28,6 @@ import kotlinx.coroutines.launch
 
 open class UserAccountViewModel(
     private val repository: UserAccountRepository,
-    private val localCache: UserAccountLocalCache,
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : ViewModel() {
 
@@ -44,66 +44,50 @@ open class UserAccountViewModel(
   private val minimumLoadingTime = 1500L // 1,5 seconds but could be changed
 
   init {
-    loadCachedUserAccount()
-  }
-
-  private fun loadCachedUserAccount() {
-    viewModelScope.launch {
-      localCache.getUserAccount().collect { cachedAccount ->
-        if (cachedAccount != null) {
-          _userAccount.value = cachedAccount
-        } else {
-          // Fetch from repository if no cache exists
-          Firebase.auth.currentUser?.uid?.let { userId -> getUserAccount(userId) }
-        }
-      }
-    }
+    repository.init { Firebase.auth.currentUser?.let { user -> getUserAccount(user.uid) } }
   }
 
   fun getUserAccount(userId: String) {
+    _isLoading.value = true
+
     viewModelScope.launch {
-      _isLoading.value = true
-
-      // Start the delay for a minimum loading time
-      val delayJob = async { delay(minimumLoadingTime) }
-
-      // Properly handle the repository job
-      val repositoryJob = launch {
-        try {
-          repository.getUserAccount(
-              userId = userId,
-              onSuccess = { userAccount -> _userAccount.value = userAccount },
-              onFailure = { exception ->
-                Log.e("UserAccountViewModel", "Failed to fetch user account", exception)
-                _userAccount.value = null
-              })
-        } catch (e: Exception) {
-          Log.e("UserAccountViewModel", "Unexpected error fetching user account", e)
-          _userAccount.value = null
-        }
+      // Start both the delay and the repository operation concurrently
+      val delayJob = async {
+        delay(minimumLoadingTime)
+        true // Return true to indicate the delay has completed
       }
 
-      // Wait for both the delay and repository job to finish
-      delayJob.await()
-      repositoryJob.join()
+      val repositoryJob = async {
+        var result = false
+        repository.getUserAccount(
+            userId = userId,
+            onSuccess = {
+              _userAccount.value = it
+              result = true
+            },
+            onFailure = {
+              _userAccount.value = null
+              result = true
+            })
+        result // Return true after repository fetch completes
+      }
 
-      // Set loading to false after both tasks are complete
+      // Wait for both delay and repository operation to complete
+      awaitAll(delayJob, repositoryJob)
+
+      // After both are done, set isLoading to false
       _isLoading.value = false
     }
   }
 
   fun createUserAccount(userAccount: UserAccount) {
-    viewModelScope.launch {
-      repository.createUserAccount(
-          userAccount, onSuccess = { _userAccount.value = userAccount }, onFailure = {})
-    }
+    repository.createUserAccount(
+        userAccount, onSuccess = { _userAccount.value = userAccount }, onFailure = {})
   }
 
   fun updateUserAccount(userAccount: UserAccount) {
-    viewModelScope.launch {
-      repository.updateUserAccount(
-          userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
-    }
+    repository.updateUserAccount(
+        userAccount, onSuccess = { getUserAccount(userAccount.userId) }, onFailure = {})
   }
 
   fun uploadProfileImage(
@@ -173,7 +157,7 @@ open class UserAccountViewModel(
     }
   }
 
-  suspend fun getFriends(): List<UserAccount> {
+  fun getFriends(): List<UserAccount> {
     val friends = mutableListOf<UserAccount>()
     userAccount.value?.friends?.forEach { friendId ->
       repository.getUserAccount(
@@ -186,7 +170,7 @@ open class UserAccountViewModel(
     return friends
   }
 
-  suspend fun getSentRequests(): List<UserAccount> {
+  fun getSentRequests(): List<UserAccount> {
     val sentRequests = mutableListOf<UserAccount>()
     userAccount.value?.sentRequests?.forEach { requestId ->
       repository.getUserAccount(
@@ -199,7 +183,7 @@ open class UserAccountViewModel(
     return sentRequests
   }
 
-  suspend fun getReceivedRequests(): List<UserAccount> {
+  fun getReceivedRequests(): List<UserAccount> {
     val receivedRequests = mutableListOf<UserAccount>()
     userAccount.value?.receivedRequests?.forEach { requestId ->
       repository.getUserAccount(
@@ -221,8 +205,6 @@ open class UserAccountViewModel(
       repository.deleteUserAccount(
           userId = userId,
           onSuccess = {
-            // Clear the local cache and Firebase Auth account
-            clearCacheOnLogout()
             // Attempt to delete the Firebase Auth account
             user
                 .delete()
@@ -259,14 +241,6 @@ open class UserAccountViewModel(
     }
   }
 
-  // Clears the local cache on logout
-  fun clearCacheOnLogout() {
-    viewModelScope.launch {
-      localCache.clearUserAccount()
-      _userAccount.value = null // Reset the userAccount in ViewModel
-    }
-  }
-
   private fun reAuthenticateUser(
       context: Context,
       user: FirebaseUser,
@@ -288,14 +262,15 @@ open class UserAccountViewModel(
 
   // Factory for creating instances of the ViewModel
   companion object {
-    fun provideFactory(context: Context): ViewModelProvider.Factory {
-      return object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-          val firestore = FirebaseFirestore.getInstance()
-          val repository = UserAccountRepositoryFirestore(firestore, UserAccountLocalCache(context))
-          return UserAccountViewModel(repository, UserAccountLocalCache(context)) as T
+    val Factory: ViewModelProvider.Factory =
+        object : ViewModelProvider.Factory {
+          @Suppress("UNCHECKED_CAST")
+          override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return UserAccountViewModel(
+                UserAccountRepositoryFirestore(FirebaseFirestore.getInstance()),
+                FirebaseAuth.getInstance())
+                as T
+          }
         }
-      }
-    }
   }
 }

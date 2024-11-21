@@ -15,10 +15,8 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -34,7 +32,6 @@ import org.robolectric.RobolectricTestRunner
 class UserAccountViewModelTest {
 
   @Mock private lateinit var userAccountRepository: UserAccountRepository
-  @Mock private lateinit var localCache: UserAccountLocalCache
   @Mock private lateinit var userAccountViewModel: UserAccountViewModel
   @Mock private lateinit var mockFirebaseAuth: FirebaseAuth
   @Mock private lateinit var mockFirebaseUser: FirebaseUser
@@ -61,58 +58,50 @@ class UserAccountViewModelTest {
 
   @Before
   fun setUp() {
-    runTest {
-      val context = ApplicationProvider.getApplicationContext<Context>()
-      if (FirebaseApp.getApps(context).isEmpty()) {
-        val options =
-            FirebaseOptions.Builder()
-                .setApplicationId("1:1234567890:android:abcde12345") // Fake App ID for testing
-                .setApiKey("fake-api-key") // Fake API key
-                .setProjectId("test-project-id") // Fake Project ID
-                .build()
-        FirebaseApp.initializeApp(context, options)
-      }
-
-      mockFirebaseAuth = mock(FirebaseAuth::class.java)
-      mockFirebaseUser = mock(FirebaseUser::class.java)
-
-      `when`(mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser)
-      `when`(mockFirebaseUser.uid).thenReturn("testUserId")
-
-      userAccountRepository = mock(UserAccountRepository::class.java)
-      localCache = mock(UserAccountLocalCache::class.java)
-
-      // Return a valid Flow for the local cache
-      `when`(localCache.getUserAccount()).thenReturn(flowOf(null))
-
-      userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
-
-      `when`(userAccountRepository.getUserAccount(eq("2"), any(), any())).thenAnswer {
-        val onSuccess = it.arguments[1] as (UserAccount) -> Unit
-        onSuccess(friendAccount1)
-      }
-      `when`(userAccountRepository.getUserAccount(eq("3"), any(), any())).thenAnswer {
-        val onSuccess = it.arguments[1] as (UserAccount) -> Unit
-        onSuccess(friendAccount2)
-      }
-      `when`(userAccountRepository.getUserAccount(eq("4"), any(), any())).thenAnswer {
-        val onSuccess = it.arguments[1] as (UserAccount) -> Unit
-        onSuccess(sentRequestAccount)
-      }
-      `when`(userAccountRepository.getUserAccount(eq("5"), any(), any())).thenAnswer {
-        val onSuccess = it.arguments[1] as (UserAccount) -> Unit
-        onSuccess(receivedRequestAccount)
-      }
-
-      // Use reflection to set the private _userAccount property
-      val userAccountProperty =
-          UserAccountViewModel::class.declaredMemberProperties.first { it.name == "_userAccount" }
-      userAccountProperty.isAccessible = true
-      (userAccountProperty.get(userAccountViewModel) as MutableStateFlow<UserAccount?>).value =
-          userAccount
-      userAccountViewModel =
-          UserAccountViewModel(userAccountRepository, localCache, mockFirebaseAuth)
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    if (FirebaseApp.getApps(context).isEmpty()) {
+      val options =
+          FirebaseOptions.Builder()
+              .setApplicationId("1:1234567890:android:abcde12345") // Fake App ID for testing
+              .setApiKey("fake-api-key") // Fake API key
+              .setProjectId("test-project-id") // Fake Project ID
+              .build()
+      FirebaseApp.initializeApp(context, options)
     }
+
+    mockFirebaseAuth = mock(FirebaseAuth::class.java)
+    mockFirebaseUser = mock(FirebaseUser::class.java)
+
+    `when`(mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser)
+    `when`(mockFirebaseUser.uid).thenReturn("testUserId")
+
+    userAccountRepository = mock(UserAccountRepository::class.java)
+    userAccountViewModel = UserAccountViewModel(userAccountRepository)
+
+    `when`(userAccountRepository.getUserAccount(eq("2"), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as (UserAccount) -> Unit
+      onSuccess(friendAccount1)
+    }
+    `when`(userAccountRepository.getUserAccount(eq("3"), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as (UserAccount) -> Unit
+      onSuccess(friendAccount2)
+    }
+    `when`(userAccountRepository.getUserAccount(eq("4"), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as (UserAccount) -> Unit
+      onSuccess(sentRequestAccount)
+    }
+    `when`(userAccountRepository.getUserAccount(eq("5"), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as (UserAccount) -> Unit
+      onSuccess(receivedRequestAccount)
+    }
+
+    // Use reflection to set the private _userAccount property
+    val userAccountProperty =
+        UserAccountViewModel::class.declaredMemberProperties.first { it.name == "_userAccount" }
+    userAccountProperty.isAccessible = true
+    (userAccountProperty.get(userAccountViewModel) as MutableStateFlow<UserAccount?>).value =
+        userAccount
+    userAccountViewModel = UserAccountViewModel(userAccountRepository, mockFirebaseAuth)
   }
 
   @Test
@@ -128,38 +117,6 @@ class UserAccountViewModelTest {
 
     verify(userAccountRepository).getUserAccount(eq("1"), any(), any())
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
-  }
-
-  @Test
-  fun `getUserAccount fetches from cache if available`() = runTest {
-    val localCache = mock(UserAccountLocalCache::class.java)
-    val cachedUserAccount = userAccount
-    `when`(localCache.getUserAccount()).thenReturn(flowOf(cachedUserAccount))
-
-    val viewModel = UserAccountViewModel(userAccountRepository, localCache, mockFirebaseAuth)
-
-    viewModel.getUserAccount("1")
-
-    verify(localCache).getUserAccount()
-    assertThat(viewModel.userAccount.first(), `is`(cachedUserAccount))
-  }
-
-  @Test
-  fun `getUserAccount fetches from repository if cache is empty`() = runTest {
-    val localCache = mock(UserAccountLocalCache::class.java)
-    `when`(localCache.getUserAccount()).thenReturn(flowOf(null))
-    `when`(userAccountRepository.getUserAccount(eq("1"), any(), any())).thenAnswer {
-      val onSuccess = it.arguments[1] as (UserAccount) -> Unit
-      onSuccess(userAccount)
-    }
-
-    val viewModel = UserAccountViewModel(userAccountRepository, localCache, mockFirebaseAuth)
-
-    viewModel.getUserAccount("1")
-
-    verify(localCache).getUserAccount()
-    verify(userAccountRepository).getUserAccount(eq("1"), any(), any())
-    assertThat(viewModel.userAccount.first(), `is`(userAccount))
   }
 
   @Test
@@ -190,19 +147,6 @@ class UserAccountViewModelTest {
 
     verify(userAccountRepository).updateUserAccount(eq(userAccount), any(), any())
     assertThat(userAccountViewModel.userAccount.first(), `is`(userAccount))
-  }
-
-  @Test
-  fun `clearCacheOnLogout clears the cache`() = runTest {
-    val localCache = mock(UserAccountLocalCache::class.java)
-    `when`(localCache.getUserAccount()).thenReturn(flowOf(null))
-    val viewModel = UserAccountViewModel(userAccountRepository, localCache, mockFirebaseAuth)
-
-    viewModel.clearCacheOnLogout()
-
-    // Verify interactions and final state
-    verify(localCache).clearUserAccount()
-    assertThat(viewModel.userAccount.first(), `is`(nullValue()))
   }
 
   @Test
