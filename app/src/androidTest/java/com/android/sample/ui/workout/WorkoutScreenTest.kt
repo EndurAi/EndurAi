@@ -8,10 +8,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import com.android.sample.model.userAccount.UserAccount
-import com.android.sample.model.userAccount.UserAccountRepository
-import com.android.sample.model.userAccount.UserAccountViewModel
-import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoRepository
 import com.android.sample.model.video.VideoViewModel
@@ -48,8 +44,6 @@ class WorkoutScreenTest {
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var warmUpRepo: WorkoutRepository<WarmUp>
-  private lateinit var userAccountViewModel: UserAccountViewModel
-  private var userAccountRepository = mock(UserAccountRepository::class.java)
   private val mockVideoRepository = mock(VideoRepository::class.java)
   private val mockVideoRepository2 = mock(VideoRepository::class.java)
   private val mockVideoViewModel = VideoViewModel(mockVideoRepository)
@@ -62,7 +56,6 @@ class WorkoutScreenTest {
     bodyWeightRepo = mock()
     yogaRepo = mock()
     warmUpRepo = mock()
-    userAccountRepository = mock()
 
     val exerciseList =
         mutableListOf(
@@ -114,19 +107,6 @@ class WorkoutScreenTest {
       it.getArgument<(List<WarmUp>) -> Unit>(0)(warmups)
     }
 
-    val userAccount =
-        UserAccount(
-            userId = "testUserId",
-            firstName = "John",
-            lastName = "Doe",
-            weight = 80f,
-            weightUnit = WeightUnit.KG)
-
-    `when`(userAccountRepository.getUserAccount(any(), any(), any())).then {
-      it.getArgument<(UserAccount) -> Unit>(0)(userAccount)
-    }
-
-    userAccountViewModel = UserAccountViewModel(userAccountRepository)
     bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
     yogaViewModel = WorkoutViewModel(yogaRepo)
 
@@ -173,8 +153,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -228,8 +207,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.YOGA,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -280,8 +258,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.YOGA,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -332,8 +309,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
     // check that permanent composable are still there
     // ArrowBack
@@ -377,8 +353,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
 
     // Exercise name
@@ -410,8 +385,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
 
     // Exercise name
@@ -444,8 +418,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
     // ex1
     composeTestRule
@@ -480,8 +453,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel2,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel2)
     }
 
     composeTestRule.onNodeWithTag("LoadingIndicator").assertIsDisplayed()
@@ -497,8 +469,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
     // Check that on launching the composable, the videoViewModel tries to fetch the videos on
     // firestore
@@ -514,8 +485,7 @@ class WorkoutScreenTest {
           yogaViewModel = yogaViewModel,
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
-          videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          videoViewModel = mockVideoViewModel)
     }
     // ex1
     composeTestRule
@@ -568,7 +538,5 @@ class WorkoutScreenTest {
         .onNodeWithTag("InnerTextExerciseCardID3", useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals("X 3")
-
-    composeTestRule.onNodeWithTag("Calories").assertIsDisplayed()
   }
 }
