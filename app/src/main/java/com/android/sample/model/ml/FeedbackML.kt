@@ -53,7 +53,6 @@ data class RepetitionExerciseFeedback(
     override val accuracyScore: Double
 ) : ExerciseFeedback(exerciseName, duration, numberOfRepetitions, accuracyScore)
 
-
 /**
  * Data class representing feedback for static hold exercises.
  *
@@ -72,4 +71,3 @@ data class StaticHoldFeedback(
     override val numberOfRepetitions: Int,
     override val accuracyScore: Double
 ) : ExerciseFeedback(exerciseName, duration, numberOfRepetitions, accuracyScore)
-
