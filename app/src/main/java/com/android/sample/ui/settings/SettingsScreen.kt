@@ -40,7 +40,8 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun SettingsScreen(
     navigationActions: NavigationActions,
-    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
+    userAccountViewModel: UserAccountViewModel =
+        viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
 ) {
   val context = LocalContext.current
   var showDeleteConfirmation by remember { mutableStateOf(false) }
@@ -81,6 +82,7 @@ fun SettingsScreen(
 
                     RedButton(
                         onClick = {
+                          userAccountViewModel.clearCacheOnLogout() // Clear local cache on logout
                           signOut(context)
                           navigationActions.navigateTo("Auth Screen")
                           Toast.makeText(context, R.string.LogoutMessage, Toast.LENGTH_SHORT).show()
