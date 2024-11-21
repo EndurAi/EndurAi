@@ -33,6 +33,7 @@
     <string name="YogaWorkoutTitle">Yoga</string>
     <string name="new_session">New Session</string>
     <string name="SkippedTextCard">Skipped</string>
+    <string name="CaloriesMessage">Calories Burnt : %d</string>
     <string name="ConfirmDeleteTitle">Delete Account</string>
     <string name="ConfirmDeleteMessage">Are you sure you want to delete your account? This action cannot be undone.</string>
     <string name="Confirm">Confirm</string>

@@ -68,6 +68,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
 import com.android.sample.model.camera.CameraViewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
@@ -99,7 +100,8 @@ fun WorkoutScreenBody(
     navigationActions: NavigationActions,
     cameraViewModel: CameraViewModel,
     videoViewModel: VideoViewModel,
-    hasWarmUp: Boolean
+    hasWarmUp: Boolean,
+    userAccountViewModel: UserAccountViewModel
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
@@ -257,7 +259,8 @@ fun WorkoutScreenBody(
                 WorkoutSummaryScreen(
                     hasWarmUp = hasWarmUp,
                     exerciseStateList.filter { it.exercise.type.workoutType != WorkoutType.WARMUP },
-                    onfinishButtonClicked = { nextExercise() })
+                    onfinishButtonClicked = { nextExercise() },
+                    userAccountViewModel = userAccountViewModel)
               } else {
                 // Column for displaying exercise information
                 Column(
@@ -535,7 +538,8 @@ fun WorkoutScreen(
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
     workoutType: WorkoutType,
     cameraViewModel: CameraViewModel = CameraViewModel(LocalContext.current),
-    videoViewModel: VideoViewModel
+    videoViewModel: VideoViewModel,
+    userAccountViewModel: UserAccountViewModel
 ) {
   // Get the selected workout based on the workout type
   val selectedWorkout =
@@ -563,6 +567,7 @@ fun WorkoutScreen(
         navigationActions = navigationActions,
         cameraViewModel = cameraViewModel,
         videoViewModel = videoViewModel,
-        hasWarmUp = selectedWorkout.warmup)
+        hasWarmUp = selectedWorkout.warmup,
+        userAccountViewModel = userAccountViewModel)
   }
 }
