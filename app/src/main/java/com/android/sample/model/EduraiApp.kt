@@ -1,11 +1,11 @@
-package com.android.sample.model.location
+package com.android.sample.model
 
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 
-class LocationAppTest : Application() {
+class Endurai : Application() {
 
   override fun onCreate() {
     super.onCreate()
