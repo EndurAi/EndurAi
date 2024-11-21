@@ -25,4 +25,4 @@ class RunningWorkout(
     date: LocalDateTime,
     path: List<List<LatLng>>,
     time: Duration
-) : Workout(workoutId,name,description,false,userIdSet,mutableListOf(), date)
+) : Workout(workoutId, name, description, false, userIdSet, mutableListOf(), date)
