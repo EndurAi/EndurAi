@@ -152,6 +152,7 @@ dependencies {
     implementation(libs.androidx.ui.test.android)
   implementation(libs.androidx.camera.video)
     implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.pose.detection.common)
 
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
