@@ -161,6 +161,10 @@ dependencies {
     // Activity Compose for rememberLauncherForActivityResult
     implementation(libs.coil.compose)
 
+    // DataStore local caching
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.gson)
+
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)

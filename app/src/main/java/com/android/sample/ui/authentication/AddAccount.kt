@@ -38,7 +38,8 @@ import java.util.GregorianCalendar
 
 @Composable
 fun AddAccount(
-    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
+    userAccountViewModel: UserAccountViewModel =
+        viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current)),
     navigationActions: NavigationActions,
     accountExists: Boolean,
     userId: String? = Firebase.auth.currentUser?.uid
