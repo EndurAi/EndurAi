@@ -378,7 +378,6 @@ fun WorkoutScreenBody(
                             Spacer(modifier = Modifier.height(5.dp))
                           }
                         } else {
-                          cameraViewModel.enablePoseRecognition()
                           CameraFeedBack.CameraScreen(
                               cameraViewModel, modifier = Modifier.size(220.dp, 350.dp))
                         }

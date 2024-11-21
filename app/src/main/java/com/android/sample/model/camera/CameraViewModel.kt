@@ -49,13 +49,6 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val videoFile: StateFlow<File>
     get() = _videoFile.asStateFlow()
 
-  /** A MutableStateFlow that holds the state of body recognition (enabled or disabled). */
-  private val _bodyRecognitionIsEnabled = MutableStateFlow(false)
-
-  /** A StateFlow that exposes the state of body recognition (enabled or disabled). */
-  val bodyRecognitionIsEnabled: StateFlow<Boolean>
-    get() = _bodyRecognitionIsEnabled.asStateFlow()
-
   /**
    * A MutableStateFlow that holds the LifecycleCameraController. Initialized with the front camera
    * selected.
@@ -71,9 +64,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     get() = _cameraController.asStateFlow()
 
   /** A MutableStateFlow that holds the list of detected pose landmarks. */
-  val _poseLandMarks = MutableStateFlow<ArrayList<List<PoseLandmark>>>(arrayListOf())
+  val _poseLandMarks = MutableStateFlow<List<PoseLandmark>>(mutableListOf())
+
   /** A StateFlow that exposes the list of detected pose landmarks. */
-  val poseLandmarks: StateFlow<ArrayList<List<PoseLandmark>>>
+  val poseLandmarks: StateFlow<List<PoseLandmark>>
     get() = _poseLandMarks.asStateFlow()
 
   /** Switches between the front and back cameras. */
@@ -111,7 +105,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     }
 
     onStarting()
-    switchVideoCaptureUseCase() // Allow the camera to Record the video
+    switchVideoCaptureUseCase()
     _recording.value =
         _cameraController.value.startRecording(
             FileOutputOptions.Builder(_videoFile.value).build(),
@@ -122,12 +116,12 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   if (event.hasError()) {
                     _recording.value?.close()
                     _recording.value = null
+                    resetCameraController()
                     onFailure()
                   } else {
+                    resetCameraController()
                     onSuccess()
                   }
-                  resetCameraController() // This allows reusability of the viewModel in the body
-                  // recognition mode
                 }
               }
             }
@@ -140,7 +134,6 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
 
   /** Resets the camera controller to its initial state with the front camera selected. */
   private fun resetCameraController() {
-    finishPoseRecognition()
     _cameraController.value =
         LifecycleCameraController(context).apply {
           cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
@@ -149,20 +142,15 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
 
   /** Enables pose recognition by setting up the image analysis analyzer. */
   fun enablePoseRecognition() {
-    if (_bodyRecognitionIsEnabled.value.not()) {
-      _cameraController.value.imageAnalysisTargetSize =
-          CameraController.OutputSize(AspectRatio.RATIO_16_9)
-      _cameraController.value.setImageAnalysisAnalyzer(
-          ContextCompat.getMainExecutor(context),
-          PoseDetectionAnalyser(
-              onDetectedPoseUpdated = {
-                if (poseLandmarks.value.isNotEmpty()) {
-                  Log.d("MLDEB", "Number of Landmarks list: ${poseLandmarks.value.size}  ")
-                }
-                _poseLandMarks.value.add(it)
-              }))
-      _bodyRecognitionIsEnabled.value = true
-    }
+    _cameraController.value.imageAnalysisTargetSize =
+        CameraController.OutputSize(AspectRatio.RATIO_16_9)
+    _cameraController.value.setImageAnalysisAnalyzer(
+        ContextCompat.getMainExecutor(context),
+        PoseDetectionAnalyser(
+            onDetectedPoseUpdated = {
+              Log.d("MLDEB", "enablePoseRecognition: ${poseLandmarks.value.size} ")
+              _poseLandMarks.value += it
+            }))
   }
 
   /**
@@ -171,7 +159,6 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
    */
   fun finishPoseRecognition() {
     _cameraController.value.clearImageAnalysisAnalyzer()
-    _poseLandMarks.value = arrayListOf()
-    _bodyRecognitionIsEnabled.value = false
+    _poseLandMarks.value = mutableListOf()
   }
 }
