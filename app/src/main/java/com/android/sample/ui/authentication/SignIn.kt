@@ -53,7 +53,8 @@ import kotlinx.coroutines.tasks.await
 
 @Composable
 fun SignInScreen(
-    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
+    userAccountViewModel: UserAccountViewModel =
+        viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current)),
     navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
