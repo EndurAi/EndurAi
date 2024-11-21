@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.core.app.ActivityCompat
@@ -19,8 +20,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.sample.model.location.LocationService
+import com.android.sample.model.calendar.CalendarViewModel
+import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WarmUp
@@ -34,6 +38,9 @@ import com.android.sample.ui.achievements.AchievementsScreen
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
+import com.android.sample.ui.calendar.DayCalendarScreen
+import com.android.sample.ui.friends.AddFriendScreen
+import com.android.sample.ui.friends.FriendsScreen
 import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
@@ -48,8 +55,9 @@ import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
+import com.android.sample.ui.workout.WorkoutOverviewScreen
 import com.android.sample.ui.workout.WorkoutScreen
-import com.android.sample.viewmodel.UserAccountViewModel
+import com.android.sample.ui.workout.WorkoutSelectionScreen
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -65,8 +73,6 @@ class MainActivity : ComponentActivity() {
         0)
 
     setContent {
-      val navController = rememberNavController()
-      val navigationActions = NavigationActions(navController)
       SampleAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -84,7 +90,8 @@ class MainActivity : ComponentActivity() {
 fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-  val userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
+  val userAccountViewModel: UserAccountViewModel =
+      viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
@@ -98,6 +105,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
   val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
   val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+  val calendarViewModel = CalendarViewModel()
+
+  val cameraViewModel = CameraViewModel(context = LocalContext.current)
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -114,11 +124,22 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Main Screen
     navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
       composable(Screen.MAIN) {
-        MainScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        MainScreen(
+            navigationActions,
+            bodyweightWorkoutViewModel,
+            yogaWorkoutViewModel,
+            userAccountViewModel)
       }
       composable(Screen.VIEW_ALL) {
         ViewAllScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
       }
+    }
+
+    // Friends Screen
+
+    navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
+      composable(Screen.FRIENDS) { FriendsScreen(navigationActions) }
+      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions) }
     }
 
     // Video Screen
@@ -176,10 +197,39 @@ fun MainApp(startDestination: String = Route.AUTH) {
       }
     }
 
+    // Body Weight Selection Screen
+    navigation(startDestination = Screen.CHOOSE_BODYWEIGHT, route = Route.CHOOSE_BODYWEIGHT) {
+      composable(Screen.CHOOSE_BODYWEIGHT) {
+        WorkoutSelectionScreen(bodyweightWorkoutViewModel, navigationActions)
+      }
+    }
+
+    // Body Weight Import Screen
+    navigation(startDestination = Screen.BODY_WEIGHT_IMPORT, route = Route.BODY_WEIGHT_IMPORT) {
+      composable(Screen.BODY_WEIGHT_IMPORT) {
+        WorkoutCreationScreen(
+            navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, true)
+      }
+    }
+
     // Yoga Creation Screen
     navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
       composable(Screen.YOGA_CREATION) {
         WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+      }
+    }
+
+    // Yoga Selection Screen
+    navigation(startDestination = Screen.CHOOSE_YOGA, route = Route.CHOOSE_YOGA) {
+      composable(Screen.CHOOSE_YOGA) {
+        WorkoutSelectionScreen(yogaWorkoutViewModel, navigationActions)
+      }
+    }
+
+    // Yoga Import Screen
+    navigation(startDestination = Screen.YOGA_IMPORT, route = Route.YOGA_IMPORT) {
+      composable(Screen.YOGA_IMPORT) {
+        WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true)
       }
     }
 
@@ -195,6 +245,48 @@ fun MainApp(startDestination: String = Route.AUTH) {
       composable(Screen.RUNNING_SCREEN) { RunningScreen(navigationActions) }
     }
 
+    // Body Weight Overview Screen
+    navigation(startDestination = Screen.BODY_WEIGHT_OVERVIEW, route = Route.BODY_WEIGHT_OVERVIEW) {
+      composable(Screen.BODY_WEIGHT_OVERVIEW) {
+        WorkoutOverviewScreen(
+            navigationActions = navigationActions,
+            bodyweightViewModel = bodyweightWorkoutViewModel,
+            yogaViewModel = yogaWorkoutViewModel,
+            workoutTye = WorkoutType.BODY_WEIGHT)
+      }
+    }
+
+    // Body Weight Edit Screen
+    navigation(startDestination = Screen.BODY_WEIGHT_EDIT, route = Route.BODY_WEIGHT_EDIT) {
+      composable(Screen.BODY_WEIGHT_EDIT) {
+        WorkoutCreationScreen(
+            navigationActions,
+            WorkoutType.BODY_WEIGHT,
+            bodyweightWorkoutViewModel,
+            true,
+            editing = true)
+      }
+    }
+
+    // Yoga Edit Screen
+    navigation(startDestination = Screen.YOGA_EDIT, route = Route.YOGA_EDIT) {
+      composable(Screen.YOGA_EDIT) {
+        WorkoutCreationScreen(
+            navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true, editing = true)
+      }
+    }
+
+    // Yoga Overview Screen
+    navigation(startDestination = Screen.YOGA_OVERVIEW, route = Route.YOGA_OVERVIEW) {
+      composable(Screen.YOGA_OVERVIEW) {
+        WorkoutOverviewScreen(
+            navigationActions = navigationActions,
+            bodyweightViewModel = bodyweightWorkoutViewModel,
+            yogaViewModel = yogaWorkoutViewModel,
+            workoutTye = WorkoutType.YOGA)
+      }
+    }
+
     // Body Weight Workout
     navigation(startDestination = Screen.BODY_WEIGHT_WORKOUT, route = Route.BODY_WEIGHT_WORKOUT) {
       composable(Screen.BODY_WEIGHT_WORKOUT) {
@@ -203,7 +295,10 @@ fun MainApp(startDestination: String = Route.AUTH) {
             bodyweightViewModel = bodyweightWorkoutViewModel,
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.BODY_WEIGHT)
+            workoutType = WorkoutType.BODY_WEIGHT,
+            cameraViewModel = cameraViewModel,
+            videoViewModel = videoViewModel,
+            userAccountViewModel = userAccountViewModel)
       }
     }
     // Yoga Workout
@@ -214,7 +309,10 @@ fun MainApp(startDestination: String = Route.AUTH) {
             bodyweightViewModel = bodyweightWorkoutViewModel,
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.YOGA)
+            workoutType = WorkoutType.YOGA,
+            cameraViewModel = cameraViewModel,
+            videoViewModel = videoViewModel,
+            userAccountViewModel = userAccountViewModel)
       }
     }
 
@@ -226,14 +324,22 @@ fun MainApp(startDestination: String = Route.AUTH) {
             bodyweightViewModel = bodyweightWorkoutViewModel,
             yogaViewModel = yogaWorkoutViewModel,
             warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.WARMUP)
+            workoutType = WorkoutType.WARMUP,
+            cameraViewModel = cameraViewModel,
+            videoViewModel = videoViewModel,
+            userAccountViewModel = userAccountViewModel)
       }
     }
 
     // Calendar Screen
     navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
       composable(Screen.CALENDAR) {
-        CalendarScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        CalendarScreen(
+            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
+      }
+      composable(Screen.DAY_CALENDAR) {
+        DayCalendarScreen(
+            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
     }
   }

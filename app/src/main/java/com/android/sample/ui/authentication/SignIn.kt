@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,10 +36,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -45,42 +47,30 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 @Composable
 fun SignInScreen(
-    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
+    userAccountViewModel: UserAccountViewModel =
+        viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current)),
     navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
+  val isLoading by
+      userAccountViewModel.isLoading.collectAsState() // Directly observe isLoading from ViewModel
+
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
+  val userAccount by userAccountViewModel.userAccount.collectAsState(initial = null)
 
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
             Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
-            val userId = result.user?.uid
-            if (userId != null) {
-              userAccountViewModel.getUserAccount(userId)
-
-              scope.launch {
-                delay(450) // delay introduced to wait for data to be fetched
-                // TODO: Find a way to modify this with loading screen
-
-                // Observe changes in userAccount to know if profile exists
-                userAccountViewModel.userAccount.collect { account ->
-                  if (account != null) {
-                    // If account exists, navigate to main screen
-                    navigationActions.navigateTo(TopLevelDestinations.MAIN)
-                  } else {
-                    // If no account exists, navigate to AddAccount screen
-                    navigationActions.navigateTo(Screen.ADD_ACCOUNT)
-                  }
-                }
-              }
+            result.user?.uid?.let { userId ->
+              checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope)
             }
             Toast.makeText(context, "Login successful!", Toast.LENGTH_LONG).show()
           },
@@ -91,6 +81,7 @@ fun SignInScreen(
   val token = stringResource(com.android.sample.R.string.default_web_client_id)
   // The main container for the screen
   // A surface container using the 'background' color from the theme
+
   if (user == null) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -136,7 +127,44 @@ fun SignInScreen(
           }
         })
   } else {
-    navigationActions.navigateTo(TopLevelDestinations.MAIN)
+    // When user is signed in, check if they have an account
+    LaunchedEffect(userAccount) {
+      Firebase.auth.currentUser?.uid?.let { userId ->
+        checkUserAccountAndNavigate(userId, userAccountViewModel, navigationActions, scope)
+      }
+    }
+  }
+
+  // Show Loading Dialog if `isLoading` is true
+  if (isLoading) {
+    LoadingDialog()
+  }
+}
+
+fun checkUserAccountAndNavigate(
+    userId: String,
+    userAccountViewModel: UserAccountViewModel,
+    navigationActions: NavigationActions,
+    scope: CoroutineScope
+) {
+  userAccountViewModel.getUserAccount(userId)
+
+  scope.launch {
+    userAccountViewModel.isLoading.collect { isLoading ->
+      if (!isLoading) {
+        // Observe changes in userAccount to know if profile exists
+        userAccountViewModel.userAccount.collect { account ->
+          if (account != null) {
+            // If account exists, navigate to main screen
+            navigationActions.navigateTo(TopLevelDestinations.MAIN)
+          } else {
+            // If no account exists, navigate to AddAccount screen
+            navigationActions.navigateTo(Screen.ADD_ACCOUNT)
+          }
+          return@collect
+        }
+      }
+    }
   }
 }
 

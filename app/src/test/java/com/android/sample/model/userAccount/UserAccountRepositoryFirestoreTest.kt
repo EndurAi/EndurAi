@@ -2,6 +2,7 @@ package com.android.sample.model.userAccount
 
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
@@ -9,15 +10,23 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Transaction
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
+import org.hamcrest.Matchers.`is`
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
@@ -29,6 +38,9 @@ class UserAccountRepositoryFirestoreTest {
   @Mock private lateinit var mockDocumentReference: DocumentReference
   @Mock private lateinit var mockCollectionReference: CollectionReference
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
+  @Mock private lateinit var localCache: UserAccountLocalCache
+
+  @Mock private lateinit var mockTransaction: Transaction
 
   private lateinit var userAccountRepositoryFirestore: UserAccountRepositoryFirestore
 
@@ -53,7 +65,12 @@ class UserAccountRepositoryFirestoreTest {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
-    userAccountRepositoryFirestore = UserAccountRepositoryFirestore(mockFirestore)
+    localCache = mock(UserAccountLocalCache::class.java)
+
+    // Return a valid Flow for the local cache
+    `when`(localCache.getUserAccount()).thenReturn(flowOf(null))
+
+    userAccountRepositoryFirestore = UserAccountRepositoryFirestore(mockFirestore, localCache)
 
     `when`(mockFirestore.collection(any())).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document(any())).thenReturn(mockDocumentReference)
@@ -62,41 +79,73 @@ class UserAccountRepositoryFirestoreTest {
 
   @Test
   fun getUserAccount_success() {
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(userAccount)
+    runTest {
+      `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+      `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(userAccount)
 
-    var successCalled = false
+      var successCalled = false
 
-    userAccountRepositoryFirestore.getUserAccount(
-        "1",
-        onSuccess = { account ->
-          successCalled = true
-          assertTrue(account == userAccount)
-        },
-        onFailure = { fail("Failure callback should not be called") })
+      userAccountRepositoryFirestore.getUserAccount(
+          "1",
+          onSuccess = { account ->
+            successCalled = true
+            assertTrue(account == userAccount)
+          },
+          onFailure = { fail("Failure callback should not be called") })
 
-    shadowOf(Looper.getMainLooper()).idle()
+      shadowOf(Looper.getMainLooper()).idle()
 
-    verify(mockDocumentReference).get()
-    assertTrue("Success callback should be called", successCalled)
+      verify(mockDocumentReference).get()
+      assertTrue("Success callback should be called", successCalled)
+    }
   }
 
   @Test
   fun getUserAccount_failure() {
-    val exception = RuntimeException("Failed to get user account")
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+    runTest {
+      val exception = RuntimeException("Failed to get user account")
+      `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
 
-    var failureCalled = false
+      var failureCalled = false
+
+      userAccountRepositoryFirestore.getUserAccount(
+          "1",
+          onSuccess = { fail("Success callback should not be called") },
+          onFailure = { failureCalled = true })
+
+      shadowOf(Looper.getMainLooper()).idle()
+
+      verify(mockDocumentReference).get()
+      assertTrue("Failure callback should be called", failureCalled)
+    }
+  }
+
+  @Test
+  fun `getUserAccount fetches from cache first`() = runTest {
+    `when`(localCache.getUserAccount()).thenReturn(flowOf(userAccount))
 
     userAccountRepositoryFirestore.getUserAccount(
         "1",
-        onSuccess = { fail("Success callback should not be called") },
-        onFailure = { failureCalled = true })
+        onSuccess = { account -> assertThat(account, `is`(userAccount)) },
+        onFailure = { fail("Failure callback should not be called") })
 
-    shadowOf(Looper.getMainLooper()).idle()
+    verify(localCache).getUserAccount()
+    verify(mockDocumentReference, never()).get()
+  }
 
+  @Test
+  fun `getUserAccount falls back to Firebase if cache is empty`() = runTest {
+    `when`(localCache.getUserAccount()).thenReturn(flowOf(null))
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(userAccount)
+
+    userAccountRepositoryFirestore.getUserAccount(
+        "1",
+        onSuccess = { account -> assertThat(account, `is`(userAccount)) },
+        onFailure = { fail("Failure callback should not be called") })
+
+    verify(localCache).getUserAccount()
     verify(mockDocumentReference).get()
-    assertTrue("Failure callback should be called", failureCalled)
   }
 
   @Test
@@ -135,6 +184,19 @@ class UserAccountRepositoryFirestoreTest {
   }
 
   @Test
+  fun `createUserAccount saves to cache`() = runTest {
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
+
+    userAccountRepositoryFirestore.createUserAccount(
+        userAccount, onSuccess = {}, onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle() // Ensure all tasks are executed
+
+    verify(mockDocumentReference).set(eq(userAccount))
+    verify(localCache).saveUserAccount(eq(userAccount)) // Verify cache save
+  }
+
+  @Test
   fun updateUserAccount_success() {
     `when`(mockDocumentReference.set(userAccount)).thenReturn(Tasks.forResult(null))
 
@@ -166,6 +228,184 @@ class UserAccountRepositoryFirestoreTest {
     shadowOf(Looper.getMainLooper()).idle()
 
     verify(mockDocumentReference).set(userAccount)
+    assertTrue("Failure callback should be called", failureCalled)
+  }
+
+  @Test
+  fun `updateUserAccount saves to cache`() = runTest {
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
+
+    userAccountRepositoryFirestore.updateUserAccount(
+        userAccount, onSuccess = {}, onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle() // Ensure all tasks are executed
+
+    verify(mockDocumentReference).set(eq(userAccount))
+    verify(localCache).saveUserAccount(eq(userAccount)) // Verify cache save
+  }
+
+  @Test
+  fun acceptFriendRequest_success() {
+    val friendId = "2"
+    val updatedUserAccount =
+        userAccount.copy(
+            friends = userAccount.friends + friendId,
+            receivedRequests = userAccount.receivedRequests - friendId)
+    val friendAccount =
+        userAccount.copy(userId = friendId, sentRequests = listOf(userAccount.userId))
+    val updatedFriendAccount =
+        friendAccount.copy(
+            friends = friendAccount.friends + userAccount.userId,
+            sentRequests = friendAccount.sentRequests - userAccount.userId)
+
+    `when`(mockFirestore.runTransaction(any<Transaction.Function<Void>>())).thenAnswer {
+        invocation: InvocationOnMock ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<Void>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult<Void>(null)
+    }
+
+    `when`(mockTransaction.get(mockDocumentReference)).thenReturn(mockDocumentSnapshot)
+    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(friendAccount)
+    `when`(mockTransaction.set(mockDocumentReference, updatedFriendAccount))
+        .thenReturn(mockTransaction)
+    `when`(mockTransaction.set(mockDocumentReference, updatedUserAccount))
+        .thenReturn(mockTransaction)
+
+    var successCalled = false
+
+    userAccountRepositoryFirestore.acceptFriendRequest(
+        userAccount,
+        friendId,
+        onSuccess = { successCalled = true },
+        onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockFirestore).runTransaction(any<Transaction.Function<Void>>())
+    verify(mockTransaction).get(mockDocumentReference)
+    verify(mockTransaction).set(mockDocumentReference, updatedFriendAccount)
+    verify(mockTransaction).set(mockDocumentReference, updatedUserAccount)
+    assertTrue("Success callback should be called", successCalled)
+  }
+
+  @Test
+  fun rejectFriendRequest_success() {
+    val friendId = "2"
+    val updatedUserAccount =
+        userAccount.copy(receivedRequests = userAccount.receivedRequests - friendId)
+    val friendAccount =
+        userAccount.copy(userId = friendId, sentRequests = listOf(userAccount.userId))
+    val updatedFriendAccount =
+        friendAccount.copy(sentRequests = friendAccount.sentRequests - userAccount.userId)
+
+    `when`(mockFirestore.runTransaction(any<Transaction.Function<Void>>())).thenAnswer {
+        invocation: InvocationOnMock ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<Void>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult<Void>(null)
+    }
+
+    `when`(mockTransaction.get(mockDocumentReference)).thenReturn(mockDocumentSnapshot)
+    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(friendAccount)
+    `when`(mockTransaction.set(mockDocumentReference, updatedFriendAccount))
+        .thenReturn(mockTransaction)
+    `when`(mockTransaction.set(mockDocumentReference, updatedUserAccount))
+        .thenReturn(mockTransaction)
+
+    var successCalled = false
+
+    userAccountRepositoryFirestore.rejectFriendRequest(
+        userAccount,
+        friendId,
+        onSuccess = { successCalled = true },
+        onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockFirestore).runTransaction(any<Transaction.Function<Void>>())
+    verify(mockTransaction).get(mockDocumentReference)
+    verify(mockTransaction).set(mockDocumentReference, updatedFriendAccount)
+    verify(mockTransaction).set(mockDocumentReference, updatedUserAccount)
+    assertTrue("Success callback should be called", successCalled)
+  }
+
+  @Test
+  fun acceptFriendRequest_failure() {
+    val friendId = "2"
+    val exception = RuntimeException("Failed to accept friend request")
+
+    `when`(mockFirestore.runTransaction(any<Transaction.Function<Void>>()))
+        .thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+
+    userAccountRepositoryFirestore.acceptFriendRequest(
+        userAccount,
+        friendId,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockFirestore).runTransaction(any<Transaction.Function<Void>>())
+    assertTrue("Failure callback should be called", failureCalled)
+  }
+
+  @Test
+  fun rejectFriendRequest_failure() {
+    val friendId = "2"
+    val exception = RuntimeException("Failed to reject friend request")
+
+    `when`(mockFirestore.runTransaction(any<Transaction.Function<Void>>()))
+        .thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+
+    userAccountRepositoryFirestore.rejectFriendRequest(
+        userAccount,
+        friendId,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockFirestore).runTransaction(any<Transaction.Function<Void>>())
+    assertTrue("Failure callback should be called", failureCalled)
+  }
+
+  @Test
+  fun deleteUserAccount_success() {
+    `when`(mockDocumentReference.delete()).thenReturn(Tasks.forResult(null))
+
+    var successCalled = false
+
+    userAccountRepositoryFirestore.deleteUserAccount(
+        "1",
+        onSuccess = { successCalled = true },
+        onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockDocumentReference).delete()
+    assertTrue("Success callback should be called", successCalled)
+  }
+
+  @Test
+  fun deleteUserAccount_failure() {
+    val exception = RuntimeException("Failed to delete user account")
+    `when`(mockDocumentReference.delete()).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+
+    userAccountRepositoryFirestore.deleteUserAccount(
+        "1",
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockDocumentReference).delete()
     assertTrue("Failure callback should be called", failureCalled)
   }
 }

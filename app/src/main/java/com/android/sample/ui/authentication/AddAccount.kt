@@ -24,10 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.android.sample.R
 import com.android.sample.model.userAccount.*
+import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.viewmodel.UserAccountViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
@@ -36,7 +38,8 @@ import java.util.GregorianCalendar
 
 @Composable
 fun AddAccount(
-    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory),
+    userAccountViewModel: UserAccountViewModel =
+        viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current)),
     navigationActions: NavigationActions,
     accountExists: Boolean,
     userId: String? = Firebase.auth.currentUser?.uid
@@ -58,6 +61,9 @@ fun AddAccount(
   var weightUnit by remember { mutableStateOf(WeightUnit.KG) }
   var gender by remember { mutableStateOf(Gender.MALE) }
   var birthDate by remember { mutableStateOf("") }
+  var friends by remember { mutableStateOf(listOf<String>()) }
+  var sentRequests by remember { mutableStateOf(listOf<String>()) }
+  var receivedRequests by remember { mutableStateOf(listOf<String>()) }
 
   // Retrieve current user UID from Firebase Auth
   val actualUserId = userId ?: return // Ensure user is signed in
@@ -78,8 +84,11 @@ fun AddAccount(
             it.birthDate.let { timestamp ->
               val calendar = Calendar.getInstance()
               calendar.time = timestamp.toDate()
-              "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(
-                            Calendar.YEAR)}"
+              "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${
+                            calendar.get(
+                                Calendar.YEAR
+                            )
+                        }"
             }
         // Check for valid URI before assigning it
         try {
@@ -93,6 +102,9 @@ fun AddAccount(
           profileImageUri = null
           originalProfileImageUri = null
         }
+        friends = it.friends
+        sentRequests = it.sentRequests
+        receivedRequests = it.receivedRequests
       }
     }
   }
@@ -103,46 +115,55 @@ fun AddAccount(
           contract = ActivityResultContracts.GetContent(),
           onResult = { uri -> profileImageUri = uri })
 
-  AccountForm(
-      profileImageUri = profileImageUri,
-      onImageClick = { imagePickerLauncher.launch("image/*") },
-      firstName = firstName,
-      lastName = lastName,
-      onFirstNameChange = { firstName = it },
-      onLastNameChange = { lastName = it },
-      height = height,
-      weight = weight,
-      heightUnit = heightUnit,
-      weightUnit = weightUnit,
-      onHeightChange = { height = it },
-      onWeightChange = { weight = it },
-      onHeightUnitChange = { heightUnit = it },
-      onWeightUnitChange = { weightUnit = it },
-      gender = gender,
-      onGenderChange = { gender = it },
-      birthDate = birthDate,
-      onBirthDateChange = { birthDate = it },
-      buttonText = if (accountExists) "Save Changes" else "Submit",
-      onButtonClick = {
-        saveAccount(
-            isNewAccount = !accountExists,
-            userAccountViewModel = userAccountViewModel,
-            navigationActions = navigationActions,
-            userId = if (accountExists) userId2 else actualUserId,
-            firstName = firstName,
-            lastName = lastName,
-            height = height,
-            heightUnit = heightUnit,
-            weight = weight,
-            weightUnit = weightUnit,
-            gender = gender,
-            birthDate = birthDate,
-            profileImageUri = profileImageUri,
-            originalProfileImageUri = if (accountExists) originalProfileImageUri else null,
-            context = context)
-      },
-      isButtonEnabled = firstName.isNotBlank(),
-      testTag = if (accountExists) "editScreen" else "addScreen")
+  Column {
+    // Add the TopBar only when editing an account
+    if (accountExists) {
+      TopBar(navigationActions = navigationActions, title = R.string.EditAccount)
+    }
+    AccountForm(
+        profileImageUri = profileImageUri,
+        onImageClick = { imagePickerLauncher.launch("image/*") },
+        firstName = firstName,
+        lastName = lastName,
+        onFirstNameChange = { firstName = it },
+        onLastNameChange = { lastName = it },
+        height = height,
+        weight = weight,
+        heightUnit = heightUnit,
+        weightUnit = weightUnit,
+        onHeightChange = { height = it },
+        onWeightChange = { weight = it },
+        onHeightUnitChange = { heightUnit = it },
+        onWeightUnitChange = { weightUnit = it },
+        gender = gender,
+        onGenderChange = { gender = it },
+        birthDate = birthDate,
+        onBirthDateChange = { birthDate = it },
+        buttonText = if (accountExists) "Save Changes" else "Submit",
+        onButtonClick = {
+          saveAccount(
+              isNewAccount = !accountExists,
+              userAccountViewModel = userAccountViewModel,
+              navigationActions = navigationActions,
+              userId = if (accountExists) userId2 else actualUserId,
+              firstName = firstName,
+              lastName = lastName,
+              height = height,
+              heightUnit = heightUnit,
+              weight = weight,
+              weightUnit = weightUnit,
+              gender = gender,
+              birthDate = birthDate,
+              profileImageUri = profileImageUri,
+              originalProfileImageUri = if (accountExists) originalProfileImageUri else null,
+              friends = friends,
+              sentRequests = sentRequests,
+              receivedRequests = receivedRequests,
+              context = context)
+        },
+        isButtonEnabled = firstName.isNotBlank(),
+        testTag = if (accountExists) "editScreen" else "addScreen")
+  }
 }
 
 @Composable
@@ -289,7 +310,10 @@ fun saveAccount(
     birthDate: String,
     profileImageUri: Uri?,
     originalProfileImageUri: Uri?,
-    context: android.content.Context
+    context: android.content.Context,
+    friends: List<String>,
+    sentRequests: List<String>,
+    receivedRequests: List<String>
 ) {
   val calendar = GregorianCalendar()
   val parts = birthDate.split("/")
@@ -309,7 +333,10 @@ fun saveAccount(
               weightUnit = weightUnit,
               gender = gender,
               birthDate = Timestamp(calendar.time),
-              profileImageUrl = profileImageUrl)
+              profileImageUrl = profileImageUrl,
+              friends = friends,
+              sentRequests = sentRequests,
+              receivedRequests = receivedRequests)
 
       if (profileImageUri != null && profileImageUri != originalProfileImageUri) {
         userAccountViewModel.uploadProfileImage(

@@ -1,10 +1,12 @@
 package com.android.sample.ui.authentication
 
+import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.userAccount.*
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.viewmodel.UserAccountViewModel
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,6 +17,7 @@ class EditAccountScreenTest {
   private lateinit var userAccountRepository: UserAccountRepository
   private lateinit var userAccountViewModel: UserAccountViewModel
   private lateinit var navigationActions: NavigationActions
+  private lateinit var localCache: UserAccountLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -33,9 +36,15 @@ class EditAccountScreenTest {
 
   @Before
   fun setUp() {
+    // Get application context for testing
+    val context = ApplicationProvider.getApplicationContext<Context>()
+
+    // Initialize localCache with the context
+    localCache = UserAccountLocalCache(context)
     userAccountRepository = FakeUserAccountRepository()
     navigationActions = mock(NavigationActions::class.java)
-    userAccountViewModel = UserAccountViewModel(userAccountRepository)
+
+    userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
 
     // Initialize the fake repository with a user account for the tests
     (userAccountRepository as FakeUserAccountRepository).setUserAccount(userAccount)
@@ -153,7 +162,7 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
-  override fun getUserAccount(
+  override suspend fun getUserAccount(
       userId: String,
       onSuccess: (UserAccount) -> Unit,
       onFailure: (Exception) -> Unit
@@ -181,6 +190,55 @@ class FakeUserAccountRepository : UserAccountRepository {
   ) {
     this.userAccount = userAccount
     onSuccess()
+  }
+
+  override fun sendFriendRequest(
+      fromUser: UserAccount,
+      toUserId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
+  override fun acceptFriendRequest(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
+  override fun removeFriend(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
+  override fun rejectFriendRequest(
+      userAccount: UserAccount,
+      friendId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
+  override fun deleteUserAccount(
+      userId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (userAccount != null && userAccount?.userId == userId) {
+      userAccount = null
+      onSuccess()
+    } else {
+      onFailure(Exception("UserAccount not found"))
+    }
   }
 
   fun setUserAccount(account: UserAccount?) {

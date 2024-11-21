@@ -55,6 +55,8 @@ sealed class ExerciseDetail {
   data class RepetitionBased(val repetitions: Int) : ExerciseDetail()
 }
 
+@JsonClass(generateAdapter = true) data class WorkoutID(val workoutid: String)
+
 enum class WorkoutType {
   BODY_WEIGHT,
   YOGA,

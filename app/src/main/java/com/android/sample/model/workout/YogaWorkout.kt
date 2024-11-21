@@ -27,5 +27,30 @@ class YogaWorkout(
 
   companion object {
     const val DOCUMENT_NAME = "yogaWorkout"
+    val QUICK_YOGA_WORKOUT =
+        YogaWorkout(
+            workoutId = "QUICK_YOGA_WORKOUT",
+            name = "Quick Yoga Workout",
+            description = "A quick yoga workout for beginners.",
+            warmup = false,
+            exercises =
+                mutableListOf(
+                    Exercise(
+                        id = "YOGA_1",
+                        type = ExerciseType.DOWNWARD_DOG,
+                        detail = ExerciseType.DOWNWARD_DOG.detail),
+                    Exercise(
+                        id = "YOGA_2",
+                        type = ExerciseType.TREE_POSE,
+                        detail = ExerciseType.TREE_POSE.detail),
+                    Exercise(
+                        id = "YOGA_3",
+                        type = ExerciseType.SUN_SALUTATION,
+                        detail = ExerciseType.SUN_SALUTATION.detail),
+                    Exercise(
+                        id = "YOGA_4",
+                        type = ExerciseType.WARRIOR_II,
+                        detail = ExerciseType.WARRIOR_II.detail)),
+            date = LocalDateTime.now())
   }
 }

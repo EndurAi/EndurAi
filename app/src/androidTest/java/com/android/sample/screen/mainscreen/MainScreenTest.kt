@@ -1,7 +1,16 @@
 package com.android.sample.screen.mainscreen
 
+import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.userAccount.Gender
+import com.android.sample.model.userAccount.HeightUnit
+import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountLocalCache
+import com.android.sample.model.userAccount.UserAccountRepository
+import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
@@ -10,7 +19,10 @@ import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.google.firebase.Timestamp
 import java.time.LocalDateTime
+import java.util.Date
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,49 +38,82 @@ class MainScreenTest {
   private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
+  private lateinit var accountViewModel: UserAccountViewModel
+  private lateinit var accountRepo: UserAccountRepository
+  private lateinit var localCache: UserAccountLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    // Mock the repos for workouts
-    bodyWeightRepo = mock()
-    yogaRepo = mock()
+    runTest {
+      // Mock the repos for workouts
+      bodyWeightRepo = mock()
+      yogaRepo = mock()
+      accountRepo = mock()
 
-    val bodyWeightWorkouts =
-        listOf(
-            BodyWeightWorkout(
-                "1",
-                "NopainNogain",
-                "Do 20 push-ups",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 42)),
-            BodyWeightWorkout(
-                "2",
-                "NightSes",
-                "Hold for 60 seconds",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 43)))
-    val yogaWorkouts: List<YogaWorkout> = listOf()
+      // Get application context for testing
+      val context = ApplicationProvider.getApplicationContext<Context>()
 
-    `when`(bodyWeightRepo.getDocuments(any(), any())).then {
-      it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
+      // Initialize localCache with the context
+      localCache = UserAccountLocalCache(context)
+
+      val account =
+          UserAccount(
+              "1111",
+              "Micheal",
+              "Phelps",
+              1.8f,
+              HeightUnit.METER,
+              70f,
+              WeightUnit.KG,
+              Gender.MALE,
+              Timestamp(Date()),
+              "")
+
+      val bodyWeightWorkouts =
+          listOf(
+              BodyWeightWorkout(
+                  "1",
+                  "NopainNogain",
+                  "Do 20 push-ups",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 42)),
+              BodyWeightWorkout(
+                  "2",
+                  "NightSes",
+                  "Hold for 60 seconds",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 43)))
+      val yogaWorkouts: List<YogaWorkout> = listOf()
+
+      `when`(accountRepo.getUserAccount(any(), any(), any())).thenAnswer {
+        val onSuccess = it.getArgument<(UserAccount) -> Unit>(1)
+        onSuccess(account)
+      }
+
+      `when`(bodyWeightRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
+      }
+
+      `when`(yogaRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
+      }
+
+      accountViewModel = UserAccountViewModel(accountRepo, localCache)
+      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
+      yogaViewModel = WorkoutViewModel(yogaRepo)
+      // Mock the NavigationActions
+      navigationActions = mock(NavigationActions::class.java)
+
+      // Mock the current route
+      `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
+
+      // Set the content of the screen for testing
+      composeTestRule.setContent {
+        MainScreen(navigationActions, bodyWeightViewModel, yogaViewModel, accountViewModel)
+      }
     }
-
-    `when`(yogaRepo.getDocuments(any(), any())).then {
-      it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
-    }
-
-    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-    yogaViewModel = WorkoutViewModel(yogaRepo)
-    // Mock the NavigationActions
-    navigationActions = mock(NavigationActions::class.java)
-
-    // Mock the current route
-    `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
-
-    // Set the content of the screen for testing
-    composeTestRule.setContent { MainScreen(navigationActions, bodyWeightViewModel, yogaViewModel) }
   }
 
   @Test
@@ -124,12 +169,19 @@ class MainScreenTest {
 
     // Simulate clicking on the New Workout Plan section
     composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
-    // Future test can be written here when it will navigate to creation screen
+    verify(navigationActions).navigateTo(Screen.SESSIONSELECTION)
+  }
+
+  @Test
+  fun testAchievemetsSectionIsDisplayed() {
+    composeTestRule.onNodeWithTag("AchievementButton").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AchievementButton").performClick()
+    verify(navigationActions).navigateTo(Screen.ACHIEVEMENTS)
   }
 
   @Test
   fun testBottomNavigationBarIsDisplayed() {
     // Check that the BottomNavigationBar is displayed
-    composeTestRule.onNodeWithTag("BottomNavigationBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
   }
 }

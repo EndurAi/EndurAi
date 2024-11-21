@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.io.FileInputStream
-import java.util.Properties
 
 plugins {
     jacoco
@@ -25,8 +22,6 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
-
         applicationId = "com.android.sample"
         minSdk = 29
         targetSdk = 34
@@ -163,16 +158,20 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.intents)
-    implementation(libs.play.services.maps)
-    implementation(libs.maps.compose)
-    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
 
     // Activity Compose for rememberLauncherForActivityResult
     implementation(libs.coil.compose)
+
+    // DataStore local caching
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.gson)
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
@@ -212,8 +211,15 @@ dependencies {
     implementation(libs.coil.compose)
 //    implementation(libs.coil.core)
 
+    val camerax_version = "1.3.0-alpha07"
+    //// CAMERA STUFF ////
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation ("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation ("androidx.camera:camera-view:$camerax_version")
+    implementation ("androidx.camera:camera-extensions:$camerax_version")
 
-
+    //// ACCOMPANIST ////
+implementation("com.google.accompanist:accompanist-permissions:0.30.1")
 
     //----------- Test dependencies ---------------
     testImplementation(libs.mockito.core)

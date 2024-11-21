@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
@@ -25,6 +26,7 @@ class CalendarScreenTest {
   private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
+  private lateinit var calendarViewModel: CalendarViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -57,6 +59,7 @@ class CalendarScreenTest {
 
     bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
     yogaViewModel = WorkoutViewModel(yogaRepo)
+    calendarViewModel = CalendarViewModel()
 
     // Mock the NavigationActions
     navigationActions = mock(NavigationActions::class.java)
@@ -88,7 +91,8 @@ class CalendarScreenTest {
       CalendarScreen(
           navigationActions = navigationActions,
           bodyworkoutViewModel = bodyWeightViewModel,
-          yogaworkoutViewModel = yogaViewModel)
+          yogaworkoutViewModel = yogaViewModel,
+          calendarViewModel = calendarViewModel)
     }
 
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
@@ -119,7 +123,7 @@ class CalendarScreenTest {
   @Test
   fun testDisplayMoreThan3Days() {
     composeTestRule.setContent {
-      CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel)
+      CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel, calendarViewModel)
     }
 
     // Find all nodes with the testTag "daySection"

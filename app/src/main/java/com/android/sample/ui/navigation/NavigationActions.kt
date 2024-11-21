@@ -26,9 +26,18 @@ object Route {
   const val WARMUP_WORKOUT = "Warmup workout"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout"
   const val YOGA_WORKOUT = "Yoga workout"
+  const val FRIENDS = "Friends"
   const val CALENDAR = "Calendar"
   const val ADD_ACCOUNT = "Add Account"
   const val EDIT_ACCOUNT = "Edit Account"
+  const val BODY_WEIGHT_IMPORT = "BodyWeightImport"
+  const val CHOOSE_BODYWEIGHT = "Choose Bodyweight"
+  const val YOGA_IMPORT = "YogaImport"
+  const val CHOOSE_YOGA = "Choose Yoga"
+  const val BODY_WEIGHT_OVERVIEW = "BodyWeightOverview"
+  const val YOGA_OVERVIEW = "YogaOverview"
+  const val BODY_WEIGHT_EDIT = "BodyWeightEdit"
+  const val YOGA_EDIT = "YogaEdit"
 }
 
 object Screen {
@@ -52,9 +61,19 @@ object Screen {
   const val WARMUP_WORKOUT = "Warmup workout screen"
   const val BODY_WEIGHT_WORKOUT = "BodyWeight workout screen"
   const val YOGA_WORKOUT = "Yoga workout screen"
-
+  const val DAY_CALENDAR = "Day Calendar Screen"
   const val ADD_ACCOUNT = "Add Account Screen"
   const val EDIT_ACCOUNT = "Edit Account Screen"
+  const val FRIENDS = "Friends Screen"
+  const val ADD_FRIEND = "Add Friend Screen"
+  const val YOGA_IMPORT = "Yoga import screen"
+  const val CHOOSE_BODYWEIGHT = "Choose Bodyweight Screen"
+  const val CHOOSE_YOGA = "Choose Yoga Screen"
+  const val BODY_WEIGHT_IMPORT = "BodyWeight import screen"
+  const val BODY_WEIGHT_OVERVIEW = "BodyWeight overview screen"
+  const val YOGA_OVERVIEW = "Yoga overview screen"
+  const val BODY_WEIGHT_EDIT = "BodyWeight edit screen"
+  const val YOGA_EDIT = "Yoga edit screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
@@ -62,17 +81,11 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 object TopLevelDestinations {
   val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
   val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
-  val ACHIEVEMENTS =
-      TopLevelDestination(Route.ACHIEVEMENTS, Icons.Outlined.DateRange, textId = "Achievements")
   val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
-    listOf(
-        TopLevelDestinations.MAIN,
-        TopLevelDestinations.VIDEO,
-        TopLevelDestinations.ACHIEVEMENTS,
-        TopLevelDestinations.CALENDAR)
+    listOf(TopLevelDestinations.MAIN, TopLevelDestinations.VIDEO, TopLevelDestinations.CALENDAR)
 
 open class NavigationActions(private val navController: NavHostController) {
   /**

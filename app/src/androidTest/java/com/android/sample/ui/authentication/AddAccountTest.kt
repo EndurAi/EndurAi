@@ -1,11 +1,13 @@
 package com.android.sample.ui.authentication
 
+import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.userAccount.*
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.viewmodel.UserAccountViewModel
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,6 +25,7 @@ class AddAccountScreenTest {
   @Mock private lateinit var userAccountRepository: UserAccountRepository
 
   @Mock private lateinit var navigationActions: NavigationActions
+  private lateinit var localCache: UserAccountLocalCache
 
   private lateinit var userAccountViewModel: UserAccountViewModel
 
@@ -30,11 +33,14 @@ class AddAccountScreenTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize the ViewModel with the mocked repository
-    userAccountViewModel = UserAccountViewModel(userAccountRepository)
+    // Get application context for testing
+    val context = ApplicationProvider.getApplicationContext<Context>()
 
-    // Mock any necessary data or methods on the repository
-    `when`(userAccountRepository.getUserAccount(any(), any(), any())).thenAnswer {}
+    // Initialize localCache with the context
+    localCache = UserAccountLocalCache(context)
+
+    // Initialize the ViewModel with the mocked repository
+    userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
   }
 
   @Test

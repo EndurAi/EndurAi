@@ -25,11 +25,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
+import com.android.sample.ui.composables.BottomBar
+import com.android.sample.ui.composables.Legend
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.MediumGrey
@@ -52,14 +56,15 @@ data class ColoredWorkout(val workout: Workout, val backgroundColor: Color, val 
 fun CalendarScreen(
     navigationActions: NavigationActions,
     bodyworkoutViewModel: WorkoutViewModel<Workout>,
-    yogaworkoutViewModel: WorkoutViewModel<Workout>
+    yogaworkoutViewModel: WorkoutViewModel<Workout>,
+    calendarViewModel: CalendarViewModel
 ) {
   val workoutsBody by bodyworkoutViewModel.workouts.collectAsState(emptyList())
   val workoutsYoga by yogaworkoutViewModel.workouts.collectAsState(emptyList())
 
   val coloredWorkoutsBody =
-      workoutsBody.map { ColoredWorkout(it, PastelBlue, WorkoutType.BODY_WEIGHT) }
-  val coloredWorkoutsYoga = workoutsYoga.map { ColoredWorkout(it, PastelRed, WorkoutType.YOGA) }
+      workoutsBody.map { ColoredWorkout(it, PastelRed, WorkoutType.BODY_WEIGHT) }
+  val coloredWorkoutsYoga = workoutsYoga.map { ColoredWorkout(it, PastelBlue, WorkoutType.YOGA) }
   val workouts = coloredWorkoutsYoga + coloredWorkoutsBody
 
   // Infinite scrolling logic
@@ -101,7 +106,16 @@ fun CalendarScreen(
               modifier = Modifier.fillMaxWidth().padding(8.dp),
               horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
-                    onClick = { showDialog = false },
+                    onClick = {
+                      showDialog = false
+                      when (selectedWorkout!!.type) {
+                        WorkoutType.BODY_WEIGHT ->
+                            navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+                        WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
+                        WorkoutType.WARMUP -> TODO()
+                        WorkoutType.RUNNING -> TODO()
+                      }
+                    },
                     colors = ButtonDefaults.outlinedButtonColors(),
                     modifier = Modifier.testTag("editButton"),
                     border = BorderStroke(2.dp, Yellow)) {
@@ -137,27 +151,34 @@ fun CalendarScreen(
 
   val workoutsByDate = workouts.groupBy { it.workout.date.toLocalDate().toKotlinLocalDate() }
 
-  Scaffold(topBar = { TopBar(navigationActions, R.string.calendar_title) }) { innerPadding ->
-    Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-      Spacer(modifier = Modifier.height(8.dp))
+  Scaffold(
+      topBar = { TopBar(navigationActions, R.string.calendar_title) },
+      bottomBar = { BottomBar(navigationActions) }) { innerPadding ->
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+          Legend()
 
-      Legend(modifier = Modifier.testTag("legend"))
+          Divider(
+              color = Color.LightGray,
+              thickness = 1.dp,
+              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
-      LazyColumn(
-          state = lazyListState,
-          modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
-            items(dates) { date ->
-              DaySection(
-                  date = date,
-                  workouts = workoutsByDate[date] ?: emptyList(),
-                  onWorkoutClick = { workout ->
-                    selectedWorkout = workout
-                    showDialog = true
-                  })
-            }
-          }
-    }
-  }
+          LazyColumn(
+              state = lazyListState,
+              modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
+                items(dates) { date ->
+                  DaySection(
+                      date = date,
+                      workouts = workoutsByDate[date] ?: emptyList(),
+                      onWorkoutClick = { workout ->
+                        selectedWorkout = workout
+                        showDialog = true
+                      },
+                      navigationActions,
+                      calendarViewModel)
+                }
+              }
+        }
+      }
 }
 
 private fun generateDateRange(
@@ -168,36 +189,12 @@ private fun generateDateRange(
 }
 
 @Composable
-fun Legend(modifier: Modifier = Modifier) {
-  Row(
-      modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
-      horizontalArrangement = Arrangement.SpaceEvenly,
-      verticalAlignment = Alignment.CenterVertically) {
-        LegendItem(color = PastelBlue, label = "Yoga", modifier = Modifier.testTag("legendYoga"))
-
-        LegendItem(
-            color = PastelRed,
-            label = "Bodyweight",
-            modifier = Modifier.testTag("legendBodyweight"))
-      }
-}
-
-@Composable
-fun LegendItem(color: Color, label: String, modifier: Modifier = Modifier) {
-  Row(
-      modifier = modifier,
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(modifier = Modifier.size(16.dp).background(color, shape = MaterialTheme.shapes.small))
-        Text(text = label, style = MaterialTheme.typography.bodySmall)
-      }
-}
-
-@Composable
 fun DaySection(
     date: kotlinx.datetime.LocalDate,
     workouts: List<ColoredWorkout>,
-    onWorkoutClick: (ColoredWorkout) -> Unit
+    onWorkoutClick: (ColoredWorkout) -> Unit,
+    navigationActions: NavigationActions,
+    calendarViewModel: CalendarViewModel
 ) {
   Row(
       modifier =
@@ -206,7 +203,11 @@ fun DaySection(
               .padding(vertical = 8.dp)
               .background(
                   color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
-              .padding(16.dp),
+              .padding(16.dp)
+              .clickable {
+                calendarViewModel.updateSelectedDate(date)
+                navigationActions.navigateTo(Screen.DAY_CALENDAR)
+              },
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier, horizontalAlignment = Alignment.Start) {
@@ -275,7 +276,7 @@ private fun getMonthName(monthNumber: Int): String {
   }
 }
 
-private fun formatTime(dateTime: LocalDateTime): String {
+fun formatTime(dateTime: LocalDateTime): String {
   val hour = dateTime.hour.toString().padStart(2, '0')
   val minute = dateTime.minute.toString().padStart(2, '0')
   return "$hour:$minute"
