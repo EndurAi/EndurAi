@@ -152,7 +152,7 @@ dependencies {
     implementation(libs.androidx.ui.test.android)
   implementation(libs.androidx.camera.video)
     implementation(libs.androidx.foundation.layout.android)
-
+    implementation(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
