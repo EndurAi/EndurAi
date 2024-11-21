@@ -18,56 +18,119 @@ import com.google.maps.android.compose.Polyline
 import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
+import android.location.Location
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import com.android.sample.ui.composables.chronoDisplay
+import com.android.sample.ui.composables.CircularButton
+import com.android.sample.ui.composables.distanceDisplay
+import com.android.sample.ui.composables.paceDisplay
+import com.google.android.gms.maps.model.LatLng
+import java.util.Timer
+import java.util.TimerTask
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RunningScreen(navigationActions: NavigationActions) {
 
-  val pathPoints = LocationService.pathPoints.collectAsState(initial = emptyList())
-    var stop: Boolean = false
-  val cameraPositionState = LocationService.camera.collectAsState()
-
+    val pathPoints = LocationService.pathPoints.collectAsState(initial = emptyList())
+    val cameraPositionState = LocationService.camera.collectAsState()
     val context = LocalContext.current
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
-  Scaffold(topBar = { TopBar(navigationActions, R.string.runningTitle) }) { innerPadding ->
-    Column(
-        modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(
-                innerPadding
-            ) // Utilisez `innerPadding` pour éviter que la carte soit collée à
-            // la TopBar
-            .padding(horizontal = 16.dp)) {
-          Spacer(Modifier.height(32.dp))
+    var isRunning by remember { mutableStateOf(false) }
+    var elapsedTime by remember { mutableStateOf(0L) }
+    val timer = remember { mutableStateOf<Timer?>(null) }
 
-          Box(modifier = Modifier
-              .weight(1f)
-              .fillMaxWidth()) {
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                if (isRunning) {
+                    chronoDisplay(elapsedTime)
+                    distanceDisplay(calculateDistance(pathPoints.value))
+                    paceDisplay(calculatePace(elapsedTime, calculateDistance(pathPoints.value)))
+
+                    CircularButton(onClick = {
+                        // Stop the timer and location service
+                        timer.value?.cancel()
+                        timer.value = null
+                        isRunning = false
+                        LocationServiceManager.stopLocationService(context)
+                    })
+                } else {
+                    Button(onClick = {
+                        // Start the location service and timer
+                        LocationServiceManager.startLocationService(context)
+                        isRunning = true
+
+                        timer.value = Timer().apply {
+                            scheduleAtFixedRate(object : TimerTask() {
+                                override fun run() {
+                                    elapsedTime += 1
+                                }
+                            }, 1000, 1000)
+                        }
+                    }, modifier = Modifier.fillMaxWidth()) {
+                        Text(text = "Start")
+                    }
+                }
+            }
+        },
+        sheetPeekHeight = 150.dp, // Controls how much of the sheet is visible when collapsed
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState.value) {
-                  // Ajouter Polyline pour le tracé
-                  if (pathPoints.value.isNotEmpty()) {
+                cameraPositionState = cameraPositionState.value
+            ) {
+                // Display the polyline for the running path
+                if (pathPoints.value.isNotEmpty()) {
                     Polyline(
                         points = pathPoints.value,
-                        color = Color.Blue, // Couleur du tracé
-                        width = 16f // Épaisseur du tracé
-                        )
-                  }
+                        color = Color.Blue,
+                        width = 16f
+                    )
                 }
-          }
-
-          Spacer(modifier = Modifier.weight(0.5f))
-
-          Button(onClick ={ LocationServiceManager.startLocationService(context) }, modifier = Modifier
-              .fillMaxWidth()
-              .padding(top = 16.dp)) {
-            Text(text = "Start")
-          }
-
-          Spacer(Modifier.height(96.dp))
+            }
         }
-  }
+    }
+}
+
+fun calculateDistance(pathPoints: List<LatLng>): Double {
+    // Implémentation simplifiée : calcul de la distance totale entre les points
+    if (pathPoints.size < 2) return 0.0
+    var totalDistance = 0.0
+    for (i in 1 until pathPoints.size) {
+        val start = pathPoints[i - 1]
+        val end = pathPoints[i]
+        totalDistance += FloatArray(1).apply {
+            Location.distanceBetween(
+                start.latitude, start.longitude,
+                end.latitude, end.longitude,
+                this
+            )
+        }[0]
+    }
+    return totalDistance // Convertir en kilomètres
+}
+
+fun calculatePace(elapsedTime: Long, distance: Double): String {
+    val distanceInKm = distance
+    if (distanceInKm == 0.0 || elapsedTime == 0L) return "0:00/km"
+    val paceInSeconds = elapsedTime / distanceInKm
+    val minutes = (paceInSeconds / 60).toInt()
+    val seconds = (paceInSeconds % 60).toInt()
+    return String.format("%d:%02d/km", minutes, seconds)
 }
 
 
