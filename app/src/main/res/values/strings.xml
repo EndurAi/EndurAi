@@ -40,4 +40,5 @@
     <string name="Confirm">Confirm</string>
     <string name="Cancel">Cancel</string>
     <string name="EditAccount">Edit Account</string>
+    <string name="RunningScreenTopBar">Running</string>
 </resources>
