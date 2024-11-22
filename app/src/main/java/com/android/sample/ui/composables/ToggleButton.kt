@@ -24,6 +24,6 @@ fun ToggleButton(onClick: (Boolean) -> Unit, isToggled: Boolean, title: String) 
         checked = isToggled,
         onCheckedChange = onClick,
         colors = SwitchDefaults.colors(checkedTrackColor = Blue),
-        modifier = Modifier.padding(start = 8.dp).testTag("switchToggle"))
+        modifier = Modifier.padding(start = 8.dp).testTag(title + " switchToggle"))
   }
 }
