@@ -42,9 +42,4 @@ class RunningSelectionScreenTest {
   fun loadPathButton_clickable() {
     composeTestRule.onNodeWithTag("loadPathButton").assertHasClickAction()
   }
-
-  @Test
-  fun interButtonSpacer_isDisplayed() {
-    composeTestRule.onNodeWithTag("interButtonSpacer").assertHasClickAction()
-  }
 }
