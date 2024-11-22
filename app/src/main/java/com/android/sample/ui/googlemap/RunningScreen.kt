@@ -28,6 +28,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.sp
+import com.android.sample.model.workout.RunningWorkout
+import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.chronoDisplay
 import com.android.sample.ui.composables.CircularButton
 import com.android.sample.ui.composables.StartButton
@@ -40,10 +42,12 @@ import java.util.Timer
 import java.util.TimerTask
 import com.android.sample.ui.composables.ToggleButton
 import com.android.sample.ui.navigation.Screen
+import java.time.LocalDateTime
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RunningScreen(navigationActions: NavigationActions) {
+fun RunningScreen(navigationActions: NavigationActions, runningWorkoutViewModel : WorkoutViewModel<RunningWorkout>) {
 
     var isPaused by remember { mutableStateOf(false) }
 
@@ -324,12 +328,27 @@ fun RunningScreen(navigationActions: NavigationActions) {
                         )
                         StartButton(
                             onClick = {
-                                // Sttop and Reset the location service
+                                // Stop and Reset the location service
                                 LocationServiceManager.stopAndResetLocationService(context)
                                 isRunning = false
                                 isFirstTime = true
                                 isPaused = false
                                 isFinished = false
+
+                                val runningWorkout = RunningWorkout(
+                                    runningWorkoutViewModel.getNewUid(),
+                                    name,
+                                    description,
+                                    date = LocalDateTime.now(),
+                                    path = pathPoints.value.map { loc -> com.google.type.LatLng.newBuilder().setLongitude(loc.longitude).setLatitude(loc.latitude).build() },
+                                    timeMs = elapsedTime
+                                )
+
+                                runningWorkoutViewModel.addWorkout(runningWorkout)
+
+                                navigationActions.navigateTo(Screen.MAIN)
+
+
 
 
 
@@ -396,7 +415,7 @@ fun RunningScreen(navigationActions: NavigationActions) {
                         )
                         StartButton(
                             onClick = {
-                                // Sttop and Reset the location service
+                                // Stop and Reset the location service
                                 LocationServiceManager.stopAndResetLocationService(context)
                                 isRunning = false
                                 isFirstTime = true
