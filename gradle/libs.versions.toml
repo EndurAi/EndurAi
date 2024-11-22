@@ -51,6 +51,8 @@ playServicesMaps = "19.0.0"
 playServicesLocation = "21.3.0"
 uiTestAndroid = "1.7.5"
 cameraVideo = "1.4.0"
+foundationLayoutAndroid = "1.7.2"
+poseDetectionCommon = "17.0.0"
 datastoreCoreAndroid = "1.1.1"
 
 [libraries]
@@ -115,6 +117,8 @@ androidx-espresso-intents = { group = "androidx.test.espresso", name = "espresso
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
 androidx-camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "cameraVideo" }
+androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+pose-detection-common = { group = "com.google.mlkit", name = "pose-detection-common", version.ref = "poseDetectionCommon" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
