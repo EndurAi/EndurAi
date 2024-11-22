@@ -41,7 +41,7 @@ fun SessionSelectionScreen(navigationActions: NavigationActions) {
                 SessionCard(session) { selectedSession ->
                   when (selectedSession.title) {
                     "Body weight" -> navigationActions.navigateTo(Screen.IMPORTORCREATE_BODY_WEIGHT)
-                    "Running" -> navigationActions.navigateTo(Screen.RUNNING_SCREEN)
+                    "Running" -> navigationActions.navigateTo(Screen.IMPORTORCREATE_RUNNING)
                     "Yoga" -> navigationActions.navigateTo(Screen.IMPORTORCREATE_YOGA)
                   }
                 }
