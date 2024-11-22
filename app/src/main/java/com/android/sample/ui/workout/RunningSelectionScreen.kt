@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.NeutralGrey
@@ -43,7 +44,7 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
             verticalArrangement = Arrangement.Center) {
               // Button "Without Path"
               Button(
-                  onClick = { /* Action for Without Path */},
+                  onClick = { navigationActions.navigateTo(Screen.RUNNING_SCREEN)},
                   modifier =
                       Modifier.fillMaxWidth(0.7f)
                           .padding(vertical = 8.dp)
