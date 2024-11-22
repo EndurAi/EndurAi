@@ -233,6 +233,7 @@ implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     testImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
+    androidTestImplementation(libs.androidx.rules)
 
     configurations.configureEach {
         exclude(group = "com.google.protobuf", module = "protobuf-lite")

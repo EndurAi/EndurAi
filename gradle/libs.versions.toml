@@ -28,6 +28,7 @@ moshiAdapters = "1.15.1"
 moshiSealedReflect = "0.28.0"
 moshiSealedRuntime = "0.28.0"
 robolectric = "4.11.1"
+rules = "1.6.1"
 sonar = "4.4.1.3373"
 gms = "4.4.2"
 mockk = "1.13.5"
@@ -56,6 +57,7 @@ datastoreCoreAndroid = "1.1.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
