@@ -16,12 +16,11 @@ class RunningSelectionScreenTest {
 
   @Before
   fun setUp() {
-    val navigationActions = mock(NavigationActions::class.java)
+    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
   }
 
   @Test
   fun runningSelectionScreen_displaysButtonsAndImage() {
-    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
 
     composeTestRule.onNodeWithTag("withoutPathButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("createNewPathButton").assertIsDisplayed()
@@ -31,29 +30,21 @@ class RunningSelectionScreenTest {
 
   @Test
   fun withoutPathButton_clickable() {
-    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
-
     composeTestRule.onNodeWithTag("withoutPathButton").assertHasClickAction()
   }
 
   @Test
   fun createNewPathButton_clickable() {
-    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
-
     composeTestRule.onNodeWithTag("createNewPathButton").assertHasClickAction()
   }
 
   @Test
   fun loadPathButton_clickable() {
-    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
-
     composeTestRule.onNodeWithTag("loadPathButton").assertHasClickAction()
   }
 
   @Test
   fun interButtonSpacer_isDisplayed() {
-    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
-
     composeTestRule.onNodeWithTag("interButtonSpacer").assertHasClickAction()
   }
 }
