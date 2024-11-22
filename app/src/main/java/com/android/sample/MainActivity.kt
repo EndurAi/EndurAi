@@ -27,6 +27,7 @@ import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.video.VideoViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WarmUp
 import com.android.sample.model.workout.WarmUpViewModel
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
@@ -108,6 +109,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val calendarViewModel = CalendarViewModel()
 
   val cameraViewModel = CameraViewModel(context = LocalContext.current)
+  val runningWorkoutRepository =
+      WorkoutRepositoryFirestore(Firebase.firestore, clazz = RunningWorkout::class.java)
+  val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
 
   NavHost(navController = navController, startDestination = startDestination) {
 
