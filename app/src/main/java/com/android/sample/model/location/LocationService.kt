@@ -45,6 +45,7 @@ class LocationService(
 
     const val ACTION_START = "ACTION_START"
     const val ACTION_STOP = "ACTION_STOP"
+      const val ACTION_RESET = "ACTION_RESET"
   }
 
     var lastLocation : LatLng? = null
@@ -67,6 +68,10 @@ class LocationService(
     when (intent?.action) {
       ACTION_START -> start()
       ACTION_STOP -> stop()
+        ACTION_RESET -> {
+            pathPoints_.value = mutableListOf()
+            stop()
+        }
     }
 
     return super.onStartCommand(intent, flags, startId)
