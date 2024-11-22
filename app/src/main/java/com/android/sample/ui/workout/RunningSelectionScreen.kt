@@ -44,7 +44,7 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
             verticalArrangement = Arrangement.Center) {
               // Button "Without Path"
               Button(
-                  onClick = { navigationActions.navigateTo(Screen.RUNNING_SCREEN)},
+                  onClick = { navigationActions.navigateTo(Screen.RUNNING_SCREEN) },
                   modifier =
                       Modifier.fillMaxWidth(0.7f)
                           .padding(vertical = 8.dp)
