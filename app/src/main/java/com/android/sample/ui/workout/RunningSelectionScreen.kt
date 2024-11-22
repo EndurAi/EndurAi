@@ -41,9 +41,9 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
             modifier = Modifier.fillMaxSize().padding(pd),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              // Bouton "Without Path"
+              // Button "Without Path"
               Button(
-                  onClick = { /* Action pour Without Path */},
+                  onClick = { /* Action for Without Path */},
                   modifier =
                       Modifier.fillMaxWidth(0.7f)
                           .padding(vertical = 8.dp)
@@ -59,7 +59,7 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
 
               // Bouton "Create New Path"
               Button(
-                  onClick = { /* Action pour Create New Path */},
+                  onClick = { /* Action for Create New Path */},
                   modifier =
                       Modifier.fillMaxWidth(0.7f)
                           .padding(vertical = 8.dp)
@@ -73,9 +73,9 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
 
               InterButtonSpacer()
 
-              // Bouton "Load Path"
+              // Button "Load Path"
               Button(
-                  onClick = { /* Action pour Load Path */},
+                  onClick = { /* Action for Load Path */},
                   modifier =
                       Modifier.fillMaxWidth(0.7f)
                           .padding(vertical = 8.dp)
@@ -87,7 +87,7 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
                     Text(text = "Load Path", fontSize = 16.sp, color = Black)
                   }
 
-              // Image de silhouette d'un coureur
+              // Picture of a running silhouette
               Box(
                   modifier = Modifier.fillMaxSize(0.75f).padding(bottom = 16.dp),
                   contentAlignment = Alignment.BottomCenter) {
@@ -95,10 +95,7 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
                         painter = painterResource(id = R.drawable.running_man),
                         contentDescription = "Running Silhouette",
                         modifier = Modifier.fillMaxSize(0.8f).testTag("runningSilhouette"),
-                        colorFilter =
-                            ColorFilter.tint(
-                                NeutralGrey.copy(alpha = 0.5f)) // Applique une teinte gris clair
-                        )
+                        colorFilter = ColorFilter.tint(NeutralGrey.copy(alpha = 0.5f)))
                   }
             }
       })
