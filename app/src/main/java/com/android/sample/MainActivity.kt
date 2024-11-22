@@ -246,7 +246,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Running Screen
     navigation(startDestination = Screen.RUNNING_SCREEN, route = Route.RUNNING_SCREEN) {
-      composable(Screen.RUNNING_SCREEN) { RunningScreen(navigationActions) }
+      composable(Screen.RUNNING_SCREEN) { RunningScreen(navigationActions, runningWorkoutViewModel) }
     }
 
     // Body Weight Overview Screen
