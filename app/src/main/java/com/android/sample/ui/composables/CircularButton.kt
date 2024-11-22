@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -19,17 +20,18 @@ fun CircularButton(onClick: () -> Unit) {
       contentAlignment = Alignment.Center,
       modifier =
           Modifier.clickable(onClick = onClick)
-              .size(60.dp) // Taille du cercle
-              .clip(CircleShape) // Forme circulaire
+              .size(60.dp)
+              .clip(CircleShape)
               .background(
                   Color(
-                      0xFFD1D5E0)) // Couleur grise claire du cercle // Ombre subtile pour le cercle
+                      0xFFD1D5E0))
+              .testTag("PauseButton")
       ) {
         Box(
             modifier =
-                Modifier.size(25.dp) // Taille du carré arrondi
-                    .clip(RoundedCornerShape(3.dp)) // Angles arrondis
-                    .background(Color(0xFF7D83AE)) // Couleur violette du carré
+                Modifier.size(25.dp)
+                    .clip(RoundedCornerShape(3.dp))
+                    .background(Color(0xFF7D83AE))
             )
       }
 }
