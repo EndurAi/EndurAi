@@ -184,11 +184,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Import or Create Screen for running workout
     navigation(
-        startDestination = Screen.IMPORTORCREATE_RUNNING,
-        route = Route.IMPORTORCREATE_RUNNING) {
-          composable(Screen.IMPORTORCREATE_RUNNING) {
-            RunningSelectionScreen(navigationActions)
-          }
+        startDestination = Screen.IMPORTORCREATE_RUNNING, route = Route.IMPORTORCREATE_RUNNING) {
+          composable(Screen.IMPORTORCREATE_RUNNING) { RunningSelectionScreen(navigationActions) }
         }
 
     // Body Weight Creation Screen

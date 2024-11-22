@@ -1,8 +1,7 @@
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.assertIsDisplayed
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.workout.RunningSelectionScreen
 import org.junit.Before
@@ -11,61 +10,50 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 
 class RunningSelectionScreenTest {
+  val navigationActions = mock(NavigationActions::class.java)
+
+  @get:Rule val composeTestRule = createComposeRule()
+
+  @Before
+  fun setUp() {
     val navigationActions = mock(NavigationActions::class.java)
+  }
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @Test
+  fun runningSelectionScreen_displaysButtonsAndImage() {
+    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
 
-    @Before
-    fun setUp() {
-        val navigationActions = mock(NavigationActions::class.java)
-    }
+    composeTestRule.onNodeWithTag("withoutPathButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("createNewPathButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("loadPathButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("runningSilhouette").assertIsDisplayed()
+  }
 
-    @Test
-    fun runningSelectionScreen_displaysButtonsAndImage() {
-        composeTestRule.setContent {
-            RunningSelectionScreen(navigationActions = navigationActions)
-        }
+  @Test
+  fun withoutPathButton_clickable() {
+    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
 
-        composeTestRule.onNodeWithTag("withoutPathButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("createNewPathButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("loadPathButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("runningSilhouette").assertIsDisplayed()
-    }
+    composeTestRule.onNodeWithTag("withoutPathButton").assertHasClickAction()
+  }
 
-    @Test
-    fun withoutPathButton_clickable() {
-        composeTestRule.setContent {
-            RunningSelectionScreen(navigationActions = navigationActions)
-        }
+  @Test
+  fun createNewPathButton_clickable() {
+    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
 
-        composeTestRule.onNodeWithTag("withoutPathButton").assertHasClickAction()
-    }
+    composeTestRule.onNodeWithTag("createNewPathButton").assertHasClickAction()
+  }
 
-    @Test
-    fun createNewPathButton_clickable() {
-        composeTestRule.setContent {
-            RunningSelectionScreen(navigationActions = navigationActions)
-        }
+  @Test
+  fun loadPathButton_clickable() {
+    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
 
-        composeTestRule.onNodeWithTag("createNewPathButton").assertHasClickAction()
-    }
+    composeTestRule.onNodeWithTag("loadPathButton").assertHasClickAction()
+  }
 
-    @Test
-    fun loadPathButton_clickable() {
-        composeTestRule.setContent {
-            RunningSelectionScreen(navigationActions = navigationActions)
-        }
+  @Test
+  fun interButtonSpacer_isDisplayed() {
+    composeTestRule.setContent { RunningSelectionScreen(navigationActions = navigationActions) }
 
-        composeTestRule.onNodeWithTag("loadPathButton").assertHasClickAction()
-    }
-
-    @Test
-    fun interButtonSpacer_isDisplayed() {
-        composeTestRule.setContent {
-            RunningSelectionScreen(navigationActions = navigationActions)
-        }
-
-        composeTestRule.onNodeWithTag("interButtonSpacer").assertHasClickAction()
-    }
+    composeTestRule.onNodeWithTag("interButtonSpacer").assertHasClickAction()
+  }
 }

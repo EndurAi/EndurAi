@@ -73,7 +73,7 @@ object Screen {
   const val YOGA_OVERVIEW = "Yoga overview screen"
   const val BODY_WEIGHT_EDIT = "BodyWeight edit screen"
   const val YOGA_EDIT = "Yoga edit screen"
-    const val IMPORTORCREATE_RUNNING = "Import Or Create Running Screen"
+  const val IMPORTORCREATE_RUNNING = "Import Or Create Running Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
