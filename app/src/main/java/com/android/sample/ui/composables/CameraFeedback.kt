@@ -1,5 +1,6 @@
 package com.android.sample.ui.composables
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -51,15 +52,22 @@ class CameraFeedBack {
      * @param cameraViewModel The ViewModel that manages the camera state.
      * @param modifier The modifier to be applied to the layout.
      */
+    @SuppressLint("StateFlowValueCalledInComposition")
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    public fun CameraScreen(cameraViewModel: CameraViewModel, modifier: Modifier = Modifier) {
+    public fun CameraScreen(
+        cameraViewModel: CameraViewModel,
+        modifier: Modifier = Modifier,
+        poseDetectionRequired: Boolean = false // Not yet used
+    ) {
 
       val cameraPermissionState: PermissionState =
           rememberPermissionState(android.Manifest.permission.CAMERA)
 
       if (cameraPermissionState.status.isGranted) {
-        Box(modifier = modifier) { CameraBody(cameraViewModel) }
+        Box(modifier = modifier) {
+          CameraBody(cameraViewModel, poseDetectionRequired = poseDetectionRequired)
+        }
       } else {
         LaunchedEffect(Unit) { cameraPermissionState.launchPermissionRequest() }
       }
@@ -71,7 +79,7 @@ class CameraFeedBack {
      * @param cameraViewModel The ViewModel that manages the camera state.
      */
     @Composable
-    fun CameraBody(cameraViewModel: CameraViewModel) {
+    fun CameraBody(cameraViewModel: CameraViewModel, poseDetectionRequired: Boolean) {
 
       val context = LocalContext.current
       val lifecycleOwner = LocalLifecycleOwner.current

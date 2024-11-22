@@ -160,6 +160,11 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.intents)
+    implementation(libs.androidx.ui.test.android)
+    implementation(libs.androidx.camera.video)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.pose.detection.common)
+    implementation(libs.androidx.datastore.core.android)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
@@ -240,6 +245,9 @@ implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     }
 
     implementation(libs.kotlinx.datetime)
+
+    //Google ML kit
+    implementation("com.google.mlkit:pose-detection:18.0.0-beta5")
 }
 
 tasks.withType<Test> {
