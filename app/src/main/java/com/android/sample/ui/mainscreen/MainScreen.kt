@@ -292,9 +292,7 @@ fun QuickWorkoutButton(
               .clickable {
                 when (iconId) {
                   R.drawable.running_man -> {
-                    bodyWeightViewModel.selectWorkout(
-                        bodyWeightViewModel.copyOf(BodyWeightWorkout.WARMUP_WORKOUT))
-                    navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+                    navigationActions.navigateTo(Screen.RUNNING_SCREEN)
                   }
                   R.drawable.pushups -> {
                     bodyWeightViewModel.selectWorkout(
