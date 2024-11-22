@@ -14,6 +14,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 
+/**
+ * Implementation of the [LocationClient] interface that provides location updates using Google's
+ * [FusedLocationProviderClient].
+ *
+ * @property context The [Context] used to check location permissions and access system services.
+ * @property client The [FusedLocationProviderClient] used to request location updates.
+ */
 class DefaultLocationClient(
     private val context: Context,
     private val client: FusedLocationProviderClient

@@ -78,52 +78,38 @@ fun RunningScreen(
   when {
     isFirstTime -> {
       Scaffold(
-          topBar = {
-            TopBar(
-                navigationActions = navigationActions,
-                R.string
-                    .RunningScreenTopBar
-                )
-          },
+          topBar = { TopBar(navigationActions = navigationActions, R.string.RunningScreenTopBar) },
       ) { paddingValues ->
-        Box(
-            modifier =
-                Modifier.fillMaxSize()
-                    .padding(paddingValues)
-            ) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+          GoogleMap(
+              modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState.value)
 
-              GoogleMap(
-                  modifier = Modifier.fillMaxSize(),
-                  cameraPositionState = cameraPositionState.value)
+          Column(
+              modifier = Modifier.fillMaxSize().padding(16.dp),
+              verticalArrangement = Arrangement.Bottom,
+              horizontalAlignment = Alignment.CenterHorizontally) {
+                RunningDesignButton(
+                    onClick = {
+                      LocationServiceManager.startLocationService(context)
+                      isRunning = true
+                      isFirstTime = false
 
-
-              Column(
-                  modifier = Modifier.fillMaxSize().padding(16.dp),
-                  verticalArrangement = Arrangement.Bottom,
-                  horizontalAlignment = Alignment.CenterHorizontally) {
-                    RunningDesignButton(
-                        onClick = {
-                          LocationServiceManager.startLocationService(context)
-                          isRunning = true
-                          isFirstTime = false
-
-                          timer.value =
-                              Timer().apply {
-                                scheduleAtFixedRate(
-                                    object : TimerTask() {
-                                      override fun run() {
-                                        elapsedTime += 1
-                                      }
-                                    },
-                                    1000,
-                                    1000)
-                              }
-                        },
-                        title = "Start",
-                        showIcon = true
-                        )
-                  }
-            }
+                      timer.value =
+                          Timer().apply {
+                            scheduleAtFixedRate(
+                                object : TimerTask() {
+                                  override fun run() {
+                                    elapsedTime += 1
+                                  }
+                                },
+                                1000,
+                                1000)
+                          }
+                    },
+                    title = "Start",
+                    showIcon = true)
+              }
+        }
       }
     }
     isRunning -> {
@@ -165,13 +151,7 @@ fun RunningScreen(
     }
     isPaused -> {
       Scaffold(
-          topBar = {
-            TopBar(
-                navigationActions = navigationActions,
-                R.string
-                    .RunningScreenTopBar
-                )
-          },
+          topBar = { TopBar(navigationActions = navigationActions, R.string.RunningScreenTopBar) },
       ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -329,11 +309,7 @@ fun RunningScreen(
 
         Scaffold(
             topBar = {
-              TopBar(
-                  navigationActions = navigationActions,
-                  R.string
-                      .RunningScreenTopBar
-                  )
+              TopBar(navigationActions = navigationActions, R.string.RunningScreenTopBar)
             },
         ) {
           Column(

@@ -18,37 +18,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.ui.theme.Black
+import com.android.sample.ui.theme.LightBlue
 
 @Composable
 fun distanceDisplay(distance: Double) {
   Column(
       horizontalAlignment = Alignment.Start, // Align "Distance" to the start
-      modifier = Modifier.padding(16.dp)
-      ) {
+      modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Distance",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 20.sp),
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp)
-            )
+            color = Black,
+            modifier = Modifier.padding(bottom = 4.dp))
         Box(
             modifier =
                 Modifier.width(300.dp)
                     .height(60.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFEAF0FF))
+                    .background(LightBlue)
                     .border(BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(12.dp))
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-            ) {
+                    .padding(vertical = 8.dp, horizontal = 16.dp)) {
               Text(
                   text = String.format("%.2f km", distance),
-                  style =
-                      MaterialTheme.typography.bodyLarge.copy(
-                          fontSize = 36.sp
-                          ),
-                  color = Color.Black,
-                  modifier = Modifier.align(Alignment.Center)
-                  )
+                  style = MaterialTheme.typography.bodyLarge.copy(fontSize = 36.sp),
+                  color = Black,
+                  modifier = Modifier.align(Alignment.Center))
             }
       }
 }
@@ -57,32 +52,25 @@ fun distanceDisplay(distance: Double) {
 fun chronoDisplay(elapsedTime: Long) {
   Column(
       horizontalAlignment = Alignment.Start, // Align "Time" to the start
-      modifier = Modifier.padding(16.dp)
-      ) {
+      modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Time",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 20.sp),
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp)
-            )
+            color = Black,
+            modifier = Modifier.padding(bottom = 4.dp))
         Box(
             modifier =
                 Modifier.width(300.dp)
                     .height(60.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFEAF0FF))
+                    .background(LightBlue)
                     .border(BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(12.dp))
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-            ) {
+                    .padding(vertical = 8.dp, horizontal = 16.dp)) {
               Text(
                   text = formatElapsedTime(elapsedTime),
-                  style =
-                      MaterialTheme.typography.bodyLarge.copy(
-                          fontSize = 36.sp
-                          ),
-                  color = Color.Black,
-                  modifier = Modifier.align(Alignment.Center)
-                  )
+                  style = MaterialTheme.typography.bodyLarge.copy(fontSize = 36.sp),
+                  color = Black,
+                  modifier = Modifier.align(Alignment.Center))
             }
       }
 }
@@ -91,32 +79,25 @@ fun chronoDisplay(elapsedTime: Long) {
 fun paceDisplay(paceString: String) {
   Column(
       horizontalAlignment = Alignment.Start, // Align "Pace" to the start
-      modifier = Modifier.padding(16.dp)
-      ) {
+      modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Pace",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 20.sp),
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp)
-            )
+            color = Black,
+            modifier = Modifier.padding(bottom = 4.dp))
         Box(
             modifier =
                 Modifier.width(300.dp)
                     .height(60.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFEAF0FF))
+                    .background(LightBlue)
                     .border(BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(12.dp))
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-            ) {
+                    .padding(vertical = 8.dp, horizontal = 16.dp)) {
               Text(
                   text = paceString,
-                  style =
-                      MaterialTheme.typography.bodyLarge.copy(
-                          fontSize = 36.sp
-                          ),
-                  color = Color.Black,
-                  modifier = Modifier.align(Alignment.Center)
-                  )
+                  style = MaterialTheme.typography.bodyLarge.copy(fontSize = 36.sp),
+                  color = Black,
+                  modifier = Modifier.align(Alignment.Center))
             }
       }
 }

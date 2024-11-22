@@ -22,16 +22,10 @@ fun CircularButton(onClick: () -> Unit) {
           Modifier.clickable(onClick = onClick)
               .size(60.dp)
               .clip(CircleShape)
-              .background(
-                  Color(
-                      0xFFD1D5E0))
-              .testTag("PauseButton")
-      ) {
+              .background(Color(0xFFD1D5E0))
+              .testTag("PauseButton")) {
         Box(
             modifier =
-                Modifier.size(25.dp)
-                    .clip(RoundedCornerShape(3.dp))
-                    .background(Color(0xFF7D83AE))
-            )
+                Modifier.size(25.dp).clip(RoundedCornerShape(3.dp)).background(Color(0xFF7D83AE)))
       }
 }

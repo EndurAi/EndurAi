@@ -20,13 +20,12 @@ fun RunningDesignButton(onClick: () -> Unit, title: String, showIcon: Boolean) {
   Button(
       onClick = onClick,
       modifier =
-          Modifier.padding(8.dp).shadow(4.dp, shape = RoundedCornerShape(50.dp)).height(50.dp).testTag(title + "Button"),
-      colors =
-          ButtonDefaults.buttonColors(
-              containerColor = Color(0xFF7D83AE)
-              ),
-      shape = RoundedCornerShape(50.dp)
-      ) {
+          Modifier.padding(8.dp)
+              .shadow(4.dp, shape = RoundedCornerShape(50.dp))
+              .height(50.dp)
+              .testTag(title + "Button"),
+      colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7D83AE)),
+      shape = RoundedCornerShape(50.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
