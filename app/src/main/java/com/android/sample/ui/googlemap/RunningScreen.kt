@@ -27,7 +27,7 @@ import com.android.sample.model.location.LocationService
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.CircularButton
-import com.android.sample.ui.composables.StartButton
+import com.android.sample.ui.composables.RunningDesignButton
 import com.android.sample.ui.composables.ToggleButton
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.composables.chronoDisplay
@@ -101,7 +101,7 @@ fun RunningScreen(
                   modifier = Modifier.fillMaxSize().padding(16.dp),
                   verticalArrangement = Arrangement.Bottom,
                   horizontalAlignment = Alignment.CenterHorizontally) {
-                    StartButton(
+                    RunningDesignButton(
                         onClick = {
                           LocationServiceManager.startLocationService(context)
                           isRunning = true
@@ -196,7 +196,7 @@ fun RunningScreen(
               Row(
                   horizontalArrangement = Arrangement.SpaceEvenly,
                   modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                    StartButton(
+                    RunningDesignButton(
                         onClick = {
                           // Start the location service and timer
                           LocationServiceManager.startLocationService(context)
@@ -225,7 +225,7 @@ fun RunningScreen(
                   color = LightGrey,
                   thickness = 2.dp,
                   modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
-              StartButton(
+              RunningDesignButton(
                   onClick = {
                     // Stop and Reset the location service
                     LocationServiceManager.stopAndResetLocationService(context)
@@ -293,7 +293,7 @@ fun RunningScreen(
                     color = LightGrey,
                     thickness = 2.dp,
                     modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
-                StartButton(
+                RunningDesignButton(
                     onClick = {
                       // Stop and Reset the location service
                       LocationServiceManager.stopAndResetLocationService(context)
@@ -362,7 +362,7 @@ fun RunningScreen(
                     color = LightGrey,
                     thickness = 2.dp,
                     modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
-                StartButton(
+                RunningDesignButton(
                     onClick = {
                       // Stop and Reset the location service
                       LocationServiceManager.stopAndResetLocationService(context)

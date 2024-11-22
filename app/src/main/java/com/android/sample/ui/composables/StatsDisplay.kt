@@ -23,31 +23,31 @@ import androidx.compose.ui.unit.sp
 fun distanceDisplay(distance: Double) {
   Column(
       horizontalAlignment = Alignment.Start, // Align "Distance" to the start
-      modifier = Modifier.padding(16.dp) // Optional padding for the entire column
+      modifier = Modifier.padding(16.dp)
       ) {
         Text(
             text = "Distance",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 20.sp),
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp) // Space between "Distance" and the box
+            modifier = Modifier.padding(bottom = 4.dp)
             )
         Box(
             modifier =
-                Modifier.width(300.dp) // Make the box take the full width of the screen
-                    .height(60.dp) // Set the height of the rectangle
+                Modifier.width(300.dp)
+                    .height(60.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFEAF0FF)) // Light blue background color
+                    .background(Color(0xFFEAF0FF))
                     .border(BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(12.dp))
-                    .padding(vertical = 8.dp, horizontal = 16.dp) // Padding inside the box
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
               Text(
                   text = String.format("%.2f km", distance),
                   style =
                       MaterialTheme.typography.bodyLarge.copy(
-                          fontSize = 36.sp // Increase the font size to make the text larger
+                          fontSize = 36.sp
                           ),
                   color = Color.Black,
-                  modifier = Modifier.align(Alignment.Center) // Center the text inside the box
+                  modifier = Modifier.align(Alignment.Center)
                   )
             }
       }
@@ -56,32 +56,32 @@ fun distanceDisplay(distance: Double) {
 @Composable
 fun chronoDisplay(elapsedTime: Long) {
   Column(
-      horizontalAlignment = Alignment.Start, // Align "Distance" to the start
-      modifier = Modifier.padding(16.dp) // Optional padding for the entire column
+      horizontalAlignment = Alignment.Start, // Align "Time" to the start
+      modifier = Modifier.padding(16.dp)
       ) {
         Text(
             text = "Time",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 20.sp),
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp) // Space between "Distance" and the box
+            modifier = Modifier.padding(bottom = 4.dp)
             )
         Box(
             modifier =
-                Modifier.width(300.dp) // Make the box take the full width of the screen
-                    .height(60.dp) // Set the height of the rectangle
+                Modifier.width(300.dp)
+                    .height(60.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFEAF0FF)) // Light blue background color
+                    .background(Color(0xFFEAF0FF))
                     .border(BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(12.dp))
-                    .padding(vertical = 8.dp, horizontal = 16.dp) // Padding inside the box
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
               Text(
                   text = formatElapsedTime(elapsedTime),
                   style =
                       MaterialTheme.typography.bodyLarge.copy(
-                          fontSize = 36.sp // Increase the font size to make the text larger
+                          fontSize = 36.sp
                           ),
                   color = Color.Black,
-                  modifier = Modifier.align(Alignment.Center) // Center the text inside the box
+                  modifier = Modifier.align(Alignment.Center)
                   )
             }
       }
@@ -90,32 +90,32 @@ fun chronoDisplay(elapsedTime: Long) {
 @Composable
 fun paceDisplay(paceString: String) {
   Column(
-      horizontalAlignment = Alignment.Start, // Align "Distance" to the start
-      modifier = Modifier.padding(16.dp) // Optional padding for the entire column
+      horizontalAlignment = Alignment.Start, // Align "Pace" to the start
+      modifier = Modifier.padding(16.dp)
       ) {
         Text(
             text = "Pace",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 20.sp),
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp) // Space between "Distance" and the box
+            modifier = Modifier.padding(bottom = 4.dp)
             )
         Box(
             modifier =
-                Modifier.width(300.dp) // Make the box take the full width of the screen
-                    .height(60.dp) // Set the height of the rectangle
+                Modifier.width(300.dp)
+                    .height(60.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFEAF0FF)) // Light blue background color
+                    .background(Color(0xFFEAF0FF))
                     .border(BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(12.dp))
-                    .padding(vertical = 8.dp, horizontal = 16.dp) // Padding inside the box
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
               Text(
                   text = paceString,
                   style =
                       MaterialTheme.typography.bodyLarge.copy(
-                          fontSize = 36.sp // Increase the font size to make the text larger
+                          fontSize = 36.sp
                           ),
                   color = Color.Black,
-                  modifier = Modifier.align(Alignment.Center) // Center the text inside the box
+                  modifier = Modifier.align(Alignment.Center)
                   )
             }
       }

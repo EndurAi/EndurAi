@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun StartButton(onClick: () -> Unit, title: String, showIcon: Boolean) {
+fun RunningDesignButton(onClick: () -> Unit, title: String, showIcon: Boolean) {
   Button(
       onClick = onClick,
       modifier =
