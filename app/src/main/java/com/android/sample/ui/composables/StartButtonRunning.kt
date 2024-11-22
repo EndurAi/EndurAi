@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,12 +20,12 @@ fun StartButton(onClick: () -> Unit, title: String, showIcon: Boolean) {
   Button(
       onClick = onClick,
       modifier =
-          Modifier.padding(8.dp).shadow(4.dp, shape = RoundedCornerShape(50.dp)).height(50.dp),
+          Modifier.padding(8.dp).shadow(4.dp, shape = RoundedCornerShape(50.dp)).height(50.dp).testTag(title + "Button"),
       colors =
           ButtonDefaults.buttonColors(
-              containerColor = Color(0xFF7D83AE) // Violet clair
+              containerColor = Color(0xFF7D83AE)
               ),
-      shape = RoundedCornerShape(50.dp) // Bords arrondis
+      shape = RoundedCornerShape(50.dp)
       ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -36,7 +37,7 @@ fun StartButton(onClick: () -> Unit, title: String, showIcon: Boolean) {
 
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
-                    imageVector = Icons.Default.ArrowForward, // Remplacez par votre icône
+                    imageVector = Icons.Default.ArrowForward,
                     contentDescription = "Arrow",
                     tint = Color.White)
               }
