@@ -17,8 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -27,10 +27,14 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.theme.Black
+import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.NeutralGrey
+import com.android.sample.ui.theme.SoftGrey
 
 @Composable
 fun RunningSelectionScreen(navigationActions: NavigationActions) {
-    val buttonColor = ButtonDefaults.buttonColors(Color.Blue)
+    val buttonColor = ButtonDefaults.buttonColors(Blue)
     Scaffold(
         modifier = Modifier.testTag("RunningSelectionScreen"),
         topBar = {
@@ -42,7 +46,7 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
                     .fillMaxSize()
                     .padding(pd),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
+                verticalArrangement = Arrangement.Center
             ) {
                 // Bouton "Without Path"
                 Button(
@@ -50,13 +54,16 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .padding(vertical = 8.dp)
-                        .height(50.dp)
-                        .testTag("withoutPathButton"),
+                        .height(70.dp)
+                        .testTag("withoutPathButton")
+                        .shadow(8.dp, RoundedCornerShape(40.dp)),
                     colors = buttonColor,
-                    shape = RoundedCornerShape(25.dp)
+                    shape = RoundedCornerShape(40.dp)
                 ) {
-                    Text(text = "Without Path", fontSize = 16.sp)
+                    Text(text = "Without Path", fontSize = 16.sp, color = Black)
                 }
+
+                InterButtonSpacer()
 
                 // Bouton "Create New Path"
                 Button(
@@ -64,13 +71,16 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .padding(vertical = 8.dp)
-                        .height(50.dp)
-                        .testTag("createNewPathButton"),
+                        .height(70.dp)
+                        .testTag("createNewPathButton")
+                        .shadow(8.dp, RoundedCornerShape(40.dp)),
                     colors = buttonColor,
-                    shape = RoundedCornerShape(25.dp)
+                    shape = RoundedCornerShape(40.dp)
                 ) {
-                    Text(text = "Create New Path", fontSize = 16.sp)
+                    Text(text = "Create New Path", fontSize = 16.sp, color = Black)
                 }
+
+                InterButtonSpacer()
 
                 // Bouton "Load Path"
                 Button(
@@ -78,33 +88,36 @@ fun RunningSelectionScreen(navigationActions: NavigationActions) {
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .padding(vertical = 8.dp)
-                        .height(50.dp)
-                        .testTag("loadPathButton"),
+                        .height(70.dp)
+                        .testTag("loadPathButton")
+                        .shadow(8.dp, RoundedCornerShape(40.dp)),
                     colors = buttonColor,
-                    shape = RoundedCornerShape(25.dp)
+                    shape = RoundedCornerShape(40.dp)
                 ) {
-                    Text(text = "Load Path", fontSize = 16.sp)
+                    Text(text = "Load Path", fontSize = 16.sp, color = Black)
                 }
-
-                Spacer(modifier = Modifier.height(32.dp))
 
                 // Image de silhouette d'un coureur
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
+                        .fillMaxSize(0.75f)
                         .padding(bottom = 16.dp),
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.running_man),
                         contentDescription = "Running Silhouette",
-                        modifier = Modifier.fillMaxSize(0.5f).testTag("runningSilhouette"),
-                        colorFilter = ColorFilter.tint(Color.Gray.copy(alpha = 0.5f)) // Applique une teinte gris clair
+                        modifier = Modifier.fillMaxSize(0.8f).testTag("runningSilhouette"),
+                        colorFilter = ColorFilter.tint(NeutralGrey.copy(alpha = 0.5f)) // Applique une teinte gris clair
                     )
                 }
             }
         }
 
     )
+}
+
+@Composable
+fun InterButtonSpacer() {
+    Spacer(modifier = Modifier.height(35.dp).testTag("interButtonSpacer"))
 }
