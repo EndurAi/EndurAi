@@ -82,29 +82,27 @@ fun RunningScreen(
             TopBar(
                 navigationActions = navigationActions,
                 R.string
-                    .RunningScreenTopBar // Assurez-vous que le titre correspond au texte "Load
-                                         // Path"
+                    .RunningScreenTopBar
                 )
           },
       ) { paddingValues ->
         Box(
             modifier =
                 Modifier.fillMaxSize()
-                    .padding(paddingValues) // Pour gérer les marges dues au Scaffold
+                    .padding(paddingValues)
             ) {
-              // Google Maps affichée en arrière-plan
+
               GoogleMap(
                   modifier = Modifier.fillMaxSize(),
                   cameraPositionState = cameraPositionState.value)
 
-              // Bouton "Start" positionné en bas
+
               Column(
                   modifier = Modifier.fillMaxSize().padding(16.dp),
                   verticalArrangement = Arrangement.Bottom,
                   horizontalAlignment = Alignment.CenterHorizontally) {
                     StartButton(
                         onClick = {
-                          // Démarrer le service de localisation et le chronomètre
                           LocationServiceManager.startLocationService(context)
                           isRunning = true
                           isFirstTime = false
@@ -121,8 +119,8 @@ fun RunningScreen(
                                     1000)
                               }
                         },
-                        title = "Start", // Texte du bouton
-                        showIcon = true // Affiche l'icône "flèche droite" intégrée
+                        title = "Start",
+                        showIcon = true
                         )
                   }
             }
@@ -151,7 +149,7 @@ fun RunningScreen(
                       })
                 }
           },
-          sheetPeekHeight = 150.dp, // Controls how much of the sheet is visible when collapsed
+          sheetPeekHeight = 150.dp,
           modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.fillMaxSize()) {
               GoogleMap(
@@ -171,8 +169,7 @@ fun RunningScreen(
             TopBar(
                 navigationActions = navigationActions,
                 R.string
-                    .RunningScreenTopBar // Assurez-vous que le titre correspond au texte "Load
-                                         // Path"
+                    .RunningScreenTopBar
                 )
           },
       ) {
@@ -230,7 +227,7 @@ fun RunningScreen(
                   modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
               StartButton(
                   onClick = {
-                    // Sttop and Reset the location service
+                    // Stop and Reset the location service
                     LocationServiceManager.stopAndResetLocationService(context)
                     isRunning = false
                     isFirstTime = false
@@ -335,8 +332,7 @@ fun RunningScreen(
               TopBar(
                   navigationActions = navigationActions,
                   R.string
-                      .RunningScreenTopBar // Assurez-vous que le titre correspond au texte "Load
-                                           // Path"
+                      .RunningScreenTopBar
                   )
             },
         ) {
@@ -387,7 +383,6 @@ fun RunningScreen(
 }
 
 fun calculateDistance(pathPoints: List<LatLng>): Double {
-  // Implémentation simplifiée : calcul de la distance totale entre les points
   if (pathPoints.size < 2) return 0.0
   var totalDistance = 0.0
   for (i in 1 until pathPoints.size) {
