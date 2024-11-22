@@ -1,22 +1,11 @@
 package com.android.sample.model.location
 
-import android.app.NotificationManager
-import android.content.Context
-import android.content.Intent
-import androidx.core.app.NotificationCompat
-import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
 import org.mockito.Mockito.*
-import java.io.File
 
-//@OptIn(ExperimentalCoroutinesApi::class)
-//class LocationServiceTest {
+
+// @OptIn(ExperimentalCoroutinesApi::class)
+// class LocationServiceTest {
 //
 //  private val testDispatcher = UnconfinedTestDispatcher()
 //
@@ -91,4 +80,4 @@ import java.io.File
 //    verify(locationService).stopForeground(1)
 //    verify(locationService).stopSelf()
 //  }
-//}
+// }

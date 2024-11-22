@@ -15,38 +15,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun StartButton(onClick: () -> Unit, title : String, showIcon : Boolean) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .padding(8.dp)
-            .shadow(4.dp, shape = RoundedCornerShape(50.dp))
-            .height(50.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF7D83AE) // Violet clair
-        ),
-        shape = RoundedCornerShape(50.dp) // Bords arrondis
-    ) {
+fun StartButton(onClick: () -> Unit, title: String, showIcon: Boolean) {
+  Button(
+      onClick = onClick,
+      modifier =
+          Modifier.padding(8.dp).shadow(4.dp, shape = RoundedCornerShape(50.dp)).height(50.dp),
+      colors =
+          ButtonDefaults.buttonColors(
+              containerColor = Color(0xFF7D83AE) // Violet clair
+              ),
+      shape = RoundedCornerShape(50.dp) // Bords arrondis
+      ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.width(100.dp)
-        ) {
-            Text(
-                text = title,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            if(showIcon) {
+            modifier = Modifier.width(100.dp)) {
+              Text(
+                  text = title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+              if (showIcon) {
 
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.ArrowForward, // Remplacez par votre icône
                     contentDescription = "Arrow",
-                    tint = Color.White
-                )
+                    tint = Color.White)
+              }
             }
-        }
-    }
+      }
 }

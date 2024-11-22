@@ -14,25 +14,16 @@ import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Blue
 
 @Composable
-fun ToggleButton(onClick : (Boolean) -> Unit, isToggled : Boolean, title : String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(16.dp)
-    ) {
-        Text(
-            text = title,
-            fontSize = 20.sp,
-            color = Black
-        )
+fun ToggleButton(onClick: (Boolean) -> Unit, isToggled: Boolean, title: String) {
+  Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)) {
+    Text(text = title, fontSize = 20.sp, color = Black)
 
-        Spacer(modifier = Modifier.width(8.dp))
+    Spacer(modifier = Modifier.width(8.dp))
 
-        Switch(
-            checked = isToggled,
-            onCheckedChange = onClick ,
-            colors = SwitchDefaults.colors(checkedTrackColor = Blue),
-            modifier =
-            Modifier.padding(start = 8.dp).testTag("switchToggle"))
-    }
+    Switch(
+        checked = isToggled,
+        onCheckedChange = onClick,
+        colors = SwitchDefaults.colors(checkedTrackColor = Blue),
+        modifier = Modifier.padding(start = 8.dp).testTag("switchToggle"))
+  }
 }
