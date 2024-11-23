@@ -350,7 +350,7 @@ fun WorkoutScreenBody(
                             text =
                                 (if (exerciseIsRepetitionBased) "$repetitions Rep."
                                 else
-                                    "${convertSecondsToTime(timeLimit)} ${if (numberOfSets>1) "x $numberOfSets" else "" }"),
+                                    "${convertSecondsToTime(timeLimit)}${if (numberOfSets>1) " x $numberOfSets" else "" }"),
                             fontSize = 20.sp,
                             modifier = Modifier.testTag("GoalValue"))
                       }
