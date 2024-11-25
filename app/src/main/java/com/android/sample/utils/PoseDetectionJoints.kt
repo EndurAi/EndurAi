@@ -50,4 +50,3 @@ val RIGHT_SHOULDER_HIP_KNEE =
 
 
 
-}
