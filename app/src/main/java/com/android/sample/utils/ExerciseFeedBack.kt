@@ -29,7 +29,7 @@ class ExerciseFeedBack {
 
     data class ExerciseCriterion(val angleCriterionSet : Set<AngleCriterion>)
 
-
+//SHOULDER HIP KNEE
     val plankCriterion_backAngle_L = AngleCriterion(
       joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
       targetAngle = 180.0,
@@ -52,44 +52,56 @@ class ExerciseFeedBack {
       , onSuccess = {
         Log.d(
           "MLFeedback",
-          "Back is good"
+          "SHOULDER HIP KNEE is good"
         )},
       onFailure = {        Log.d(
         "MLFeedback",
-        "Don't bend your back"
+        "SHOULDER HIP KNEE pas cool"
       )}
     )
 
-
-    val plankCriterion_backAngle_L = AngleCriterion(
+    // HIP SHOULDER ELBOW
+    val plankCriterion_SHOULDER_L = AngleCriterion(
       joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
-      targetAngle = 180.0,
-      delta = 25.0
+      targetAngle = 90.0,
+      delta = 15.0
       , onSuccess = {
         Log.d(
           "MLFeedback",
-          "Back is good"
+          "HIP SHOULDER ELBOW is good"
         )},
       onFailure = {        Log.d(
         "MLFeedback",
-        "Don't bend your back"
+        "HIP SHOULDER ELBOW pas cool"
       )}
     )
-
+    // HIP SHOULDER ELBOW
     val plankCriterion_SHOULDER_R = AngleCriterion(
       joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
-      targetAngle = 180.0,
-      delta = 25.0
+      targetAngle = 90.0,
+      delta = 15.0
       , onSuccess = {
         Log.d(
           "MLFeedback",
-          "Back is good"
+          "HIP SHOULDER ELBOW is good"
         )},
       onFailure = {        Log.d(
         "MLFeedback",
-        "Don't bend your back"
+        "HIP SHOULDER ELBOW pas cool"
       )}
     )
+    //PlankExerciseCriterion
+    val PlankExerciseCriterion : ExerciseCriterion = ExerciseCriterion(angleCriterionSet = setOf(
+      plankCriterion_SHOULDER_R,
+      plankCriterion_SHOULDER_L,
+      plankCriterion_backAngle_L,
+      plankCriterion_SHOULDER_R
+    ))
+
+
+    fun assessLandMarks(landMarkList : List<PoseLandmark>, )
+
+
 
 
 
