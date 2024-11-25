@@ -90,7 +90,14 @@ class ExerciseFeedBack {
         "Don't bend your back"
       )}
     )
+    fun preambleCriterion(criterionSet: Set<AngleCriterion>) : Set<AngleCriterion> {
+        val preambleCriterion = criterionSet.map {
+            (joints, targetAngle, delta, onSuccess, onFailure) ->
+            AngleCriterion(joints, targetAngle, 1.5*delta, onSuccess, onFailure)
 
+        }
+        return preambleCriterion.toSet()
+    }
 
 
 
