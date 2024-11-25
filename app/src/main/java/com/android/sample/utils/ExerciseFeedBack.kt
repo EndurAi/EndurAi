@@ -34,7 +34,7 @@ class ExerciseFeedBack {
 //SHOULDER HIP KNEE
     val plankCriterion_backAngle_L = AngleCriterion(
       joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
-      targetAngle = 90.0,
+      targetAngle = 180.0,
       delta = 25.0
       , onSuccess = {
         Log.d(
@@ -49,7 +49,7 @@ class ExerciseFeedBack {
 
     val plankCriterion_backAngle_R = AngleCriterion(
       joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
-      targetAngle = 90.0,
+      targetAngle = 180.0,
       delta = 25.0
       , onSuccess = {
         Log.d(
