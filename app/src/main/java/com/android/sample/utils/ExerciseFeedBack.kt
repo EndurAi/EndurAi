@@ -1,6 +1,7 @@
 package com.android.sample.utils
 
 import MathsPoseDetection
+import android.graphics.PointF
 import android.util.Log
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -99,7 +100,17 @@ class ExerciseFeedBack {
     ))
 
 
-    fun assessLandMarks(landMarkList : List<PoseLandmark>, )
+    fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{
+      val l = exerciseCriterion.angleCriterionSet.map { angleCriterion ->
+        val a = poseLandmarkList[angleCriterion.joints.first].
+        val b = poseLandmarkList[angleCriterion.joints.second].position.
+        val c = poseLandmarkList[angleCriterion.joints.third]
+        val joint = Triple(a,b,c)
+        angleEqualsTo(joint,angleCriterion.targetAngle, delta = angleCriterion.delta)
+
+      }
+
+    }
 
 
     fun preambleCriterion(criterionSet: Set<AngleCriterion>) : Set<AngleCriterion> {
@@ -112,6 +123,9 @@ class ExerciseFeedBack {
     }
 
 
+    fun PointFToPair(point : PointF) : Pair<Float,Float>{
+      return Pair(point.x,point.y)
+    }
 
 
 
