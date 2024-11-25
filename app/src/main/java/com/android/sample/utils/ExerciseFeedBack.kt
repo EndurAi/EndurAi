@@ -137,7 +137,7 @@ class ExerciseFeedBack {
     //CHAIR CRITERIONS
       val chairCriterion_SHOULDER_R = AngleCriterion(
           joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
-          targetAngle = 180.0,
+          targetAngle = 90.0,
           delta = 15.0,
           onSuccess = {
               Log.d(
