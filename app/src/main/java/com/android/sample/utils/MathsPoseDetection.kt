@@ -21,6 +21,10 @@ class MathsPoseDetection {
     }
 
 
+fun angle(a: Pair<Double, Double>, b: Pair<Double, Double>, c: Pair<Double, Double>): Double {
+  return angle(a.first.toFloat(), a.second.toFloat(), b.first.toFloat(), b.second.toFloat(), c.first.toFloat(), c.second.toFloat())
+}
+
     /**
      * Calculates the angle formed by three pose landmarks.
      *
