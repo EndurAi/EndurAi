@@ -382,6 +382,7 @@ fun WorkoutScreenBody(
                           }
                         } else {
                           cameraViewModel.enablePoseRecognition()
+
                           CameraFeedBack.CameraScreen(
                               cameraViewModel, modifier = Modifier.size(220.dp, 350.dp))
                         }
