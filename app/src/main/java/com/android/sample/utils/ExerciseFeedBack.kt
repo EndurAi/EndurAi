@@ -101,14 +101,22 @@ class ExerciseFeedBack {
 
 
     fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{
-      val l = exerciseCriterion.angleCriterionSet.map { angleCriterion ->
+      val listOfBoolean = exerciseCriterion.angleCriterionSet.map { angleCriterion ->
         val a = pointFToPair( poseLandmarkList[angleCriterion.joints.first].position)
-        val b = poseLandmarkList[angleCriterion.joints.second].position
-        val c = poseLandmarkList[angleCriterion.joints.third]
+        val b = pointFToPair( poseLandmarkList[angleCriterion.joints.second].position)
+        val c = pointFToPair( poseLandmarkList[angleCriterion.joints.third].position)
         val joint = Triple(a,b,c)
-        angleEqualsTo(joint,angleCriterion.targetAngle, delta = angleCriterion.delta)
-
+        val result = angleEqualsTo(joint,angleCriterion.targetAngle, delta = angleCriterion.delta)
+        if (result){
+          angleCriterion.onSuccess()
+        }
+        else{
+          angleCriterion.onFailure()
+        }
+        result
       }
+
+      return listOfBoolean.all { b -> b } //Checks that all are valid
 
     }
 

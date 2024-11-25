@@ -15,6 +15,7 @@ import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
+import com.android.sample.utils.ExerciseFeedBack
 import com.android.sample.utils.PoseDetectionJoints
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.io.File
@@ -209,6 +210,11 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   val b_r = currentLandMarkList[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.second]
                   val c_r = currentLandMarkList[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.third]*/
                   Log.d("MLDEBAngle", "Number of Landmarks list L: ${MathsPoseDetection.angle(a_l,b_l,c_l)}  R: ${MathsPoseDetection.angle(a_r,b_r,c_r)}  Div: ${ Math.abs(MathsPoseDetection.angle(a_l,b_l,c_l)- MathsPoseDetection.angle(a_r,b_r,c_r))}")
+
+                  val lastLandMark = poseLandmarks.value.last()
+                  val assessedPlank = ExerciseFeedBack.assessLandMarks(lastLandMark,ExerciseFeedBack.PlankExerciseCriterion)
+
+
                 }
                 _poseLandMarks.value.add(it)
               }))

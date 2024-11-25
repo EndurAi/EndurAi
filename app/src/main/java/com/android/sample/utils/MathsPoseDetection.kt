@@ -21,10 +21,6 @@ class MathsPoseDetection {
     }
 
 
-fun angle(a: Pair<Double, Double>, b: Pair<Double, Double>, c: Pair<Double, Double>): Double {
-  return angle(a.first.toFloat(), a.second.toFloat(), b.first.toFloat(), b.second.toFloat(), c.first.toFloat(), c.second.toFloat())
-}
-
 fun angle(a: Pair<Float, Float>, b: Pair<Float, Float>, c: Pair<Float, Float>): Double {
   return angle(a.first, a.second, b.first, b.second, c.first, c.second)
 }
