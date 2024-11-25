@@ -22,7 +22,8 @@ class ExerciseFeedBack {
         val b = poses.second
         val c = poses.third
         val angle = MathsPoseDetection.angle(a, b, c)
-        return abs(target - angle) <= delta
+  Log.d("MLFEEDBACK", "angleEqualsTo: actual = $angle target = $target")
+        return abs(target - angle) <= delta || abs(target - angle + 180) <= delta
     }
 
     data class AngleCriterion(val joints : Triple<Int,Int,Int>, val targetAngle : Double, val delta: Double, val onSuccess : ()->Unit,val onFailure : ()->Unit)
@@ -91,18 +92,52 @@ class ExerciseFeedBack {
         "HIP SHOULDER ELBOW pas cool R"
       )}
     )
+
+    // HIP KNEE ANKLE
+    val plankCriterion_LEG_L = AngleCriterion(
+      joints = PoseDetectionJoints.LEFT_HIP_KNEE_ANKLE,
+      targetAngle = 90.0,
+      delta = 15.0
+      , onSuccess = {
+        Log.d(
+          "MLFeedback",
+          "HIP KNEE ANKLE is good L"
+        )},
+      onFailure = {        Log.d(
+        "MLFeedback",
+        "HIP KNEE ANKLE pas cool L"
+      )}
+    )
+    // HIP KNEE ANKLE
+    val plankCriterion_LEG_R = AngleCriterion(
+      joints = PoseDetectionJoints.RIGHT_HIP_KNEE_ANKLE,
+      targetAngle = 180.0,
+      delta = 15.0
+      , onSuccess = {
+        Log.d(
+          "MLFeedback",
+          "HIP KNEE ANKLE is good R"
+        )},
+      onFailure = {        Log.d(
+        "MLFeedback",
+        "HIP KNEE ANKLE pas cool R"
+      )}
+    )
+
     //PlankExerciseCriterion
     val PlankExerciseCriterion : ExerciseCriterion = ExerciseCriterion(angleCriterionSet = setOf(
       plankCriterion_SHOULDER_R,
       plankCriterion_SHOULDER_L,
       plankCriterion_backAngle_R,
       plankCriterion_backAngle_L,
+      plankCriterion_LEG_R,
+      plankCriterion_LEG_L
 
     ))
 
       val chairCriterion_SHOULDER_R = AngleCriterion(
           joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
-          targetAngle = 90.0,
+          targetAngle = 180.0,
           delta = 15.0,
           onSuccess = {
               Log.d(
