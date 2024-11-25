@@ -38,11 +38,11 @@ class ExerciseFeedBack {
       , onSuccess = {
         Log.d(
           "MLFeedback",
-          "Back is good"
+          "Back is good L"
         )},
       onFailure = {        Log.d(
         "MLFeedback",
-        "Don't bend your back"
+        "Don't bend your back L"
       )}
     )
 
@@ -53,50 +53,51 @@ class ExerciseFeedBack {
       , onSuccess = {
         Log.d(
           "MLFeedback",
-          "SHOULDER HIP KNEE is good"
+          "Back is good R"
         )},
       onFailure = {        Log.d(
         "MLFeedback",
-        "SHOULDER HIP KNEE pas cool"
+        "SHOULDER HIP KNEE pas cool R"
       )}
     )
 
     // HIP SHOULDER ELBOW
     val plankCriterion_SHOULDER_L = AngleCriterion(
-      joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
+      joints = PoseDetectionJoints.LEFT_ELBOW_SHOULDER_HIP,
       targetAngle = 90.0,
       delta = 15.0
       , onSuccess = {
         Log.d(
           "MLFeedback",
-          "HIP SHOULDER ELBOW is good"
+          "HIP SHOULDER ELBOW is good L"
         )},
       onFailure = {        Log.d(
         "MLFeedback",
-        "HIP SHOULDER ELBOW pas cool"
+        "HIP SHOULDER ELBOW pas cool L"
       )}
     )
     // HIP SHOULDER ELBOW
     val plankCriterion_SHOULDER_R = AngleCriterion(
-      joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
+      joints = PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_HIP,
       targetAngle = 90.0,
       delta = 15.0
       , onSuccess = {
         Log.d(
           "MLFeedback",
-          "HIP SHOULDER ELBOW is good"
+          "HIP SHOULDER ELBOW is good R"
         )},
       onFailure = {        Log.d(
         "MLFeedback",
-        "HIP SHOULDER ELBOW pas cool"
+        "HIP SHOULDER ELBOW pas cool R"
       )}
     )
     //PlankExerciseCriterion
     val PlankExerciseCriterion : ExerciseCriterion = ExerciseCriterion(angleCriterionSet = setOf(
       plankCriterion_SHOULDER_R,
       plankCriterion_SHOULDER_L,
+      plankCriterion_backAngle_R,
       plankCriterion_backAngle_L,
-      plankCriterion_SHOULDER_R
+
     ))
 
       val chairCriterion_SHOULDER_R = AngleCriterion(
@@ -131,20 +132,24 @@ class ExerciseFeedBack {
       )
 
     fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{
+      Log.d("MLFeedback", "-----------------------------------")
       val listOfBoolean = exerciseCriterion.angleCriterionSet.map { angleCriterion ->
         val a = pointFToPair( poseLandmarkList[angleCriterion.joints.first].position)
         val b = pointFToPair( poseLandmarkList[angleCriterion.joints.second].position)
         val c = pointFToPair( poseLandmarkList[angleCriterion.joints.third].position)
         val joint = Triple(a,b,c)
         val result = angleEqualsTo(joint,angleCriterion.targetAngle, delta = angleCriterion.delta)
+
         if (result){
           angleCriterion.onSuccess()
         }
         else{
           angleCriterion.onFailure()
         }
+
         result
       }
+      Log.d("MLFeedback", "-----------------------------------")
 
       return listOfBoolean.all { b -> b } //Checks that all are valid
 
