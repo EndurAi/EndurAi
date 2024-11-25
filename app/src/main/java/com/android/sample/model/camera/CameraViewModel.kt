@@ -1,5 +1,6 @@
 package com.android.sample.model.camera
 
+import MathsPoseDetection
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
+import com.android.sample.utils.PoseDetectionJoints
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -148,7 +150,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   }
 
   /** Enables pose recognition by setting up the image analysis analyzer. */
-  fun enablePoseRecognition() {
+  fun enablePoseRecognition( ) {
     if (_bodyRecognitionIsEnabled.value.not()) {
       _cameraController.value.imageAnalysisTargetSize =
           CameraController.OutputSize(AspectRatio.RATIO_16_9)
@@ -157,7 +159,11 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
           PoseDetectionAnalyser(
               onDetectedPoseUpdated = {
                 if (poseLandmarks.value.isNotEmpty()) {
-                  Log.d("MLDEB", "Number of Landmarks list: ${poseLandmarks.value.size}  ")
+                  val currentLandMarkList = poseLandmarks.value.last()
+                  val a = currentLandMarkList[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.first]
+                  val b = currentLandMarkList[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.second]
+                  val c = currentLandMarkList[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.third]
+                  Log.d("MLDEB", "Number of Landmarks list: ${MathsPoseDetection.angle(a,b,c)}  ")
                 }
                 _poseLandMarks.value.add(it)
               }))

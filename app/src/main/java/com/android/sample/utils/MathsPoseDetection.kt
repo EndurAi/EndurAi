@@ -15,6 +15,20 @@ class MathsPoseDetection {
      * @param c The third pose landmark.
      * @return The angle in degrees.
      */
+    fun angle(triplet : Triple<PoseLandmark,PoseLandmark,PoseLandmark>): Double {
+      return angle(
+        triplet.first, triplet.second, triplet.third)
+    }
+
+
+    /**
+     * Calculates the angle formed by three pose landmarks.
+     *
+     * @param a The first pose landmark.
+     * @param b The second pose landmark (vertex of the angle).
+     * @param c The third pose landmark.
+     * @return The angle in degrees.
+     */
     fun angle(a: PoseLandmark, b: PoseLandmark, c: PoseLandmark): Double {
       return angle(
           a.position.x, a.position.y, b.position.x, b.position.y, c.position.x, c.position.y)
