@@ -21,15 +21,6 @@ class PoseDetectionJoints {
     val RIGHT_WRIST_ELBOW_SHOULDER =
       Triple(PoseLandmark.RIGHT_WRIST, PoseLandmark.RIGHT_ELBOW, PoseLandmark.RIGHT_SHOULDER)
 
-
-/*
-  LR Hip - Knee - Ankle
-  */
-val LEFT_HIP_KNEE_ANKLE =
-  Triple(PoseLandmark.LEFT_HIP, PoseLandmark.LEFT_KNEE, PoseLandmark.LEFT_ANKLE)
-val RIGHT_HIP_KNEE_ANKLE =
-  Triple(PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_KNEE, PoseLandmark.RIGHT_ANKLE)
-
 /*
   LR Shoulder - Hip - Knee
   */
@@ -37,15 +28,20 @@ val LEFT_SHOULDER_HIP_KNEE =
   Triple(PoseLandmark.LEFT_SHOULDER, PoseLandmark.LEFT_HIP, PoseLandmark.LEFT_KNEE)
 val RIGHT_SHOULDER_HIP_KNEE =
   Triple(PoseLandmark.RIGHT_SHOULDER, PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_KNEE)
+
+    /*
+    LR Hip - Knee - ankle
+    */
+    val LEFT_HIP_KNEE_ANKLE =
+      Triple(PoseLandmark.LEFT_HIP, PoseLandmark.LEFT_KNEE, PoseLandmark.LEFT_ANKLE)
+    val RIGHT_HIP_KNEE_ANKLE =
+      Triple(PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_KNEE, PoseLandmark.RIGHT_ANKLE)
+
+
+
   }
 
-  /*
-  LR Hip - Knee - ankle
-  */
-  val LEFT_HIP_KNEE_ANKLE =
-    Triple(PoseLandmark.LEFT_HIP, PoseLandmark.LEFT_KNEE, PoseLandmark.LEFT_ANKLE)
-  val RIGHT_HIP_KNEE_ANKLE =
-    Triple(PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_KNEE, PoseLandmark.RIGHT_ANKLE)
+
 }
 
 

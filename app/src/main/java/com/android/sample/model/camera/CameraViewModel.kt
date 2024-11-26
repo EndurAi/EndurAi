@@ -212,7 +212,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   //Log.d("MLDEBAngle", "Number of Landmarks list L: ${MathsPoseDetection.angle(a_l,b_l,c_l)}  R: ${MathsPoseDetection.angle(a_r,b_r,c_r)}  Div: ${ Math.abs(MathsPoseDetection.angle(a_l,b_l,c_l)- MathsPoseDetection.angle(a_r,b_r,c_r))}")
 
                   val lastLandMark = poseLandmarks.value.last()
-                  val assessedPlank = ExerciseFeedBack.assessLandMarks(lastLandMark,ExerciseFeedBack.chairCriterions)
+                  val assessedChair = ExerciseFeedBack.assessLandMarks(lastLandMark,ExerciseFeedBack.chairCriterions)
+                  Log.d("MLFEEDBACK_RESULTChair", "chair: $assessedChair ")
+                  val assessedPlank = ExerciseFeedBack.assessLandMarks(lastLandMark,ExerciseFeedBack.PlankExerciseCriterion)
+                  Log.d("MLFEEDBACK_RESULTPlank", "Plank: $assessedPlank ")
 
 
                 }
