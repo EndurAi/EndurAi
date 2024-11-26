@@ -27,7 +27,7 @@ abstract class ExerciseFeedback(
  */
 data class PoseFeedback(
     val balanceScore: Double? = null,
-    val alignmentFeedback: Map<String, String> = emptyMap(),
+    val jointFeedback: List<JointFeedback>,
     override val exerciseName: String,
     override val duration: Double,
     override val numberOfRepetitions: Int,
@@ -46,7 +46,7 @@ data class PoseFeedback(
  */
 data class RepetitionExerciseFeedback(
     val angleThreshold: Double? = null,
-    val jointFeedback: Map<String, String> = emptyMap(),
+    val jointFeedback: List<JointFeedback> = emptyList(),
     override val exerciseName: String,
     override val duration: Double,
     override val numberOfRepetitions: Int,
@@ -71,3 +71,18 @@ data class StaticHoldFeedback(
     override val numberOfRepetitions: Int,
     override val accuracyScore: Double
 ) : ExerciseFeedback(exerciseName, duration, numberOfRepetitions, accuracyScore)
+
+
+/**
+ * Data class representing feedback for a specific joint.
+ *
+ * @property jointName The name of the joint (e.g., "knee", "elbow")
+ * @property feedback A brief description of the joint's performance
+ * @property correctionSuggestion Optional suggestions for improvement
+ */
+data class JointFeedback(
+    val jointName: String,
+    val feedback: String,
+    val correctionSuggestion: String? = null
+)
+

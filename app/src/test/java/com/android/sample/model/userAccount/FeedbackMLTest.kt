@@ -1,5 +1,6 @@
 package com.android.sample.model.userAccount
 
+import com.android.sample.model.ml.JointFeedback
 import com.android.sample.model.ml.PoseFeedback
 import com.android.sample.model.ml.RepetitionExerciseFeedback
 import com.android.sample.model.ml.StaticHoldFeedback
@@ -13,15 +14,16 @@ class FeedbackMLTest {
     val poseFeedback =
         PoseFeedback(
             balanceScore = 85.0,
-            alignmentFeedback = mapOf("left_knee" to "aligned", "right_knee" to "misaligned"),
             exerciseName = "Tree Pose",
+            jointFeedback = listOf( JointFeedback("left_knee", "straight", "bent")),
             duration = 60.0,
             numberOfRepetitions = 1,
             accuracyScore = 90.0)
 
     poseFeedback.balanceScore?.let { assertEquals(85.0, it, 0.0) }
-    assertEquals("aligned", poseFeedback.alignmentFeedback["left_knee"])
-    assertEquals("misaligned", poseFeedback.alignmentFeedback["right_knee"])
+    assertEquals("left_knee", poseFeedback.jointFeedback[0].jointName)
+    assertEquals("straight", poseFeedback.jointFeedback[0].feedback)
+    assertEquals("bent", poseFeedback.jointFeedback[0].correctionSuggestion)
     assertEquals("Tree Pose", poseFeedback.exerciseName)
     assertEquals(60.0, poseFeedback.duration, 0.0)
     assertEquals(1, poseFeedback.numberOfRepetitions)
@@ -33,15 +35,17 @@ class FeedbackMLTest {
     val repetitionFeedback =
         RepetitionExerciseFeedback(
             angleThreshold = 45.0,
-            jointFeedback = mapOf("elbow" to "good", "shoulder" to "needs improvement"),
+            jointFeedback = listOf( JointFeedback("left_knee", "straight", "bent")),
             exerciseName = "Bicep Curl",
             duration = 30.0,
             numberOfRepetitions = 15,
             accuracyScore = 85.0)
 
     repetitionFeedback.angleThreshold?.let { assertEquals(45.0, it, 0.0) }
-    assertEquals("good", repetitionFeedback.jointFeedback["elbow"])
-    assertEquals("needs improvement", repetitionFeedback.jointFeedback["shoulder"])
+
+      assertEquals("left_knee", repetitionFeedback.jointFeedback[0].jointName)
+      assertEquals("straight", repetitionFeedback.jointFeedback[0].feedback)
+    assertEquals("bent", repetitionFeedback.jointFeedback[0].correctionSuggestion)
     assertEquals("Bicep Curl", repetitionFeedback.exerciseName)
     assertEquals(30.0, repetitionFeedback.duration, 0.0)
     assertEquals(15, repetitionFeedback.numberOfRepetitions)
