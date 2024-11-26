@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModel
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import com.android.sample.utils.ExerciseFeedBack
 import com.android.sample.utils.PoseDetectionJoints
+import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,6 +79,16 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   /** A StateFlow that exposes the list of detected pose landmarks. */
   val poseLandmarks: StateFlow<ArrayList<List<PoseLandmark>>>
     get() = _poseLandMarks.asStateFlow()
+
+
+  /** A MutableStateFlow that holds the list of detected pose landmarks. */
+  val _poseLandMarks_means = MutableStateFlow<ArrayList<List<PointF3D>>>(arrayListOf())
+  /** A StateFlow that exposes the list of detected pose landmarks. */
+  val poseLandmarks_means: StateFlow<ArrayList<List<PointF3D>>>
+    get() = _poseLandMarks_means.asStateFlow()
+  val meanWindow = 10
+
+
 
   /** Switches between the front and back cameras. */
   fun switchCamera() {
@@ -211,10 +222,11 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   val c_r = currentLandMarkList[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.third]*/
                   //Log.d("MLDEBAngle", "Number of Landmarks list L: ${MathsPoseDetection.angle(a_l,b_l,c_l)}  R: ${MathsPoseDetection.angle(a_r,b_r,c_r)}  Div: ${ Math.abs(MathsPoseDetection.angle(a_l,b_l,c_l)- MathsPoseDetection.angle(a_r,b_r,c_r))}")
 
-                  val lastLandMark = poseLandmarks.value.last()
-                  val assessedChair = ExerciseFeedBack.assessLandMarks(lastLandMark,ExerciseFeedBack.chairCriterions)
+                  val lastLandMark = poseLandmarks.value.takeLast(windowSize)
+                  val meanedLandmark= MathsPoseDetection.window_mean(lastLandMark)
+                  val assessedChair = ExerciseFeedBack.assessLandMarks(meanedLandmark,ExerciseFeedBack.chairCriterions)
                   Log.d("MLFEEDBACK_RESULTChair", "chair: $assessedChair ")
-                  val assessedPlank = ExerciseFeedBack.assessLandMarks(lastLandMark,ExerciseFeedBack.PlankExerciseCriterion)
+                  val assessedPlank = ExerciseFeedBack.assessLandMarks(meanedLandmark,ExerciseFeedBack.PlankExerciseCriterion)
                   Log.d("MLFEEDBACK_RESULTPlank", "Plank: $assessedPlank ")
 
 
@@ -234,4 +246,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     _poseLandMarks.value = arrayListOf()
     _bodyRecognitionIsEnabled.value = false
   }
+
+
+
 }

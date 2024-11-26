@@ -1,3 +1,5 @@
+import com.android.sample.utils.PoseDetectionJoints
+import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 import kotlin.math.acos
 import kotlin.math.sqrt
@@ -99,5 +101,37 @@ class MathsPoseDetection {
     private fun degrees(radians: Float): Double {
       return radians * (180.0 / Math.PI)
     }
+
+    fun pointFToTriple(point : PointF3D) : Triple<Float,Float,Float>{
+      return Triple(point.x,point.y,point.z)
+    }
+
+
+    fun window_mean(posesList : List<List<PoseLandmark>>) : List<Triple<Float,Float,Float>>{
+      val windowSize = posesList.size
+    // transform to a list<list<Triple of floats>>
+    val posesList_float = posesList.map { l ->
+      l.map { poseLandmark -> pointFToTriple(poseLandmark.position3D) }
+    }
+      val poseLandmarkList_mean = MutableList(33){Triple(0f,0f,0f)}
+
+      for (landMarkIdx in 0..32){
+        var x = 0f
+        var y = 0f
+        var z = 0f
+        for (sampleIdx in 0..<windowSize){
+          val triple = posesList_float[sampleIdx][landMarkIdx]
+          x+= triple.first/windowSize.toFloat()
+          y+= triple.second/windowSize.toFloat()
+          z+= triple.third/windowSize.toFloat()
+        }
+        poseLandmarkList_mean[landMarkIdx] = Triple(x,y,z)
+      }
+      return poseLandmarkList_mean
+
+    }
+
+
+
   }
 }

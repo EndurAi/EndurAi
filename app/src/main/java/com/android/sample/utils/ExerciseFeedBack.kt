@@ -197,15 +197,49 @@ class ExerciseFeedBack {
           chairCriterion_KNEE_L to chairCriterion_KNEE_R
       ))
 
-    fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{
+    fun assessLandMarks(poseLandmarkList : List<Triple<Float,Float,Float>>, exerciseCriterion : ExerciseCriterion) : Boolean{
       Log.d("MLFeedback", "-----------------------------------")
       val listOfBoolean = exerciseCriterion.angleCriterionSet.map { (angleCriterionL,angleCriterionR) ->
-        val a_l = pointFToTriple( poseLandmarkList[angleCriterionL.joints.first].position3D)
-        val b_l = pointFToTriple( poseLandmarkList[angleCriterionL.joints.second].position3D)
-        val c_l = pointFToTriple( poseLandmarkList[angleCriterionL.joints.third].position3D)
-        val a_r = pointFToTriple( poseLandmarkList[angleCriterionR.joints.first].position3D)
-        val b_r = pointFToTriple( poseLandmarkList[angleCriterionR.joints.second].position3D)
-        val c_r = pointFToTriple( poseLandmarkList[angleCriterionR.joints.third].position3D)
+        val a_l =poseLandmarkList[angleCriterionL.joints.first]
+        val b_l = poseLandmarkList[angleCriterionL.joints.second]
+        val c_l = poseLandmarkList[angleCriterionL.joints.third]
+        val a_r = poseLandmarkList[angleCriterionR.joints.first]
+        val b_r =poseLandmarkList[angleCriterionR.joints.second]
+        val c_r =poseLandmarkList[angleCriterionR.joints.third]
+        val jointL = Triple(a_l,b_l,c_l)
+        val jointR = Triple(a_r,b_r,c_r)
+        val resultL = angleEqualsTo(jointL,angleCriterionL.targetAngle, delta = angleCriterionL.delta)
+        val resultR = angleEqualsTo(jointR,angleCriterionR.targetAngle, delta = angleCriterionR.delta)
+        if (resultL){
+          angleCriterionL.onSuccess()
+        }
+        else if (resultR){
+          angleCriterionR.onSuccess()
+
+        }
+        else{
+          angleCriterionL.onFailure()
+          angleCriterionR.onFailure()
+        }
+
+        resultL ||resultR
+      }
+      Log.d("MLFeedback", "-----------------------------------")
+
+      return listOfBoolean.all { b -> b } //Checks that all are valid
+
+
+    }
+
+   /* fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{
+      Log.d("MLFeedback", "-----------------------------------")
+      val listOfBoolean = exerciseCriterion.angleCriterionSet.map { (angleCriterionL,angleCriterionR) ->
+        val a_l =MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionL.joints.first].position3D)
+        val b_l = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionL.joints.second].position3D)
+        val c_l = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionL.joints.third].position3D)
+        val a_r = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionR.joints.first].position3D)
+        val b_r = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionR.joints.second].position3D)
+        val c_r = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionR.joints.third].position3D)
         val jointL = Triple(a_l,b_l,c_l)
         val jointR = Triple(a_r,b_r,c_r)
         val resultL = angleEqualsTo(jointL,angleCriterionL.targetAngle, delta = angleCriterionL.delta)
@@ -230,7 +264,7 @@ class ExerciseFeedBack {
       return listOfBoolean.all { b -> b } //Checks that all are valid
 
     }
-
+*/
 
     fun preambleCriterion(criterionSet: Set<AngleCriterion>) : Set<AngleCriterion> {
         val preambleCriterion = criterionSet.map {
@@ -242,9 +276,7 @@ class ExerciseFeedBack {
     }
 
 
-    fun pointFToTriple(point : PointF3D) : Triple<Float,Float,Float>{
-      return Triple(point.x,point.y,point.z)
-    }
+
 
 
 
