@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModel
 import com.android.sample.mlUtils.ExerciseFeedBack
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
+import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -181,6 +182,13 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   val assessedPlank =
                       ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
                   Log.d("MLFEEDBACK_RESULTPlank", "Plank: $assessedPlank ")
+
+                  val assessedPushUpsDown =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCrierions)
+                  Log.d("MLFEEDBACK_RESULTPlank", "PushUpsDown: $assessedPushUpsDown ")
+
+
+
                 }
                 if (it.all { poseLandmark ->
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
