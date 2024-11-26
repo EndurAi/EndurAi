@@ -14,9 +14,10 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import com.android.sample.mlUtils.ExerciseFeedBack
+import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
+import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
-import com.android.sample.utils.ExerciseFeedBack
-import com.android.sample.utils.PoseDetectionJoints
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.io.File
@@ -80,15 +81,13 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val poseLandmarks: StateFlow<ArrayList<List<PoseLandmark>>>
     get() = _poseLandMarks.asStateFlow()
 
-
   /** A MutableStateFlow that holds the list of detected pose landmarks. */
   val _poseLandMarks_means = MutableStateFlow<ArrayList<List<PointF3D>>>(arrayListOf())
   /** A StateFlow that exposes the list of detected pose landmarks. */
   val poseLandmarks_means: StateFlow<ArrayList<List<PointF3D>>>
     get() = _poseLandMarks_means.asStateFlow()
+
   val meanWindow = 10
-
-
 
   /** Switches between the front and back cameras. */
   fun switchCamera() {
@@ -162,8 +161,9 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   }
 
   /** Enables pose recognition by setting up the image analysis analyzer. */
-  fun enablePoseRecognition( ) {
-    val windowSize = 20
+  fun enablePoseRecognition() {
+    val windowSize = 20 // Window Size used to compute the mean
+    val inFrameLikelihoodThreshold = 0.8f
 
     if (_bodyRecognitionIsEnabled.value.not()) {
       _cameraController.value.imageAnalysisTargetSize =
@@ -172,66 +172,20 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
           ContextCompat.getMainExecutor(context),
           PoseDetectionAnalyser(
               onDetectedPoseUpdated = {
-                if (poseLandmarks.value.size > windowSize ) {
-                  val window_list = poseLandmarks.value.windowed(windowSize,1,false )
-                  val lastWindow = window_list.last()
-
-
-      val a_l = lastWindow.map { pose ->
-        pose[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.first].position.x to pose[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.first].position.y
-      }.fold(0.0 to 0.0) { acc, pair ->
-        (acc.first + pair.first/windowSize) to (acc.second + pair.second/windowSize)
-      }
-      val b_l = lastWindow.map { pose ->
-        pose[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.second].position.x to pose[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.second].position.y
-      }.fold(0.0 to 0.0) { acc, pair ->
-        (acc.first + pair.first/windowSize) to (acc.second + pair.second/windowSize)
-      }
-
-      val c_l = lastWindow.map { pose ->
-        pose[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.third].position.x to pose[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.third].position.y
-      }.fold(0.0 to 0.0) { acc, pair ->
-        (acc.first + pair.first/windowSize) to (acc.second + pair.second/windowSize)
-      }
-
-      val a_r = lastWindow.map { pose ->
-        pose[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.first].position.x to pose[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.first].position.y
-      }.fold(0.0 to 0.0) { acc, pair ->
-        (acc.first + pair.first/windowSize) to (acc.second + pair.second/windowSize)
-      }
-
-      val b_r = lastWindow.map { pose ->
-        pose[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.second].position.x to pose[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.second].position.y
-      }.fold(0.0 to 0.0) { acc, pair ->
-        (acc.first + pair.first/windowSize) to (acc.second + pair.second/windowSize)
-      }
-
-      val c_r = lastWindow.map { pose ->
-        pose[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.third].position.x to pose[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.third].position.y
-      }.fold(0.0 to 0.0) { acc, pair ->
-        (acc.first + pair.first/windowSize) to (acc.second + pair.second/windowSize)
-      }
-
-/*                  val currentLandMarkList = poseLandmarks.value.last()
-                  val a_l = currentLandMarkList[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.first]
-                  val b_l = currentLandMarkList[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.second]
-                  val c_l = currentLandMarkList[PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE.third]
-
-                  val a_r = currentLandMarkList[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.first]
-                  val b_r = currentLandMarkList[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.second]
-                  val c_r = currentLandMarkList[PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE.third]*/
-                  //Log.d("MLDEBAngle", "Number of Landmarks list L: ${MathsPoseDetection.angle(a_l,b_l,c_l)}  R: ${MathsPoseDetection.angle(a_r,b_r,c_r)}  Div: ${ Math.abs(MathsPoseDetection.angle(a_l,b_l,c_l)- MathsPoseDetection.angle(a_r,b_r,c_r))}")
-
+                if (poseLandmarks.value.size > windowSize) {
                   val lastLandMark = poseLandmarks.value.takeLast(windowSize)
-                  val meanedLandmark= MathsPoseDetection.window_mean(lastLandMark)
-                  val assessedChair = ExerciseFeedBack.assessLandMarks(meanedLandmark,ExerciseFeedBack.chairCriterions)
+                  val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
+                  val assessedChair =
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, ChairCriterions)
                   Log.d("MLFEEDBACK_RESULTChair", "chair: $assessedChair ")
-                  val assessedPlank = ExerciseFeedBack.assessLandMarks(meanedLandmark,ExerciseFeedBack.PlankExerciseCriterion)
+                  val assessedPlank =
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
                   Log.d("MLFEEDBACK_RESULTPlank", "Plank: $assessedPlank ")
-
-
                 }
-                _poseLandMarks.value.add(it)
+                if (it.all { poseLandmark ->
+                  poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
+                })
+                    _poseLandMarks.value.add(it)
               }))
       _bodyRecognitionIsEnabled.value = true
     }
@@ -246,7 +200,4 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     _poseLandMarks.value = arrayListOf()
     _bodyRecognitionIsEnabled.value = false
   }
-
-
-
 }

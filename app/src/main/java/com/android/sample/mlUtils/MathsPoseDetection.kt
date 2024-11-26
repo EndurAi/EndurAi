@@ -1,4 +1,3 @@
-import com.android.sample.utils.PoseDetectionJoints
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 import kotlin.math.acos
@@ -29,12 +28,13 @@ class MathsPoseDetection {
      * @param c The third point (x, y, z).
      * @return The angle in degrees.
      */
-    fun angle(a: Triple<Float,Float,Float>, b: Triple<Float,Float,Float>, c:Triple<Float,Float,Float>): Double {
+    fun angle(
+        a: Triple<Float, Float, Float>,
+        b: Triple<Float, Float, Float>,
+        c: Triple<Float, Float, Float>
+    ): Double {
       return angle(
-    a.first, a.second, a.third,
-    b.first, b.second, b.third,
-    c.first, c.second, c.third
-      )
+          a.first, a.second, a.third, b.first, b.second, b.third, c.first, c.second, c.third)
     }
 
     /**
@@ -47,10 +47,15 @@ class MathsPoseDetection {
      */
     fun angle(a: PoseLandmark, b: PoseLandmark, c: PoseLandmark): Double {
       return angle(
-        a.position3D.x, a.position3D.y, a.position3D.z,
-        b.position3D.x, b.position3D.y, b.position3D.z,
-        c.position3D.x, c.position3D.y, c.position3D.z
-      )
+          a.position3D.x,
+          a.position3D.y,
+          a.position3D.z,
+          b.position3D.x,
+          b.position3D.y,
+          b.position3D.z,
+          c.position3D.x,
+          c.position3D.y,
+          c.position3D.z)
     }
 
     /**
@@ -67,9 +72,17 @@ class MathsPoseDetection {
      * @param c_z The z-coordinate of the third point.
      * @return The angle in degrees.
      */
-    fun angle(a_x: Float, a_y: Float, a_z: Float,
-              b_x: Float, b_y: Float, b_z: Float,
-              c_x: Float, c_y: Float, c_z: Float): Double {
+    fun angle(
+        a_x: Float,
+        a_y: Float,
+        a_z: Float,
+        b_x: Float,
+        b_y: Float,
+        b_z: Float,
+        c_x: Float,
+        c_y: Float,
+        c_z: Float
+    ): Double {
       // Create vectors BA and BC
       val ba = floatArrayOf(a_x - b_x, a_y - b_y, a_z - b_z)
       val bc = floatArrayOf(c_x - b_x, c_y - b_y, c_z - b_z)
@@ -84,9 +97,9 @@ class MathsPoseDetection {
       // Calculate the angle in radians using the dot product formula
       val epsilon = 1e-6
       val angleRadians =
-        if (magnitudeBA > epsilon && magnitudeBC > epsilon)
-          acos(dotProduct / (magnitudeBA * magnitudeBC))
-        else 0f
+          if (magnitudeBA > epsilon && magnitudeBC > epsilon)
+              acos(dotProduct / (magnitudeBA * magnitudeBC))
+          else 0f
 
       // Convert radians to degrees
       return degrees(angleRadians)
@@ -102,36 +115,30 @@ class MathsPoseDetection {
       return radians * (180.0 / Math.PI)
     }
 
-    fun pointFToTriple(point : PointF3D) : Triple<Float,Float,Float>{
-      return Triple(point.x,point.y,point.z)
+    fun pointFToTriple(point: PointF3D): Triple<Float, Float, Float> {
+      return Triple(point.x, point.y, point.z)
     }
 
-
-    fun window_mean(posesList : List<List<PoseLandmark>>) : List<Triple<Float,Float,Float>>{
+    fun window_mean(posesList: List<List<PoseLandmark>>): List<Triple<Float, Float, Float>> {
       val windowSize = posesList.size
-    // transform to a list<list<Triple of floats>>
-    val posesList_float = posesList.map { l ->
-      l.map { poseLandmark -> pointFToTriple(poseLandmark.position3D) }
-    }
-      val poseLandmarkList_mean = MutableList(33){Triple(0f,0f,0f)}
+      // transform to a list<list<Triple of floats>>
+      val posesList_float =
+          posesList.map { l -> l.map { poseLandmark -> pointFToTriple(poseLandmark.position3D) } }
+      val poseLandmarkList_mean = MutableList(33) { Triple(0f, 0f, 0f) }
 
-      for (landMarkIdx in 0..32){
+      for (landMarkIdx in 0..32) {
         var x = 0f
         var y = 0f
         var z = 0f
-        for (sampleIdx in 0..<windowSize){
+        for (sampleIdx in 0 ..< windowSize) {
           val triple = posesList_float[sampleIdx][landMarkIdx]
-          x+= triple.first/windowSize.toFloat()
-          y+= triple.second/windowSize.toFloat()
-          z+= triple.third/windowSize.toFloat()
+          x += triple.first / windowSize.toFloat()
+          y += triple.second / windowSize.toFloat()
+          z += triple.third / windowSize.toFloat()
         }
-        poseLandmarkList_mean[landMarkIdx] = Triple(x,y,z)
+        poseLandmarkList_mean[landMarkIdx] = Triple(x, y, z)
       }
       return poseLandmarkList_mean
-
     }
-
-
-
   }
 }
