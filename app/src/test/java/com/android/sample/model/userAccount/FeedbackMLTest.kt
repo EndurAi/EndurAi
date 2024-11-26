@@ -15,7 +15,7 @@ class FeedbackMLTest {
         PoseFeedback(
             balanceScore = 85.0,
             exerciseName = "Tree Pose",
-            jointFeedback = listOf( JointFeedback("left_knee", "straight", "bent")),
+            jointFeedback = listOf(JointFeedback("left_knee", "straight", "bent")),
             duration = 60.0,
             numberOfRepetitions = 1,
             accuracyScore = 90.0)
@@ -35,7 +35,7 @@ class FeedbackMLTest {
     val repetitionFeedback =
         RepetitionExerciseFeedback(
             angleThreshold = 45.0,
-            jointFeedback = listOf( JointFeedback("left_knee", "straight", "bent")),
+            jointFeedback = listOf(JointFeedback("left_knee", "straight", "bent")),
             exerciseName = "Bicep Curl",
             duration = 30.0,
             numberOfRepetitions = 15,
@@ -43,8 +43,8 @@ class FeedbackMLTest {
 
     repetitionFeedback.angleThreshold?.let { assertEquals(45.0, it, 0.0) }
 
-      assertEquals("left_knee", repetitionFeedback.jointFeedback[0].jointName)
-      assertEquals("straight", repetitionFeedback.jointFeedback[0].feedback)
+    assertEquals("left_knee", repetitionFeedback.jointFeedback[0].jointName)
+    assertEquals("straight", repetitionFeedback.jointFeedback[0].feedback)
     assertEquals("bent", repetitionFeedback.jointFeedback[0].correctionSuggestion)
     assertEquals("Bicep Curl", repetitionFeedback.exerciseName)
     assertEquals(30.0, repetitionFeedback.duration, 0.0)

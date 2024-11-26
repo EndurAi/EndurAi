@@ -72,7 +72,6 @@ data class StaticHoldFeedback(
     override val accuracyScore: Double
 ) : ExerciseFeedback(exerciseName, duration, numberOfRepetitions, accuracyScore)
 
-
 /**
  * Data class representing feedback for a specific joint.
  *
@@ -85,4 +84,3 @@ data class JointFeedback(
     val feedback: String,
     val correctionSuggestion: String? = null
 )
-
