@@ -21,13 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
+import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.TitleBlue
 import com.android.sample.ui.workout.LeafShape
 import java.time.LocalDateTime
@@ -97,13 +98,13 @@ fun DateTimePicker(
                     text = displayText,
                     style =
                         MaterialTheme.typography.bodyMedium.copy(
-                            color = if (selectedDateTime == null) Color.Gray else Color.Black),
+                            color = if (selectedDateTime == null) NeutralGrey else Black),
                     modifier = Modifier.weight(1f))
 
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "Select Date",
-                    tint = Color.Gray,
+                    tint = NeutralGrey,
                     modifier = Modifier.size(Dimensions.iconSize))
               }
         }

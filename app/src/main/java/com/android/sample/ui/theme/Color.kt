@@ -1,5 +1,6 @@
 package com.android.sample.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -33,3 +34,8 @@ val YogaTag = Color(0xFFABC2FD)
 val RunningTag = Color(0xFF81FFA9)
 val CalendarBackground = Color(0xFFE4E4E4)
 val Green = Color(0xFF00FF00)
+val White = Color(0xFFFFFFFF)
+val Transparent = Color(0x00000000)
+
+// Gradients
+val TopBarGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))

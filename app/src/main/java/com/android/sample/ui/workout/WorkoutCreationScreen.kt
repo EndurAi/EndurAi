@@ -72,13 +72,18 @@ import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.Purple60
 import com.android.sample.ui.theme.TitleBlue
+import com.android.sample.ui.theme.TopBarGradient
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.White
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -161,29 +166,29 @@ fun WorkoutCreationScreen(
                           }
                         },
                         shape = LeafShape,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                        colors = ButtonDefaults.buttonColors(containerColor = Transparent),
                         contentPadding = PaddingValues(),
                         modifier =
                             Modifier.width(Dimensions.ButtonWidth)
                                 .height(Dimensions.ButtonHeight)
-                                .background(brush = gradientBrush, shape = LeafShape)
+                                .background(brush = TopBarGradient, shape = LeafShape)
                                 .align(Alignment.CenterHorizontally)
                                 .testTag("nextButton")) {
                           Box(
                               modifier =
                                   Modifier.fillMaxSize()
-                                      .background(brush = gradientBrush, shape = LeafShape),
+                                      .background(brush = TopBarGradient, shape = LeafShape),
                               contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                   Text(
                                       text = "Next",
-                                      color = Color.White,
+                                      color = White,
                                       fontSize = FontSizes.SubtitleFontSize,
                                       fontWeight = FontWeight.Bold)
                                   Icon(
                                       imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                       contentDescription = "Next",
-                                      tint = Color.White,
+                                      tint = White,
                                       modifier = Modifier.padding(start = 4.dp))
                                 }
                               }
@@ -561,22 +566,22 @@ fun CustomTextField(
                     placeholder = {
                       Text(
                           text = placeholder,
-                          style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
+                          style = MaterialTheme.typography.bodyMedium.copy(color = NeutralGrey))
                     },
                     colors =
                         TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Transparent,
+                            unfocusedContainerColor = Transparent,
                             cursorColor = TitleBlue,
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent),
+                            focusedTextColor = Black,
+                            unfocusedTextColor = Black,
+                            focusedIndicatorColor = Transparent,
+                            unfocusedIndicatorColor = Transparent),
                     modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit",
-                    tint = Color.Gray,
+                    tint = NeutralGrey,
                     modifier = Modifier.size(Dimensions.iconSize))
               }
         }

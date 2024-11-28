@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -24,9 +23,12 @@ import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +67,7 @@ fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
       shape = RoundedCornerShape(12.dp), // Updated the corner radius for consistency with Figma
       colors =
           CardDefaults.cardColors(
-              containerColor = Color.Transparent), // Make the card background transparent
+              containerColor = Transparent), // Make the card background transparent
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
       Image(
@@ -79,8 +81,8 @@ fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
               MaterialTheme.typography.bodyLarge.copy(
                   fontSize = FontSizes.SubtitleFontSize,
                   fontWeight = FontWeight.ExtraBold,
-                  shadow = Shadow(color = Color.Black, offset = Offset(4f, 4f), blurRadius = 6f)),
-          color = Color.White,
+                  shadow = Shadow(color = Black, offset = Offset(4f, 4f), blurRadius = 6f)),
+          color = White,
           modifier = Modifier.align(Alignment.BottomStart).padding(Dimensions.SmallPadding))
     }
   }

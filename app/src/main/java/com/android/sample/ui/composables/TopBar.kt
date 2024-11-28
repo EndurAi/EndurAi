@@ -11,15 +11,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.FontSizes
-import com.android.sample.ui.theme.TitleBlue
-import com.android.sample.ui.theme.TopBarBlue
+import com.android.sample.ui.theme.TopBarGradient
+import com.android.sample.ui.theme.White
 
 /**
  * A composable function that displays a top app bar with a title and a back navigation icon.
@@ -31,17 +30,16 @@ import com.android.sample.ui.theme.TopBarBlue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navigationActions: NavigationActions, @StringRes title: Int) {
-  val gradientBrush = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
 
   androidx.compose.foundation.layout.Box(
-      modifier = Modifier.fillMaxWidth().wrapContentHeight().background(brush = gradientBrush)) {
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().background(brush = TopBarGradient)) {
         TopAppBar(
             title = {
               Text(
                   text = stringResource(id = title),
                   fontSize = FontSizes.TitleFontSize,
                   fontWeight = FontWeight.Bold,
-                  color = Color.White,
+                  color = White,
                   modifier = Modifier.testTag("ScreenTitle"))
             },
             navigationIcon = { ArrowBack(navigationActions, Color.White) },

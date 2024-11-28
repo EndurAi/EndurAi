@@ -9,8 +9,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,8 +22,9 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
-import com.android.sample.ui.theme.TitleBlue
-import com.android.sample.ui.theme.TopBarBlue
+import com.android.sample.ui.theme.TopBarGradient
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,22 +65,22 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                     }
                   },
                   shape = LeafShape,
-                  colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                  colors = ButtonDefaults.buttonColors(containerColor = Transparent),
                   contentPadding = PaddingValues(),
                   modifier =
                       Modifier.width(Dimensions.ButtonWidth)
                           .padding(vertical = Dimensions.SmallPadding)
                           .height(Dimensions.ButtonHeight)
-                          .background(brush = gradientBrush, shape = LeafShape)) {
+                          .background(brush = TopBarGradient, shape = LeafShape)) {
                     Box(
                         modifier =
                             Modifier.fillMaxSize()
                                 .background(
-                                    brush = gradientBrush, shape = RoundedCornerShape(12.dp)),
+                                    brush = TopBarGradient, shape = RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center) {
                           Text(
                               text = "Import",
-                              color = Color.White,
+                              color = White,
                               fontSize = FontSizes.SubtitleFontSize,
                               fontWeight = FontWeight.Bold)
                         }
@@ -99,22 +98,22 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                     }
                   },
                   shape = LeafShape,
-                  colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                  colors = ButtonDefaults.buttonColors(containerColor = Transparent),
                   contentPadding = PaddingValues(),
                   modifier =
                       Modifier.width(Dimensions.ButtonWidth)
                           .padding(vertical = Dimensions.SmallPadding)
                           .height(Dimensions.ButtonHeight)
-                          .background(brush = gradientBrush, shape = LeafShape)) {
+                          .background(brush = TopBarGradient, shape = LeafShape)) {
                     Box(
                         modifier =
                             Modifier.fillMaxSize()
                                 .background(
-                                    brush = gradientBrush, shape = RoundedCornerShape(12.dp)),
+                                    brush = TopBarGradient, shape = RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center) {
                           Text(
                               text = "Create from scratch",
-                              color = Color.White,
+                              color = White,
                               fontSize = FontSizes.SubtitleFontSize,
                               fontWeight = FontWeight.Bold)
                         }
@@ -131,6 +130,3 @@ val LeafShape: CornerBasedShape =
         topEnd = CornerSize(10.dp),
         bottomStart = CornerSize(10.dp),
         bottomEnd = CornerSize(20.dp))
-
-// Gradient Colors for Buttons
-val gradientBrush = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
