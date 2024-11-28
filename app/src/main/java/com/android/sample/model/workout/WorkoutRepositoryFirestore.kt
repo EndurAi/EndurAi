@@ -7,6 +7,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.type.LatLng
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
@@ -53,8 +54,9 @@ open class WorkoutRepositoryFirestore<T : Workout>(
           .add(MoshiSealedJsonAdapterFactory())
           .add(KotlinJsonAdapterFactory())
           .add(LocalDateTimeAdapter())
+          .add(LatLngAdapter())
+          .add(LatLngListAdapter(LatLngAdapter()))
           .build()
-
   private val adapter = moshi.adapter(clazz)
 
   private val adapterWorkoutID = moshi.adapter(WorkoutID::class.java)
@@ -273,6 +275,43 @@ open class WorkoutRepositoryFirestore<T : Workout>(
     @FromJson
     fun fromJson(dateTimeString: String): LocalDateTime {
       return LocalDateTime.parse(dateTimeString, formatter)
+    }
+  }
+
+  data class LatLngJson(val latitude: Double, val longitude: Double)
+
+  class LatLngAdapter {
+    @ToJson
+    fun toJson(latLng: LatLng): LatLngJson {
+      return LatLngJson(latLng.latitude, latLng.longitude)
+    }
+
+    @FromJson
+    fun fromJson(latLngJson: LatLngJson): LatLng {
+      return LatLng.newBuilder()
+          .setLatitude(latLngJson.latitude)
+          .setLongitude(latLngJson.longitude)
+          .build()
+    }
+  }
+
+  class LatLngListAdapter(private val latLngAdapter: LatLngAdapter) {
+
+    @ToJson
+    fun toJson(list: List<LatLng>): List<Map<String, Double>> {
+      return list.map { latLng ->
+        mapOf("latitude" to latLng.latitude, "longitude" to latLng.longitude)
+      }
+    }
+
+    @FromJson
+    fun fromJson(jsonList: List<Map<String, Double>>): List<LatLng> {
+      return jsonList.map { json ->
+        LatLng.newBuilder()
+            .setLatitude(json["latitude"] ?: throw JsonDataException("Missing latitude"))
+            .setLongitude(json["longitude"] ?: throw JsonDataException("Missing longitude"))
+            .build()
+      }
     }
   }
 }
