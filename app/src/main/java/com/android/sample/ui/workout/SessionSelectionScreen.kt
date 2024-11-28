@@ -1,8 +1,6 @@
 package com.android.sample.ui.workout
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,12 +25,15 @@ import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.LightBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionSelectionScreen(navigationActions: NavigationActions) {
   Scaffold(
-      topBar = { TopBar(navigationActions, R.string.new_session) },
+      topBar = { TopBar(navigationActions, R.string.NewWorkout) },
       content = { padding ->
         LazyColumn(
             contentPadding = padding,
@@ -48,47 +49,47 @@ fun SessionSelectionScreen(navigationActions: NavigationActions) {
                 }
               }
             }
-      })
+      },
+      containerColor = LightBackground)
 }
 
 @Composable
 fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
-    Card(
-        modifier = Modifier
-            .clickable { onSessionClick(session) }
-            .fillMaxWidth()
-            .height(180.dp)
-            .padding(horizontal = 8.dp)
-            .shadow(8.dp, RoundedCornerShape(12.dp)) // Add shadow here
-            .testTag("sessionCard_${session.title}"),
-        shape = RoundedCornerShape(12.dp), // Updated the corner radius for consistency with Figma
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent), // Make the card background transparent
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = session.imageRes),
-                contentDescription = session.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().testTag("image_${session.title}")
-            )
-            Text(
-                text = session.title,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    shadow = Shadow(
-                        color = Color.Black, // Shadow color
-                        offset = Offset(4f, 4f), // Shadow offset (x, y)
-                        blurRadius = 6f // Blur radius for soft shadow
-                    )
-                ), // Adjust font size if needed
-                color = Color.White, // Plain white text
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(8.dp)
-            )
-        }
+  Card(
+      modifier =
+          Modifier.clickable { onSessionClick(session) }
+              .fillMaxWidth()
+              .height(180.dp)
+              .padding(horizontal = Dimensions.SmallPadding)
+              .shadow(8.dp, RoundedCornerShape(12.dp)) // Add shadow here
+              .testTag("sessionCard_${session.title}"),
+      shape = RoundedCornerShape(12.dp), // Updated the corner radius for consistency with Figma
+      colors =
+          CardDefaults.cardColors(
+              containerColor = Color.Transparent), // Make the card background transparent
+  ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+      Image(
+          painter = painterResource(id = session.imageRes),
+          contentDescription = session.title,
+          contentScale = ContentScale.Crop,
+          modifier = Modifier.fillMaxSize().testTag("image_${session.title}"))
+      Text(
+          text = session.title,
+          style =
+              MaterialTheme.typography.bodyLarge.copy(
+                  fontSize = FontSizes.SubtitleFontSize,
+                  fontWeight = FontWeight.ExtraBold,
+                  shadow =
+                      Shadow(
+                          color = Color.Black,
+                          offset = Offset(4f, 4f),
+                          blurRadius = 6f
+                          )),
+          color = Color.White,
+          modifier = Modifier.align(Alignment.BottomStart).padding(Dimensions.SmallPadding))
     }
+  }
 }
 
 data class Session(val title: String, val imageRes: Int)

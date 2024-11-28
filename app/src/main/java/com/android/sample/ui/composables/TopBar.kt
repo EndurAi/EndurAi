@@ -18,7 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.TitleBlue
+import com.android.sample.ui.theme.TopBarBlue
 
 /**
  * A composable function that displays a top app bar with a title and a back navigation icon.
@@ -30,29 +33,24 @@ import com.android.sample.ui.theme.DarkBlue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navigationActions: NavigationActions, @StringRes title: Int) {
-    val gradientBrush = Brush.horizontalGradient(
-        colors = listOf(Color(0xFF1E3C72), Color(0xFF2A5298)) // Gradient colors from Figma
-    )
+  val gradientBrush =
+      Brush.horizontalGradient(
+          colors = listOf(TitleBlue, TopBarBlue)
+          )
 
-    androidx.compose.foundation.layout.Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(brush = gradientBrush)
-    ) {
+  androidx.compose.foundation.layout.Box(
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().background(brush = gradientBrush)) {
         TopAppBar(
             title = {
-                Text(
-                    text = stringResource(id = title),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.testTag("ScreenTitle")
-                )
+              Text(
+                  text = stringResource(id = title),
+                  fontSize = FontSizes.TitleFontSize,
+                  fontWeight = FontWeight.Bold,
+                  color = Color.White,
+                  modifier = Modifier.testTag("ScreenTitle"))
             },
             navigationIcon = { ArrowBack(navigationActions, Color.White) },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
-            modifier = Modifier.testTag("TopBar")
-        )
-    }
+            modifier = Modifier.testTag("TopBar"))
+      }
 }

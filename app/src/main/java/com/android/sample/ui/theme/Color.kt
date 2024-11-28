@@ -1,5 +1,6 @@
 package com.android.sample.ui.theme
 
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -13,10 +14,13 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 val SoftGrey = Color(0xFFEAE8E8)
 val LightGrey = Color(0xFFD9D9D9)
+val LightBackground = Color(0xFFF0F4F4)
 val MediumGrey = Color(0xFFCCCCCC)
 val NeutralGrey = Color(0xFF888888)
 val DarkGrey = Color(0xFF444444)
 val Blue = Color(0xFFABC2FD)
+val TitleBlue = Color(0xFF1E3C72)
+val TopBarBlue = Color(0xFF2A5298)
 val DarkBlue = Color(0xFF525A91)
 val DarkBlue2 = Color(0xB5525A91)
 val PastelRed = Color(0xFFFFCDD2)
