@@ -40,4 +40,5 @@
     <string name="Cancel">Cancel</string>
     <string name="EditAccount">Edit Account</string>
     <string name="RunningWorkoutTitle">Running</string>
+    <string name="WorkoutsTitle">My Workouts</string>
 </resources>

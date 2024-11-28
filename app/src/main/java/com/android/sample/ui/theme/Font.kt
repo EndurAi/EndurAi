@@ -9,3 +9,7 @@ val OpenSans = FontFamily(
     Font(R.font.open_sans_regular, FontWeight.Normal),
     Font(R.font.open_sans_bold, FontWeight.Bold)
 )
+
+val ContrailOne = FontFamily(
+    Font(R.font.contrail_one, FontWeight.Normal)
+)
