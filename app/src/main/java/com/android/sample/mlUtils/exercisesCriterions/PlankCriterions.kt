@@ -43,7 +43,7 @@ private val plankCriterion_SHOULDER_R =
 private val plankCriterion_LEG_L =
     AngleCriterion(
         joints = PoseDetectionJoints.LEFT_HIP_KNEE_ANKLE,
-        targetAngle = 180.0,
+        targetAngle = 170.0,
         delta = 15.0,
         onSuccess = { Log.d("MLFeedback", "HIP KNEE ANKLE is good L") },
         onFailure = { Log.d("MLFeedback", "HIP KNEE ANKLE pas cool L") })
@@ -51,7 +51,7 @@ private val plankCriterion_LEG_L =
 private val plankCriterion_LEG_R =
     AngleCriterion(
         joints = PoseDetectionJoints.RIGHT_HIP_KNEE_ANKLE,
-        targetAngle = 180.0,
+        targetAngle = 170.0,
         delta = 15.0,
         onSuccess = { Log.d("MLFeedback", "HIP KNEE ANKLE is good R") },
         onFailure = { Log.d("MLFeedback", "HIP KNEE ANKLE pas cool R") })

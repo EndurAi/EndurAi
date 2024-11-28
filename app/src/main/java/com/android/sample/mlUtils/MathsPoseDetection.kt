@@ -59,47 +59,49 @@ class MathsPoseDetection {
     }
 
     /**
-     * Calculates the angle formed by three points in 3D space.
+     * Calculates the angle formed by three points in 2D or 3D space.
      *
      * @param a_x The x-coordinate of the first point.
      * @param a_y The y-coordinate of the first point.
-     * @param a_z The z-coordinate of the first point.
+     * @param a_z The z-coordinate of the first point (optional, use 0f for 2D).
      * @param b_x The x-coordinate of the second point (vertex of the angle).
      * @param b_y The y-coordinate of the second point (vertex of the angle).
-     * @param b_z The z-coordinate of the second point (vertex of the angle).
+     * @param b_z The z-coordinate of the second point (vertex of the angle) (optional, use 0f for 2D).
      * @param c_x The x-coordinate of the third point.
      * @param c_y The y-coordinate of the third point.
-     * @param c_z The z-coordinate of the third point.
+     * @param c_z The z-coordinate of the third point (optional, use 0f for 2D).
+     * @param is3D  A boolean flag indicating whether to calculate the angle in 3D space.
      * @return The angle in degrees.
      */
     fun angle(
-        a_x: Float,
-        a_y: Float,
-        a_z: Float,
-        b_x: Float,
-        b_y: Float,
-        b_z: Float,
-        c_x: Float,
-        c_y: Float,
-        c_z: Float
+      a_x: Float,
+      a_y: Float,
+      a_z: Float,
+      b_x: Float,
+      b_y: Float,
+      b_z: Float,
+      c_x: Float,
+      c_y: Float,
+      c_z: Float,
+      is3D: Boolean = false
     ): Double {
       // Create vectors BA and BC
-      val ba = floatArrayOf(a_x - b_x, a_y - b_y, a_z - b_z)
-      val bc = floatArrayOf(c_x - b_x, c_y - b_y, c_z - b_z)
+      val ba = if (is3D) floatArrayOf(a_x - b_x, a_y - b_y, a_z - b_z) else floatArrayOf(a_x - b_x, a_y - b_y)
+      val bc = if (is3D) floatArrayOf(c_x - b_x, c_y - b_y, c_z - b_z) else floatArrayOf(c_x - b_x, c_y - b_y)
 
       // Calculate dot product of BA and BC
-      val dotProduct = ba[0] * bc[0] + ba[1] * bc[1] + ba[2] * bc[2]
+      val dotProduct = ba[0] * bc[0] + ba[1] * bc[1] + (if (is3D) ba[2] * bc[2] else 0f)
 
       // Calculate magnitudes of BA and BC
-      val magnitudeBA = sqrt(ba[0] * ba[0] + ba[1] * ba[1] + ba[2] * ba[2])
-      val magnitudeBC = sqrt(bc[0] * bc[0] + bc[1] * bc[1] + bc[2] * bc[2])
+      val magnitudeBA = sqrt(ba[0] * ba[0] + ba[1] * ba[1] + (if (is3D) ba[2] * ba[2] else 0f))
+      val magnitudeBC = sqrt(bc[0] * bc[0] + bc[1] * bc[1] + (if (is3D) bc[2] * bc[2] else 0f))
 
       // Calculate the angle in radians using the dot product formula
       val epsilon = 1e-6
       val angleRadians =
-          if (magnitudeBA > epsilon && magnitudeBC > epsilon)
-              acos(dotProduct / (magnitudeBA * magnitudeBC))
-          else 0f
+        if (magnitudeBA > epsilon && magnitudeBC > epsilon)
+          acos(dotProduct / (magnitudeBA * magnitudeBC))
+        else 0f
 
       // Convert radians to degrees
       return degrees(angleRadians)

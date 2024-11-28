@@ -163,7 +163,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
 
   /** Enables pose recognition by setting up the image analysis analyzer. */
   fun enablePoseRecognition() {
-    val windowSize = 20 // Window Size used to compute the mean
+    val windowSize = 10 // Window Size used to compute the mean
     val inFrameLikelihoodThreshold = 0.8f
 
     if (_bodyRecognitionIsEnabled.value.not()) {
@@ -176,12 +176,14 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                 if (poseLandmarks.value.size > windowSize) {
                   val lastLandMark = poseLandmarks.value.takeLast(windowSize)
                   val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
+/*
                   val assessedChair =
                       ExerciseFeedBack.assessLandMarks(meanedLandmark, ChairCriterions)
                   Log.d("MLFEEDBACK_RESULTChair", "chair: $assessedChair ")
                   val assessedPlank =
                       ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
                   Log.d("MLFEEDBACK_RESULTPlank", "Plank: $assessedPlank ")
+*/
 
                   val assessedPushUpsDown =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCrierions)
