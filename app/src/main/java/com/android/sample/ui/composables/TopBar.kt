@@ -2,7 +2,6 @@ package com.android.sample.ui.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -45,11 +44,7 @@ fun TopBar(navigationActions: NavigationActions, @StringRes title: Int) {
                   color = Color.White,
                   modifier = Modifier.testTag("ScreenTitle"))
             },
-            navigationIcon = {
-              Box(modifier = Modifier.testTag("arrowBackButton")) {
-                ArrowBack(navigationActions, Color.White)
-              }
-            },
+            navigationIcon = { ArrowBack(navigationActions, Color.White) },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
             modifier = Modifier.testTag("TopBar"))
       }

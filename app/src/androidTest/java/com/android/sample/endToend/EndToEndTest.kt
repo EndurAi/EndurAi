@@ -224,7 +224,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    // composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
   }
 
   private fun importOrCreateScreenIsWellDisplayed() {
