@@ -97,7 +97,7 @@ fun MainScreen(
                   navigationActions = navigationActions)
             Divider(
                 color = Line,
-                thickness = 0.8.dp,
+                thickness = 0.5.dp,
                 modifier = Modifier.padding(horizontal = 25.dp, vertical = 3.dp).shadow(1.dp)
             )
               QuickWorkoutSection(
@@ -106,7 +106,7 @@ fun MainScreen(
                   yogaViewModel = yogaViewModel)
             Divider(
                 color = Line,
-                thickness = 0.8.dp,
+                thickness = 0.5.dp,
                 modifier = Modifier.padding(horizontal = 25.dp, vertical = 3.dp).shadow(1.dp)
             )
               AchievementsSection(navigationActions = navigationActions)
@@ -237,53 +237,70 @@ fun QuickWorkoutSection(
     bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
     yogaViewModel: WorkoutViewModel<YogaWorkout>
 ) {
-  val context = LocalContext.current
-  val metrics = context.resources.displayMetrics
-  val screenWidth = metrics.widthPixels
-  val screenWidthDp = screenWidth / metrics.density
-  val buttonSizeDp = (screenWidthDp * 0.15).toInt()
+    Column(modifier = Modifier.fillMaxWidth().testTag("QuickSection")) {
+        Text(
+            text = stringResource(id = R.string.QuickTitle),
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontSize = 24.sp,
+                fontFamily = OpenSans
+            ),
+            modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp)
+        )
 
-  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).testTag("QuickSection")) {
-    Text(
-        text = "Quick workout",
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp),
-        modifier = Modifier.padding(vertical = 8.dp))
-    Column(
-        modifier =
+        Row(
+            modifier =
             Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(SoftGrey)
-                .padding(10.dp)) {
-          Row(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-              horizontalArrangement = Arrangement.SpaceAround) {
-                QuickWorkoutButton(
-                    R.drawable.running_man,
-                    navigationActions,
-                    bodyWeightViewModel,
-                    yogaViewModel,
-                    buttonSizeDp)
-                QuickWorkoutButton(
-                    R.drawable.pushups,
-                    navigationActions,
-                    bodyWeightViewModel,
-                    yogaViewModel,
-                    buttonSizeDp)
-                QuickWorkoutButton(
-                    R.drawable.yoga,
-                    navigationActions,
-                    bodyWeightViewModel,
-                    yogaViewModel,
-                    buttonSizeDp)
-                QuickWorkoutButton(
-                    R.drawable.dumbbell,
-                    navigationActions,
-                    bodyWeightViewModel,
-                    yogaViewModel,
-                    buttonSizeDp)
-              }
+                .background(Color.Transparent),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            QuickWorkoutButton(R.drawable.quick_bodyweight, onClick = {
+                bodyWeightViewModel.selectWorkout(bodyWeightViewModel.copyOf(BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT))
+                navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)})
+            QuickWorkoutButton(R.drawable.quick_running, onClick = {
+                bodyWeightViewModel.selectWorkout(bodyWeightViewModel.copyOf(BodyWeightWorkout.WARMUP_WORKOUT))
+                navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+            })
+            QuickWorkoutButton(R.drawable.quick_yoga, onClick = {
+                yogaViewModel.selectWorkout(yogaViewModel.copyOf(YogaWorkout.QUICK_YOGA_WORKOUT))
+                navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
+            })
         }
-  }
+    }
+}
+/**
+ * Composable function that displays a button for a quick workout session.
+ *
+ * @param iconId The resource ID for the quick workout icon.
+ * @param onClick Functions called when the button is clicked.
+ */
+@Composable
+fun QuickWorkoutButton(
+    iconId: Int,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .height(76.dp)
+            .width(117.dp)
+            .clickable { onClick() }
+            .background(Color.Transparent)
+            .padding(5.dp)
+    ) {
+        val shape = RoundedCornerShape(
+            topStart = 25.dp,
+            topEnd = 11.dp,
+            bottomEnd = 25.dp,
+            bottomStart = 11.dp
+        )
+        Image(
+            painter = painterResource(id = iconId),
+            contentDescription = "Quick Workout Icon",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+                .shadow(4.dp, shape = shape)
+                .clip(shape)
+        )
+    }
 }
 
 /**
@@ -293,7 +310,7 @@ fun QuickWorkoutSection(
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun QuickWorkoutButton(
+fun WorkoutButton(
     iconId: Int,
     navigationActions: NavigationActions,
     bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
@@ -304,13 +321,11 @@ fun QuickWorkoutButton(
       modifier =
           Modifier.size(buttonSize.dp)
               .aspectRatio(1f)
-              .background(Blue, CircleShape)
+              .background(Blue)
               .clickable {
                 when (iconId) {
                   R.drawable.running_man -> {
-                    bodyWeightViewModel.selectWorkout(
-                        bodyWeightViewModel.copyOf(BodyWeightWorkout.WARMUP_WORKOUT))
-                    navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+
                   }
                   R.drawable.pushups -> {
                     bodyWeightViewModel.selectWorkout(
@@ -318,14 +333,10 @@ fun QuickWorkoutButton(
                     navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
                   }
                   R.drawable.yoga -> {
-                    yogaViewModel.selectWorkout(
-                        yogaViewModel.copyOf(YogaWorkout.QUICK_YOGA_WORKOUT))
-                    navigationActions.navigateTo(Screen.YOGA_OVERVIEW)
+
                   }
                   R.drawable.dumbbell -> {
-                    bodyWeightViewModel.selectWorkout(
-                        bodyWeightViewModel.copyOf(BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT))
-                    navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
+
                   }
                 }
               }
@@ -403,8 +414,8 @@ fun AchievementsSection(navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth()) {
     Text(
         stringResource(id = R.string.AchievementsTitle),
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp))
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans))
     Box(
         modifier =
             Modifier.fillMaxWidth()
