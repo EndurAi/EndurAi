@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,13 @@ import com.android.sample.model.video.VideoViewModel
 import com.android.sample.ui.composables.CustomSearchBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.BodyWeightTag
+import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.Purple40
+import com.android.sample.ui.theme.WarmUpTag
+import com.android.sample.ui.theme.YogaTag
 
 /** Screen to display the video library. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,15 +67,17 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
+                    .testTag("topBar")
             ) {
                 Column {
                     // Blue gradient search bar
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 0.dp, vertical = 0.dp), // Reduced vertical padding
-                        shadowElevation = 8.dp, // Add elevation
-                        shape = RectangleShape // Rounded corners only at the bottom
+                            .padding(horizontal = 0.dp, vertical = 0.dp)
+                            .testTag("searchBarSurface"),
+                        shadowElevation = 8.dp,
+                        shape = RectangleShape
                     ) {
                         Box(
                             modifier = Modifier
@@ -75,27 +85,30 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                                 .background(
                                     Brush.horizontalGradient(
                                         colors = listOf(
-                                            Color(0xFF1E88E5), // Start of gradient
-                                            Color(0xFF42A5F5)  // End of gradient
+                                            DarkBlue, // Start of gradient
+                                            Purple40  // End of gradient
                                         )
                                     )
                                 )
-                                .padding(horizontal = 16.dp, vertical = 8.dp) // Reduced vertical padding
+                                .testTag("searchBarBox")
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
                             // Search bar row
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
+                                    .testTag("searchBarRow")
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(24.dp))
                                     .background(Color.Transparent)
-                                    .padding(horizontal = 12.dp, vertical = 4.dp) // Reduced vertical padding
+                                    .padding(horizontal = 12.dp, vertical = 4.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "Back",
                                     tint = Color.White,
                                     modifier = Modifier
+                                        .testTag("backButton")
                                         .size(24.dp)
                                         .clickable { navigationActions.goBack() }
                                 )
@@ -115,7 +128,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                                         unfocusedContainerColor = Color.Transparent,
                                         cursorColor = Color.White
                                     ),
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f).testTag("searchField")
                                 )
 
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -135,18 +148,12 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
 
                                 TagDropdown(
                                     selectedTag = selectedTag,
-                                    onTagSelected = { selectedTag = it }
+                                    onTagSelected = { selectedTag = it },
+                                    modifier = Modifier.testTag("tagDropdown")
                                 )
                             }
                         }
                     }
-
-
-
-
-
-
-
 
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -177,11 +184,12 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                                     .padding(vertical = 4.dp)
                                     .fillMaxWidth()
                                     .graphicsLayer(alpha = alpha)
+                                    .testTag("videoItem_${video.title}")
                             )
                         }
                     }
 
-                    // Fake bottom rectangle
+                    // Fake bottom rectangle for bottom bar
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -193,6 +201,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
         }
     )
 }
+/** Function to calculate the alpha value for the fading effect. */
 
 fun calculateAlpha(index: Int, listState: LazyListState): Float {
     val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
@@ -207,6 +216,8 @@ fun calculateAlpha(index: Int, listState: LazyListState): Float {
         1f
     }
 }
+
+/** Composable function to display a dropdown menu for selecting tags. */
 @Composable
 fun TagDropdown(
     selectedTag: String,
@@ -218,8 +229,9 @@ fun TagDropdown(
     Box(modifier = modifier) {
         Box(
             modifier = Modifier
+                .testTag("tagDropdownButton")
                 .clickable { expanded = true }
-                .padding(8.dp) // Invisible clickable area
+                .padding(8.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = selectedTag, color = Color.White)
@@ -234,7 +246,7 @@ fun TagDropdown(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.background(Color(0xFF1E88E5)) // Blue background for the entire menu
+            modifier = Modifier.testTag("dropdownMenu").background(DarkBlue) // Blue background for the entire menu
         ) {
             listOf("All", "Body-Weight", "Warmup", "Yoga").forEach { tag ->
                 DropdownMenuItem(
@@ -245,7 +257,8 @@ fun TagDropdown(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFF1E88E5)) // Blue background for each item
+                        .background(DarkBlue) // Blue background for each item
+                        .testTag("dropdownMenuItem_$tag")
                 )
             }
         }
@@ -266,7 +279,7 @@ fun VideoListItem(video: Video, onClick: () -> Unit, modifier: Modifier = Modifi
     ) {
         Row(
             modifier = Modifier
-                .height(150.dp) // Fixed height for consistent size
+                .height(150.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -294,7 +307,8 @@ fun VideoListItem(video: Video, onClick: () -> Unit, modifier: Modifier = Modifi
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(Color.Blue.copy(alpha = 0.6f)) // Semi-transparent background
-                        .padding(4.dp),
+                        .padding(4.dp)
+                        .testTag("playButton"),
                     tint = Color.White
                 )
             }
@@ -304,14 +318,15 @@ fun VideoListItem(video: Video, onClick: () -> Unit, modifier: Modifier = Modifi
             // Text content column
             Column(
                 modifier = Modifier
-                    .weight(0.5f) // Remaining 30% of the card's width
-                    .fillMaxHeight(),
+                    .weight(0.5f)
+                    .fillMaxHeight()
+                    .testTag("videoContentColumn"),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = video.title,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    fontSize = 16.sp, // Adjusted font size for better balance
+                    fontSize = 16.sp,
                     maxLines = 2,
                     color = Color.Black
 
@@ -322,7 +337,7 @@ fun VideoListItem(video: Video, onClick: () -> Unit, modifier: Modifier = Modifi
                 Card(
                     shape = RoundedCornerShape(8.dp),
                     colors = CardDefaults.cardColors(containerColor = tagColor(video.tag)),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 100.dp) // Adjust the elevation as needed
+                    elevation = CardDefaults.cardElevation(defaultElevation = 100.dp)
                ) {
                     Text(
                         text = video.tag,
@@ -339,9 +354,9 @@ fun VideoListItem(video: Video, onClick: () -> Unit, modifier: Modifier = Modifi
 /** Function to map tags to their respective colors. */
 fun tagColor(tag: String): Color {
     return when (tag) {
-        "Body-Weight" -> Color(0xFF9C27B0) // Purple for Body-Weight (harmonizes with blue)
-        "Warmup" -> Color(0xFF81D4FA) // Light cyan for Warmup (soft blue, fits the theme)
-        "Yoga" -> Color(0xFF42A5F5) // Medium blue for Yoga (distinct from Warmup, still fits the blue theme)
-        else -> Color(0xFFB0BEC5) // Light gray for untagged (neutral, blends well)
+        "Body-Weight" -> BodyWeightTag // Purple for Body-Weight (harmonizes with blue)
+        "Warmup" -> WarmUpTag // Light cyan for Warmup (soft blue, fits the theme)
+        "Yoga" -> YogaTag // Medium blue for Yoga (distinct from Warmup, still fits the blue theme)
+        else -> LightGrey // Light gray for untagged (neutral, blends well)
     }
 }
