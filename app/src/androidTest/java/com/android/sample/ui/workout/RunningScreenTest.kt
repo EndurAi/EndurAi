@@ -69,7 +69,7 @@ class RunningScreenTest {
   }
 
   @Test
-  fun pauseButton_clickPausesRunning() { // not good
+  fun pauseButton_clickPausesRunning() {
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -82,7 +82,7 @@ class RunningScreenTest {
   }
 
   @Test
-  fun resumeButton_clickResumesRunning() { // not good
+  fun resumeButton_clickResumesRunning() {
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -110,7 +110,7 @@ class RunningScreenTest {
   }
 
   @Test
-  fun saveToggleButton_isDisplayedWhenSaving() { // not good
+  fun saveToggleButton_isDisplayedWhenSaving() {
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -125,7 +125,7 @@ class RunningScreenTest {
   }
 
   @Test
-  fun saveButton_isDisplayedWhenToggleClicked() { // not good
+  fun saveButton_isDisplayedWhenToggleClicked() {
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -141,7 +141,7 @@ class RunningScreenTest {
   }
 
   @Test
-  fun descriptionTextFieldAndNameTextField_isDisplayedWhenSaving() { // not good
+  fun descriptionTextFieldAndNameTextField_isDisplayedWhenSaving() {
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
