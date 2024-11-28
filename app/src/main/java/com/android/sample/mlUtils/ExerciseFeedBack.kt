@@ -43,6 +43,7 @@ class ExerciseFeedBack {
         val combination : Boolean = false,
         val onSuccess: () -> Unit,
         val onFailure: () -> Unit,
+        val correctionMessage: String = "git gud lol"
       
     )
 
@@ -51,9 +52,9 @@ class ExerciseFeedBack {
     fun assessLandMarks(
         poseLandmarkList: List<Triple<Float, Float, Float>>,
         exerciseCriterion: ExerciseCriterion
-    ): Boolean {
+    ): List<Pair<Boolean, String>> {
       Log.d("MLFeedback", "-----------------------------------")
-      val listOfBoolean =
+      val listOfBooleanWithMessage =
           exerciseCriterion.angleCriterionSet.map { (angleCriterionL, angleCriterionR) ->
             val a_l = poseLandmarkList[angleCriterionL.joints.first]
             val b_l = poseLandmarkList[angleCriterionL.joints.second]
@@ -87,11 +88,11 @@ class ExerciseFeedBack {
               angleCriterionR.onFailure()
             }
 
-            resultL || resultR
+              (resultL || resultR) to if (resultL || resultR) "Ok" else angleCriterionL.correctionMessage
           }
       Log.d("MLFeedback", "-----------------------------------")
 
-      return listOfBoolean.all { b -> b } // Checks that all are valid
+      return listOfBooleanWithMessage
     }
 
     /* fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{

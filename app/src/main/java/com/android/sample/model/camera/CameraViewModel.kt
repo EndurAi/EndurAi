@@ -250,7 +250,7 @@ val jjstate = when {
     _cameraController.value.setImageAnalysisAnalyzer(
       ContextCompat.getMainExecutor(context),
       PoseDetectionAnalyser(
-        onDetectedPoseUpdated = {
+        onDetectedPoseUpdated = { it ->
           // If the new pose is detected, we add it to the list of poses
           if (it.all { poseLandmark ->
             poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
@@ -265,7 +265,12 @@ val jjstate = when {
             assessLandMarks(meanedLandmark, preamble)
 
             if (exerciseWasDetected) {
-              assessLandMarks(meanedLandmark, criterions)
+              val result = assessLandMarks(meanedLandmark, criterions)
+              val isSuccessful = result.all { it.first } //True only if all criterions are successful
+              if (!isSuccessful) {
+                val returnMessage = result.filter { !it.first }.joinToString { it.second }
+                finishPoseRecognition()
+              }
             }
 
           }
