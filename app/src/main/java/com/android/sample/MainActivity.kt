@@ -32,10 +32,14 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
+
+
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.calendar.DayCalendarScreen
+import com.android.sample.ui.components.DumbbellAnimation
+
 import com.android.sample.ui.friends.AddFriendScreen
 import com.android.sample.ui.friends.FriendsScreen
 import com.android.sample.ui.mainscreen.MainScreen
@@ -63,15 +67,17 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
-      SampleAppTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
-            color = MaterialTheme.colorScheme.background) {
-              val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
-              MainApp(startDestination)
-            }
-      }
+//      SampleAppTheme {
+//        // A surface container using the 'background' color from the theme
+//        Surface(
+//            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
+//            color = MaterialTheme.colorScheme.background) {
+//              val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
+//              MainApp(startDestination)
+//            }
+//      }
+
+        DumbbellAnimation()
     }
   }
 }
