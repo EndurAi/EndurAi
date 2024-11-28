@@ -311,9 +311,9 @@ class EndToEndTest {
   private fun videoLibraryScreenIsWellDisplayed() {
     val testName = "videoLibraryScreenIsWellDisplayed"
 
-    nodeControl("libraryTitle", testName)
+    //    nodeControl("libraryTitle", testName) the title was removed in the ui
 
-    nodeControl("searchBar", testName)
+    nodeControl("searchField", testName)
 
     nodeControl("tagDropdown", testName)
   }
