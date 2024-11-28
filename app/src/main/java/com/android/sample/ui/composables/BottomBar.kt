@@ -50,7 +50,7 @@ fun BottomBar(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically) {
               LIST_OF_TOP_LEVEL_DESTINATIONS.forEach { destination ->
-                val isSelected = navigationActions.currentRoute() == destination.route
+                val isSelected = navigationActions.currentRoute() == (destination.route + " Screen") // navigationActions.currentRoute() returns the Screen....
 
                 // Animation for vertical offset
                 val offsetY by animateDpAsState(targetValue = if (isSelected) (-15).dp else 0.dp)
