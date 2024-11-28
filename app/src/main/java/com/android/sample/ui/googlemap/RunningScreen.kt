@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -156,7 +158,7 @@ fun RunningScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier.fillMaxSize()) {
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
               Spacer(Modifier.height(60.dp))
               chronoDisplay(elapsedTime)
               distanceDisplay(calculateDistance(pathPoints.value))
@@ -231,7 +233,7 @@ fun RunningScreen(
           Column(
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.spacedBy(2.dp),
-              modifier = Modifier.fillMaxSize()) {
+              modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                 Spacer(Modifier.height(60.dp))
                 chronoDisplay(elapsedTime)
                 distanceDisplay(calculateDistance(pathPoints.value))
@@ -315,7 +317,7 @@ fun RunningScreen(
           Column(
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.spacedBy(2.dp),
-              modifier = Modifier.fillMaxSize()) {
+              modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                 Spacer(Modifier.height(60.dp))
                 chronoDisplay(elapsedTime)
                 distanceDisplay(calculateDistance(pathPoints.value))
