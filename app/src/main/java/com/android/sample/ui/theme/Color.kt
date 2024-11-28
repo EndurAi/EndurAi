@@ -1,5 +1,7 @@
 package com.android.sample.ui.theme
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -30,3 +32,11 @@ val YogaTag = Color(0xFFABC2FD)
 val RunningTag = Color(0xFF81FFA9)
 val CalendarBackground = Color(0xFFE4E4E4)
 val Green = Color(0xFF00FF00)
+val Transparent = Color(0x00000000)
+val White = Color(0xFFFFFFFF)
+
+val BlueGradient =
+    Brush.linearGradient(
+        colors = listOf(Color(0xFF1E3C72), Color(0xFF2A5298)),
+        start = Offset(0f, 0f),
+        end = Offset(Float.POSITIVE_INFINITY, 0f))
