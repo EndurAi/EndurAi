@@ -1,6 +1,9 @@
 package com.android.sample.ui.composables
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -8,6 +11,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -26,16 +30,29 @@ import com.android.sample.ui.theme.DarkBlue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navigationActions: NavigationActions, @StringRes title: Int) {
-  TopAppBar(
-      title = {
-        Text(
-            text = stringResource(id = title),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.testTag("ScreenTitle"))
-      },
-      navigationIcon = { ArrowBack(navigationActions, Color.White) },
-      colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
-      modifier = Modifier.testTag("TopBar"))
+    val gradientBrush = Brush.horizontalGradient(
+        colors = listOf(Color(0xFF1E3C72), Color(0xFF2A5298)) // Gradient colors from Figma
+    )
+
+    androidx.compose.foundation.layout.Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(brush = gradientBrush)
+    ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = stringResource(id = title),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.testTag("ScreenTitle")
+                )
+            },
+            navigationIcon = { ArrowBack(navigationActions, Color.White) },
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
+            modifier = Modifier.testTag("TopBar")
+        )
+    }
 }
