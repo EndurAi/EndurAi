@@ -19,6 +19,7 @@ import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.getCriterions
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.preambleCriterion
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
+import com.android.sample.mlUtils.exercisesCriterions.DownwardDogCriterions
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksClosedCriterions
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
@@ -171,7 +172,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
 
   /** Enables pose recognition by setting up the image analysis analyzer. */
   fun enablePoseRecognition() {
-    val windowSize = 10 // Window Size used to compute the mean
+    val windowSize = 1 // Window Size used to compute the mean
 
     if (_bodyRecognitionIsEnabled.value.not()) {
       _cameraController.value.imageAnalysisTargetSize =
@@ -211,7 +212,12 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksClosedCriterions)
                   Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksClosed: $assessedJumpingJackCLosed ")
 
-val jjstate = when {
+                  val assessedDowndardDog =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, DownwardDogCriterions)
+                  Log.d("MLFEEDBACK_RESULTExercise", "DownwardDog: $assessedDowndardDog ")
+
+
+                  val jjstate = when {
     assessedJumpingJackOpen && !assessedJumpingJackCLosed -> "open"
     !assessedJumpingJackOpen && assessedJumpingJackCLosed -> "closed"
     assessedJumpingJackOpen && assessedJumpingJackCLosed -> "both"
