@@ -1,6 +1,7 @@
 package com.android.sample.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import com.android.sample.model.workout.WarmUp
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
@@ -25,8 +26,9 @@ val Yellow = Color(0xFFFFFF00)
 val Black = Color(0xFF000000)
 val Red = Color(0xFFFF0000)
 val BottomBarColor = Color(0x96525A91)
-val BodyWeightTag = Color(0xFFFDABAC)
-val YogaTag = Color(0xFFABC2FD)
+val BodyWeightTag = Color(0xFF9C27B0)
+val YogaTag = Color(0xFF42A5F5)
+val WarmUpTag = Color(0xFF81D4FA)
 val RunningTag = Color(0xFF81FFA9)
 val CalendarBackground = Color(0xFFE4E4E4)
 val Green = Color(0xFF00FF00)
