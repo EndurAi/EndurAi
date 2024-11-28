@@ -167,7 +167,8 @@ fun WorkoutCreationScreen(
                             Modifier.width(Dimensions.ButtonWidth)
                                 .height(Dimensions.ButtonHeight)
                                 .background(brush = gradientBrush, shape = LeafShape)
-                                .align(Alignment.CenterHorizontally)) {
+                                .align(Alignment.CenterHorizontally)
+                                .testTag("nextButton")) {
                           Box(
                               modifier =
                                   Modifier.fillMaxSize()
