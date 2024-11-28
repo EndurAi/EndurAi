@@ -12,7 +12,7 @@ import androidx.navigation.NavHostController
 object Route {
   const val MAIN = "Main"
   const val AUTH = "Auth"
-  const val VIDEO_LIBRARY = "VideoLibrary"
+  const val VIDEO_LIBRARY = "Video Library"
   const val VIDEO = "Video"
   const val ACHIEVEMENTS = "Achievements"
   const val PREFERENCES = "Preferences"
@@ -81,11 +81,11 @@ object Screen {
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
-  val MAIN = TopLevelDestination(Screen.MAIN, Icons.Outlined.Home, textId = "Main")
-  val VIDEO = TopLevelDestination(Screen.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
-  val ADD = TopLevelDestination(Screen.SESSIONSELECTION, Icons.Outlined.Add, textId = "Add")
-  val CALENDAR = TopLevelDestination(Screen.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
-  val PROFILE = TopLevelDestination(Screen.SETTINGS, Icons.Outlined.Person, textId = "profile")
+  val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
+  val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
+  val ADD = TopLevelDestination(Route.SESSIONSELECTION, Icons.Outlined.Add, textId = "Add")
+  val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
+  val PROFILE = TopLevelDestination(Route.SETTINGS, Icons.Outlined.Person, textId = "profile")
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
