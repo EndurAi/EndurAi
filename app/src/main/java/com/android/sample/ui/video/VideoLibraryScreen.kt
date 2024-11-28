@@ -3,6 +3,7 @@ package com.android.sample.ui.video
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -71,31 +72,16 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
             Spacer(modifier = Modifier.height(16.dp))
 
             // Filtered video list with fading effect
-            val listState = rememberLazyListState()
-            LazyColumn(
-                state = listState, modifier = Modifier.padding(horizontal = 16.dp).weight(1f)) {
-                  items(
-                      videoList.filter { video ->
-                        video.title.contains(searchQuery, ignoreCase = true) &&
-                            (selectedTag == "All" || video.tag == selectedTag)
-                      }) { video ->
-                        val index = videoList.indexOf(video)
-                        val alpha = calculateAlpha(index, listState)
-                        VideoListItem(
-                            video = video,
-                            onClick = {
-                              videoViewModel.selectVideo(video)
-                              navigationActions.navigateTo(Screen.VIDEO)
-                            },
-                            modifier =
-                                Modifier.padding(vertical = 4.dp)
-                                    .fillMaxWidth()
-                                    .graphicsLayer(alpha = alpha)
-                                    .testTag("videoItem_${video.title}"))
-                      }
-                }
+              VideoList(
+                  videoList = videoList,
+                  searchQuery = searchQuery,
+                  selectedTag = selectedTag,
+                  videoViewModel = videoViewModel,
+                  navigationActions = navigationActions
+              )
 
             // Fake bottom rectangle for bottom bar
+              Spacer(modifier = Modifier.weight(1f))
             Box(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Gray))
           }
         }
@@ -253,7 +239,7 @@ fun tagColor(tag: String): Color {
   }
 }
 
-
+/** Composable function to display the top bar with search and tag dropdown. */
 @Composable
 fun TopBar(
     searchQuery: String,
@@ -351,4 +337,36 @@ fun TopBar(
     }
 }
 
-
+/** Composable function to display the list of videos. */
+@Composable
+fun VideoList(
+    videoList: List<Video>,
+    searchQuery: String,
+    selectedTag: String,
+    videoViewModel: VideoViewModel,
+    navigationActions: NavigationActions
+) {
+    val listState = rememberLazyListState()
+    LazyColumn(
+        state = listState, modifier = Modifier.padding(horizontal = 16.dp)) {
+        items(
+            videoList.filter { video ->
+                video.title.contains(searchQuery, ignoreCase = true) &&
+                        (selectedTag == "All" || video.tag == selectedTag)
+            }) { video ->
+            val index = videoList.indexOf(video)
+            val alpha = calculateAlpha(index, listState)
+            VideoListItem(
+                video = video,
+                onClick = {
+                    videoViewModel.selectVideo(video)
+                    navigationActions.navigateTo(Screen.VIDEO)
+                },
+                modifier =
+                Modifier.padding(vertical = 4.dp)
+                    .fillMaxWidth()
+                    .graphicsLayer(alpha = alpha)
+                    .testTag("videoItem_${video.title}"))
+        }
+    }
+}
