@@ -1,5 +1,6 @@
 package com.android.sample
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,6 +40,7 @@ import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.friends.AddFriendScreen
 import com.android.sample.ui.friends.FriendsScreen
+import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -61,6 +64,16 @@ import com.google.firebase.firestore.firestore
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    ActivityCompat.requestPermissions(
+        this,
+        arrayOf(
+            // Permission for not precise location
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            // Permission for precise location
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            // Permission to post location
+            Manifest.permission.POST_NOTIFICATIONS),
+        0)
 
     setContent {
       SampleAppTheme {
@@ -236,6 +249,13 @@ fun MainApp(startDestination: String = Route.AUTH) {
     navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
       composable(Screen.YOGA_CREATION) {
         WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+      }
+    }
+
+    // Running Screen
+    navigation(startDestination = Screen.RUNNING_SCREEN, route = Route.RUNNING_SCREEN) {
+      composable(Screen.RUNNING_SCREEN) {
+        RunningScreen(navigationActions, runningWorkoutViewModel)
       }
     }
 

@@ -137,7 +137,6 @@ class QuickWorkoutTest {
     val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
     val expectedWorkouts: List<Workout> =
         listOf(
-                BodyWeightWorkout.WARMUP_WORKOUT,
                 BodyWeightWorkout.WORKOUT_PUSH_UPS,
                 YogaWorkout.QUICK_YOGA_WORKOUT,
                 BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
@@ -155,10 +154,9 @@ class QuickWorkoutTest {
     for (i in 0 until nodes.fetchSemanticsNodes().size) {
       nodes[i].performClick()
       when (i) {
-        0 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
-        1 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
-        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
-        3 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        1 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i - 1]))
+        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[i - 1]))
+        3 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i - 1]))
       }
     }
   }

@@ -1,3 +1,5 @@
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     jacoco
@@ -9,6 +11,15 @@ plugins {
 }
 
 android {
+    // Load the API key from local.properties
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(FileInputStream(localPropertiesFile))
+    }
+
+    val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY") ?: ""
+
     namespace = "com.android.sample"
     compileSdk = 34
 
@@ -150,15 +161,17 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.intents)
     implementation(libs.androidx.ui.test.android)
-  implementation(libs.androidx.camera.video)
+    implementation(libs.androidx.camera.video)
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.pose.detection.common)
-
     implementation(libs.androidx.datastore.core.android)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
 
     // Activity Compose for rememberLauncherForActivityResult
     implementation(libs.coil.compose)
@@ -225,6 +238,7 @@ implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     testImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
+    androidTestImplementation(libs.androidx.rules)
 
     configurations.configureEach {
         exclude(group = "com.google.protobuf", module = "protobuf-lite")

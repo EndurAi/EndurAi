@@ -1,5 +1,6 @@
 package com.android.sample.endToend
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.test.assertCountEquals
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.rule.GrantPermissionRule
 import com.android.sample.MainActivity
 import com.android.sample.model.workout.ExerciseType
 import com.android.sample.model.workout.WorkoutType
@@ -27,6 +29,13 @@ import org.junit.Test
 class EndToEndTest {
   private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
+
+  @get:Rule
+  val grantPermissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(
+          Manifest.permission.ACCESS_COARSE_LOCATION,
+          Manifest.permission.ACCESS_FINE_LOCATION,
+          Manifest.permission.POST_NOTIFICATIONS)
 
   @Before
   fun setUp() {
