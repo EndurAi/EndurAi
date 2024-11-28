@@ -57,29 +57,39 @@ class VideoLibraryScreenTest {
           navigationActions = mockNavigationActions, videoViewModel = mockVideoViewModel)
     }
 
-
     // Verify that the search bar is displayed
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBarSurface").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBarBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("backButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchField")
-      .assertIsDisplayed()
-      .assertIsNotFocused()
-      .assertHasClickAction()
-      .performClick()
-      .assertIsFocused()
+    composeTestRule
+        .onNodeWithTag("searchField")
+        .assertIsDisplayed()
+        .assertIsNotFocused()
+        .assertHasClickAction()
+        .performClick()
+        .assertIsFocused()
     composeTestRule.onNodeWithTag("tagDropdown").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("tagDropdownButton")
-      .assertIsDisplayed()
-      .assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("tagDropdownButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
         .performClick()
     composeTestRule.onNodeWithTag("dropdownMenu").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("dropdownMenuItem_All").assertIsDisplayed().assertHasClickAction()
-    composeTestRule.onNodeWithTag("dropdownMenuItem_Body-Weight").assertIsDisplayed().assertHasClickAction()
-    composeTestRule.onNodeWithTag("dropdownMenuItem_Warmup").assertIsDisplayed().assertHasClickAction()
-    composeTestRule.onNodeWithTag("dropdownMenuItem_Yoga").assertIsDisplayed().assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("dropdownMenuItem_Body-Weight")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("dropdownMenuItem_Warmup")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("dropdownMenuItem_Yoga")
+        .assertIsDisplayed()
+        .assertHasClickAction()
     composeTestRule.onNodeWithTag("videoItem_Sample Video 1").assertIsDisplayed()
     composeTestRule.onNodeWithTag("videoItem_Sample Video 2").assertIsDisplayed()
   }
