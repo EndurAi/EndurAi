@@ -184,7 +184,7 @@ class EndToEndTest {
   private fun workoutCreationScreenIsWellDisplayed() {
     val testName = "workoutCreationScreenIsWellDisplayed"
 
-    nodeControl("workoutTopBar", testName)
+    nodeControl("TopBar", testName)
     nodeControl("nameTextField", testName)
     nodeControl("descriptionTextField", testName)
     nodeControl("nextButton", testName)
