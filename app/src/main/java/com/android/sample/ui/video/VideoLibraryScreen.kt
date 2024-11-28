@@ -60,79 +60,13 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
           Column {
             // Blue gradient search bar
-            Surface(
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .padding(horizontal = 0.dp, vertical = 0.dp)
-                        .testTag("searchBarSurface"),
-                shadowElevation = 8.dp,
-                shape = RectangleShape) {
-                  Box(
-                      modifier =
-                          Modifier.fillMaxWidth()
-                              .background(
-                                  Brush.horizontalGradient(
-                                      colors =
-                                          listOf(
-                                              DarkBlue, // Start of gradient
-                                              Purple40 // End of gradient
-                                              )))
-                              .testTag("searchBarBox")
-                              .padding(horizontal = 16.dp, vertical = 8.dp)) {
-                        // Search bar row
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier =
-                                Modifier.testTag("searchBarRow")
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(24.dp))
-                                    .background(Color.Transparent)
-                                    .padding(horizontal = 12.dp, vertical = 4.dp)) {
-                              Icon(
-                                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                  contentDescription = "Back",
-                                  tint = Color.White,
-                                  modifier =
-                                      Modifier.testTag("backButton").size(24.dp).clickable {
-                                        navigationActions.goBack()
-                                      })
-
-                              Spacer(modifier = Modifier.width(8.dp))
-
-                              TextField(
-                                  value = searchQuery,
-                                  onValueChange = { searchQuery = it },
-                                  placeholder = { Text("Search", color = Color.White) },
-                                  colors =
-                                      TextFieldDefaults.colors(
-                                          focusedTextColor = Color.White,
-                                          unfocusedTextColor = Color.White,
-                                          focusedPlaceholderColor = Color.White,
-                                          unfocusedPlaceholderColor = Color.White,
-                                          focusedContainerColor = Color.Transparent,
-                                          unfocusedContainerColor = Color.Transparent,
-                                          cursorColor = Color.White),
-                                  modifier = Modifier.weight(1f).testTag("searchField"))
-
-                              Spacer(modifier = Modifier.width(8.dp))
-
-                              if (searchQuery.isNotEmpty()) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Clear",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(24.dp).clickable { searchQuery = "" })
-                              }
-
-                              Spacer(modifier = Modifier.width(8.dp))
-
-                              TagDropdown(
-                                  selectedTag = selectedTag,
-                                  onTagSelected = { selectedTag = it },
-                                  modifier = Modifier.testTag("tagDropdown"))
-                            }
-                      }
-                }
+              TopBar(
+                  searchQuery = searchQuery,
+                  onSearchQueryChange = { searchQuery = it },
+                  selectedTag = selectedTag,
+                  onTagSelected = { selectedTag = it },
+                  navigationActions = navigationActions
+              )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -318,3 +252,103 @@ fun tagColor(tag: String): Color {
     else -> LightGrey // Light gray for untagged (neutral, blends well)
   }
 }
+
+
+@Composable
+fun TopBar(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    selectedTag: String,
+    onTagSelected: (String) -> Unit,
+    navigationActions: NavigationActions
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 0.dp, vertical = 0.dp)
+            .testTag("searchBarSurface"),
+        shadowElevation = 8.dp,
+        shape = RectangleShape
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            DarkBlue, // Start of gradient
+                            Purple40 // End of gradient
+                        )
+                    )
+                )
+                .testTag("searchBarBox")
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            // Search bar row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .testTag("searchBarRow")
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(Color.Transparent)
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .testTag("backButton")
+                        .size(24.dp)
+                        .clickable {
+                            navigationActions.goBack()
+                        }
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                TextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChange,
+                    placeholder = { Text("Search", color = Color.White) },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedPlaceholderColor = Color.White,
+                        unfocusedPlaceholderColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        cursorColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("searchField")
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                if (searchQuery.isNotEmpty()) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Clear",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onSearchQueryChange("") }
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                TagDropdown(
+                    selectedTag = selectedTag,
+                    onTagSelected = onTagSelected,
+                    modifier = Modifier.testTag("tagDropdown")
+                )
+            }
+        }
+    }
+}
+
+
