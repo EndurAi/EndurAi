@@ -35,5 +35,36 @@ class PoseDetectionJoints {
         Triple(PoseLandmark.LEFT_HIP, PoseLandmark.LEFT_KNEE, PoseLandmark.LEFT_ANKLE)
     val RIGHT_HIP_KNEE_ANKLE =
         Triple(PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_KNEE, PoseLandmark.RIGHT_ANKLE)
+
+
+    /*
+LR Elbow - Shoulder - Oposite Shoulder
+*/
+    val LEFT_ELBOW_SHOULDER_OPPSHOULDER =
+      Triple(PoseLandmark.LEFT_ELBOW, PoseLandmark.LEFT_SHOULDER, PoseLandmark.RIGHT_SHOULDER)
+    val RIGHT_ELBOW_SHOULDER_OPPSHOULDER =
+      Triple(PoseLandmark.RIGHT_ELBOW, PoseLandmark.RIGHT_SHOULDER, PoseLandmark.LEFT_SHOULDER)
+
+
+    /*
+LR OppHip-Hip- Knee
+*/
+    val LEFT_OPPHIP_HIP_KNEE =
+      Triple(PoseLandmark.RIGHT_HIP, PoseLandmark.LEFT_HIP, PoseLandmark.LEFT_KNEE)
+    val RIGHT_OPPHIP_HIP_KNEE =
+      Triple(PoseLandmark.LEFT_HIP, PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_KNEE)
+
+
+
+
+
+
+
   }
+
+
+
+
+
+
 }

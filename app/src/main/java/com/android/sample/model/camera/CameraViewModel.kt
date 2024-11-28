@@ -19,9 +19,12 @@ import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.getCriterions
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.preambleCriterion
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
+import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksClosedCriterions
+import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
 import com.android.sample.model.workout.ExerciseType
+import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -180,18 +183,45 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                 if (poseLandmarks.value.size > windowSize) {
                   val lastLandMark = poseLandmarks.value.takeLast(windowSize)
                   val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
-/*
                   val assessedChair =
                       ExerciseFeedBack.assessLandMarks(meanedLandmark, ChairCriterions)
-                  Log.d("MLFEEDBACK_RESULTChair", "chair: $assessedChair ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "chair: $assessedChair ")
                   val assessedPlank =
                       ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
-                  Log.d("MLFEEDBACK_RESULTPlank", "Plank: $assessedPlank ")
-*/
+                  Log.d("MLFEEDBACK_RESULTExercise", "Plank: $assessedPlank ")
 
                   val assessedPushUpsDown =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCrierions)
-                  Log.d("MLFEEDBACK_RESULTPlank", "PushUpsDown: $assessedPushUpsDown ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsDown: $assessedPushUpsDown ")
+
+
+                  val assessedPushUpsUp =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsUpCrierions)
+                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsUp: $assessedPushUpsUp ")
+
+
+                  Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown")
+
+
+                  val assessedJumpingJackOpen =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksOpenCriterions)
+                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksOpen: $assessedJumpingJackOpen ")
+
+                  val assessedJumpingJackCLosed =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksClosedCriterions)
+                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksClosed: $assessedJumpingJackCLosed ")
+
+val jjstate = when {
+    assessedJumpingJackOpen && !assessedJumpingJackCLosed -> "open"
+    !assessedJumpingJackOpen && assessedJumpingJackCLosed -> "closed"
+    assessedJumpingJackOpen && assessedJumpingJackCLosed -> "both"
+    else -> "None"
+}
+                  Log.d("JumpingJacksState", jjstate)
+
+                  Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown")
+
+
 
 
 

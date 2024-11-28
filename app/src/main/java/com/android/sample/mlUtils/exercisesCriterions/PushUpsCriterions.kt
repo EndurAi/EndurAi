@@ -27,6 +27,7 @@ private val back_L =
     joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
     targetAngle = 180.0,
     delta = 15.0,
+    succesString= "BIen ouvert les bras GG "
     onSuccess = { Log.d("MLFeedback", "L back is good") },
     onFailure = { Log.d("MLFeedback", "L back pas cool") })
 
@@ -40,21 +41,39 @@ private val back_R =
 
 
 
-private val elbow_L =
+private val elbowCurved_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_WRIST_ELBOW_SHOULDER,
     targetAngle = 90.0,
-    delta = 15.0,
-    onSuccess = { Log.d("MLFeedback", "L elbow is good") },
-    onFailure = { Log.d("MLFeedback", "L elbow pas cool") })
+    delta = 20.0,
+    onSuccess = { Log.d("MLFeedback", "L elbow curved is good") },
+    onFailure = { Log.d("MLFeedback", "L elbow curved pas cool") })
 
-private val elbow_R =
+private val elbowCurved_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_WRIST_ELBOW_SHOULDER,
     targetAngle = 90.0,
-    delta = 15.0,
+    delta = 20.0,
     onSuccess = { Log.d("MLFeedback", "R elbow is good") },
     onFailure = { Log.d("MLFeedback", "R elbow pas cool") })
+
+
+private val elbowFlat_L =
+  AngleCriterion(
+    joints = PoseDetectionJoints.LEFT_WRIST_ELBOW_SHOULDER,
+    targetAngle = 170.0,
+    delta =20.0,
+    onSuccess = { Log.d("MLFeedback", "L elbow flat is good") },
+    onFailure = { Log.d("MLFeedback", "L elbow pas cool") })
+
+private val elbowFlat_R =
+  AngleCriterion(
+    joints = PoseDetectionJoints.RIGHT_WRIST_ELBOW_SHOULDER,
+    targetAngle = 170.0,
+    delta = 20.0,
+    onSuccess = { Log.d("MLFeedback", "R elbow flat is good") },
+    onFailure = { Log.d("MLFeedback", "R elbow flat pas cool") })
+
 
 
 
@@ -62,7 +81,16 @@ val PushUpsDownCrierions: ExerciseCriterion =
   ExerciseCriterion(
     angleCriterionSet =
     setOf(
-      elbow_L to elbow_R,
+      elbowCurved_L to elbowCurved_R,
+      legStraight_L to legStraight_R,
+      back_L to back_R))
+
+
+val PushUpsUpCrierions: ExerciseCriterion =
+  ExerciseCriterion(
+    angleCriterionSet =
+    setOf(
+      elbowFlat_L to elbowFlat_R,
       legStraight_L to legStraight_R,
       back_L to back_R))
 

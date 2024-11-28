@@ -40,8 +40,10 @@ class ExerciseFeedBack {
         val joints: Triple<Int, Int, Int>,
         val targetAngle: Double,
         val delta: Double,
+        val combination : Boolean = false,
         val onSuccess: () -> Unit,
-        val onFailure: () -> Unit
+        val onFailure: () -> Unit,
+      
     )
 
     data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>)
@@ -65,7 +67,18 @@ class ExerciseFeedBack {
                 angleEqualsTo(jointL, angleCriterionL.targetAngle, delta = angleCriterionL.delta)
             val resultR =
                 angleEqualsTo(jointR, angleCriterionR.targetAngle, delta = angleCriterionR.delta)
-            if (resultL) {
+
+            if (angleCriterionR.combination && angleCriterionL.combination){ //Both left and right part should be OK
+              if (resultR && resultL){
+                angleCriterionL.onSuccess()
+                angleCriterionL.onSuccess()
+              }
+              else{
+                angleCriterionL.onFailure()
+                angleCriterionR.onFailure()
+              }
+            }//If only one part is sufficient
+            else if (resultL) {
               angleCriterionL.onSuccess()
             } else if (resultR) {
               angleCriterionR.onSuccess()

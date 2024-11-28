@@ -23,7 +23,7 @@ class PoseDetectionAnalyser(private val onDetectedPoseUpdated: (List<PoseLandmar
     ImageAnalysis.Analyzer {
 
   companion object {
-    const val THROTTLE_TIMEOUT_MS = 33L
+    const val THROTTLE_TIMEOUT_MS = 15L
   }
 
   private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
