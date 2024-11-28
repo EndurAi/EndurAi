@@ -3,7 +3,6 @@ package com.android.sample.ui.video
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -61,27 +60,25 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
           Column {
             // Blue gradient search bar
-              TopBar(
-                  searchQuery = searchQuery,
-                  onSearchQueryChange = { searchQuery = it },
-                  selectedTag = selectedTag,
-                  onTagSelected = { selectedTag = it },
-                  navigationActions = navigationActions
-              )
+            TopBar(
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it },
+                selectedTag = selectedTag,
+                onTagSelected = { selectedTag = it },
+                navigationActions = navigationActions)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Filtered video list with fading effect
-              VideoList(
-                  videoList = videoList,
-                  searchQuery = searchQuery,
-                  selectedTag = selectedTag,
-                  videoViewModel = videoViewModel,
-                  navigationActions = navigationActions
-              )
+            VideoList(
+                videoList = videoList,
+                searchQuery = searchQuery,
+                selectedTag = selectedTag,
+                videoViewModel = videoViewModel,
+                navigationActions = navigationActions)
 
             // Fake bottom rectangle for bottom bar
-              Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
             Box(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Gray))
           }
         }
@@ -248,93 +245,79 @@ fun TopBar(
     onTagSelected: (String) -> Unit,
     navigationActions: NavigationActions
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 0.dp, vertical = 0.dp)
-            .testTag("searchBarSurface"),
-        shadowElevation = 8.dp,
-        shape = RectangleShape
-    ) {
+  Surface(
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(horizontal = 0.dp, vertical = 0.dp)
+              .testTag("searchBarSurface"),
+      shadowElevation = 8.dp,
+      shape = RectangleShape) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(
-                            DarkBlue, // Start of gradient
-                            Purple40 // End of gradient
-                        )
-                    )
-                )
-                .testTag("searchBarBox")
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            // Search bar row
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .testTag("searchBarRow")
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(Color.Transparent)
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .testTag("backButton")
-                        .size(24.dp)
-                        .clickable {
-                            navigationActions.goBack()
-                        }
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                TextField(
-                    value = searchQuery,
-                    onValueChange = onSearchQueryChange,
-                    placeholder = { Text("Search", color = Color.White) },
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedPlaceholderColor = Color.White,
-                        unfocusedPlaceholderColor = Color.White,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        cursorColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag("searchField")
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                if (searchQuery.isNotEmpty()) {
+            modifier =
+                Modifier.fillMaxWidth()
+                    .background(
+                        Brush.horizontalGradient(
+                            colors =
+                                listOf(
+                                    DarkBlue, // Start of gradient
+                                    Purple40 // End of gradient
+                                    )))
+                    .testTag("searchBarBox")
+                    .padding(horizontal = 16.dp, vertical = 8.dp)) {
+              // Search bar row
+              Row(
+                  verticalAlignment = Alignment.CenterVertically,
+                  modifier =
+                      Modifier.testTag("searchBarRow")
+                          .fillMaxWidth()
+                          .clip(RoundedCornerShape(24.dp))
+                          .background(Color.Transparent)
+                          .padding(horizontal = 12.dp, vertical = 4.dp)) {
                     Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Clear",
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
                         tint = Color.White,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable { onSearchQueryChange("") }
-                    )
-                }
+                        modifier =
+                            Modifier.testTag("backButton").size(24.dp).clickable {
+                              navigationActions.goBack()
+                            })
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                TagDropdown(
-                    selectedTag = selectedTag,
-                    onTagSelected = onTagSelected,
-                    modifier = Modifier.testTag("tagDropdown")
-                )
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = onSearchQueryChange,
+                        placeholder = { Text("Search", color = Color.White) },
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedPlaceholderColor = Color.White,
+                                unfocusedPlaceholderColor = Color.White,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                cursorColor = Color.White),
+                        modifier = Modifier.weight(1f).testTag("searchField"))
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    if (searchQuery.isNotEmpty()) {
+                      Icon(
+                          imageVector = Icons.Default.Close,
+                          contentDescription = "Clear",
+                          tint = Color.White,
+                          modifier = Modifier.size(24.dp).clickable { onSearchQueryChange("") })
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    TagDropdown(
+                        selectedTag = selectedTag,
+                        onTagSelected = onTagSelected,
+                        modifier = Modifier.testTag("tagDropdown"))
+                  }
             }
-        }
-    }
+      }
 }
 
 /** Composable function to display the list of videos. */
@@ -346,27 +329,26 @@ fun VideoList(
     videoViewModel: VideoViewModel,
     navigationActions: NavigationActions
 ) {
-    val listState = rememberLazyListState()
-    LazyColumn(
-        state = listState, modifier = Modifier.padding(horizontal = 16.dp)) {
-        items(
-            videoList.filter { video ->
-                video.title.contains(searchQuery, ignoreCase = true) &&
-                        (selectedTag == "All" || video.tag == selectedTag)
-            }) { video ->
-            val index = videoList.indexOf(video)
-            val alpha = calculateAlpha(index, listState)
-            VideoListItem(
-                video = video,
-                onClick = {
-                    videoViewModel.selectVideo(video)
-                    navigationActions.navigateTo(Screen.VIDEO)
-                },
-                modifier =
-                Modifier.padding(vertical = 4.dp)
-                    .fillMaxWidth()
-                    .graphicsLayer(alpha = alpha)
-                    .testTag("videoItem_${video.title}"))
+  val listState = rememberLazyListState()
+  LazyColumn(state = listState, modifier = Modifier.padding(horizontal = 16.dp)) {
+    items(
+        videoList.filter { video ->
+          video.title.contains(searchQuery, ignoreCase = true) &&
+              (selectedTag == "All" || video.tag == selectedTag)
+        }) { video ->
+          val index = videoList.indexOf(video)
+          val alpha = calculateAlpha(index, listState)
+          VideoListItem(
+              video = video,
+              onClick = {
+                videoViewModel.selectVideo(video)
+                navigationActions.navigateTo(Screen.VIDEO)
+              },
+              modifier =
+                  Modifier.padding(vertical = 4.dp)
+                      .fillMaxWidth()
+                      .graphicsLayer(alpha = alpha)
+                      .testTag("videoItem_${video.title}"))
         }
-    }
+  }
 }
