@@ -1,6 +1,5 @@
 package com.android.sample.ui.workout
 
-import android.provider.CalendarContract.Colors
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background

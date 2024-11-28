@@ -16,9 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.TitleBlue
 import com.android.sample.ui.theme.TopBarBlue
@@ -33,10 +31,7 @@ import com.android.sample.ui.theme.TopBarBlue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navigationActions: NavigationActions, @StringRes title: Int) {
-  val gradientBrush =
-      Brush.horizontalGradient(
-          colors = listOf(TitleBlue, TopBarBlue)
-          )
+  val gradientBrush = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
 
   androidx.compose.foundation.layout.Box(
       modifier = Modifier.fillMaxWidth().wrapContentHeight().background(brush = gradientBrush)) {

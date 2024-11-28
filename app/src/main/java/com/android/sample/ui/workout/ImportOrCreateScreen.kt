@@ -16,7 +16,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.composables.TopBar
@@ -48,7 +47,8 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
               Text(
                   text =
                       "Do you want to create a new program from scratch or from an existing one?",
-                  style = TextStyle(fontSize = FontSizes.TitleFontSize, fontWeight = FontWeight.Bold),
+                  style =
+                      TextStyle(fontSize = FontSizes.TitleFontSize, fontWeight = FontWeight.Bold),
                   modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally),
                   textAlign = TextAlign.Center)
 

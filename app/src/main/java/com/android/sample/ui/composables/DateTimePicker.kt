@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
@@ -78,13 +77,18 @@ fun DateTimePicker(
         text = title,
         style =
             MaterialTheme.typography.bodySmall.copy(
-                color = TitleBlue, fontWeight = FontWeight.Bold, fontSize = FontSizes.SubtitleFontSize),
+                color = TitleBlue,
+                fontWeight = FontWeight.Bold,
+                fontSize = FontSizes.SubtitleFontSize),
         modifier = Modifier.padding(bottom = 4.dp))
 
     Card(
         shape = LeafShape,
         colors = CardDefaults.cardColors(containerColor = LightBackground),
-        modifier = Modifier.fillMaxWidth().height(Dimensions.ButtonHeight).clickable { showDateTimePickers() },
+        modifier =
+            Modifier.fillMaxWidth().height(Dimensions.ButtonHeight).clickable {
+              showDateTimePickers()
+            },
         elevation = CardDefaults.cardElevation(4.dp)) {
           Row(
               verticalAlignment = Alignment.CenterVertically,

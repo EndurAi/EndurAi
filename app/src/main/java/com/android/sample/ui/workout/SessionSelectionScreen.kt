@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
@@ -80,12 +79,7 @@ fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
               MaterialTheme.typography.bodyLarge.copy(
                   fontSize = FontSizes.SubtitleFontSize,
                   fontWeight = FontWeight.ExtraBold,
-                  shadow =
-                      Shadow(
-                          color = Color.Black,
-                          offset = Offset(4f, 4f),
-                          blurRadius = 6f
-                          )),
+                  shadow = Shadow(color = Color.Black, offset = Offset(4f, 4f), blurRadius = 6f)),
           color = Color.White,
           modifier = Modifier.align(Alignment.BottomStart).padding(Dimensions.SmallPadding))
     }
