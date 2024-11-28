@@ -15,9 +15,13 @@ import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.android.sample.mlUtils.ExerciseFeedBack
+import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
+import com.android.sample.mlUtils.ExerciseFeedBack.Companion.getCriterions
+import com.android.sample.mlUtils.ExerciseFeedBack.Companion.preambleCriterion
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
+import com.android.sample.model.workout.ExerciseType
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -89,6 +93,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     get() = _poseLandMarks_means.asStateFlow()
 
   val meanWindow = 10
+  private val inFrameLikelihoodThreshold = 0.8f
 
   /** Switches between the front and back cameras. */
   fun switchCamera() {
@@ -164,7 +169,6 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   /** Enables pose recognition by setting up the image analysis analyzer. */
   fun enablePoseRecognition() {
     val windowSize = 10 // Window Size used to compute the mean
-    val inFrameLikelihoodThreshold = 0.8f
 
     if (_bodyRecognitionIsEnabled.value.not()) {
       _cameraController.value.imageAnalysisTargetSize =
@@ -199,6 +203,46 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
               }))
       _bodyRecognitionIsEnabled.value = true
     }
+  }
+
+  fun enablePoseRecognition(exerciseType : ExerciseType): String {
+    var exerciseWasDetected = false
+    val criterions = getCriterions(exerciseType)
+    val preamble = preambleCriterion(criterions, onSuccess =  {
+      exerciseWasDetected = true //When the preamble criterions succeed, then we start assessing the exercise
+    },
+      onFailure = {
+        exerciseWasDetected = false
+      })
+    _bodyRecognitionIsEnabled.value = true
+    _cameraController.value.imageAnalysisTargetSize =
+        CameraController.OutputSize(AspectRatio.RATIO_16_9)
+    _cameraController.value.setImageAnalysisAnalyzer(
+      ContextCompat.getMainExecutor(context),
+      PoseDetectionAnalyser(
+        onDetectedPoseUpdated = {
+          // If the new pose is detected, we add it to the list of poses
+          if (it.all { poseLandmark ->
+            poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
+          }) {
+            _poseLandMarks.value.add(it)
+          }
+          if (poseLandmarks.value.size > meanWindow) {
+            val lastLandMark = poseLandmarks.value.takeLast(meanWindow)
+            val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
+
+            //Check if the user is trying to do the exercise, this can switch exerciseWasDetected to true or false
+            assessLandMarks(meanedLandmark, preamble)
+
+            if (exerciseWasDetected) {
+              assessLandMarks(meanedLandmark, criterions)
+            }
+
+          }
+
+        }
+      )
+    )
   }
 
   /**

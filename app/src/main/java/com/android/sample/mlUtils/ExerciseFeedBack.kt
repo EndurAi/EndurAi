@@ -2,6 +2,9 @@ package com.android.sample.mlUtils
 
 import MathsPoseDetection
 import android.util.Log
+import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
+import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
+import com.android.sample.model.workout.ExerciseType
 import kotlin.math.abs
 
 class ExerciseFeedBack {
@@ -113,12 +116,41 @@ class ExerciseFeedBack {
         }
     */
 
-    fun preambleCriterion(criterionSet: Set<AngleCriterion>): Set<AngleCriterion> {
+    fun preambleCriterion(exerciseCriterion: ExerciseCriterion,onSuccess: () -> Unit,onFailure: () -> Unit): ExerciseCriterion {
       val preambleCriterion =
-          criterionSet.map { (joints, targetAngle, delta, onSuccess, onFailure) ->
-            AngleCriterion(joints, targetAngle, 1.5 * delta, onSuccess, onFailure)
+          exerciseCriterion.angleCriterionSet.map { (angleCriterionL, angleCriterionR) ->
+           AngleCriterion(
+               joints = angleCriterionL.joints,
+                targetAngle = angleCriterionL.targetAngle,
+                delta = angleCriterionL.delta*1.5,
+                onSuccess = onSuccess,
+                onFailure = onFailure
+           ) to AngleCriterion(
+               joints = angleCriterionR.joints,
+               targetAngle = angleCriterionR.targetAngle,
+               delta = angleCriterionR.delta*1.5,
+               onSuccess = onSuccess,
+               onFailure = onFailure
+           )
           }
-      return preambleCriterion.toSet()
+      return ExerciseCriterion(preambleCriterion.toSet())
     }
+      fun getCriterions(exerciseType: ExerciseType): ExerciseCriterion {
+          val ret = when (exerciseType) {
+              ExerciseType.DOWNWARD_DOG -> TODO()
+              ExerciseType.TREE_POSE -> TODO()
+              ExerciseType.SUN_SALUTATION -> TODO()
+              ExerciseType.WARRIOR_II -> TODO()
+              ExerciseType.PUSH_UPS -> TODO()
+              ExerciseType.SQUATS -> TODO()
+              ExerciseType.PLANK -> PlankExerciseCriterions
+              ExerciseType.CHAIR -> ChairCriterions
+              ExerciseType.JUMPING_JACKS -> TODO()
+              ExerciseType.LEG_SWINGS -> TODO()
+              ExerciseType.ARM_CIRCLES -> TODO()
+              ExerciseType.ARM_WRIST_CIRCLES -> TODO()
+          }
+            return ret
+      }
   }
 }
