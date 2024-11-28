@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.rule.GrantPermissionRule
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutRepository
@@ -68,7 +69,7 @@ class RunningScreenTest {
   }
 
   @Test
-  fun pauseButton_clickPausesRunning() {
+  fun pauseButton_clickPausesRunning() { // not good
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -77,11 +78,11 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("ResumeButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ResumeButton").performScrollTo().assertIsDisplayed()
   }
 
   @Test
-  fun resumeButton_clickResumesRunning() {
+  fun resumeButton_clickResumesRunning() { // not good
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -90,7 +91,7 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("ResumeButton").performClick()
+    composeTestRule.onNodeWithTag("ResumeButton").performScrollTo().performClick()
     composeTestRule.onNodeWithTag("PauseButton").assertExists()
   }
 
@@ -104,12 +105,12 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").assertHasClickAction()
+    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().assertHasClickAction()
   }
 
   @Test
-  fun saveToggleButton_isDisplayedWhenSaving() {
+  fun saveToggleButton_isDisplayedWhenSaving() { // not good
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -118,13 +119,13 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag("Save Running switchToggle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Save Running switchToggle").performScrollTo().assertIsDisplayed()
   }
 
   @Test
-  fun saveButton_isDisplayedWhenToggleClicked() {
+  fun saveButton_isDisplayedWhenToggleClicked() { // not good
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -133,14 +134,14 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performClick()
-    composeTestRule.onNodeWithTag("Save Running switchToggle").performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("Save Running switchToggle").performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag("SaveButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SaveButton").performScrollTo().assertIsDisplayed()
   }
 
   @Test
-  fun descriptionTextFieldAndNameTextField_isDisplayedWhenSaving() {
+  fun descriptionTextFieldAndNameTextField_isDisplayedWhenSaving() { // not good
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
@@ -149,9 +150,9 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performClick()
-    composeTestRule.onNodeWithTag("Save Running switchToggle").performClick()
-    composeTestRule.onNodeWithTag("nameTextField").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("descriptionTextField").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("Save Running switchToggle").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("nameTextField").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("descriptionTextField").performScrollTo().assertIsDisplayed()
   }
 }
