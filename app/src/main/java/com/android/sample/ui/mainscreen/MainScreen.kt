@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +48,7 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.AchievementButton
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.BlueWorkoutCard
 import com.android.sample.ui.theme.ContrailOne
@@ -78,8 +81,8 @@ fun MainScreen(
 
   val workoutDisplayed =
       when {
-        bodyWeightWorkouts.value.isNotEmpty() -> bodyWeightWorkouts.value[0]
-        yogaWorkouts.value.isNotEmpty() -> yogaWorkouts.value[0]
+        bodyWeightWorkouts.value.isNotEmpty() -> bodyWeightWorkouts.value.take(2)
+        yogaWorkouts.value.isNotEmpty() -> yogaWorkouts.value.take(2)
         else -> null
       }
 
@@ -98,7 +101,7 @@ fun MainScreen(
             Divider(
                 color = Line,
                 thickness = 0.5.dp,
-                modifier = Modifier.padding(horizontal = 25.dp, vertical = 3.dp).shadow(1.dp)
+                modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).shadow(1.dp)
             )
               QuickWorkoutSection(
                   navigationActions = navigationActions,
@@ -107,7 +110,7 @@ fun MainScreen(
             Divider(
                 color = Line,
                 thickness = 0.5.dp,
-                modifier = Modifier.padding(horizontal = 25.dp, vertical = 3.dp).shadow(1.dp)
+                modifier = Modifier.padding(horizontal = 25.dp, vertical = 10.dp).shadow(1.dp)
             )
               AchievementsSection(navigationActions = navigationActions)
             }
@@ -136,7 +139,6 @@ fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) 
             )
             .padding(vertical = 25.dp)
     ) {
-        // Contenu de la Row (Image et Texte)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
@@ -175,17 +177,17 @@ fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) 
 /**
  * Composable function that displays a section with workout sessions.
  *
- * @param workouts A list of workouts to display.
+ * @param workout A list of workouts to display.
  * @param profile The resource ID for the profile picture.
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
 fun WorkoutSessionsSection(
-    workout: Workout?,
+    workout: List<Workout>?,
     profile: String,
     navigationActions: NavigationActions
 ) {
-  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp).testTag("WorkoutSection")) {
+  Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).testTag("WorkoutSection")) {
     Text(
         text = stringResource(id = R.string.WorkoutsTitle),
         style = MaterialTheme.typography.titleSmall.copy(
@@ -195,15 +197,20 @@ fun WorkoutSessionsSection(
     Column(
         modifier =
             Modifier.fillMaxWidth()
-                .height(300.dp)
+                .height(250.dp)
                 .padding(8.dp)) {
           if (workout != null) {
-            Box(modifier = Modifier.padding(vertical = 4.dp)) {
-              WorkoutCard(workout, profile, navigationActions)
-            }
+              LazyColumn(
+                  modifier = Modifier.padding(vertical = 4.dp)
+              ) {
+                  items(workout) { workoutItem ->
+                      WorkoutCard(workoutItem, profile, navigationActions)
+                      Spacer(modifier = Modifier.height(15.dp))
+                  }
+              }
           } else {
             Text(
-                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                modifier = Modifier.fillMaxWidth().padding(12.dp),
                 textAlign = TextAlign.Center,
                 text = "No workouts yet",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
@@ -244,7 +251,7 @@ fun QuickWorkoutSection(
                 fontSize = 24.sp,
                 fontFamily = OpenSans
             ),
-            modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp)
+            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
         )
 
         Row(
@@ -304,51 +311,6 @@ fun QuickWorkoutButton(
 }
 
 /**
- * Composable function that displays a button for a quick workout session.
- *
- * @param iconId The resource ID for the quick workout icon.
- * @param navigationActions Actions for navigating between screens.
- */
-@Composable
-fun WorkoutButton(
-    iconId: Int,
-    navigationActions: NavigationActions,
-    bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
-    yogaViewModel: WorkoutViewModel<YogaWorkout>,
-    buttonSize: Int
-) {
-  Box(
-      modifier =
-          Modifier.size(buttonSize.dp)
-              .aspectRatio(1f)
-              .background(Blue)
-              .clickable {
-                when (iconId) {
-                  R.drawable.running_man -> {
-
-                  }
-                  R.drawable.pushups -> {
-                    bodyWeightViewModel.selectWorkout(
-                        bodyWeightViewModel.copyOf(BodyWeightWorkout.WORKOUT_PUSH_UPS))
-                    navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
-                  }
-                  R.drawable.yoga -> {
-
-                  }
-                  R.drawable.dumbbell -> {
-
-                  }
-                }
-              }
-              .testTag("QuickWorkoutButton"),
-      contentAlignment = Alignment.Center) {
-        Image(
-            painter = painterResource(id = iconId),
-            contentDescription = "Quick Workout Icon",
-            modifier = Modifier.fillMaxSize(0.5f))
-      }
-}
-/**
  * Composable function that displays a workout card with its details.
  *
  * @param workout The workout data to display.
@@ -362,7 +324,7 @@ fun WorkoutCard(workout: Workout, profile: String, navigationActions: Navigation
     Card(
         shape = shape,
         modifier = Modifier
-            .padding(horizontal = 30.dp)
+            .padding(horizontal = 30.dp, vertical = 3.dp)
             .shadow(
                 elevation = 8.dp, shape = shape
             )
@@ -411,30 +373,39 @@ fun WorkoutCard(workout: Workout, profile: String, navigationActions: Navigation
  */
 @Composable
 fun AchievementsSection(navigationActions: NavigationActions) {
+    val shape = RoundedCornerShape(topStart = 25.dp, topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 25.dp)
   Column(modifier = Modifier.fillMaxWidth()) {
     Text(
         stringResource(id = R.string.AchievementsTitle),
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
         style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans))
-    Box(
-        modifier =
-            Modifier.fillMaxWidth()
-                .clickable { navigationActions.navigateTo(Screen.ACHIEVEMENTS) }
-                .padding(vertical = 16.dp, horizontal = 12.dp)
-                .height(80.dp)
-                .background(LightGrey, RoundedCornerShape(20.dp))
-                .testTag("AchievementButton"),
-        contentAlignment = Alignment.Center) {
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.trophy),
-                contentDescription = "Trophy",
-                modifier = Modifier.size(40.dp))
-            Text(
-                stringResource(id = R.string.View),
-                modifier = Modifier.padding(horizontal = 12.dp),
-                style = MaterialTheme.typography.titleSmall.copy(fontSize = 23.sp))
+
+      Row(){
+          Text(
+              stringResource(id = R.string.TotalTrainings, 10), // Hardcoded value until the achievements epic is implemented
+              modifier = Modifier.padding(horizontal = 12.dp).align(Alignment.CenterVertically),
+              style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp), fontFamily = ContrailOne)
+          Box(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .clickable { navigationActions.navigateTo(Screen.ACHIEVEMENTS) }
+                      .padding(vertical = 16.dp, horizontal = 20.dp)
+                      .shadow(4.dp, shape = shape)
+                      .height(60.dp)
+                      .background(AchievementButton, shape = shape)
+                      .testTag("AchievementButton"),
+              contentAlignment = Alignment.Center) {
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                  Text(
+                      stringResource(id = R.string.ViewAllTitle),
+                      modifier = Modifier.padding(horizontal = 12.dp),
+                      style = MaterialTheme.typography.titleSmall.copy(fontSize = 23.sp, fontFamily = OpenSans, fontWeight = FontWeight.Bold))
+                  Image(
+                      painter = painterResource(id = R.drawable.trophy),
+                      contentDescription = "Trophy",
+                      modifier = Modifier.size(40.dp))
+              }
           }
-        }
+      }
   }
 }
