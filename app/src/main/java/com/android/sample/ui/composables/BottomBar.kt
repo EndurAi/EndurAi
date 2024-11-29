@@ -36,7 +36,6 @@ fun BottomBar(
     navigationActions: NavigationActions,
 ) {
 
-  navigationActions.currentRoute()
   Box(
       modifier =
           Modifier.fillMaxWidth()
