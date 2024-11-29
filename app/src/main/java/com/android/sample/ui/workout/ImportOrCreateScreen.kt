@@ -19,10 +19,10 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
-import com.android.sample.ui.theme.TopBarGradient
 import com.android.sample.ui.theme.Transparent
 import com.android.sample.ui.theme.White
 
@@ -71,12 +71,12 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                       Modifier.width(Dimensions.ButtonWidth)
                           .padding(vertical = Dimensions.SmallPadding)
                           .height(Dimensions.ButtonHeight)
-                          .background(brush = TopBarGradient, shape = LeafShape)) {
+                          .background(brush = BlueGradient, shape = LeafShape)) {
                     Box(
                         modifier =
                             Modifier.fillMaxSize()
                                 .background(
-                                    brush = TopBarGradient, shape = RoundedCornerShape(12.dp)),
+                                    brush = BlueGradient, shape = RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center) {
                           Text(
                               text = "Import",
@@ -104,12 +104,12 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                       Modifier.width(Dimensions.ButtonWidth)
                           .padding(vertical = Dimensions.SmallPadding)
                           .height(Dimensions.ButtonHeight)
-                          .background(brush = TopBarGradient, shape = LeafShape)) {
+                          .background(brush = BlueGradient, shape = LeafShape)) {
                     Box(
                         modifier =
                             Modifier.fillMaxSize()
                                 .background(
-                                    brush = TopBarGradient, shape = RoundedCornerShape(12.dp)),
+                                    brush = BlueGradient, shape = RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center) {
                           Text(
                               text = "Create from scratch",

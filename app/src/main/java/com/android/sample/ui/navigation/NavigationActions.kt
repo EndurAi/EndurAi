@@ -2,15 +2,17 @@ package com.android.sample.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 
 object Route {
   const val MAIN = "Main"
   const val AUTH = "Auth"
-  const val VIDEO_LIBRARY = "VideoLibrary"
+  const val VIDEO_LIBRARY = "Video Library"
   const val VIDEO = "Video"
   const val ACHIEVEMENTS = "Achievements"
   const val PREFERENCES = "Preferences"
@@ -83,11 +85,18 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 object TopLevelDestinations {
   val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
   val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
+  val ADD = TopLevelDestination(Route.SESSIONSELECTION, Icons.Outlined.Add, textId = "Add")
   val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
+  val PROFILE = TopLevelDestination(Route.SETTINGS, Icons.Outlined.Person, textId = "profile")
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
-    listOf(TopLevelDestinations.MAIN, TopLevelDestinations.VIDEO, TopLevelDestinations.CALENDAR)
+    listOf(
+        TopLevelDestinations.MAIN,
+        TopLevelDestinations.VIDEO,
+        TopLevelDestinations.ADD,
+        TopLevelDestinations.CALENDAR,
+        TopLevelDestinations.PROFILE)
 
 open class NavigationActions(private val navController: NavHostController) {
   /**

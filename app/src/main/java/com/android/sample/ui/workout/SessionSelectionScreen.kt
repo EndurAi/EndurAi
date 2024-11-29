@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -35,6 +36,7 @@ import com.android.sample.ui.theme.White
 fun SessionSelectionScreen(navigationActions: NavigationActions) {
   Scaffold(
       topBar = { TopBar(navigationActions, R.string.NewWorkout) },
+      bottomBar = { BottomBar(navigationActions = navigationActions) },
       content = { padding ->
         LazyColumn(
             contentPadding = padding,

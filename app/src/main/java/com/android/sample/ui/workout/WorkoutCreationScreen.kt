@@ -74,6 +74,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
@@ -81,7 +82,6 @@ import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.Purple60
 import com.android.sample.ui.theme.TitleBlue
-import com.android.sample.ui.theme.TopBarGradient
 import com.android.sample.ui.theme.Transparent
 import com.android.sample.ui.theme.White
 import java.time.LocalDateTime
@@ -171,13 +171,13 @@ fun WorkoutCreationScreen(
                         modifier =
                             Modifier.width(Dimensions.ButtonWidth)
                                 .height(Dimensions.ButtonHeight)
-                                .background(brush = TopBarGradient, shape = LeafShape)
+                                .background(brush = BlueGradient, shape = LeafShape)
                                 .align(Alignment.CenterHorizontally)
                                 .testTag("nextButton")) {
                           Box(
                               modifier =
                                   Modifier.fillMaxSize()
-                                      .background(brush = TopBarGradient, shape = LeafShape),
+                                      .background(brush = BlueGradient, shape = LeafShape),
                               contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                   Text(

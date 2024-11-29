@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -16,8 +15,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.FontSizes
-import com.android.sample.ui.theme.TopBarGradient
 import com.android.sample.ui.theme.White
 
 /**
@@ -32,7 +31,7 @@ import com.android.sample.ui.theme.White
 fun TopBar(navigationActions: NavigationActions, @StringRes title: Int) {
 
   androidx.compose.foundation.layout.Box(
-      modifier = Modifier.fillMaxWidth().wrapContentHeight().background(brush = TopBarGradient)) {
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().background(brush = BlueGradient)) {
         TopAppBar(
             title = {
               Text(

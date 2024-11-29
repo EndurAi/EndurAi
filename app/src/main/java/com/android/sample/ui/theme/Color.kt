@@ -40,4 +40,4 @@ val White = Color(0xFFFFFFFF)
 val Transparent = Color(0x00000000)
 
 // Gradients
-val TopBarGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
+val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
