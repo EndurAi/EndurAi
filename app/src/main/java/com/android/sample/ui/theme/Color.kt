@@ -15,10 +15,13 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 val SoftGrey = Color(0xFFEAE8E8)
 val LightGrey = Color(0xFFD9D9D9)
+val LightBackground = Color(0xFFF0F4F4)
 val MediumGrey = Color(0xFFCCCCCC)
 val NeutralGrey = Color(0xFF888888)
 val DarkGrey = Color(0xFF444444)
 val Blue = Color(0xFFABC2FD)
+val TitleBlue = Color(0xFF1E3C72)
+val TopBarBlue = Color(0xFF2A5298)
 val LightBlue = Color(0xFFEAF0FF)
 val DarkBlue = Color(0xFF525A91)
 val DarkBlue2 = Color(0xB5525A91)
@@ -34,9 +37,11 @@ val WarmUpTag = Color(0xFF81D4FA)
 val RunningTag = Color(0xFF81FFA9)
 val CalendarBackground = Color(0xFFE4E4E4)
 val Green = Color(0xFF00FF00)
-val Transparent = Color(0x00000000)
 val White = Color(0xFFFFFFFF)
+val Transparent = Color(0x00000000)
 
+// Gradients
+val TopBarGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
 val BlueGradient =
     Brush.linearGradient(
         colors = listOf(Color(0xFF1E3C72), Color(0xFF2A5298)),

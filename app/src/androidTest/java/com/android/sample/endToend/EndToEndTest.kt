@@ -193,7 +193,7 @@ class EndToEndTest {
   private fun workoutCreationScreenIsWellDisplayed() {
     val testName = "workoutCreationScreenIsWellDisplayed"
 
-    nodeControl("workoutTopBar", testName)
+    nodeControl("TopBar", testName)
     nodeControl("nameTextField", testName)
     nodeControl("descriptionTextField", testName)
     nodeControl("nextButton", testName)
@@ -233,7 +233,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    // composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
   }
 
   private fun importOrCreateScreenIsWellDisplayed() {
