@@ -35,9 +35,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoViewModel
+import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.BodyWeightTag
 import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.LightGrey
@@ -56,6 +58,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
   var selectedTag by remember { mutableStateOf("All") }
 
   Scaffold(
+      bottomBar = {BottomBar(navigationActions = navigationActions)},
       content = { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
           Column {
@@ -255,13 +258,7 @@ fun TopBar(
         Box(
             modifier =
                 Modifier.fillMaxWidth()
-                    .background(
-                        Brush.horizontalGradient(
-                            colors =
-                                listOf(
-                                    DarkBlue, // Start of gradient
-                                    Purple40 // End of gradient
-                                    )))
+                    .background(BlueGradient)
                     .testTag("searchBarBox")
                     .padding(horizontal = 16.dp, vertical = 8.dp)) {
               // Search bar row
