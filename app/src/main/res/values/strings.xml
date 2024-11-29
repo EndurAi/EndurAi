@@ -12,6 +12,7 @@
     <string name="setting_title">Settings</string>
     <string name="calendar_title">Calendar</string>
     <string name="addButton">+</string>
+    <string name="runningTitle">Running</string>
     <string name="friends_title">Friends</string>
     <string name="add_friends_title">Add a new Friend</string>
     <string name="welcome_message_invitations">Hey %1$s, someone sent you a friend request!</string >
@@ -40,4 +41,5 @@
     <string name="Cancel">Cancel</string>
     <string name="EditAccount">Edit Account</string>
     <string name="RunningWorkoutTitle">Running</string>
+    <string name="RunningScreenTopBar">Running</string>
 </resources>
