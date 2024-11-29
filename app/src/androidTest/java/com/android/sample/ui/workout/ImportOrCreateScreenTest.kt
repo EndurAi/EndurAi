@@ -40,7 +40,7 @@ class ImportOrCreateScreenTest {
           navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
     // Check that the title is displayed correctly
-    composeTestRule.onNodeWithText("New Session").assertExists()
+    composeTestRule.onNodeWithText("New Workout").assertExists()
   }
 
   @Test
