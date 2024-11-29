@@ -15,8 +15,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.BlueGradient
+import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.White
 
 /**

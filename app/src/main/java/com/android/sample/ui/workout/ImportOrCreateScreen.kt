@@ -19,10 +19,10 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
-import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Transparent
 import com.android.sample.ui.theme.White
 
