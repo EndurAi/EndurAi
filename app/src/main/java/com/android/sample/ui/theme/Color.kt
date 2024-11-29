@@ -1,6 +1,5 @@
 package com.android.sample.ui.theme
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
@@ -41,9 +40,4 @@ val White = Color(0xFFFFFFFF)
 val Transparent = Color(0x00000000)
 
 // Gradients
-val TopBarGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
-val BlueGradient =
-    Brush.linearGradient(
-        colors = listOf(Color(0xFF1E3C72), Color(0xFF2A5298)),
-        start = Offset(0f, 0f),
-        end = Offset(Float.POSITIVE_INFINITY, 0f))
+val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
