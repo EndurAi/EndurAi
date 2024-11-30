@@ -1,7 +1,9 @@
 package com.android.sample.ui.mainscreen
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +16,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -46,6 +52,7 @@ import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.BottomBar
+import com.android.sample.ui.composables.ImageComposable
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.AchievementButton
@@ -60,7 +67,9 @@ import com.android.sample.ui.theme.DoubleArrow
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Line
 import com.android.sample.ui.theme.OpenSans
+import com.android.sample.ui.theme.ShadowColor
 import com.android.sample.ui.theme.SoftGrey
+import kotlin.math.exp
 
 /**
  * Main composable function that sets up the main screen layout.
@@ -74,46 +83,48 @@ fun MainScreen(
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
     userAccountViewModel: UserAccountViewModel
 ) {
-  // Configuration temporaire pour tester
+
   val account = userAccountViewModel.userAccount.collectAsState().value
   val bodyWeightWorkouts = bodyWeightViewModel.workouts.collectAsState()
   val yogaWorkouts = yogaViewModel.workouts.collectAsState()
 
-  val workoutDisplayed =
-      when {
-        bodyWeightWorkouts.value.isNotEmpty() -> bodyWeightWorkouts.value.take(2)
-        yogaWorkouts.value.isNotEmpty() -> yogaWorkouts.value.take(2)
-        else -> null
-      }
+    val expanded = remember { mutableStateOf(false) }
 
   Scaffold(
       modifier = Modifier.testTag("mainScreen"),
-      topBar = { ProfileSection(account = account, navigationActions = navigationActions) },
+      topBar = { ProfileSection(account = account, navigationActions = navigationActions, expanded = expanded) },
       content = { padding ->
         Column(
             modifier =
                 Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween) {
-              WorkoutSessionsSection(
-                  workout = workoutDisplayed,
-                  profile = account?.profileImageUrl ?: "",
-                  navigationActions = navigationActions)
-            Divider(
-                color = Line,
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).shadow(1.dp)
+            WorkoutSessionsSection(
+                bodyWeightViewModel = bodyWeightViewModel,
+                yogaViewModel = yogaViewModel,
+                profile = account?.profileImageUrl ?: "",
+                navigationActions = navigationActions,
+                expanded = expanded
             )
-              QuickWorkoutSection(
-                  navigationActions = navigationActions,
-                  bodyWeightViewModel = bodyWeightViewModel,
-                  yogaViewModel = yogaViewModel)
-            Divider(
-                color = Line,
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(horizontal = 25.dp, vertical = 10.dp).shadow(1.dp)
-            )
-              AchievementsSection(navigationActions = navigationActions)
+
+            if (!expanded.value) {
+                Divider(
+                    color = Line,
+                    thickness = 0.5.dp,
+                    modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).shadow(1.dp)
+                )
+                QuickWorkoutSection(
+                    navigationActions = navigationActions,
+                    bodyWeightViewModel = bodyWeightViewModel,
+                    yogaViewModel = yogaViewModel
+                )
+                Divider(
+                    color = Line,
+                    thickness = 0.5.dp,
+                    modifier = Modifier.padding(horizontal = 25.dp, vertical = 10.dp).shadow(1.dp)
+                )
+                AchievementsSection(navigationActions = navigationActions)
             }
+        }
       },
       bottomBar = { BottomBar(navigationActions = navigationActions) })
 }
@@ -126,7 +137,7 @@ fun MainScreen(
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) {
+fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions, expanded: MutableState<Boolean>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -151,12 +162,17 @@ fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) 
                     .size(54.dp)
                     .clip(CircleShape)
                     .testTag("ProfilePicture")
-                    .clickable { navigationActions.navigateTo(Screen.SETTINGS) } // temporary until the bottom bar implemented
+                    .clickable { navigationActions.navigateTo(Screen.SESSIONSELECTION) } // temporary until the bottom bar implemented
                     .shadow(4.dp)
             )
             Spacer(modifier = Modifier.width(20.dp))
             Text(
-                text = stringResource(id = R.string.welcome_message, account?.firstName ?: ""),
+                text = if(expanded.value){
+                    stringResource(id = R.string.WorkoutsTitle, account?.firstName ?: "")
+                }
+                else {
+                    stringResource(id = R.string.welcome_message, account?.firstName ?: "")
+                     },
                 style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans,  fontWeight = FontWeight.Bold),
                 color = Color.White,
                 modifier = Modifier.testTag("WelcomeText")
@@ -174,6 +190,12 @@ fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) 
     }
 }
 
+enum class WorkoutTab {
+    Bodyweight,
+    Yoga,
+    Running
+}
+
 /**
  * Composable function that displays a section with workout sessions.
  *
@@ -183,28 +205,64 @@ fun ProfileSection(account: UserAccount?, navigationActions: NavigationActions) 
  */
 @Composable
 fun WorkoutSessionsSection(
-    workout: List<Workout>?,
+    bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>,
+    yogaViewModel: WorkoutViewModel<YogaWorkout>,
     profile: String,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    expanded : MutableState<Boolean>
 ) {
+    val selectedTab = remember { mutableStateOf(WorkoutTab.Bodyweight) }
+
+    val bodyweightWorkouts = bodyWeightViewModel.workouts.collectAsState()
+    val yogaWorkouts =   yogaViewModel.workouts.collectAsState()
+    val workout: List<Workout> =
+        if(expanded.value){
+            when (selectedTab.value) {
+                WorkoutTab.Bodyweight -> {
+                    bodyweightWorkouts.value
+                }
+
+                WorkoutTab.Yoga -> {
+                    yogaWorkouts.value
+                }
+
+                WorkoutTab.Running -> {
+                    emptyList()
+                }
+            }
+        } else {
+            bodyweightWorkouts.value.take(2) + yogaWorkouts.value.take(2 - bodyweightWorkouts.value.size)
+        }
+
   Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).testTag("WorkoutSection")) {
-    Text(
-        text = stringResource(id = R.string.WorkoutsTitle),
-        style = MaterialTheme.typography.titleSmall.copy(
-            fontSize = 24.sp,
-            fontFamily = OpenSans),
-        modifier = Modifier.padding(vertical = 8.dp))
+      if(expanded.value){
+          TabsMainScreen(selectedTab.value, onTabSelected = {tab -> selectedTab.value = tab})
+      } else {
+          Spacer(modifier = Modifier.height(16.dp))
+          Text(
+              text = stringResource(id = R.string.WorkoutsTitle),
+              style = MaterialTheme.typography.titleSmall.copy(
+                  fontSize = 24.sp,
+                  fontFamily = OpenSans
+              ),
+              modifier = Modifier.padding(vertical = 8.dp)
+          )
+      }
     Column(
         modifier =
             Modifier.fillMaxWidth()
                 .height(250.dp)
                 .padding(8.dp)) {
-          if (workout != null) {
+          if (workout.isNotEmpty()) {
               LazyColumn(
                   modifier = Modifier.padding(vertical = 4.dp)
               ) {
                   items(workout) { workoutItem ->
-                      WorkoutCard(workoutItem, profile, navigationActions)
+                      val workoutViewModel = when (workoutItem) {
+                          is BodyWeightWorkout -> bodyWeightViewModel
+                          else -> yogaViewModel
+                      }
+                      WorkoutCard(workoutItem,workoutViewModel, profile, navigationActions)
                       Spacer(modifier = Modifier.height(15.dp))
                   }
               }
@@ -214,23 +272,93 @@ fun WorkoutSessionsSection(
                 textAlign = TextAlign.Center,
                 text = "No workouts yet",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
+
+              if(expanded.value){
+                  ImageComposable(
+                  R.drawable.no_item, "No workout logo", Modifier.size(200.dp).align(Alignment.CenterHorizontally))
+              }
           }
 
           Spacer(modifier = Modifier.weight(1f))
+
 
         Image(
             painter = rememberImagePainter(data = R.drawable.double_arrow),
             contentDescription = "Double arrow",
             colorFilter = ColorFilter.tint(DoubleArrow),
             modifier = Modifier
+                .rotate(if (expanded.value) 180f else 0f)
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
                 .height(40.dp)
                 .testTag("Double Arrow")
-                .clickable { navigationActions.navigateTo(Screen.VIEW_ALL) }
+                .clickable { expanded.value = !expanded.value }
         )
         }
   }
+}
+
+/**
+ * Displays the tabs for selecting different workout types.
+ *
+ * @param selectedTab The currently selected tab index.
+ * @param onTabSelected Callback function to handle tab selection.
+ */
+@Composable
+fun TabsMainScreen(selectedTab: WorkoutTab, onTabSelected: (WorkoutTab) -> Unit) {
+    val tabTitles = listOf(R.string.TitleTabBody, R.string.TitleTabYoga, R.string.TitleTabRunning)
+    val tabTags = listOf("BodyTab", "YogaTab", "RunningTab")
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+            WorkoutTab.entries.forEachIndexed { index, tab ->
+                TabItemMainScreen(
+                    title = tabTitles[index],
+                    isSelected = selectedTab == tab,
+                    modifier = Modifier.testTag(tabTags[index]),
+                    onClick = { onTabSelected(tab) })
+            }
+        }
+        Divider(
+            color = Line,
+            thickness = 0.5.dp,
+            modifier = Modifier.padding(horizontal = 25.dp, vertical = 10.dp).shadow(1.dp)
+        )
+    }
+}
+
+/**
+ * Display a single tab item in the tabs.
+ *
+ * @param title The resource ID for the tab title.
+ * @param isSelected Indicates if this tab is currently selected.
+ * @param onClick Callback function invoked when the tab is clicked.
+ * @param modifier A modifier for styling.
+ */
+@Composable
+fun TabItemMainScreen(@StringRes title: Int, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier) {
+    val shape = RoundedCornerShape(topStart = 25.dp, topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 25.dp)
+    Box(
+        modifier =
+        modifier
+            .shadow(if(isSelected) 4.dp else 0.dp, shape = shape)
+            .border(
+                width = 1.dp,
+                color = if (isSelected) Color.Transparent else Color.LightGray,
+                shape = shape)
+            .background(
+                color = if (isSelected) BlueWorkoutCard else Color.White,
+                shape = shape)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable(onClick = onClick)) {
+        Text(
+            text = stringResource(id = title),
+            color = if (isSelected) Color.Black else Color.Gray,
+            fontSize = 18.sp,
+            fontFamily = OpenSans)
+    }
 }
 
 /**
@@ -318,7 +446,7 @@ fun QuickWorkoutButton(
  * @param navigationActions Actions for navigating between screens.
  */
 @Composable
-fun WorkoutCard(workout: Workout, profile: String, navigationActions: NavigationActions) {
+fun WorkoutCard(workout: Workout, viewModel: WorkoutViewModel<Workout> ,profile: String, navigationActions: NavigationActions) {
     val shape = RoundedCornerShape(topStart = 40.dp, topEnd = 15.dp, bottomStart = 15.dp, bottomEnd = 40.dp)
 
     Card(
@@ -329,7 +457,7 @@ fun WorkoutCard(workout: Workout, profile: String, navigationActions: Navigation
                 elevation = 8.dp, shape = shape
             )
             .fillMaxWidth()
-            .clickable { /* Navigate to workout details or start workout */}
+            .clickable { navigateToWorkoutScreen(workout, viewModel, navigationActions)}
             .testTag("WorkoutCard"),
         colors = CardDefaults.cardColors(containerColor = BlueWorkoutCard)) {
 
@@ -384,7 +512,7 @@ fun AchievementsSection(navigationActions: NavigationActions) {
           Text(
               stringResource(id = R.string.TotalTrainings, 10), // Hardcoded value until the achievements epic is implemented
               modifier = Modifier.padding(horizontal = 12.dp).align(Alignment.CenterVertically),
-              style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp), fontFamily = ContrailOne)
+              style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp), fontFamily = OpenSans)
           Box(
               modifier =
                   Modifier.fillMaxWidth()
@@ -399,11 +527,11 @@ fun AchievementsSection(navigationActions: NavigationActions) {
                   Text(
                       stringResource(id = R.string.ViewAllTitle),
                       modifier = Modifier.padding(horizontal = 12.dp),
-                      style = MaterialTheme.typography.titleSmall.copy(fontSize = 23.sp, fontFamily = OpenSans, fontWeight = FontWeight.Bold))
+                      style = MaterialTheme.typography.titleSmall.copy(fontSize = 22.sp, fontFamily = OpenSans, fontWeight = FontWeight.Bold))
                   Image(
                       painter = painterResource(id = R.drawable.trophy),
                       contentDescription = "Trophy",
-                      modifier = Modifier.size(40.dp))
+                      modifier = Modifier.size(38.dp))
               }
           }
       }
