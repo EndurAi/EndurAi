@@ -12,18 +12,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
@@ -31,10 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberImagePainter
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
@@ -56,20 +49,13 @@ import com.android.sample.ui.composables.ImageComposable
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.AchievementButton
-import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.BlueWorkoutCard
 import com.android.sample.ui.theme.ContrailOne
-import com.android.sample.ui.theme.DarkBlue
-import com.android.sample.ui.theme.DarkBlue2
 import com.android.sample.ui.theme.DarkBlueTopBar1
 import com.android.sample.ui.theme.DarkBlueTopBar2
 import com.android.sample.ui.theme.DoubleArrow
-import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.Line
 import com.android.sample.ui.theme.OpenSans
-import com.android.sample.ui.theme.ShadowColor
-import com.android.sample.ui.theme.SoftGrey
-import kotlin.math.exp
 
 /**
  * Main composable function that sets up the main screen layout.
@@ -231,7 +217,7 @@ fun WorkoutSessionsSection(
                 }
             }
         } else {
-            bodyweightWorkouts.value.take(2) + yogaWorkouts.value.take(2 - bodyweightWorkouts.value.size)
+            bodyweightWorkouts.value.take(2) + yogaWorkouts.value.take(maxOf(2 - bodyweightWorkouts.value.size, 0))
         }
 
   Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).testTag("WorkoutSection")) {
@@ -251,7 +237,7 @@ fun WorkoutSessionsSection(
     Column(
         modifier =
             Modifier.fillMaxWidth()
-                .height(250.dp)
+                .height(if(expanded.value) 500.dp else 200.dp)
                 .padding(8.dp)) {
           if (workout.isNotEmpty()) {
               LazyColumn(
@@ -280,21 +266,19 @@ fun WorkoutSessionsSection(
           }
 
           Spacer(modifier = Modifier.weight(1f))
-
-
-        Image(
-            painter = rememberImagePainter(data = R.drawable.double_arrow),
-            contentDescription = "Double arrow",
-            colorFilter = ColorFilter.tint(DoubleArrow),
-            modifier = Modifier
-                .rotate(if (expanded.value) 180f else 0f)
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-                .height(40.dp)
-                .testTag("Double Arrow")
-                .clickable { expanded.value = !expanded.value }
-        )
         }
+      Image(
+          painter = rememberImagePainter(data = R.drawable.double_arrow),
+          contentDescription = "Double arrow",
+          colorFilter = ColorFilter.tint(DoubleArrow),
+          modifier = Modifier
+              .rotate(if (expanded.value) 180f else 0f)
+              .fillMaxWidth()
+              .align(Alignment.CenterHorizontally)
+              .height(40.dp)
+              .testTag("Double Arrow")
+              .clickable { expanded.value = !expanded.value }
+      )
   }
 }
 
@@ -312,7 +296,7 @@ fun TabsMainScreen(selectedTab: WorkoutTab, onTabSelected: (WorkoutTab) -> Unit)
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             WorkoutTab.entries.forEachIndexed { index, tab ->
                 TabItemMainScreen(
                     title = tabTitles[index],
@@ -324,7 +308,7 @@ fun TabsMainScreen(selectedTab: WorkoutTab, onTabSelected: (WorkoutTab) -> Unit)
         Divider(
             color = Line,
             thickness = 0.5.dp,
-            modifier = Modifier.padding(horizontal = 25.dp, vertical = 10.dp).shadow(1.dp)
+            modifier = Modifier.padding(vertical = 5.dp).shadow(1.dp)
         )
     }
 }
@@ -341,7 +325,6 @@ fun TabsMainScreen(selectedTab: WorkoutTab, onTabSelected: (WorkoutTab) -> Unit)
 fun TabItemMainScreen(@StringRes title: Int, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier) {
     val shape = RoundedCornerShape(topStart = 25.dp, topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 25.dp)
     Box(
-        modifier =
         modifier
             .shadow(if(isSelected) 4.dp else 0.dp, shape = shape)
             .border(
@@ -349,7 +332,7 @@ fun TabItemMainScreen(@StringRes title: Int, isSelected: Boolean, onClick: () ->
                 color = if (isSelected) Color.Transparent else Color.LightGray,
                 shape = shape)
             .background(
-                color = if (isSelected) BlueWorkoutCard else Color.White,
+                color = if (isSelected) BlueWorkoutCard else Color.Transparent,
                 shape = shape)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick)) {
