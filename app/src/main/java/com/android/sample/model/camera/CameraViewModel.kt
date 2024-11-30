@@ -26,6 +26,8 @@ import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
 import com.android.sample.model.workout.ExerciseType
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
+import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_LEFT_Criterions
+import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_RIGHT_Criterions
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -186,41 +188,56 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
                   val assessedChair =
                       ExerciseFeedBack.assessLandMarks(meanedLandmark, ChairCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "chair: $assessedChair ")
-                  val assessedPlank =
-                      ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "Plank: $assessedPlank ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "chair: $assessedChair.first ")
 
                   val assessedPushUpsDown =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCrierions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsDown: $assessedPushUpsDown ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsDown: $assessedPushUpsDown.first ")
 
 
                   val assessedPushUpsUp =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsUpCrierions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsUp: $assessedPushUpsUp ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsUp: $assessedPushUpsUp.first ")
 
 
-                  Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown")
+                  Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown.first")
 
 
                   val assessedJumpingJackOpen =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksOpenCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksOpen: $assessedJumpingJackOpen ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksOpen: $assessedJumpingJackOpen.first ")
 
                   val assessedJumpingJackCLosed =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksClosedCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksClosed: $assessedJumpingJackCLosed ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksClosed: ${assessedJumpingJackCLosed.first} ")
 
                   val assessedDowndardDog =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, DownwardDogCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "DownwardDog: $assessedDowndardDog ")
+                  Log.d("MLFEEDBACK_RESULTExercise", "DownwardDog: ${assessedDowndardDog.first} ")
+
+                  val assessedWarrior2Right =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_RIGHT_Criterions)
+                  Log.d("MLFEEDBACK_RESULTExercise", "Warrior 2 right: ${assessedWarrior2Right.first} ")
+
+                  val assessedWarrior2Left =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_LEFT_Criterions)
+                  Log.d("MLFEEDBACK_RESULTExercise", "Warrior 2 left: ${assessedWarrior2Left.first} ")
+
+                  val assessedPlank =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
+                  Log.d("MLFEEDBACK_RESULTExercisePLANK", "PLANK: ${assessedPlank.first} ")
+
+                  val assessedPlank_preamble =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, ExerciseFeedBack.preambleCriterion(
+                      PlankExerciseCriterions,{},{}))
+                  Log.d("MLFEEDBACK_RESULTExercisePLANK_PREAMBLE", "PLANK_PREAMBLE: ${assessedPlank_preamble.first} ")
+
 
 
                   val jjstate = when {
-    assessedJumpingJackOpen && !assessedJumpingJackCLosed -> "open"
-    !assessedJumpingJackOpen && assessedJumpingJackCLosed -> "closed"
-    assessedJumpingJackOpen && assessedJumpingJackCLosed -> "both"
+    assessedJumpingJackOpen.first && !assessedJumpingJackCLosed.first -> "open"
+    !assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first -> "closed"
+    assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first -> "both"
     else -> "None"
 }
                   Log.d("JumpingJacksState", jjstate)
@@ -241,6 +258,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     }
   }
 
+/*
   fun enablePoseRecognition(exerciseType : ExerciseType): String {
     var exerciseWasDetected = false
     val criterions = getCriterions(exerciseType)
@@ -280,6 +298,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
       )
     )
   }
+*/
 
   /**
    * Disables pose recognition by clearing the image analysis analyzer and emptying the landMarks
