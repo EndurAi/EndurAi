@@ -1,6 +1,8 @@
 package com.android.sample.ui.mainscreen
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -220,6 +223,11 @@ fun WorkoutSessionsSection(
             bodyweightWorkouts.value.take(2) + yogaWorkouts.value.take(maxOf(2 - bodyweightWorkouts.value.size, 0))
         }
 
+    val animatedHeight by animateDpAsState(
+        targetValue = if (expanded.value) 500.dp else 200.dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+
   Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).testTag("WorkoutSection")) {
       if(expanded.value){
           TabsMainScreen(selectedTab.value, onTabSelected = {tab -> selectedTab.value = tab})
@@ -237,7 +245,7 @@ fun WorkoutSessionsSection(
     Column(
         modifier =
             Modifier.fillMaxWidth()
-                .height(if(expanded.value) 500.dp else 200.dp)
+                .height(animatedHeight)
                 .padding(8.dp)) {
           if (workout.isNotEmpty()) {
               LazyColumn(
