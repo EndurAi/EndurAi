@@ -252,7 +252,7 @@ fun WorkoutSessionsSection(
         }
       } else {
         Text(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            modifier = Modifier.fillMaxWidth().padding(12.dp).testTag("NoWorkoutMessage"),
             textAlign = TextAlign.Center,
             text = "No workouts yet",
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
@@ -261,7 +261,7 @@ fun WorkoutSessionsSection(
           ImageComposable(
               R.drawable.no_item,
               "No workout logo",
-              Modifier.size(200.dp).align(Alignment.CenterHorizontally))
+              Modifier.size(200.dp).align(Alignment.CenterHorizontally).testTag("NoWorkoutImage"))
         }
       }
 
@@ -292,7 +292,7 @@ fun TabsMainScreen(selectedTab: WorkoutTab, onTabSelected: (WorkoutTab) -> Unit)
   val tabTitles = listOf(R.string.TitleTabBody, R.string.TitleTabYoga, R.string.TitleTabRunning)
   val tabTags = listOf("BodyTab", "YogaTab", "RunningTab")
 
-  Column(modifier = Modifier.fillMaxWidth()) {
+  Column(modifier = Modifier.fillMaxWidth().testTag("TabSection")) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {

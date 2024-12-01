@@ -84,7 +84,13 @@ class MainScreenTest {
                   "NightSes",
                   "Hold for 60 seconds",
                   false,
-                  date = LocalDateTime.of(2024, 11, 1, 0, 43)))
+                  date = LocalDateTime.of(2024, 11, 1, 0, 43)),
+              BodyWeightWorkout(
+                  "3",
+                  "Hello",
+                  "Do 20 push-ups",
+                  true,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 42)))
       val yogaWorkouts: List<YogaWorkout> = listOf()
 
       `when`(accountRepo.getUserAccount(any(), any(), any())).thenAnswer {
@@ -150,6 +156,25 @@ class MainScreenTest {
 
     // Simulate clicking on "View all"
     composeTestRule.onNodeWithTag("DoubleArrow").performClick()
+
+    // Check tabs are displayed
+    composeTestRule.onNodeWithTag("TabSection").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BodyTab").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("YogaTab").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RunningTab").assertIsDisplayed()
+
+    // Check empty card list
+    composeTestRule.onNodeWithTag("YogaTab").performClick()
+    composeTestRule.onNodeWithTag("NoWorkoutMessage").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("NoWorkoutImage").assertIsDisplayed()
+
+    // Check filled card list
+    composeTestRule.onNodeWithTag("BodyTab").performClick()
+    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(3)
+
+    // Check navigation when a card is clicked
+    composeTestRule.onAllNodesWithTag("WorkoutCard")[0].performClick()
+    verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
   }
 
   @Test
