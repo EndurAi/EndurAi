@@ -88,7 +88,7 @@ class WorkoutCreationScreenTest {
           isImported = false)
     }
 
-    composeTestRule.onNodeWithTag("workoutTopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nameTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("descriptionTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nextButton").assertIsDisplayed().assertHasClickAction()
@@ -130,7 +130,7 @@ class WorkoutCreationScreenTest {
           isImported = false)
     }
 
-    composeTestRule.onNodeWithTag("workoutTopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nameTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("descriptionTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nextButton").assertIsDisplayed().assertHasClickAction()
