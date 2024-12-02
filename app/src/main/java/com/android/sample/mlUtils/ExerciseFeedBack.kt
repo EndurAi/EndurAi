@@ -44,8 +44,10 @@ class ExerciseFeedBack {
         val combination : Boolean = false,
         val onSuccess: () -> Unit,
         val onFailure: () -> Unit,
-      val correctionComment: AngleCriterionComments = AngleCriterionComments.NOT_IMPLEMENTED
-
+      val failCorrectionComment: AngleCriterionComments = AngleCriterionComments.NOT_IMPLEMENTED,
+      val successCorrectionComment : AngleCriterionComments = AngleCriterionComments.SUCCESS,
+      val LR_FailComment : AngleCriterionComments = AngleCriterionComments.NOT_IMPLEMENTED, //Comment when the L and the R side of a joint are failed
+      
     )
 
     data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>)
@@ -75,27 +77,31 @@ class ExerciseFeedBack {
             val resultR =
                 angleEqualsTo(jointR, angleCriterionR.targetAngle, delta = angleCriterionR.delta)
 
+            //NOTE : Only one comment is sent at a time !
             if (angleCriterionR.combination && angleCriterionL.combination){ //Both left and right part should be OK
               if (resultR && resultL){
                 angleCriterionL.onSuccess()
                 angleCriterionL.onSuccess()
+                listOfComments.add(angleCriterionR.successCorrectionComment)
+                //listOfComments.add(angleCriterionL.successCorrectionComment)
               }
               else{
                 angleCriterionL.onFailure()
                 angleCriterionR.onFailure()
-                listOfComments.add(angleCriterionL.correctionComment)
-                listOfComments.add(angleCriterionR.correctionComment)
+                listOfComments.add(angleCriterionL.LR_FailComment)
+                //listOfComments.add(angleCriterionR.failCorrectionComment)
               }
             }//If only one part is sufficient
             else if (resultL) {
               angleCriterionL.onSuccess()
+              listOfComments.add(angleCriterionL.successCorrectionComment)
             } else if (resultR) {
               angleCriterionR.onSuccess()
+              listOfComments.add(angleCriterionR.successCorrectionComment)
             } else {
               angleCriterionL.onFailure()
               angleCriterionR.onFailure()
-              listOfComments.add(angleCriterionL.correctionComment)
-              listOfComments.add(angleCriterionR.correctionComment)
+              listOfComments.add(angleCriterionL.failCorrectionComment)
 
             }
 

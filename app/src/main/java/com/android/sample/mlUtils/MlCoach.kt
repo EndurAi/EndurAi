@@ -32,7 +32,7 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
             ExerciseFeedBack.assessLandMarks(sample, exerciseCriterion = excerciseCriterions)
         }
 
-        val freqThreshold = 0.15F //If a mistake is make with a higher frequency, give advice to the user
+        val freqThreshold = 0.0F //If a mistake is make with a higher frequency, give advice to the user
 
         val nbComments = assessedExercise.fold(0,{acc,(boolean,list)-> acc+list.size })
         val allComments = assessedExercise
