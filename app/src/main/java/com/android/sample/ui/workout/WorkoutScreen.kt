@@ -109,6 +109,7 @@ fun WorkoutScreenBody(
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
   val context = LocalContext.current
+  var feedback by remember {mutableStateOf("")}
   val exerciseState =
       exerciseStateList?.get(exerciseIndex)
           ?: run {
@@ -516,10 +517,14 @@ fun WorkoutScreenBody(
                     Button(onClick =
                     {
                       val mlCoach = MlCoach(cameraViewModel,exerciseState.exercise.type)
-                      Log.d("MLCOACH", "Feedback for ${exerciseState.exercise.type} \n ${mlCoach.getFeedback()}")
+                      val feedBack_str = mlCoach.getFeedback()
+                      Log.d("MLCOACH", "Feedback for ${exerciseState.exercise.type} \n ${feedBack_str}")
+                      feedback = feedBack_str
                     }) {
                       Text("Generate feedback")
                     }
+                    Text(feedback)
+
                         if (cameraRecordAsked) {
                           Button(
                               colors =
