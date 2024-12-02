@@ -38,7 +38,7 @@ private val armLow_R =
     joints = PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_OPPSHOULDER,
     targetAngle = 90.0,
     combination = true,
-    delta =15.0,
+    delta =20.0,
     onSuccess = { Log.d("MLFeedback", "R arm Low is good") },
     onFailure = { Log.d("MLFeedback", "R arm low pas cool") })
 
@@ -48,7 +48,7 @@ private val armLow_R =
 private val armUp_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_ELBOW_SHOULDER_HIP,
-    targetAngle = 155.0,
+    targetAngle = 160.0,
     delta =15.0,
     combination = true,
     onSuccess = { Log.d("MLFeedback", "L arm up is good") },
@@ -57,7 +57,7 @@ private val armUp_L =
 private val armUp_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_HIP,
-    targetAngle = 155.0,
+    targetAngle = 160.0,
     combination = true,
     delta =15.0,
     onSuccess = { Log.d("MLFeedback", "R arm Up is good") },
@@ -112,7 +112,7 @@ private val legOpen_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_OPPHIP_HIP_KNEE,
     targetAngle = 115.0,
-    delta =5.0,
+    delta =10.0,
     combination = true,
     onSuccess = { Log.d("MLFeedback", "L legOpen is good") },
     onFailure = { Log.d("MLFeedback", "L legOpen pas cool") })
@@ -121,7 +121,7 @@ private val legOpen_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_OPPHIP_HIP_KNEE,
     targetAngle = 115.0,
-    delta =5.0,
+    delta =10.0,
     combination = true,
     onSuccess = { Log.d("MLFeedback", "R legOpen is good") },
     onFailure = { Log.d("MLFeedback", "R legOpen pas cool") })
@@ -133,6 +133,7 @@ val JumpingJacksOpenCriterions : ExerciseCriterion = ExerciseCriterion(
   setOf(
     legOpen_L to legOpen_R,
     legFlat_L to legFlat_R,
+    armUp_L to armUp_R
   )
 )
 

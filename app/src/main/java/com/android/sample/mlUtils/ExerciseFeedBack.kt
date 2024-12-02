@@ -2,6 +2,7 @@ package com.android.sample.mlUtils
 
 import MathsPoseDetection
 import android.util.Log
+import com.android.sample.mlUtils.exercisesCriterions.AngleCriterionComments
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.model.workout.ExerciseType
@@ -43,18 +44,23 @@ class ExerciseFeedBack {
         val combination : Boolean = false,
         val onSuccess: () -> Unit,
         val onFailure: () -> Unit,
-        val correctionMessage: String = "git gud lol"
-      
+      val correctionComment: AngleCriterionComments = AngleCriterionComments.NOT_IMPLEMENTED
+
     )
 
     data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>)
 
+    /**
+     * Asses the landmarks to the given angle criterion
+     * @return a Boolean stating that all the angle criterion are fulfilled and a list of correcting comment
+     */
     fun assessLandMarks(
         poseLandmarkList: List<Triple<Float, Float, Float>>,
         exerciseCriterion: ExerciseCriterion
-    ): List<Pair<Boolean, String>> {
+    ): Pair<Boolean, List<AngleCriterionComments>> {
       Log.d("MLFeedback", "-----------------------------------")
-      val listOfBooleanWithMessage =
+      val listOfComments = mutableListOf<AngleCriterionComments>()
+      val listOfBoolean =
           exerciseCriterion.angleCriterionSet.map { (angleCriterionL, angleCriterionR) ->
             val a_l = poseLandmarkList[angleCriterionL.joints.first]
             val b_l = poseLandmarkList[angleCriterionL.joints.second]
@@ -77,6 +83,8 @@ class ExerciseFeedBack {
               else{
                 angleCriterionL.onFailure()
                 angleCriterionR.onFailure()
+                listOfComments.add(angleCriterionL.correctionComment)
+                listOfComments.add(angleCriterionR.correctionComment)
               }
             }//If only one part is sufficient
             else if (resultL) {
@@ -86,13 +94,17 @@ class ExerciseFeedBack {
             } else {
               angleCriterionL.onFailure()
               angleCriterionR.onFailure()
+              listOfComments.add(angleCriterionL.correctionComment)
+              listOfComments.add(angleCriterionR.correctionComment)
+
             }
 
-              (resultL || resultR) to if (resultL || resultR) "Ok" else angleCriterionL.correctionMessage
+            resultL || resultR
           }
       Log.d("MLFeedback", "-----------------------------------")
 
-      return listOfBooleanWithMessage
+      val exerciseSuccess = listOfBoolean.all { b -> b }
+      return Pair(exerciseSuccess,listOfComments.toList())
     }
 
     /* fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{

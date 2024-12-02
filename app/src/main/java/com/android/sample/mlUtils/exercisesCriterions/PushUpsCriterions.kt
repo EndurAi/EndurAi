@@ -27,7 +27,6 @@ private val back_L =
     joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
     targetAngle = 180.0,
     delta = 15.0,
-    succesString= "BIen ouvert les bras GG "
     onSuccess = { Log.d("MLFeedback", "L back is good") },
     onFailure = { Log.d("MLFeedback", "L back pas cool") })
 
