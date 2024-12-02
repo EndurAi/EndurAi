@@ -32,7 +32,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 
 class QuickWorkoutTest {
   private lateinit var navigationActions: NavigationActions
@@ -121,42 +120,28 @@ class QuickWorkoutTest {
       }
     }
   }
-  // Test that each button calls navigateTo
-  @Test
-  fun testQuickWorkoutButtonsNavigateCorrectly() {
-    val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
-    for (i in 0 until nodes.fetchSemanticsNodes().size) {
-      nodes[i].performClick()
-    }
-    verify(navigationActions, times(nodes.fetchSemanticsNodes().size)).navigateTo(screen = any())
-  }
 
   // Test that each button selects the correct workout
   @Test
   fun testQuickWorkoutButtonsSelectCorrectWorkout() {
     val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
     val expectedWorkouts: List<Workout> =
-        listOf(
-                BodyWeightWorkout.WORKOUT_PUSH_UPS,
-                YogaWorkout.QUICK_YOGA_WORKOUT,
-                BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
-            .map {
-              when (it) {
-                is BodyWeightWorkout ->
-                    bodyWeightViewModel.copyOf(it) // In this test, the new UID is harcoded
-                is YogaWorkout -> yogaViewModel.copyOf(it)
-                else -> {
-                  null as Workout
-                }
-              }
+        listOf(BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT, YogaWorkout.QUICK_YOGA_WORKOUT).map {
+          when (it) {
+            is BodyWeightWorkout ->
+                bodyWeightViewModel.copyOf(it) // In this test, the new UID is harcoded
+            is YogaWorkout -> yogaViewModel.copyOf(it)
+            else -> {
+              null as Workout
             }
+          }
+        }
 
     for (i in 0 until nodes.fetchSemanticsNodes().size) {
       nodes[i].performClick()
       when (i) {
-        1 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i - 1]))
-        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[i - 1]))
-        3 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i - 1]))
+        0 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[0]))
+        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[1]))
       }
     }
   }

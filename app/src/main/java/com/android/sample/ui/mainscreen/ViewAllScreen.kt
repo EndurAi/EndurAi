@@ -253,7 +253,7 @@ fun ViewAllCard(
  * @param viewModel The ViewModel for the selected workout.
  * @param navigationActions The navigation actions for handling navigation events.
  */
-private fun navigateToWorkoutScreen(
+fun navigateToWorkoutScreen(
     workout: Workout,
     viewModel: WorkoutViewModel<Workout>,
     navigationActions: NavigationActions
