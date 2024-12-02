@@ -162,22 +162,6 @@ fun WorkoutScreenBody(
     countDownTimerIsPaused = false
   }
 
-  /** Moves to the next exercise or finishes the workout if all exercises are completed. */
-  fun nextExercise() {
-    userHasRecorded = false
-    cameraRecordAsked = false
-    cameraFeedbackIsDisplayed = false
-    comparisonVideoIsDisplayed = false
-    if (exerciseIndex < exerciseStateList.size - 1) {
-      exerciseIndex++
-      paramToPresentation()
-    } else if (!summaryScreenIsDisplayed) {
-      summaryScreenIsDisplayed = true
-    } else {
-      navigationActions.navigateTo(Screen.MAIN)
-    }
-  }
-
   /** Determine if the exercise is repetition-based or time-based. */
   val exerciseIsRepetitionBased =
       when (exerciseState.exercise.detail) {
@@ -195,16 +179,18 @@ fun WorkoutScreenBody(
 
   /** State variables for managing the timer */
   var timer by remember { mutableIntStateOf(0) }
+  var currentSet by remember { mutableIntStateOf(0) }
   var timeLimit = 0
+  var numberOfSets by remember { mutableIntStateOf(0) }
 
   // Initialize the timer for time-based exercises
   if (!exerciseIsRepetitionBased) {
     val rawDetail = exerciseState.exercise.detail as ExerciseDetail.TimeBased
     isCountdownTime = true
     countDownTimerIsPaused = true
-    timeLimit = rawDetail.durationInSeconds * rawDetail.sets
+    timeLimit = rawDetail.durationInSeconds
+    numberOfSets = rawDetail.sets
     timer = timeLimit
-
     // Coroutine to decrement the timer every second
     LaunchedEffect(Unit) {
       while (true) {
@@ -212,7 +198,8 @@ fun WorkoutScreenBody(
         if (!countDownTimerIsPaused &&
             finishButtonBoxIsDisplayed &&
             !cameraRecordAsked &&
-            !comparisonVideoIsDisplayed) {
+            !comparisonVideoIsDisplayed &&
+            currentSet < numberOfSets) {
           if (isCountdownTime) {
             if (countDownValue > 0) {
               countDownValue--
@@ -225,10 +212,41 @@ fun WorkoutScreenBody(
           } else {
             if (timer > 0) {
               timer--
+            } else if (timer == 0) { // Reload the timer and add one done set
+              if (currentSet != numberOfSets.minus(1)) {
+                timer = timeLimit
+                isCountdownTime = true
+              }
+
+              currentSet++
+              // reload the countdown time
+              isCountdownTime = true
+              countDownValue = maxCountDownTIme
+              countDownTimerIsPaused = true // pause automaticaly after a set
             }
           }
         }
       }
+    }
+  }
+
+  /** Moves to the next exercise or finishes the workout if all exercises are completed. */
+  fun nextExercise() {
+
+    userHasRecorded = false
+    cameraRecordAsked = false
+    cameraFeedbackIsDisplayed = false
+    comparisonVideoIsDisplayed = false
+    if (exerciseIndex < exerciseStateList.size - 1) {
+      exerciseIndex++
+      paramToPresentation()
+      currentSet = 0 // reset the set counter
+      timer = 0 // reset the counter
+      countDownValue = maxCountDownTIme
+    } else if (!summaryScreenIsDisplayed) {
+      summaryScreenIsDisplayed = true
+    } else {
+      navigationActions.navigateTo(Screen.MAIN)
     }
   }
 
@@ -347,12 +365,32 @@ fun WorkoutScreenBody(
                         Text(
                             text =
                                 (if (exerciseIsRepetitionBased) "$repetitions Rep."
-                                else convertSecondsToTime(timeLimit)),
+                                else
+                                    "${convertSecondsToTime(timeLimit)}${if (numberOfSets>1) " x $numberOfSets" else "" }"),
                             fontSize = 20.sp,
                             modifier = Modifier.testTag("GoalValue"))
                       }
 
-                      Spacer(modifier = Modifier.height(20.dp))
+                      Spacer(modifier = Modifier.height(10.dp))
+                      if (goalCounterBoxIsDisplayed &&
+                          exerciseIsRepetitionBased.not() &&
+                          numberOfSets > 1) {
+                        Box(
+                            modifier =
+                                Modifier.width(75.dp)
+                                    .height(38.dp)
+                                    .border(
+                                        width = 2.dp, // Adjust border thickness as needed
+                                        color = Color(0xFF6750A4),
+                                        shape = RoundedCornerShape(25.dp)),
+                            contentAlignment = Alignment.Center) {
+                              Text(
+                                  text = "$currentSet/$numberOfSets",
+                                  color = Color(0xFF6750A4) // Same color as the border
+                                  )
+                            }
+                      }
+                      Spacer(modifier = Modifier.height(10.dp))
 
                       // Box for the goal counter: Display an image of the exercise type if rep
                       // based
@@ -401,6 +439,7 @@ fun WorkoutScreenBody(
                                     countDownTimerIsPaused = !countDownTimerIsPaused
                                   },
                                 isPaused = countDownTimerIsPaused,
+                                isFinished = (timer == 0 && currentSet == numberOfSets),
                                 countDownCurrentValue = countDownValue,
                                 isCountDownTime = isCountdownTime)
                             Spacer(modifier = Modifier.height(5.dp))

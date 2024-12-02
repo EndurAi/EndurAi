@@ -1,37 +1,42 @@
 package com.android.sample.ui.workout
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
-import com.android.sample.ui.composables.ArrowBack
+import com.android.sample.ui.composables.BottomBar
+import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Black
+import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.LightBackground
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionSelectionScreen(navigationActions: NavigationActions) {
   Scaffold(
-      topBar = {
-        TopAppBar(
-            title = { Text("New session") }, navigationIcon = { ArrowBack(navigationActions) })
-      },
+      topBar = { TopBar(navigationActions, R.string.NewWorkout) },
+      bottomBar = { BottomBar(navigationActions = navigationActions) },
       content = { padding ->
         LazyColumn(
             contentPadding = padding,
@@ -47,7 +52,8 @@ fun SessionSelectionScreen(navigationActions: NavigationActions) {
                 }
               }
             }
-      })
+      },
+      containerColor = LightBackground)
 }
 
 @Composable
@@ -57,10 +63,13 @@ fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
           Modifier.clickable { onSessionClick(session) }
               .fillMaxWidth()
               .height(180.dp)
-              .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+              .padding(horizontal = Dimensions.SmallPadding)
+              .shadow(8.dp, RoundedCornerShape(12.dp)) // Add shadow here
               .testTag("sessionCard_${session.title}"),
-      shape = RoundedCornerShape(8.dp),
-      elevation = CardDefaults.cardElevation(8.dp),
+      shape = RoundedCornerShape(12.dp), // Updated the corner radius for consistency with Figma
+      colors =
+          CardDefaults.cardColors(
+              containerColor = Transparent), // Make the card background transparent
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
       Image(
@@ -70,12 +79,13 @@ fun SessionCard(session: Session, onSessionClick: (Session) -> Unit) {
           modifier = Modifier.fillMaxSize().testTag("image_${session.title}"))
       Text(
           text = session.title,
-          style = MaterialTheme.typography.bodyLarge,
-          color = Color.White,
-          modifier =
-              Modifier.align(Alignment.BottomStart)
-                  .padding(8.dp)
-                  .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(4.dp)))
+          style =
+              MaterialTheme.typography.bodyLarge.copy(
+                  fontSize = FontSizes.SubtitleFontSize,
+                  fontWeight = FontWeight.ExtraBold,
+                  shadow = Shadow(color = Black, offset = Offset(4f, 4f), blurRadius = 6f)),
+          color = White,
+          modifier = Modifier.align(Alignment.BottomStart).padding(Dimensions.SmallPadding))
     }
   }
 }

@@ -48,8 +48,10 @@ fun CountDownTimer(
     onFinishedIcon: ImageVector = Icons.Filled.Done,
     modifier: Modifier,
     isPaused: Boolean = false,
+    isFinished: Boolean = false,
     isCountDownTime: Boolean = true,
-    countDownCurrentValue: Int = 3
+    countDownCurrentValue: Int = 3,
+    onFinish: () -> Unit = {}
 ) {
 
   val currentTime_str = convertSecondsToTime(currentTime_int)
@@ -92,10 +94,10 @@ fun CountDownTimer(
           android.graphics.Paint().apply {
             color = android.graphics.Color.BLACK
             textAlign = android.graphics.Paint.Align.CENTER
-            textSize = 90f
+            textSize = 70f
             isAntiAlias = true // Enable anti-aliasing
           }
-      if (currentTime > 0) {
+      if (isFinished.not()) {
         canvas.nativeCanvas.drawText(
             if (isCountDownTime.not()) currentTime_str else countDownCurrentValue.toString(),
             width / 2,
@@ -140,6 +142,7 @@ fun CountDownTimer(
               paint)
         }
       } else {
+        onFinish()
 
         val checkStartX = width / 2 - 60f
         val checkStartY = height / 2 - 80f
