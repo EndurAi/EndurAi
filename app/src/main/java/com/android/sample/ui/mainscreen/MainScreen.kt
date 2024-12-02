@@ -140,8 +140,8 @@ fun ProfileSection(
                           colors =
                               listOf(
                                   DarkBlueTopBar1,
-                                  DarkBlueTopBar2), // Dégradé de DarkBlue à LightBlue
-                          start = Offset(0f, 0f), // Début du dégradé (à gauche)
+                                  DarkBlueTopBar2), // brush of colors
+                          start = Offset(0f, 0f),
                           end = Offset(Float.POSITIVE_INFINITY, 0f)))
               .padding(vertical = 25.dp)) {
         Row(
@@ -234,7 +234,7 @@ fun WorkoutSessionsSection(
       Spacer(modifier = Modifier.height(16.dp))
       Text(
           text = stringResource(id = R.string.WorkoutsTitle),
-          style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans),
+          style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold),
           modifier = Modifier.padding(vertical = 8.dp))
     }
     Column(modifier = Modifier.fillMaxWidth().height(animatedHeight).padding(8.dp)) {
@@ -254,7 +254,7 @@ fun WorkoutSessionsSection(
         Text(
             modifier = Modifier.fillMaxWidth().padding(12.dp).testTag("NoWorkoutMessage"),
             textAlign = TextAlign.Center,
-            text = "No workouts yet",
+            text = stringResource(id = R.string.noWorkouts),
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp))
 
         if (expanded.value) {
@@ -358,7 +358,7 @@ fun QuickWorkoutSection(
   Column(modifier = Modifier.fillMaxWidth().testTag("QuickSection")) {
     Text(
         text = stringResource(id = R.string.QuickTitle),
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans),
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold),
         modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp))
 
     Row(
@@ -489,7 +489,7 @@ fun AchievementsSection(navigationActions: NavigationActions) {
     Text(
         stringResource(id = R.string.AchievementsTitle),
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp).testTag("AchievementText"),
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans))
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold))
 
     Row() {
       Text(
