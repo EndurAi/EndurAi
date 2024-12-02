@@ -137,10 +137,7 @@ fun ProfileSection(
               .background(
                   brush =
                       Brush.linearGradient(
-                          colors =
-                              listOf(
-                                  DarkBlueTopBar1,
-                                  DarkBlueTopBar2), // brush of colors
+                          colors = listOf(DarkBlueTopBar1, DarkBlueTopBar2), // brush of colors
                           start = Offset(0f, 0f),
                           end = Offset(Float.POSITIVE_INFINITY, 0f)))
               .padding(vertical = 25.dp)) {
@@ -234,7 +231,9 @@ fun WorkoutSessionsSection(
       Spacer(modifier = Modifier.height(16.dp))
       Text(
           text = stringResource(id = R.string.WorkoutsTitle),
-          style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold),
+          style =
+              MaterialTheme.typography.titleSmall.copy(
+                  fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold),
           modifier = Modifier.padding(vertical = 8.dp))
     }
     Column(modifier = Modifier.fillMaxWidth().height(animatedHeight).padding(8.dp)) {
@@ -358,7 +357,9 @@ fun QuickWorkoutSection(
   Column(modifier = Modifier.fillMaxWidth().testTag("QuickSection")) {
     Text(
         text = stringResource(id = R.string.QuickTitle),
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold),
+        style =
+            MaterialTheme.typography.titleSmall.copy(
+                fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold),
         modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp))
 
     Row(
@@ -489,7 +490,9 @@ fun AchievementsSection(navigationActions: NavigationActions) {
     Text(
         stringResource(id = R.string.AchievementsTitle),
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp).testTag("AchievementText"),
-        style = MaterialTheme.typography.titleSmall.copy(fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold))
+        style =
+            MaterialTheme.typography.titleSmall.copy(
+                fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.SemiBold))
 
     Row() {
       Text(
