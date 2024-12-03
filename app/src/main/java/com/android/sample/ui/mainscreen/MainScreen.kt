@@ -399,22 +399,20 @@ fun QuickWorkoutButton(
     iconId: Int,
     onClick: () -> Unit,
 ) {
+    val shape =
+        RoundedCornerShape(
+            topStart = 25.dp, topEnd = 11.dp, bottomEnd = 25.dp, bottomStart = 11.dp)
   Box(
       modifier =
           Modifier.height(76.dp)
               .width(117.dp)
-              .clickable { onClick() }
-              .background(Color.Transparent)
-              .padding(5.dp)
-              .testTag("QuickWorkoutButton")) {
-        val shape =
-            RoundedCornerShape(
-                topStart = 25.dp, topEnd = 11.dp, bottomEnd = 25.dp, bottomStart = 11.dp)
+              .background(Color.Transparent, shape = shape)
+              .padding(5.dp)) {
         Image(
             painter = painterResource(id = iconId),
             contentDescription = "Quick Workout Icon",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize().shadow(4.dp, shape = shape).clip(shape))
+            modifier = Modifier.fillMaxSize().shadow(4.dp, shape = shape).clip(shape).testTag("QuickWorkoutButton").clickable { onClick() })
       }
 }
 
@@ -505,12 +503,12 @@ fun AchievementsSection(navigationActions: NavigationActions) {
       Box(
           modifier =
               Modifier.fillMaxWidth()
-                  .clickable { navigationActions.navigateTo(Screen.ACHIEVEMENTS) }
                   .padding(vertical = 16.dp, horizontal = 20.dp)
                   .shadow(4.dp, shape = shape)
                   .height(60.dp)
                   .background(AchievementButton, shape = shape)
-                  .testTag("AchievementButton"),
+                  .testTag("AchievementButton")
+                  .clickable { navigationActions.navigateTo(Screen.ACHIEVEMENTS) },
           contentAlignment = Alignment.Center) {
             Row(verticalAlignment = Alignment.CenterVertically) {
               Text(
