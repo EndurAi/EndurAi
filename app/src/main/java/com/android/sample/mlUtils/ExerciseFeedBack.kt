@@ -5,6 +5,8 @@ import android.util.Log
 import com.android.sample.mlUtils.exercisesCriterions.AngleCriterionComments
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
+import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
+import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.model.workout.ExerciseType
 import kotlin.math.abs
 
@@ -167,16 +169,16 @@ class ExerciseFeedBack {
           }
       return ExerciseCriterion(preambleCriterion.toSet())
     }
-      fun getCriterions(exerciseType: ExerciseType): ExerciseCriterion {
+      fun getCriterions(exerciseType: ExerciseType): List<ExerciseCriterion> {
           val ret = when (exerciseType) {
               ExerciseType.DOWNWARD_DOG -> TODO()
               ExerciseType.TREE_POSE -> TODO()
               ExerciseType.SUN_SALUTATION -> TODO()
               ExerciseType.WARRIOR_II -> TODO()
-              ExerciseType.PUSH_UPS -> TODO()
+              ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCrierions)
               ExerciseType.SQUATS -> TODO()
-              ExerciseType.PLANK -> PlankExerciseCriterions
-              ExerciseType.CHAIR -> ChairCriterions
+              ExerciseType.PLANK -> listOf(PlankExerciseCriterions)
+              ExerciseType.CHAIR -> listOf(ChairCriterions)
               ExerciseType.JUMPING_JACKS -> TODO()
               ExerciseType.LEG_SWINGS -> TODO()
               ExerciseType.ARM_CIRCLES -> TODO()
