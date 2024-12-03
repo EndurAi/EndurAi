@@ -152,7 +152,7 @@ fun CalendarScreen(
   val workoutsByDate = workouts.groupBy { it.workout.date.toLocalDate().toKotlinLocalDate() }
 
   Scaffold(
-      topBar = { TopBar(navigationActions, R.string.calendar_title) },
+      topBar = { TopBar(navigationActions, R.string.calendar_title, false) },
       bottomBar = { BottomBar(navigationActions) }) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
           Legend()
