@@ -18,6 +18,7 @@ import com.android.sample.mlUtils.ExerciseFeedBack
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.getCriterions
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.preambleCriterion
+import com.android.sample.mlUtils.MyPoseLandmark
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
 import com.android.sample.mlUtils.exercisesCriterions.DownwardDogCriterions
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksClosedCriterions
@@ -87,9 +88,9 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     get() = _cameraController.asStateFlow()
 
   /** A MutableStateFlow that holds the list of detected pose landmarks. */
-  val _poseLandMarks = MutableStateFlow<ArrayList<List<PoseLandmark>>>(arrayListOf())
+  val _poseLandMarks = MutableStateFlow<ArrayList<List<MyPoseLandmark>>>(arrayListOf())
   /** A StateFlow that exposes the list of detected pose landmarks. */
-  val poseLandmarks: StateFlow<ArrayList<List<PoseLandmark>>>
+  val poseLandmarks: StateFlow<ArrayList<List<MyPoseLandmark>>>
     get() = _poseLandMarks.asStateFlow()
 
   /** A MutableStateFlow that holds the list of detected pose landmarks. */
@@ -252,7 +253,8 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                 if (it.all { poseLandmark ->
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
                 })
-                    _poseLandMarks.value.add(it)
+                  //Convert into simple type
+                    _poseLandMarks.value.add(it.map { poseLandmark ->  MyPoseLandmark(poseLandmark.position3D.x,poseLandmark.position3D.y,poseLandmark.position3D.z,poseLandmark.inFrameLikelihood) })
               }))
       _bodyRecognitionIsEnabled.value = true
     }

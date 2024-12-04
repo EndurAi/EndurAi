@@ -10,12 +10,14 @@ private val legStraight_L =
     joints = PoseDetectionJoints.LEFT_HIP_KNEE_ANKLE,
     targetAngle = 170.0,
     delta = 10.0,
+    failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
     onSuccess = { Log.d("MLFeedback", "L Leg is good") },
     onFailure = { Log.d("MLFeedback", "L leg pas cool") })
 
 private val legStraight_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_HIP_KNEE_ANKLE,
+    failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
     targetAngle = 170.0,
     delta = 10.0,
     onSuccess = { Log.d("MLFeedback", "R leg is good") },
@@ -23,11 +25,13 @@ private val legStraight_R =
 
 
 
-//Arm are up
+//flat arms
 private val armUp_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_ELBOW_SHOULDER_HIP,
     targetAngle = 170.0,
+    failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
+
     delta =10.0,
     onSuccess = { Log.d("MLFeedback", "L arm up is good") },
     onFailure = { Log.d("MLFeedback", "L arm up pas cool") })

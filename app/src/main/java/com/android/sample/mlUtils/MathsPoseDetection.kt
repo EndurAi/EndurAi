@@ -1,3 +1,4 @@
+import com.android.sample.mlUtils.MyPoseLandmark
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 import kotlin.math.acos
@@ -121,11 +122,11 @@ class MathsPoseDetection {
       return Triple(point.x, point.y, point.z)
     }
 
-    fun window_mean(posesList: List<List<PoseLandmark>>): List<Triple<Float, Float, Float>> {
+    fun window_mean(posesList: List<List<MyPoseLandmark>>): List<Triple<Float, Float, Float>> {
       val windowSize = posesList.size
       // transform to a list<list<Triple of floats>>
       val posesList_float =
-          posesList.map { l -> l.map { poseLandmark -> pointFToTriple(poseLandmark.position3D) } }
+          posesList.map { l -> l.map { poseLandmark -> Triple(poseLandmark.x,poseLandmark.y,poseLandmark.z) } }
       val poseLandmarkList_mean = MutableList(33) { Triple(0f, 0f, 0f) }
 
       for (landMarkIdx in 0..32) {

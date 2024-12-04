@@ -11,7 +11,7 @@ private val plankCriterion_backAngle_L =
         joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
         targetAngle = 180.0,
         delta = 25.0,
-        failCorrectionComment = AngleCriterionComments.SHOULDER_HIP_KNEE,
+        failCorrectionComment = AngleCriterionComments.SHOULDER_HIP_KNEE_NOT_FLAT,
         onSuccess = { Log.d("MLFeedback", "Back is good L") },
         onFailure = { Log.d("MLFeedback", "Don't bend your back L") })
 
@@ -20,7 +20,7 @@ private val plankCriterion_backAngle_R =
         joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
         targetAngle = 180.0,
         delta = 25.0,
-        failCorrectionComment = AngleCriterionComments.SHOULDER_HIP_KNEE,
+        failCorrectionComment = AngleCriterionComments.SHOULDER_HIP_KNEE_NOT_FLAT,
         onSuccess = { Log.d("MLFeedback", "Back is good R") },
         onFailure = { Log.d("MLFeedback", "SHOULDER HIP KNEE pas cool R") })
 
