@@ -79,7 +79,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                                     brush = BlueGradient, shape = RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center) {
                           Text(
-                              text = "Import",
+                              text = "Choose from existing",
                               color = White,
                               fontSize = FontSizes.SubtitleFontSize,
                               fontWeight = FontWeight.Bold)

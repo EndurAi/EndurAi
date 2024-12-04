@@ -107,7 +107,7 @@ class WorkoutCreationScreenTest {
     composeTestRule.onNodeWithTag("exerciseTypeSUN_SALUTATION").performClick()
     composeTestRule
         .onNodeWithTag("selectedExerciseType")
-        .assertTextEquals("Selected Exercise: ${ExerciseType.SUN_SALUTATION}")
+        .assertTextEquals("Selected Exercise: ${ExerciseType.UPWARD_FACING_DOG}")
 
     composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
