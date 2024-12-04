@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -56,6 +57,13 @@ class VideoLibraryScreenTest {
       VideoLibraryScreen(
           navigationActions = mockNavigationActions, videoViewModel = mockVideoViewModel)
     }
+
+      // Wait for loading indicator to disappear
+      composeTestRule.onNodeWithTag("loadingIndicator").assertIsDisplayed() // Ensure it starts loading
+      composeTestRule.waitUntil(5_000) {
+          composeTestRule.onAllNodesWithTag("loadingIndicator").fetchSemanticsNodes().isEmpty()
+      }
+
 
     // Verify that the search bar is displayed
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()

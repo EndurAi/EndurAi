@@ -64,7 +64,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
       content = { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
             when {
-                isLoading -> DumbbellAnimation(modifier = Modifier.align(Alignment.Center))
+                isLoading -> DumbbellAnimation(modifier = Modifier.testTag("loadingIndicator").align(Alignment.Center))
                 error != null -> {
                     Text(
                         text = "An error occurred",
