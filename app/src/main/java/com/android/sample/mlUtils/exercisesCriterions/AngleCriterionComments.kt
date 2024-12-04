@@ -2,6 +2,7 @@ package com.android.sample.mlUtils.exercisesCriterions
 enum class AngleCriterionComments(val description: String) {
     SUCCESS("Success"),
     NOT_IMPLEMENTED("Not implemented yet"),
+    NONE(""),
 
     SHOULDER_HIP_KNEE_NOT_FLAT("Your back should be more right"),
     SHOULDER_HIP_KNEE_NOT_BENDED("Try bending more your body"),
@@ -18,6 +19,10 @@ enum class AngleCriterionComments(val description: String) {
     LEFT_ELBOW_SHOULDER_OPPSHOULDER_NOT_FLAT("Keep your left elbow right, aligned with your shoulder."),
     RIGHT_ELBOW_SHOULDER_OPPSHOULDER_NOT_FLAT("Keep your left elbow right, aligned with your shoulder."),
     BOTH_ELBOW_SHOULDER_OPPSHOULDER_NOT_FLAT("Keep elbows right, aligned with your shoulders."),
+
+    LEFT_ELBOW_SHOULDER_HIP_NOT_RIGHT("Keep your left arm straight parallel to the ground"),
+    RIGHT_ELBOW_SHOULDER_HIP_NOT_RIGHT("Keep your right arm straight parallel to the ground"),
+    BOTH_ELBOW_SHOULDER_HIP_NOT_RIGHT("Keep your arms straight parallel to the ground"),
 
     ELBOW_SHOULDER_HIP_NOT_FLAT("Put your arms aligned with your back."),
 
@@ -36,8 +41,6 @@ enum class AngleCriterionComments(val description: String) {
     RIGHT_OPPHIP_HIP_KNEE_NOT_CLOSED("Tighten more your right leg."),
     LEFT_OPPHIP_HIP_KNEE_NOT_CLOSED("Tighten more your left leg."),
    BOTH_OPPHIP_HIP_KNEE_NOT_CLOSED("Tighten more your legs."),
-
-
 
 
 

@@ -55,7 +55,7 @@ class ExerciseFeedBack {
       
     )
 
-    data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>)
+    data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>, val symmetric : Boolean = true)
 
     /**
      * Asses the landmarks to the given angle criterion

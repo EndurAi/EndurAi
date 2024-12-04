@@ -56,24 +56,37 @@ when (exerciseType.detail) {
 
     }
     is ExerciseDetail.TimeBased -> {
-        assert(excerciseCriterionsList.size == 1) //Time based exercises are single pose exercise !
+        //If the exercise pose are not symetric eg : the warrior 2  pose can be done on the left or on the right
+        if (excerciseCriterionsList.all { exerciseCriterion -> exerciseCriterion.symmetric }) {
+            assert(excerciseCriterionsList.size == 2) // for the left and right part
+            //select the one with the most detected preamble
+            val nbPreambleA =
 
-        val timeStamps = rawData.map { pose->
-            pose[0].timeStamp
+
+
+
+
+
+
+
+
+
+
+
+        } else {
+            assert(excerciseCriterionsList.size == 1) //Time based exercises are single pose exercise !
+
+            val timeStamps = rawData.map { pose ->
+                pose[0].timeStamp
+            }
+            return getFeedBackSingleExercise(
+                data = data,
+                excerciseCriterions = excerciseCriterionsList.first(),
+                preambleCriterions = preambleCriterionsList.first(), prependDuration = true
+            )
         }
 
-
-
-
-
-
-
-
-        return getFeedBackSingleExercise(data = data,
-            excerciseCriterions = excerciseCriterionsList.first(),
-            preambleCriterions = preambleCriterionsList.first(), prependDuration = true)
     }
-
 }
 
 
