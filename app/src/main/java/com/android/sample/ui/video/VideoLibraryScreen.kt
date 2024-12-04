@@ -1,5 +1,6 @@
 package com.android.sample.ui.video
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,21 +21,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android.sample.R
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoViewModel
 import com.android.sample.ui.animations.DumbbellAnimation
+import com.android.sample.ui.composables.AnimatedText
 import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -43,7 +48,9 @@ import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.BodyWeightTag
 import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.Transparent
 import com.android.sample.ui.theme.WarmUpTag
+import com.android.sample.ui.theme.White
 import com.android.sample.ui.theme.YogaTag
 
 /** Screen to display the video library. */
@@ -61,6 +68,43 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
 
   Scaffold(
       bottomBar = { BottomBar(navigationActions = navigationActions) },
+      floatingActionButton = {
+          Box(
+              modifier = Modifier
+                  .padding(16.dp)
+
+          ) {
+              Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                  Box(
+                      modifier = Modifier
+                          .width(175.dp) // Set a fixed width for the text box to prevent everything from moving
+                          .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                          .padding(8.dp)
+                  ) {
+                      AnimatedText(
+                          text = "Hey, need help learning those moves?",
+                          style = MaterialTheme.typography.bodySmall.copy(color = White)
+                      )
+                  }
+
+                  Spacer(modifier = Modifier.height(8.dp))
+                  FloatingActionButton(
+                      onClick = { /* Action when clicked */ },
+                      shape = CircleShape,
+                      containerColor = Transparent,
+                      contentColor = Transparent,
+                      modifier = Modifier.background(BlueGradient, shape = CircleShape)
+                          .shadow(8.dp, shape = CircleShape)
+                  ) {
+                      Image(
+                          painter = painterResource(id = R.drawable.endurai_coach),
+                          contentDescription = "Coach",
+                          modifier = Modifier.size(150.dp).clip(CircleShape)
+                      )
+                  }
+              }
+          }
+      },
       content = { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
           when {
