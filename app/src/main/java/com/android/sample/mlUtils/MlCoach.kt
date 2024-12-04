@@ -118,14 +118,14 @@ when (exerciseType.detail) {
 
         //count the alternating number
         var count = 0
-        var current = stateList.first()
+        var current = if (stateList.isNotEmpty()) stateList.first() else -1
         for (i in 0 until stateList.size ){
             if (stateList[i] == (current+1)%(assessedPoses.size)){ //handles switching from state 1 -> 2-> 3 ...
                  count++
                 current= stateList[i]
             }
         }
-        return count
+        return count/2
     }
 
 

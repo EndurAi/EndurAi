@@ -8,6 +8,7 @@ import com.android.sample.mlUtils.PoseDetectionJoints
 private val legStraight_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_HIP_KNEE_ANKLE,
+    failCorrectionComment =  AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
     targetAngle = 165.0,
     delta = 15.0,
     onSuccess = { Log.d("MLFeedback", "L Leg is good") },
@@ -16,6 +17,7 @@ private val legStraight_L =
 private val legStraight_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_HIP_KNEE_ANKLE,
+    failCorrectionComment =  AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
     targetAngle = 165.0,
     delta = 15.0,
     onSuccess = { Log.d("MLFeedback", "R leg is good") },
@@ -26,6 +28,7 @@ private val back_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
     targetAngle = 180.0,
+    failCorrectionComment =  AngleCriterionComments.SHOULDER_HIP_KNEE_NOT_FLAT,
     delta = 15.0,
     onSuccess = { Log.d("MLFeedback", "L back is good") },
     onFailure = { Log.d("MLFeedback", "L back pas cool") })
@@ -34,6 +37,7 @@ private val back_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
     targetAngle = 180.0,
+    failCorrectionComment =  AngleCriterionComments.SHOULDER_HIP_KNEE_NOT_FLAT,
     delta = 15.0,
     onSuccess = { Log.d("MLFeedback", "R back is good") },
     onFailure = { Log.d("MLFeedback", "R back pas cool") })
@@ -43,6 +47,7 @@ private val back_R =
 private val elbowCurved_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_WRIST_ELBOW_SHOULDER,
+    failCorrectionComment =  AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_RIGHT,
     targetAngle = 90.0,
     delta = 20.0,
     onSuccess = { Log.d("MLFeedback", "L elbow curved is good") },
@@ -51,6 +56,7 @@ private val elbowCurved_L =
 private val elbowCurved_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_WRIST_ELBOW_SHOULDER,
+    failCorrectionComment =  AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_RIGHT,
     targetAngle = 90.0,
     delta = 20.0,
     onSuccess = { Log.d("MLFeedback", "R elbow is good") },
@@ -60,6 +66,8 @@ private val elbowCurved_R =
 private val elbowFlat_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_WRIST_ELBOW_SHOULDER,
+    failCorrectionComment =  AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT,
+
     targetAngle = 170.0,
     delta =20.0,
     onSuccess = { Log.d("MLFeedback", "L elbow flat is good") },
@@ -68,6 +76,7 @@ private val elbowFlat_L =
 private val elbowFlat_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_WRIST_ELBOW_SHOULDER,
+    failCorrectionComment =  AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT,
     targetAngle = 170.0,
     delta = 20.0,
     onSuccess = { Log.d("MLFeedback", "R elbow flat is good") },
