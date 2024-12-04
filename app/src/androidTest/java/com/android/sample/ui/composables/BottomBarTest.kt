@@ -58,11 +58,25 @@ class BottomBarTest {
   @Test
   fun testNavigationToEachScreen() {
     composeTestRule.setContent { BottomBar(navigationActions) }
-    LIST_OF_TOP_LEVEL_DESTINATIONS.forEach { destination ->
-      composeTestRule.onNodeWithTag(destination.textId).performClick()
+    LIST_OF_TOP_LEVEL_DESTINATIONS.filter { destination ->
+          destination.route != TopLevelDestinations.ADD.route
+        }
+        .forEach { destination ->
+          composeTestRule.onNodeWithTag(destination.textId).performClick()
 
-      verify(navigationActions).navigateTo(destination.route)
-    }
+          verify(navigationActions).navigateTo(destination.route)
+        }
+    // test the ADD button navigation outputs
+    composeTestRule.onNodeWithTag(TopLevelDestinations.ADD.textId).performClick()
+
+    composeTestRule.onNodeWithTag("BottomBarRun").performClick()
+    verify(navigationActions).navigateTo(Screen.RUNNING_SCREEN)
+
+    composeTestRule.onNodeWithTag("BottomBarBodyweight").performClick()
+    verify(navigationActions).navigateTo(Screen.IMPORTORCREATE_BODY_WEIGHT)
+
+    composeTestRule.onNodeWithTag("BottomBarYoga").performClick()
+    verify(navigationActions).navigateTo(Screen.IMPORTORCREATE_YOGA)
   }
 
   /** Tests if the `MAIN Button` is highlighted correctly when selected. */
@@ -133,5 +147,14 @@ class BottomBarTest {
         .forEach { destination ->
           composeTestRule.onNodeWithTag(destination.textId).assertHeightIsEqualTo(30.dp)
         }
+  }
+
+  @Test
+  fun testAddButtonTriggerThreeNewButtons() {
+    composeTestRule.setContent { BottomBar(navigationActions) }
+    composeTestRule.onNodeWithTag(TopLevelDestinations.ADD.textId).performClick()
+    composeTestRule.onNodeWithTag("BottomBarBodyweight").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BottomBarRun").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BottomBarYoga").assertIsDisplayed()
   }
 }
