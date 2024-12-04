@@ -42,15 +42,29 @@ open class VideoViewModel(private val videoRepository: VideoRepository) : ViewMo
   suspend fun loadVideos() {
 
     _loading.value = true
+    _loading.value = true
+    val startTime = System.currentTimeMillis()
     withContext(Dispatchers.IO) {
-      videoRepository.getVideos(
+
+      try {
+        videoRepository.getVideos(
           { videoList ->
             _videos.update { videoList }
-            _loading.value = false
+//            _loading.value = false
             Log.d("VideoViewModel", "Loaded videos: $videoList")
           },
-          { exception -> _error.update { "Failed to load videos: ${exception.message}" }
-            _loading.value = false })
+          { exception ->
+            _error.update { "Failed to load videos: ${exception.message}" }
+//            _loading.value = false
+          })
+      } finally {
+        val elapsedTime = System.currentTimeMillis() - startTime
+        val minLoadingDuration = 2000L // 2 seconds minimum loading time
+        if (elapsedTime < minLoadingDuration) {
+          kotlinx.coroutines.delay(minLoadingDuration - elapsedTime)
+        }
+        _loading.value = false
+      }
     }
   }
 
