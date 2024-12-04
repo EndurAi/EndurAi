@@ -400,9 +400,8 @@ fun WorkoutCreationScreen(
                                                 painterResource(
                                                     id =
                                                         getExerciseIcon(
-                                                            type
-                                                                .name)), // Replace with your actual
-                                                                         // icon resource
+                                                            type.name)), // Replace with your actual
+                                            // icon resource
                                             contentDescription = "${type.name} Icon",
                                             modifier = Modifier.size(24.dp))
                                         Spacer(
