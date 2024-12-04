@@ -60,7 +60,7 @@ class ExerciseFeedBack {
      * @return a Boolean stating that all the angle criterion are fulfilled and a list of correcting comment
      */
     fun assessLandMarks(
-        poseLandmarkList: List<Triple<Float, Float, Float>>,
+        poseLandmarkList: List<MyPoseLandmark>,
         exerciseCriterion: ExerciseCriterion
     ): Pair<Boolean, List<AngleCriterionComments>> {
       Log.d("MLFeedback", "-----------------------------------")
@@ -73,8 +73,8 @@ class ExerciseFeedBack {
             val a_r = poseLandmarkList[angleCriterionR.joints.first]
             val b_r = poseLandmarkList[angleCriterionR.joints.second]
             val c_r = poseLandmarkList[angleCriterionR.joints.third]
-            val jointL = Triple(a_l, b_l, c_l)
-            val jointR = Triple(a_r, b_r, c_r)
+            val jointL = Triple(a_l.toTriple(), b_l.toTriple(), c_l.toTriple())
+            val jointR = Triple(a_r.toTriple(), b_r.toTriple(), c_r.toTriple())
             val resultL =
                 angleEqualsTo(jointL, angleCriterionL.targetAngle, delta = angleCriterionL.delta)
             val resultR =

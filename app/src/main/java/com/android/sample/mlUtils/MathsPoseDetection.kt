@@ -122,24 +122,29 @@ class MathsPoseDetection {
       return Triple(point.x, point.y, point.z)
     }
 
-    fun window_mean(posesList: List<List<MyPoseLandmark>>): List<Triple<Float, Float, Float>> {
+    fun window_mean(posesList: List<List<MyPoseLandmark>>): List<MyPoseLandmark> {
       val windowSize = posesList.size
-      // transform to a list<list<Triple of floats>>
-      val posesList_float =
-          posesList.map { l -> l.map { poseLandmark -> Triple(poseLandmark.x,poseLandmark.y,poseLandmark.z) } }
-      val poseLandmarkList_mean = MutableList(33) { Triple(0f, 0f, 0f) }
+
+      val poseLandmarkList_mean = MutableList(33) { MyPoseLandmark(0f, 0f, 0f,0f,0L) }
 
       for (landMarkIdx in 0..32) {
         var x = 0f
         var y = 0f
         var z = 0f
+        var presenceLikelyhood = 0f
+        var timestamp = 0L
         for (sampleIdx in 0 ..< windowSize) {
-          val triple = posesList_float[sampleIdx][landMarkIdx]
-          x += triple.first / windowSize.toFloat()
-          y += triple.second / windowSize.toFloat()
-          z += triple.third / windowSize.toFloat()
+          val poseLandmark = posesList[sampleIdx][landMarkIdx]
+          x += poseLandmark.x / windowSize.toFloat()
+          y += poseLandmark.y  / windowSize.toFloat()
+          z += poseLandmark.z  / windowSize.toFloat()
+          presenceLikelyhood += poseLandmark.presenceLikelyhood  / windowSize.toFloat()
+          timestamp = poseLandmark.timeStamp //take the last one inside the window
+
+
+
         }
-        poseLandmarkList_mean[landMarkIdx] = Triple(x, y, z)
+        poseLandmarkList_mean[landMarkIdx] = MyPoseLandmark(x, y, z,presenceLikelyhood,timestamp)
       }
       return poseLandmarkList_mean
     }

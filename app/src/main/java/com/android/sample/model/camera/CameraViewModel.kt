@@ -36,6 +36,8 @@ import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 /**
  * A ViewModel that manages camera operations for video recording and pose detection.
@@ -258,7 +260,9 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
                 })
                   //Convert into simple type
-                    _poseLandMarks.value.add(it.map { poseLandmark ->  MyPoseLandmark(poseLandmark.position3D.x,poseLandmark.position3D.y,poseLandmark.position3D.z,poseLandmark.inFrameLikelihood) })
+                    _poseLandMarks.value.add(it.map { poseLandmark ->
+                      val timeStamp = Clock.System.now().toEpochMilliseconds()
+                      MyPoseLandmark(poseLandmark.position3D.x,poseLandmark.position3D.y,poseLandmark.position3D.z,poseLandmark.inFrameLikelihood, timeStamp = timeStamp) })
               }))
       _bodyRecognitionIsEnabled.value = true
     }

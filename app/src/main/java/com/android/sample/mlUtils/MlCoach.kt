@@ -22,10 +22,10 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
         // get the stacked value from the camera view model
         val rawData = cameraViewModel._poseLandMarks.value
         // mean the data
-        val windowSize = 3
+        val windowSize = 1
         val windowStep = 1
         // 1st dim : Sample number, 2nd dim : a joint fo the sample, the 3rd dim : the three coordinates of the joint
-        val data : List<List<Triple<Float,Float,Float>>> = rawData
+        val data : List<List<MyPoseLandmark>> = rawData
             .windowed(windowSize,windowStep, partialWindows = false)
             .map { window ->
                 MathsPoseDetection.window_mean(window)
@@ -58,6 +58,17 @@ when (exerciseType.detail) {
     is ExerciseDetail.TimeBased -> {
         assert(excerciseCriterionsList.size == 1) //Time based exercises are single pose exercise !
 
+        val timeStamps = rawData.map { pose->
+            pose[0].timeStamp
+        }
+
+
+
+
+
+
+
+
         return getFeedBackSingleExercise(data = data,
             excerciseCriterions = excerciseCriterionsList.first(),
             preambleCriterions = preambleCriterionsList.first(), prependDuration = true)
@@ -71,9 +82,12 @@ when (exerciseType.detail) {
     }
 
 
-    fun getFeedBackSingleExercise(data: List<List<Triple<Float, Float, Float>>>, excerciseCriterions : ExerciseCriterion , preambleCriterions : ExerciseCriterion, prependDuration: Boolean = false) : String{
+    fun getFeedBackSingleExercise(data: List<List<MyPoseLandmark>>, excerciseCriterions : ExerciseCriterion , preambleCriterions : ExerciseCriterion, prependDuration: Boolean = false) : String{
         val data_preambleActived = data.filter { sample -> ExerciseFeedBack.assessLandMarks(sample, preambleCriterions).first }
-        val exerciseDuration = data_preambleActived.size * PoseDetectionAnalyser.THROTTLE_TIMEOUT_MS / 1000L
+
+        val firstTimeStamp = data_preambleActived.first().first().timeStamp
+        val lastTimeStamp = data_preambleActived.last().first().timeStamp
+        val exerciseDuration = (lastTimeStamp - firstTimeStamp) / 1000L
         //compute the distance from the target to the reference for each angle criterion
         //get the list of comments
         val assessedExercise = data_preambleActived.map { sample ->
@@ -135,6 +149,8 @@ when (exerciseType.detail) {
         return count/2
     }
 
+
+    
 
 
 
