@@ -44,7 +44,7 @@ private val chairCriterion_KNEE_R =
 
 val ChairCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        name= "Chair",
+        name = "Chair",
         angleCriterionSet =
             setOf(
                 chairCriterion_SHOULDER_L to chairCriterion_SHOULDER_R,

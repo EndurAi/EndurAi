@@ -188,126 +188,136 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   Log.d("MLFEEDBACK_RESULTExercise", "chair: $assessedChair.first ")
 
                   val assessedPushUpsDown =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCriterions)
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCriterions)
                   Log.d("MLFEEDBACK_RESULTExercise", "PushUpsDown: $assessedPushUpsDown.first ")
 
-
                   val assessedPushUpsUp =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsUpCrierions)
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsUpCrierions)
                   Log.d("MLFEEDBACK_RESULTExercise", "PushUpsUp: $assessedPushUpsUp.first ")
-
 
                   Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown.first")
 
-
                   val assessedJumpingJackOpen =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksOpenCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksOpen: $assessedJumpingJackOpen.first ")
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksOpenCriterions)
+                  Log.d(
+                      "MLFEEDBACK_RESULTExercise",
+                      "JumpingJacksOpen: $assessedJumpingJackOpen.first ")
 
                   val assessedJumpingJackCLosed =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksClosedCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksClosed: ${assessedJumpingJackCLosed.first} ")
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksClosedCriterions)
+                  Log.d(
+                      "MLFEEDBACK_RESULTExercise",
+                      "JumpingJacksClosed: ${assessedJumpingJackCLosed.first} ")
 
                   val assessedDowndardDog =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, DownwardDogCriterions)
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, DownwardDogCriterions)
                   Log.d("MLFEEDBACK_RESULTExercise", "DownwardDog: ${assessedDowndardDog.first} ")
                   val assessedDowndardDogPreamble =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark,ExerciseFeedBack.preambleCriterion(
-                      DownwardDogCriterions,{},{}))
+                      ExerciseFeedBack.assessLandMarks(
+                          meanedLandmark,
+                          ExerciseFeedBack.preambleCriterion(DownwardDogCriterions, {}, {}))
                   Log.d("PREAMBLE_DOWNWARD_DOG", "Preamble: ${assessedDowndardDogPreamble.first} ")
 
                   val assessedWarrior2Right =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_RIGHT_Criterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "Warrior 2 right: ${assessedWarrior2Right.first} ")
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_RIGHT_Criterions)
+                  Log.d(
+                      "MLFEEDBACK_RESULTExercise",
+                      "Warrior 2 right: ${assessedWarrior2Right.first} ")
 
                   val assessedWarrior2Left =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_LEFT_Criterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "Warrior 2 left: ${assessedWarrior2Left.first} ")
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_LEFT_Criterions)
+                  Log.d(
+                      "MLFEEDBACK_RESULTExercise", "Warrior 2 left: ${assessedWarrior2Left.first} ")
 
                   val assessedPlank =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
+                      ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
                   Log.d("MLFEEDBACK_RESULTExercisePLANK", "PLANK: ${assessedPlank.first} ")
 
                   val assessedPlank_preamble =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, ExerciseFeedBack.preambleCriterion(
-                      PlankExerciseCriterions,{},{}))
-                  Log.d("MLFEEDBACK_RESULTExercisePLANK_PREAMBLE", "PLANK_PREAMBLE: ${assessedPlank_preamble.first} ")
+                      ExerciseFeedBack.assessLandMarks(
+                          meanedLandmark,
+                          ExerciseFeedBack.preambleCriterion(PlankExerciseCriterions, {}, {}))
+                  Log.d(
+                      "MLFEEDBACK_RESULTExercisePLANK_PREAMBLE",
+                      "PLANK_PREAMBLE: ${assessedPlank_preamble.first} ")
 
-
-
-                  val jjstate = when {
-    assessedJumpingJackOpen.first && !assessedJumpingJackCLosed.first -> "open"
-    !assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first -> "closed"
-    assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first -> "both"
-    else -> "None"
-}
+                  val jjstate =
+                      when {
+                        assessedJumpingJackOpen.first && !assessedJumpingJackCLosed.first -> "open"
+                        !assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first ->
+                            "closed"
+                        assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first -> "both"
+                        else -> "None"
+                      }
                   Log.d("JumpingJacksState", jjstate)
 
                   Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown")
-
-
-
-
-
                 }
                 if (it.all { poseLandmark ->
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
                 })
-                  //Convert into simple type
-                    _poseLandMarks.value.add(it.map { poseLandmark ->
-                      val timeStamp = Clock.System.now().toEpochMilliseconds()
-                      MyPoseLandmark(poseLandmark.position3D.x,poseLandmark.position3D.y,poseLandmark.position3D.z,poseLandmark.inFrameLikelihood, timeStamp = timeStamp) })
+                // Convert into simple type
+                _poseLandMarks.value.add(
+                        it.map { poseLandmark ->
+                          val timeStamp = Clock.System.now().toEpochMilliseconds()
+                          MyPoseLandmark(
+                              poseLandmark.position3D.x,
+                              poseLandmark.position3D.y,
+                              poseLandmark.position3D.z,
+                              poseLandmark.inFrameLikelihood,
+                              timeStamp = timeStamp)
+                        })
               }))
       _bodyRecognitionIsEnabled.value = true
     }
   }
 
-/*
-  fun enablePoseRecognition(exerciseType : ExerciseType): String {
-    var exerciseWasDetected = false
-    val criterions = getCriterions(exerciseType)
-    val preamble = preambleCriterion(criterions, onSuccess =  {
-      exerciseWasDetected = true //When the preamble criterions succeed, then we start assessing the exercise
-    },
-      onFailure = {
-        exerciseWasDetected = false
-      })
-    _bodyRecognitionIsEnabled.value = true
-    _cameraController.value.imageAnalysisTargetSize =
-        CameraController.OutputSize(AspectRatio.RATIO_16_9)
-    _cameraController.value.setImageAnalysisAnalyzer(
-      ContextCompat.getMainExecutor(context),
-      PoseDetectionAnalyser(
-        onDetectedPoseUpdated = { it ->
-          // If the new pose is detected, we add it to the list of poses
-          if (it.all { poseLandmark ->
-            poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
-          }) {
-            _poseLandMarks.value.add(it)
-          }
-          if (poseLandmarks.value.size > meanWindow) {
-            val lastLandMark = poseLandmarks.value.takeLast(meanWindow)
-            val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
+  /*
+    fun enablePoseRecognition(exerciseType : ExerciseType): String {
+      var exerciseWasDetected = false
+      val criterions = getCriterions(exerciseType)
+      val preamble = preambleCriterion(criterions, onSuccess =  {
+        exerciseWasDetected = true //When the preamble criterions succeed, then we start assessing the exercise
+      },
+        onFailure = {
+          exerciseWasDetected = false
+        })
+      _bodyRecognitionIsEnabled.value = true
+      _cameraController.value.imageAnalysisTargetSize =
+          CameraController.OutputSize(AspectRatio.RATIO_16_9)
+      _cameraController.value.setImageAnalysisAnalyzer(
+        ContextCompat.getMainExecutor(context),
+        PoseDetectionAnalyser(
+          onDetectedPoseUpdated = { it ->
+            // If the new pose is detected, we add it to the list of poses
+            if (it.all { poseLandmark ->
+              poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
+            }) {
+              _poseLandMarks.value.add(it)
+            }
+            if (poseLandmarks.value.size > meanWindow) {
+              val lastLandMark = poseLandmarks.value.takeLast(meanWindow)
+              val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
 
-            //Check if the user is trying to do the exercise, this can switch exerciseWasDetected to true or false
-            assessLandMarks(meanedLandmark, preamble)
+              //Check if the user is trying to do the exercise, this can switch exerciseWasDetected to true or false
+              assessLandMarks(meanedLandmark, preamble)
 
-            if (exerciseWasDetected) {
-              val result = assessLandMarks(meanedLandmark, criterions)
-              val isSuccessful = result.all { it.first } //True only if all criterions are successful
-              if (!isSuccessful) {
-                val returnMessage = result.filter { !it.first }.joinToString { it.second }
-                finishPoseRecognition()
+              if (exerciseWasDetected) {
+                val result = assessLandMarks(meanedLandmark, criterions)
+                val isSuccessful = result.all { it.first } //True only if all criterions are successful
+                if (!isSuccessful) {
+                  val returnMessage = result.filter { !it.first }.joinToString { it.second }
+                  finishPoseRecognition()
+                }
               }
+
             }
 
           }
-
-        }
+        )
       )
-    )
-  }
-*/
+    }
+  */
 
   /**
    * Disables pose recognition by clearing the image analysis analyzer and emptying the landMarks

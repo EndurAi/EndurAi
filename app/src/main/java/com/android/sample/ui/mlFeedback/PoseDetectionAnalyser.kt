@@ -16,7 +16,6 @@ import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PoseDetectionAnalyser(private val onDetectedPoseUpdated: (List<PoseLandmark>) -> Unit) :
@@ -56,8 +55,7 @@ class PoseDetectionAnalyser(private val onDetectedPoseUpdated: (List<PoseLandmar
                     Log.d("ANALYZER", "ADDED")
 
                     onDetectedPoseUpdated(listOfLandmark)
-                  }
-                  else{
+                  } else {
                     Log.d("ANALYZER", "EMPTY")
                   }
                 }
@@ -67,7 +65,7 @@ class PoseDetectionAnalyser(private val onDetectedPoseUpdated: (List<PoseLandmar
                 }
           }
 
-          //delay(THROTTLE_TIMEOUT_MS)
+          // delay(THROTTLE_TIMEOUT_MS)
         }
         .invokeOnCompletion { exception ->
           exception?.printStackTrace()
