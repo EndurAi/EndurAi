@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
@@ -68,7 +67,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
-import com.android.sample.mlUtils.MlCoach
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.video.VideoViewModel
@@ -108,7 +106,6 @@ fun WorkoutScreenBody(
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
   val context = LocalContext.current
-  var feedback by remember { mutableStateOf("") }
   val exerciseState =
       exerciseStateList?.get(exerciseIndex)
           ?: run {
@@ -423,8 +420,6 @@ fun WorkoutScreenBody(
                             Spacer(modifier = Modifier.height(5.dp))
                           }
                         } else {
-                          cameraViewModel.enablePoseRecognition()
-
                           CameraFeedBack.CameraScreen(
                               cameraViewModel, modifier = Modifier.size(220.dp, 350.dp))
                         }
@@ -483,22 +478,6 @@ fun WorkoutScreenBody(
                       modifier = Modifier.size(height = 250.dp, width = 180.dp),
                       horizontalAlignment = Alignment.CenterHorizontally,
                       verticalArrangement = Arrangement.Top) {
-                        Button(
-                            onClick = {
-                              val mlCoach = MlCoach(cameraViewModel, exerciseState.exercise.type)
-                              val feedBackList = mlCoach.getFeedback()
-                              val stringBuilder = StringBuilder()
-                              feedBackList.forEach { stringBuilder.append(it.toString()) }
-                              val feedBack_str = stringBuilder.toString()
-                              Log.d(
-                                  "MLCOACH",
-                                  "Feedback for ${exerciseState.exercise.type} \n ${feedBack_str}")
-                              feedback = feedBack_str
-                            }) {
-                              Text("Generate feedback")
-                            }
-                        Text(feedback)
-
                         if (cameraRecordAsked) {
                           Button(
                               colors =
