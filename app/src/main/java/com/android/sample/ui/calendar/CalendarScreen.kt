@@ -1,6 +1,7 @@
 package com.android.sample.ui.calendar
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Typeface
 import android.widget.Space
 import androidx.compose.foundation.BorderStroke
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -35,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
@@ -50,6 +53,8 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.DarkGrey
+import com.android.sample.ui.theme.LegendBodyweight
+import com.android.sample.ui.theme.LegendYoga
 import com.android.sample.ui.theme.Line
 import com.android.sample.ui.theme.MediumGrey
 import com.android.sample.ui.theme.NeutralGrey
@@ -80,8 +85,8 @@ fun CalendarScreen(
   val workoutsYoga by yogaworkoutViewModel.workouts.collectAsState(emptyList())
 
   val coloredWorkoutsBody =
-      workoutsBody.map { ColoredWorkout(it, PastelRed, WorkoutType.BODY_WEIGHT) }
-  val coloredWorkoutsYoga = workoutsYoga.map { ColoredWorkout(it, PastelBlue, WorkoutType.YOGA) }
+      workoutsBody.map { ColoredWorkout(it, LegendBodyweight, WorkoutType.BODY_WEIGHT) }
+  val coloredWorkoutsYoga = workoutsYoga.map { ColoredWorkout(it, LegendYoga, WorkoutType.YOGA) }
   val workouts = coloredWorkoutsYoga + coloredWorkoutsBody
 
   // Infinite scrolling logic
@@ -224,7 +229,6 @@ fun DaySection(
                 calendarViewModel.updateSelectedDate(date)
                 navigationActions.navigateTo(Screen.DAY_CALENDAR)
               },
-      horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier, horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
             Spacer(modifier = Modifier.height(40.dp))
@@ -243,15 +247,15 @@ fun DaySection(
                 }
             )
         }
-
+      Spacer(modifier = Modifier.width(150.dp))
         if (workouts.isEmpty()) {
           Text(
               text = stringResource(id = R.string.NoWorkout), style = MaterialTheme.typography.bodyMedium, color = NeutralGrey, fontFamily = OpenSans)
         } else {
-          Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
+          Column(modifier = Modifier) {
             workouts
                 .sortedBy { it.workout.date }
-                .forEach { workout -> WorkoutItem(workout, onWorkoutClick) }
+                .forEach { workout -> WorkoutItem(workout, onWorkoutClick, context) }
           }
         }
       }
@@ -262,6 +266,7 @@ fun shadowText(
     context: android.content.Context,
     text: String,
     textSizeSp: Float,
+    y: Float = 0f
 ){
     val openSansTypeface = ResourcesCompat.getFont(context, R.font.open_sans_regular)
 
@@ -275,33 +280,44 @@ fun shadowText(
     canvas.nativeCanvas.drawText(
         text,
         0f,
-        0f,
+        y,
         textPaint
     )
 }
 
 @Composable
-fun WorkoutItem(coloredWorkout: ColoredWorkout, onClick: (ColoredWorkout) -> Unit) {
+fun WorkoutItem(coloredWorkout: ColoredWorkout, onClick: (ColoredWorkout) -> Unit, context: Context) {
   Card(
       modifier =
-          Modifier.fillMaxWidth()
+          Modifier
               .clickable { onClick(coloredWorkout) }
               .padding(vertical = 4.dp)
               .testTag("workoutItem"),
-      colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
-      shape = MaterialTheme.shapes.medium) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
-              Text(text = coloredWorkout.workout.name, style = MaterialTheme.typography.bodyLarge)
-              Text(
-                  text = formatTime(coloredWorkout.workout.date),
-                  style = MaterialTheme.typography.bodyLarge)
-            }
+      colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
+        Row(modifier = Modifier.width(200.dp).height(30.dp)) {
+            Spacer(modifier = Modifier.width(20.dp))
+            CircleDot(coloredWorkout.backgroundColor)
+            Spacer(modifier = Modifier.width(20.dp))
+            Box(
+                modifier = Modifier.drawBehind {
+                    drawIntoCanvas { canvas ->
+                        shadowText(canvas, context, coloredWorkout.workout.name,  18.sp.toPx(), 35f)
+                    }
+                }
+            )
+        }
       }
 }
 
+@Composable
+fun CircleDot(color: Color){
+    Column(
+        modifier = Modifier
+            .size(15.dp)
+            .shadow(4.dp, shape = CircleShape)
+            .background(color, shape = CircleShape)
+    ){}
+}
 private fun getMonthName(monthNumber: Int): String {
   return when (monthNumber) {
     1 -> "January"
