@@ -96,6 +96,7 @@ private val flatLeg_right =
 val Warrior_2_LEFT_Criterions: ExerciseCriterion =
   ExerciseCriterion(
     symmetric = false,
+    name = "Warrior 2 pose on the left",
     angleCriterionSet =
     setOf(
       armLeftFlat to armRightFlat,
@@ -105,6 +106,7 @@ val Warrior_2_LEFT_Criterions: ExerciseCriterion =
 val Warrior_2_RIGHT_Criterions: ExerciseCriterion =
   ExerciseCriterion(
     symmetric = false,
+    name = "Warrior 2 pose on the right",
     angleCriterionSet =
     setOf(
       armLeftFlat to armRightFlat,

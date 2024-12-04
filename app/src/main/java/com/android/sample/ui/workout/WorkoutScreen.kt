@@ -517,7 +517,10 @@ fun WorkoutScreenBody(
                     Button(onClick =
                     {
                       val mlCoach = MlCoach(cameraViewModel,exerciseState.exercise.type)
-                      val feedBack_str = mlCoach.getFeedback()
+                      val feedBackList = mlCoach.getFeedback()
+                      val stringBuilder = StringBuilder()
+                      feedBackList.forEach { stringBuilder.append(it.toString()) }
+                      val feedBack_str = stringBuilder.toString()
                       Log.d("MLCOACH", "Feedback for ${exerciseState.exercise.type} \n ${feedBack_str}")
                       feedback = feedBack_str
                     }) {

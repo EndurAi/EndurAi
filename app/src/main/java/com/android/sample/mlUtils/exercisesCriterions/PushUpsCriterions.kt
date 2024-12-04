@@ -85,8 +85,9 @@ private val elbowFlat_R =
 
 
 
-val PushUpsDownCrierions: ExerciseCriterion =
+val PushUpsDownCriterions: ExerciseCriterion =
   ExerciseCriterion(
+    name = "Pushup low position",
     angleCriterionSet =
     setOf(
       elbowCurved_L to elbowCurved_R,
@@ -96,6 +97,7 @@ val PushUpsDownCrierions: ExerciseCriterion =
 
 val PushUpsUpCrierions: ExerciseCriterion =
   ExerciseCriterion(
+    name = "Pushup high position",
     angleCriterionSet =
     setOf(
       elbowFlat_L to elbowFlat_R,

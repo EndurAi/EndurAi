@@ -15,29 +15,23 @@ import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.android.sample.mlUtils.ExerciseFeedBack
-import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
-import com.android.sample.mlUtils.ExerciseFeedBack.Companion.getCriterions
-import com.android.sample.mlUtils.ExerciseFeedBack.Companion.preambleCriterion
 import com.android.sample.mlUtils.MyPoseLandmark
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
 import com.android.sample.mlUtils.exercisesCriterions.DownwardDogCriterions
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksClosedCriterions
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
-import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
-import com.android.sample.model.workout.ExerciseType
+import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_LEFT_Criterions
 import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_RIGHT_Criterions
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import com.google.mlkit.vision.common.PointF3D
-import com.google.mlkit.vision.pose.PoseLandmark
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 /**
  * A ViewModel that manages camera operations for video recording and pose detection.
@@ -194,7 +188,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   Log.d("MLFEEDBACK_RESULTExercise", "chair: $assessedChair.first ")
 
                   val assessedPushUpsDown =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCrierions)
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCriterions)
                   Log.d("MLFEEDBACK_RESULTExercise", "PushUpsDown: $assessedPushUpsDown.first ")
 
 

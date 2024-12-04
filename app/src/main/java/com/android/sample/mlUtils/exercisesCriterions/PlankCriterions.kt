@@ -65,6 +65,7 @@ private val plankCriterion_LEG_R =
 // PlankExerciseCriterion
 val PlankExerciseCriterions: ExerciseCriterion =
     ExerciseCriterion(
+        name= "PlanK",
         angleCriterionSet =
             setOf(
                 plankCriterion_SHOULDER_L to plankCriterion_SHOULDER_R,

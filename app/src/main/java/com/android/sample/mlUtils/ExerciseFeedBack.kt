@@ -8,7 +8,7 @@ import com.android.sample.mlUtils.exercisesCriterions.DownwardDogCriterions
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksClosedCriterions
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
-import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
+import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.model.workout.ExerciseType
 import kotlin.math.abs
@@ -55,7 +55,7 @@ class ExerciseFeedBack {
       
     )
 
-    data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>, val symmetric : Boolean = true)
+    data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>, val symmetric : Boolean = true, val name: String)
 
     /**
      * Asses the landmarks to the given angle criterion
@@ -170,7 +170,7 @@ class ExerciseFeedBack {
                onFailure = onFailure
            )
           }
-      return ExerciseCriterion(preambleCriterion.toSet())
+      return ExerciseCriterion(preambleCriterion.toSet(), name = "")
     }
       fun getCriterions(exerciseType: ExerciseType): List<ExerciseCriterion> {
           val ret = when (exerciseType) {
@@ -178,7 +178,7 @@ class ExerciseFeedBack {
               ExerciseType.TREE_POSE -> TODO()
               ExerciseType.SUN_SALUTATION -> TODO()
               ExerciseType.WARRIOR_II -> TODO()
-              ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCrierions)
+              ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCriterions)
               ExerciseType.SQUATS -> TODO()
               ExerciseType.PLANK -> listOf(PlankExerciseCriterions)
               ExerciseType.CHAIR -> listOf(ChairCriterions)

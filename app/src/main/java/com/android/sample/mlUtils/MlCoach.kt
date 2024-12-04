@@ -37,7 +37,7 @@ when (exerciseType.detail) {
 
 
         val listOfCoachAdvice =  (excerciseCriterionsList zip preambleCriterionsList ).map { (exCriterion, preambleCriterions) ->
-           getFeedBackSingleExercise(data = data, excerciseCriterions = exCriterion, preambleCriterions = preambleCriterions, numberOfRepetition = nbRep)
+           getFeedBackSingleExercise(data = data, exerciseCriterion = exCriterion, preambleCriterions = preambleCriterions, numberOfRepetition = nbRep)
         }
         return listOfCoachAdvice
 
@@ -53,12 +53,12 @@ when (exerciseType.detail) {
     }
     is ExerciseDetail.TimeBased -> {
         //If the exercise pose are not symetric eg : the warrior 2  pose can be done on the left or on the right
-        if (excerciseCriterionsList.all { exerciseCriterion -> exerciseCriterion.symmetric }) {
+        if (excerciseCriterionsList.all { exerciseCriterion -> !exerciseCriterion.symmetric }) {
             assert(excerciseCriterionsList.size == 2) // for the left and right part
             //select the one with the most detected preamble
            val bestSideAssessement = (excerciseCriterionsList zip preambleCriterionsList).map { (excerciseCriterion, preambleCriterion)-> getFeedBackSingleExercise(
                data = data,
-               excerciseCriterions = excerciseCriterion,
+               exerciseCriterion = excerciseCriterion,
                preambleCriterions = preambleCriterion,
                isTimeBased = true
            )}.sortedBy { it.successRate }.last()
@@ -85,7 +85,7 @@ when (exerciseType.detail) {
             }
             return listOf(getFeedBackSingleExercise(
                 data = data,
-                excerciseCriterions = excerciseCriterionsList.first(),
+                exerciseCriterion = excerciseCriterionsList.first(),
                 preambleCriterions = preambleCriterionsList.first(),
                 isTimeBased = true
             ))
@@ -101,10 +101,10 @@ when (exerciseType.detail) {
 
 
     fun getFeedBackSingleExercise(data: List<List<MyPoseLandmark>>,
-                                  excerciseCriterions : ExerciseCriterion ,
+                                  exerciseCriterion : ExerciseCriterion,
                                   preambleCriterions : ExerciseCriterion,
                                   isTimeBased: Boolean = false,
-                                  numberOfRepetition : Int = 0 ,
+                                  numberOfRepetition : Int = 0,
     ) : CoachFeedback {
         val data_preambleActived = data.filter { sample -> ExerciseFeedBack.assessLandMarks(sample, preambleCriterions).first }
 
@@ -118,7 +118,7 @@ when (exerciseType.detail) {
         //compute the distance from the target to the reference for each angle criterion
         //get the list of comments
         val assessedExercise = data_preambleActived.map { sample ->
-            ExerciseFeedBack.assessLandMarks(sample, exerciseCriterion = excerciseCriterions)
+            ExerciseFeedBack.assessLandMarks(sample, exerciseCriterion = exerciseCriterion)
         }
         val freqThreshold = 0.0F //If a mistake is make with a higher frequency, give advice to the user
 
@@ -151,13 +151,15 @@ when (exerciseType.detail) {
                 commentSet = jointFeedbackSet,
                 successRate = successRate,
                 repOrDuration = exerciseDuration.toInt(),
-                "s")
+                "s",
+                exerciseCriterion = exerciseCriterion )
         } else{
             CoachFeedback(
                 commentSet = jointFeedbackSet,
                 successRate = successRate,
                 repOrDuration = numberOfRepetition,
-                "repetitions")
+                "repetitions",
+                exerciseCriterion = exerciseCriterion)
         }
 
     }

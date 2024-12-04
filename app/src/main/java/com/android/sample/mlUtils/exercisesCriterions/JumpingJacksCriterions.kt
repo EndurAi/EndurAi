@@ -141,6 +141,8 @@ private val legOpen_R =
 
 
 val JumpingJacksOpenCriterions : ExerciseCriterion = ExerciseCriterion(
+  name = "", //empty as the exercise is not commented by the ml coach
+  angleCriterionSet =
   setOf(
     legOpen_L to legOpen_R,
     legFlat_L to legFlat_R,
@@ -150,6 +152,8 @@ val JumpingJacksOpenCriterions : ExerciseCriterion = ExerciseCriterion(
 
 
 val JumpingJacksClosedCriterions : ExerciseCriterion = ExerciseCriterion(
+  name = "", //empty as the exercise is not commented by the ml coach
+  angleCriterionSet =
   setOf(
     legClosed_L to legClosed_R,
     legFlat_L to legFlat_R,

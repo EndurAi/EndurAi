@@ -87,7 +87,8 @@ private val  bended_hip_R =
 
 
 val DownwardDogCriterions :  ExerciseCriterion = ExerciseCriterion(
-  setOf(
+  name= "Downward Dog",
+  angleCriterionSet = setOf(
     legStraight_L to legStraight_R,
     armUp_L to armUp_R,
     elbowFlat_L to elbowFlat_R,
