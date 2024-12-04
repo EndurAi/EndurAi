@@ -60,7 +60,7 @@ when (exerciseType.detail) {
 
         return getFeedBackSingleExercise(data = data,
             excerciseCriterions = excerciseCriterionsList.first(),
-            preambleCriterions = preambleCriterionsList.first(), prependDuration = false)
+            preambleCriterions = preambleCriterionsList.first(), prependDuration = true)
     }
 
 }
