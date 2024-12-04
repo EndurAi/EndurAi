@@ -1,9 +1,11 @@
 package com.android.sample.ui.calendar
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -14,10 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
@@ -31,6 +35,10 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.BodyWeightTag
 import com.android.sample.ui.theme.CalendarBackground
+import com.android.sample.ui.theme.LegendBodyweight
+import com.android.sample.ui.theme.LegendRunning
+import com.android.sample.ui.theme.LegendYoga
+import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.RunningTag
 import com.android.sample.ui.theme.YogaTag
 import java.time.format.DateTimeFormatter
@@ -65,9 +73,9 @@ fun DayCalendarScreen(
       dailyWorkouts
           .map {
             when (it) {
-              is BodyWeightWorkout -> ColoredWorkout(it, BodyWeightTag, WorkoutType.BODY_WEIGHT)
-              is YogaWorkout -> ColoredWorkout(it, YogaTag, WorkoutType.YOGA)
-              else -> ColoredWorkout(it, RunningTag, WorkoutType.RUNNING)
+              is BodyWeightWorkout -> ColoredWorkout(it, LegendBodyweight, WorkoutType.BODY_WEIGHT)
+              is YogaWorkout -> ColoredWorkout(it, LegendYoga, WorkoutType.YOGA)
+              else -> ColoredWorkout(it, LegendRunning, WorkoutType.RUNNING)
             }
           }
           .sortedBy { it.workout.date.minute }
@@ -84,10 +92,11 @@ fun DayCalendarScreen(
 
           Text(
               text =
-                  selectedDate?.toJavaLocalDate()?.format(DateTimeFormatter.ofPattern("d MMMM"))
+                  selectedDate?.toJavaLocalDate()?.format(DateTimeFormatter.ofPattern("dd MMMM"))
                       ?: "",
-              style = MaterialTheme.typography.headlineMedium,
-              fontWeight = FontWeight.Bold,
+              fontFamily = OpenSans,
+              fontWeight = FontWeight.SemiBold,
+              fontSize = 45.sp,
               modifier =
                   Modifier.padding(top = 8.dp, start = 16.dp, bottom = 16.dp).testTag("Date"))
 
@@ -95,10 +104,12 @@ fun DayCalendarScreen(
               modifier =
                   Modifier.testTag("Hours")
                       .fillMaxWidth()
-                      .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                      .background(CalendarBackground, shape = MaterialTheme.shapes.medium)) {
+                      .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
+                      .shadow(4.dp, shape = RoundedCornerShape(25.dp))
+                      .background(CalendarBackground, shape = RoundedCornerShape(25.dp))) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                  items(24) { hour ->
+                  items(25) { hourInput ->
+                      val hour = if(hourInput == 24) 0 else hourInput
                     HourBlock(hour, coloredWorkouts.filter { it.workout.date.hour == hour })
                   }
                 }
@@ -113,15 +124,21 @@ fun DayCalendarScreen(
  * @param hour The hour to display (e.g., 9 for 9:00 AM).
  * @param workouts A list of colored workouts scheduled for that hour.
  */
+@SuppressLint("DefaultLocale")
 @Composable
 fun HourBlock(hour: Int, workouts: List<ColoredWorkout>) {
-  Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+  Column(modifier = Modifier.fillMaxWidth()) {
     Text(
-        text = "${hour}:00",
-        style = MaterialTheme.typography.bodyMedium,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 16.dp))
-    workouts.forEach { workout -> WorkoutItem(workout) }
+        fontFamily = OpenSans,
+        fontWeight = FontWeight.SemiBold,
+        text = String.format("%02d:00", hour),
+        modifier = Modifier.padding(start = 25.dp))
+
+      if(workouts.isEmpty()){
+          Spacer(modifier = Modifier.height(25.dp))
+      } else {
+          workouts.forEach { workout -> WorkoutItem(workout) }
+      }
   }
 }
 
@@ -132,19 +149,24 @@ fun HourBlock(hour: Int, workouts: List<ColoredWorkout>) {
  */
 @Composable
 fun WorkoutItem(coloredWorkout: ColoredWorkout) {
-  Card(
-      modifier =
-          Modifier.fillMaxWidth()
-              .padding(vertical = 4.dp, horizontal = 30.dp)
-              .testTag("WorkoutCard")
-              .clickable { /*navigate to edit or start workout screen*/},
-      colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
-      shape = MaterialTheme.shapes.medium) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-              Text(text = coloredWorkout.workout.name, fontWeight = FontWeight.Bold)
-              Text(text = formatTime(coloredWorkout.workout.date))
+    val shape = RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
+    Row(){
+        Spacer(modifier = Modifier.width(30.dp))
+        Card(
+            modifier =
+            Modifier
+                .padding(horizontal = 50.dp)
+                .testTag("WorkoutCard")
+                .clickable { /*navigate to edit or start workout screen*/}
+                .shadow(4.dp, shape = shape),
+            colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
+            shape = shape) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp ,horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = coloredWorkout.workout.name, fontFamily = OpenSans, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = formatTime(coloredWorkout.workout.date), fontFamily = OpenSans, fontSize = 18.sp)
             }
-      }
+        }
+    }
 }
