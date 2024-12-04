@@ -44,20 +44,23 @@ class ExerciseFeedBack {
         val joints: Triple<Int, Int, Int>,
         val targetAngle: Double,
         val delta: Double,
-        val combination : Boolean = false,
+        val combination: Boolean = false,
         val onSuccess: () -> Unit,
         val onFailure: () -> Unit,
-      val failCorrectionComment: AngleCriterionComments = AngleCriterionComments.NOT_IMPLEMENTED,
-      val successCorrectionComment : AngleCriterionComments = AngleCriterionComments.SUCCESS,
-      val LR_FailComment : AngleCriterionComments = AngleCriterionComments.NOT_IMPLEMENTED, //Comment when the L and the R side of a joint are failed
-      
+        val failCorrectionComment: AngleCriterionComments = AngleCriterionComments.NOT_IMPLEMENTED,
+        val successCorrectionComment: AngleCriterionComments = AngleCriterionComments.SUCCESS,
+        val LR_FailComment: AngleCriterionComments =
+            AngleCriterionComments
+                .NOT_IMPLEMENTED, // Comment when the L and the R side of a joint are failed
     )
 
     data class ExerciseCriterion(val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>)
 
     /**
      * Asses the landmarks to the given angle criterion
-     * @return a Boolean stating that all the angle criterion are fulfilled and a list of correcting comment
+     *
+     * @return a Boolean stating that all the angle criterion are fulfilled and a list of correcting
+     *   comment
      */
     fun assessLandMarks(
         poseLandmarkList: List<MyPoseLandmark>,
@@ -80,21 +83,21 @@ class ExerciseFeedBack {
             val resultR =
                 angleEqualsTo(jointR, angleCriterionR.targetAngle, delta = angleCriterionR.delta)
 
-            //NOTE : Only one comment is sent at a time !
-            if (angleCriterionR.combination && angleCriterionL.combination){ //Both left and right part should be OK
-              if (resultR && resultL){
+            // NOTE : Only one comment is sent at a time !
+            if (angleCriterionR.combination &&
+                angleCriterionL.combination) { // Both left and right part should be OK
+              if (resultR && resultL) {
                 angleCriterionL.onSuccess()
                 angleCriterionL.onSuccess()
                 listOfComments.add(angleCriterionR.successCorrectionComment)
-                //listOfComments.add(angleCriterionL.successCorrectionComment)
-              }
-              else{
+                // listOfComments.add(angleCriterionL.successCorrectionComment)
+              } else {
                 angleCriterionL.onFailure()
                 angleCriterionR.onFailure()
                 listOfComments.add(angleCriterionL.LR_FailComment)
-                //listOfComments.add(angleCriterionR.failCorrectionComment)
+                // listOfComments.add(angleCriterionR.failCorrectionComment)
               }
-            }//If only one part is sufficient
+            } // If only one part is sufficient
             else if (resultL) {
               angleCriterionL.onSuccess()
               listOfComments.add(angleCriterionL.successCorrectionComment)
@@ -105,7 +108,6 @@ class ExerciseFeedBack {
               angleCriterionL.onFailure()
               angleCriterionR.onFailure()
               listOfComments.add(angleCriterionL.failCorrectionComment)
-
             }
 
             resultL || resultR
@@ -113,7 +115,7 @@ class ExerciseFeedBack {
       Log.d("MLFeedback", "-----------------------------------")
 
       val exerciseSuccess = listOfBoolean.all { b -> b }
-      return Pair(exerciseSuccess,listOfComments.toList())
+      return Pair(exerciseSuccess, listOfComments.toList())
     }
 
     /* fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{
@@ -151,41 +153,46 @@ class ExerciseFeedBack {
         }
     */
 
-    fun preambleCriterion(exerciseCriterion: ExerciseCriterion,onSuccess: () -> Unit,onFailure: () -> Unit): ExerciseCriterion {
+    fun preambleCriterion(
+        exerciseCriterion: ExerciseCriterion,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ): ExerciseCriterion {
       val preambleCriterion =
           exerciseCriterion.angleCriterionSet.map { (angleCriterionL, angleCriterionR) ->
-           AngleCriterion(
-               joints = angleCriterionL.joints,
+            AngleCriterion(
+                joints = angleCriterionL.joints,
                 targetAngle = angleCriterionL.targetAngle,
-                delta = angleCriterionL.delta*1.5,
+                delta = angleCriterionL.delta * 1.5,
                 onSuccess = onSuccess,
-                onFailure = onFailure
-           ) to AngleCriterion(
-               joints = angleCriterionR.joints,
-               targetAngle = angleCriterionR.targetAngle,
-               delta = angleCriterionR.delta*1.5,
-               onSuccess = onSuccess,
-               onFailure = onFailure
-           )
+                onFailure = onFailure) to
+                AngleCriterion(
+                    joints = angleCriterionR.joints,
+                    targetAngle = angleCriterionR.targetAngle,
+                    delta = angleCriterionR.delta * 1.5,
+                    onSuccess = onSuccess,
+                    onFailure = onFailure)
           }
       return ExerciseCriterion(preambleCriterion.toSet())
     }
-      fun getCriterions(exerciseType: ExerciseType): List<ExerciseCriterion> {
-          val ret = when (exerciseType) {
-              ExerciseType.DOWNWARD_DOG -> listOf(DownwardDogCriterions)
-              ExerciseType.TREE_POSE -> TODO()
-              ExerciseType.SUN_SALUTATION -> TODO()
-              ExerciseType.WARRIOR_II -> TODO()
-              ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCrierions)
-              ExerciseType.SQUATS -> TODO()
-              ExerciseType.PLANK -> listOf(PlankExerciseCriterions)
-              ExerciseType.CHAIR -> listOf(ChairCriterions)
-              ExerciseType.JUMPING_JACKS -> TODO()
-              ExerciseType.LEG_SWINGS -> TODO()
-              ExerciseType.ARM_CIRCLES -> TODO()
-              ExerciseType.ARM_WRIST_CIRCLES -> TODO()
+
+    fun getCriterions(exerciseType: ExerciseType): List<ExerciseCriterion> {
+      val ret =
+          when (exerciseType) {
+            ExerciseType.DOWNWARD_DOG -> listOf(DownwardDogCriterions)
+            ExerciseType.TREE_POSE -> TODO()
+            ExerciseType.SUN_SALUTATION -> TODO()
+            ExerciseType.WARRIOR_II -> TODO()
+            ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCrierions)
+            ExerciseType.SQUATS -> TODO()
+            ExerciseType.PLANK -> listOf(PlankExerciseCriterions)
+            ExerciseType.CHAIR -> listOf(ChairCriterions)
+            ExerciseType.JUMPING_JACKS -> TODO()
+            ExerciseType.LEG_SWINGS -> TODO()
+            ExerciseType.ARM_CIRCLES -> TODO()
+            ExerciseType.ARM_WRIST_CIRCLES -> TODO()
           }
-            return ret
-      }
+      return ret
+    }
   }
 }
