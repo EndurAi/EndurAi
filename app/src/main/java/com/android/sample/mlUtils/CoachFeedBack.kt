@@ -14,7 +14,7 @@ data class CoachFeedback(
         .filter { it.rate >= 0.15F }
         .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
     if (repOrDurationUnit == "s") {
-      stringBuilder.append("Duration: $repOrDuration seconds\n")
+      stringBuilder.append("Duration: $repOrDuration s\n")
     } else {
       stringBuilder.append("Repetitions: $repOrDuration repetitions\n")
     }

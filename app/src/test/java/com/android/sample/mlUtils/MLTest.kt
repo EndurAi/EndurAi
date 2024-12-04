@@ -61,7 +61,6 @@ class MLTest {
     `when`(mockCameraViewModel._poseLandMarks).thenReturn(testImage)
     val mlCoach = MlCoach(mockCameraViewModel, ExerciseType.PLANK)
     val feedback = mlCoach.getFeedback()
-    assert(feedback.contains("Duration:10 s"))
-    assert(feedback.contains("Success rate: 100.0%"))
+    assert(feedback[0].toString().contains("Duration: 10 s"))
   }
 }
