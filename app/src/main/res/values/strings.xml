@@ -45,4 +45,5 @@
     <string name="QuickTitle">Quick Workout</string>
     <string name="TotalTrainings">%1$s Workouts in Total</string>
     <string name="RunningScreenTopBar">Running</string>
+    <string name="NoWorkout">No Workout</string>
 </resources>

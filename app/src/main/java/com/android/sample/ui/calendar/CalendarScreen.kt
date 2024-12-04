@@ -1,5 +1,8 @@
 package com.android.sample.ui.calendar
 
+import android.annotation.SuppressLint
+import android.graphics.Typeface
+import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,11 +23,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.res.ResourcesCompat
 import com.android.sample.R
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.Workout
@@ -40,6 +53,7 @@ import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.Line
 import com.android.sample.ui.theme.MediumGrey
 import com.android.sample.ui.theme.NeutralGrey
+import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.PastelBlue
 import com.android.sample.ui.theme.PastelRed
 import com.android.sample.ui.theme.Red
@@ -51,6 +65,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toLocalDateTime
+import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter.All
 
 data class ColoredWorkout(val workout: Workout, val backgroundColor: Color, val type: WorkoutType)
 
@@ -187,6 +202,7 @@ private fun generateDateRange(
   return List(count) { daysToAdd -> startDate.plus(daysToAdd.toLong(), DateTimeUnit.DAY) }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun DaySection(
     date: kotlinx.datetime.LocalDate,
@@ -195,6 +211,7 @@ fun DaySection(
     navigationActions: NavigationActions,
     calendarViewModel: CalendarViewModel
 ) {
+    val context = LocalContext.current
   Row(
       modifier =
           Modifier.fillMaxWidth()
@@ -209,22 +226,27 @@ fun DaySection(
               },
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
-        Column(modifier = Modifier, horizontalAlignment = Alignment.Start) {
-          Text(
-              text = date.dayOfMonth.toString(),
-              style = MaterialTheme.typography.headlineLarge,
-              fontWeight = FontWeight.Bold)
-          Spacer(modifier = Modifier.height(4.dp))
-          Text(
-              text = getMonthName(date.monthNumber),
-              style = MaterialTheme.typography.bodySmall,
-              fontWeight = FontWeight.Light,
-              color = DarkGrey)
+        Column(modifier = Modifier, horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
+            Spacer(modifier = Modifier.height(40.dp))
+            Box(
+              modifier = Modifier.drawBehind {
+                  drawIntoCanvas { canvas ->
+                      shadowText(canvas, context, String.format("%02d", date.dayOfMonth),  50.sp.toPx())
+                  }
+              })
+          Spacer(modifier = Modifier.height(20.dp))
+            Box(
+                modifier = Modifier.drawBehind {
+                    drawIntoCanvas { canvas ->
+                        shadowText(canvas, context,  getMonthName(date.monthNumber),  16.sp.toPx())
+                    }
+                }
+            )
         }
 
         if (workouts.isEmpty()) {
           Text(
-              text = "No workout", style = MaterialTheme.typography.bodyMedium, color = NeutralGrey)
+              text = stringResource(id = R.string.NoWorkout), style = MaterialTheme.typography.bodyMedium, color = NeutralGrey, fontFamily = OpenSans)
         } else {
           Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
             workouts
@@ -233,6 +255,29 @@ fun DaySection(
           }
         }
       }
+}
+
+fun shadowText(
+    canvas: Canvas,
+    context: android.content.Context,
+    text: String,
+    textSizeSp: Float,
+){
+    val openSansTypeface = ResourcesCompat.getFont(context, R.font.open_sans_regular)
+
+    val textPaint = android.graphics.Paint().apply {
+        color = android.graphics.Color.BLACK
+        textSize = textSizeSp
+        setShadowLayer(8f, 4f, 4f, android.graphics.Color.GRAY)
+        typeface = openSansTypeface
+    }
+
+    canvas.nativeCanvas.drawText(
+        text,
+        0f,
+        0f,
+        textPaint
+    )
 }
 
 @Composable
