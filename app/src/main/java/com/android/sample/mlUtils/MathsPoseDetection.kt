@@ -67,33 +67,28 @@ class MathsPoseDetection {
      * @param a_z The z-coordinate of the first point (optional, use 0f for 2D).
      * @param b_x The x-coordinate of the second point (vertex of the angle).
      * @param b_y The y-coordinate of the second point (vertex of the angle).
-     * @param b_z The z-coordinate of the second point (vertex of the angle) (optional, use 0f for
-     *   2D).
+     * @param b_z The z-coordinate of the second point (vertex of the angle) (optional, use 0f for 2D).
      * @param c_x The x-coordinate of the third point.
      * @param c_y The y-coordinate of the third point.
      * @param c_z The z-coordinate of the third point (optional, use 0f for 2D).
-     * @param is3D A boolean flag indicating whether to calculate the angle in 3D space.
+     * @param is3D  A boolean flag indicating whether to calculate the angle in 3D space.
      * @return The angle in degrees.
      */
     fun angle(
-        a_x: Float,
-        a_y: Float,
-        a_z: Float,
-        b_x: Float,
-        b_y: Float,
-        b_z: Float,
-        c_x: Float,
-        c_y: Float,
-        c_z: Float,
-        is3D: Boolean = false
+      a_x: Float,
+      a_y: Float,
+      a_z: Float,
+      b_x: Float,
+      b_y: Float,
+      b_z: Float,
+      c_x: Float,
+      c_y: Float,
+      c_z: Float,
+      is3D: Boolean = false
     ): Double {
       // Create vectors BA and BC
-      val ba =
-          if (is3D) floatArrayOf(a_x - b_x, a_y - b_y, a_z - b_z)
-          else floatArrayOf(a_x - b_x, a_y - b_y)
-      val bc =
-          if (is3D) floatArrayOf(c_x - b_x, c_y - b_y, c_z - b_z)
-          else floatArrayOf(c_x - b_x, c_y - b_y)
+      val ba = if (is3D) floatArrayOf(a_x - b_x, a_y - b_y, a_z - b_z) else floatArrayOf(a_x - b_x, a_y - b_y)
+      val bc = if (is3D) floatArrayOf(c_x - b_x, c_y - b_y, c_z - b_z) else floatArrayOf(c_x - b_x, c_y - b_y)
 
       // Calculate dot product of BA and BC
       val dotProduct = ba[0] * bc[0] + ba[1] * bc[1] + (if (is3D) ba[2] * bc[2] else 0f)
@@ -105,9 +100,9 @@ class MathsPoseDetection {
       // Calculate the angle in radians using the dot product formula
       val epsilon = 1e-6
       val angleRadians =
-          if (magnitudeBA > epsilon && magnitudeBC > epsilon)
-              acos(dotProduct / (magnitudeBA * magnitudeBC))
-          else 0f
+        if (magnitudeBA > epsilon && magnitudeBC > epsilon)
+          acos(dotProduct / (magnitudeBA * magnitudeBC))
+        else 0f
 
       // Convert radians to degrees
       return degrees(angleRadians)
@@ -130,7 +125,7 @@ class MathsPoseDetection {
     fun window_mean(posesList: List<List<MyPoseLandmark>>): List<MyPoseLandmark> {
       val windowSize = posesList.size
 
-      val poseLandmarkList_mean = MutableList(33) { MyPoseLandmark(0f, 0f, 0f, 0f, 0L) }
+      val poseLandmarkList_mean = MutableList(33) { MyPoseLandmark(0f, 0f, 0f,0f,0L) }
 
       for (landMarkIdx in 0..32) {
         var x = 0f
@@ -141,12 +136,15 @@ class MathsPoseDetection {
         for (sampleIdx in 0 ..< windowSize) {
           val poseLandmark = posesList[sampleIdx][landMarkIdx]
           x += poseLandmark.x / windowSize.toFloat()
-          y += poseLandmark.y / windowSize.toFloat()
-          z += poseLandmark.z / windowSize.toFloat()
-          presenceLikelyhood += poseLandmark.presenceLikelyhood / windowSize.toFloat()
-          timestamp = poseLandmark.timeStamp // take the last one inside the window
+          y += poseLandmark.y  / windowSize.toFloat()
+          z += poseLandmark.z  / windowSize.toFloat()
+          presenceLikelyhood += poseLandmark.presenceLikelyhood  / windowSize.toFloat()
+          timestamp = poseLandmark.timeStamp //take the last one inside the window
+
+
+
         }
-        poseLandmarkList_mean[landMarkIdx] = MyPoseLandmark(x, y, z, presenceLikelyhood, timestamp)
+        poseLandmarkList_mean[landMarkIdx] = MyPoseLandmark(x, y, z,presenceLikelyhood,timestamp)
       }
       return poseLandmarkList_mean
     }
