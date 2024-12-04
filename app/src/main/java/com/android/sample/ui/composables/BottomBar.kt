@@ -6,10 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -40,6 +42,7 @@ import com.android.sample.ui.theme.White
 fun BottomBar(
     navigationActions: NavigationActions,
 ) {
+  var isAddSelected by remember { mutableStateOf(false) }
 
   Box(
       modifier =
@@ -55,161 +58,126 @@ fun BottomBar(
             verticalAlignment = Alignment.CenterVertically) {
               LIST_OF_TOP_LEVEL_DESTINATIONS.forEach { destination ->
                 val isSelected =
-                    navigationActions.currentRoute() ==
-                        (destination.route +
-                            " Screen") // navigationActions.currentRoute() returns the Screen....
-                val isAdd = destination.route == TopLevelDestinations.ADD.route
+                    navigationActions.currentRoute() == (destination.route + " Screen") &&
+                        !isAddSelected // navigationActions.currentRoute() returns the Screen....
 
-                  var isAddSelected = false
+                val isAdd = destination.route == TopLevelDestinations.ADD.route
 
                 // Animation for vertical offset
                 val offsetY by animateDpAsState(targetValue = if (isSelected) (-15).dp else 0.dp)
 
-                  val offsetYAdd by animateDpAsState(targetValue = if (isAddSelected) (-15).dp else 0.dp)
-
-                val offsetXBodyweight by
+                val offsetYAdd by
                     animateDpAsState(targetValue = if (isAddSelected) (-15).dp else 0.dp)
 
-                val offsetXYoga by animateDpAsState(targetValue = if (isAddSelected) (15).dp else 0.dp)
-
                 val offsetYWorkout by
-                    animateDpAsState(targetValue = if (isAddSelected) (-25).dp else 0.dp)
+                    animateDpAsState(targetValue = if (isAddSelected) (-28).dp else 0.dp)
 
                 // Animation for circle size
                 val circleSize by animateDpAsState(targetValue = if (isSelected) 55.dp else 30.dp)
 
-                  val circleSizeAdd by animateDpAsState(targetValue = if (isAddSelected) 55.dp else 30.dp)
+                val circleSizeAdd by
+                    animateDpAsState(targetValue = if (isAddSelected) 55.dp else 30.dp)
 
                 if (isAdd) {
 
-                    Box(
-                        modifier = Modifier.fillMaxWidth().weight(11f),
-                        contentAlignment = Alignment.Center) {
+                  if (isAddSelected) {
 
-                        Row(
-                            horizontalArrangement = Arrangement.Center
-                        )
-                        {
-
-                        Column(
-                            Modifier.offset(y = offsetYWorkout),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                    Row(horizontalArrangement = Arrangement.Absolute.spacedBy(16.dp)) {
+                      Column(
+                          Modifier.offset(y = offsetYWorkout),
+                          horizontalAlignment = Alignment.CenterHorizontally) {
                             Box(
                                 modifier =
-                                if (isAddSelected)
                                     Modifier.background(BlueGradient, CircleShape)
                                         .size(circleSizeAdd)
                                         .clickable(
                                             onClick = {
-                                                    navigationActions.navigateTo(Screen.IMPORTORCREATE_BODY_WEIGHT)
+                                              navigationActions.navigateTo(
+                                                  Screen.IMPORTORCREATE_BODY_WEIGHT)
                                             })
-                                else
-                                    Modifier.background(Transparent, CircleShape)
+                                        .testTag("BottomBarBodyweight"),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                              Icon(
+                                  painter = painterResource(R.drawable.outline_fitness_center_24),
+                                  contentDescription = null,
+                                  modifier = Modifier.size(30.dp),
+                                  tint = if (isAddSelected) White else Transparent)
+                            }
+                          }
+
+                      Column(
+                          Modifier.offset(y = offsetYAdd),
+                          horizontalAlignment = Alignment.CenterHorizontally) {
+                            Box(
+                                modifier =
+                                    Modifier.background(BlueGradient, CircleShape)
                                         .size(circleSizeAdd)
                                         .clickable(
                                             onClick = {
-
-                                            }),
+                                              navigationActions.navigateTo(Screen.RUNNING_SCREEN)
+                                            })
+                                        .testTag("BottomBarRun"),
                                 contentAlignment = Alignment.Center,
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.outline_fitness_center_24),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(30.dp),
-                                    tint = if (isAddSelected) White else Transparent
-                                )
+                              Icon(
+                                  painter = painterResource(R.drawable.outline_directions_run_24),
+                                  contentDescription = null,
+                                  modifier = Modifier.size(30.dp),
+                                  tint = if (isAddSelected) White else Transparent)
                             }
-                        }
+                          }
 
-                            Column(
-                                Modifier.offset(y = offsetYAdd),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                      Column(
+                          Modifier.offset(y = offsetYWorkout),
+                          horizontalAlignment = Alignment.CenterHorizontally) {
+                            Box(
+                                modifier =
+                                    Modifier.background(BlueGradient, CircleShape)
+                                        .size(circleSizeAdd)
+                                        .clickable(
+                                            onClick = {
+                                              navigationActions.navigateTo(
+                                                  Screen.IMPORTORCREATE_YOGA)
+                                            })
+                                        .testTag("BottomBarYoga"),
+                                contentAlignment = Alignment.Center,
                             ) {
+                              Icon(
+                                  painter =
+                                      painterResource(R.drawable.baseline_self_improvement_24),
+                                  contentDescription = null,
+                                  modifier = Modifier.size(30.dp),
+                                  tint = if (isAddSelected) White else Transparent)
+                            }
+                          }
+                    }
+                  } else {
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth().weight(11f),
+                        contentAlignment = Alignment.Center) {
+                          Column(
+                              Modifier.offset(y = offsetY),
+                              horizontalAlignment = Alignment.CenterHorizontally) {
                                 Box(
                                     modifier =
-                                    if (isAddSelected)
-                                        Modifier.background(BlueGradient, CircleShape)
-                                            .size(circleSizeAdd)
-                                            .clickable(
-                                                onClick = {
-                                                    navigationActions.navigateTo(Screen.RUNNING_SCREEN)
-                                                })
-                                    else
                                         Modifier.background(Transparent, CircleShape)
-                                            .size(circleSizeAdd)
-                                            .clickable(
-                                                onClick = {
-                                                    isAddSelected = true
-                                                }),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-
-                                    if (isAddSelected) {
-
-                                        Icon(
-                                            painter = painterResource(R.drawable.outline_directions_run_24),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(30.dp),
-                                            tint = if (isAddSelected) White else Transparent
-                                        )
-
-
-                                    } else {
-
-                                    Icon(
-                                        imageVector = destination.icon,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(30.dp),
-                                        tint = if (isAddSelected) White else NeutralGrey
-                                    )
-                                }
-                                }
-                            }
-
-                            Column(
-                                Modifier.offset(y = offsetYWorkout),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Box(
-                                    modifier =
-                                    if (isSelected)
-                                        Modifier.background(BlueGradient, CircleShape)
-                                            .size(circleSizeAdd)
-                                            .clickable(
-                                                onClick = {
-                                                    navigationActions.navigateTo(Screen.IMPORTORCREATE_YOGA)
-                                                })
-                                            .testTag(destination.textId)
-                                    else
-                                        Modifier.background(Transparent, CircleShape)
-                                            .size(circleSizeAdd)
-                                            .clickable(
-                                                onClick = {
-
-                                                })
+                                            .size(circleSize)
+                                            .clickable(onClick = { isAddSelected = true })
                                             .testTag(destination.textId),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.baseline_self_improvement_24),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(30.dp),
-                                        tint = if (isAddSelected) White else Transparent
-                                    )
+                                  Icon(
+                                      imageVector = destination.icon,
+                                      contentDescription = null,
+                                      modifier = Modifier.size(30.dp),
+                                      tint = if (isSelected) White else NeutralGrey)
                                 }
-                            }
-
-                    }
-
-                    }
-
-
-
-
+                              }
+                        }
+                  }
                 } else {
-
-
 
                   Box(
                       modifier = Modifier.fillMaxWidth().weight(11f),
@@ -224,12 +192,8 @@ fun BottomBar(
                                               .size(circleSize)
                                               .clickable(
                                                   onClick = {
-                                                    if (isAdd) {
-                                                      isAddSelected = true
-                                                    } else {
-                                                      navigationActions.navigateTo(
-                                                          destination.route)
-                                                    }
+                                                    isAddSelected = false
+                                                    navigationActions.navigateTo(destination.route)
                                                   })
                                               .testTag(destination.textId)
                                       else
@@ -237,12 +201,9 @@ fun BottomBar(
                                               .size(circleSize)
                                               .clickable(
                                                   onClick = {
-                                                    if (isAdd) {
-                                                      isAddSelected = false
-                                                    } else {
-                                                      navigationActions.navigateTo(
-                                                          destination.route)
-                                                    }
+                                                    isAddSelected = false
+
+                                                    navigationActions.navigateTo(destination.route)
                                                   })
                                               .testTag(destination.textId),
                                   contentAlignment = Alignment.Center,
