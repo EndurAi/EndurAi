@@ -84,7 +84,13 @@ class MainScreenTest {
                   "NightSes",
                   "Hold for 60 seconds",
                   false,
-                  date = LocalDateTime.of(2024, 11, 1, 0, 43)))
+                  date = LocalDateTime.of(2024, 11, 1, 0, 43)),
+              BodyWeightWorkout(
+                  "3",
+                  "Hello",
+                  "Do 20 push-ups",
+                  true,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 42)))
       val yogaWorkouts: List<YogaWorkout> = listOf()
 
       `when`(accountRepo.getUserAccount(any(), any(), any())).thenAnswer {
@@ -99,6 +105,8 @@ class MainScreenTest {
       `when`(yogaRepo.getDocuments(any(), any())).then {
         it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
       }
+      `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked_uid_123")
+      `when`(yogaRepo.getNewUid()).thenReturn("mocked_uid_456")
 
       accountViewModel = UserAccountViewModel(accountRepo, localCache)
       bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
@@ -125,13 +133,13 @@ class MainScreenTest {
     composeTestRule.onNodeWithTag("WelcomeText").assertIsDisplayed()
 
     // Check that the settings button is displayed
-    composeTestRule.onNodeWithTag("SettingsButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("FriendsButton").assertExists()
 
     // Simulate a click on the settings button and verify the navigation
-    composeTestRule.onNodeWithTag("SettingsButton").performClick()
+    composeTestRule.onNodeWithTag("FriendsButton").performClick()
 
     // Verify that navigateTo for SETTINGS was called
-    verify(navigationActions).navigateTo(Screen.SETTINGS)
+    verify(navigationActions).navigateTo(Screen.FRIENDS)
   }
 
   @Test
@@ -141,16 +149,32 @@ class MainScreenTest {
     composeTestRule.onNodeWithTag("WorkoutSection").assertIsDisplayed()
 
     // Check that two workout cards are displayed
-    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(1)
+    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(2)
 
     // Check that the "View all" button is displayed
-    composeTestRule.onNodeWithTag("ViewAllButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DoubleArrow").assertIsDisplayed()
 
     // Simulate clicking on "View all"
-    composeTestRule.onNodeWithTag("ViewAllButton").performClick()
+    composeTestRule.onNodeWithTag("DoubleArrow").performClick()
 
-    // Verify that navigateTo for ViewAllScreen was called
-    verify(navigationActions).navigateTo(Screen.VIEW_ALL)
+    // Check tabs are displayed
+    composeTestRule.onNodeWithTag("TabSection").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("BodyTab").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("YogaTab").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RunningTab").assertIsDisplayed()
+
+    // Check empty card list
+    composeTestRule.onNodeWithTag("YogaTab").performClick()
+    composeTestRule.onNodeWithTag("NoWorkoutMessage").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("NoWorkoutImage").assertIsDisplayed()
+
+    // Check filled card list
+    composeTestRule.onNodeWithTag("BodyTab").performClick()
+    composeTestRule.onAllNodesWithTag("WorkoutCard").assertCountEquals(3)
+
+    // Check navigation when a card is clicked
+    composeTestRule.onAllNodesWithTag("WorkoutCard")[0].performClick()
+    verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
   }
 
   @Test
@@ -159,21 +183,20 @@ class MainScreenTest {
     composeTestRule.onNodeWithTag("QuickSection").assertIsDisplayed()
 
     // Check that four quick workout buttons are displayed
-    composeTestRule.onAllNodesWithTag("QuickWorkoutButton").assertCountEquals(4)
-  }
+    composeTestRule.onAllNodesWithTag("QuickWorkoutButton").assertCountEquals(3)
 
-  @Test
-  fun testMainScreenDisplaysNewWorkoutPlanSection() {
-    // Check that the New Workout button is displayed
-    composeTestRule.onNodeWithTag("NewWorkoutButton").assertIsDisplayed()
+    composeTestRule.onAllNodesWithTag("QuickWorkoutButton")[0].performClick()
+    verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
 
-    // Simulate clicking on the New Workout Plan section
-    composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
-    verify(navigationActions).navigateTo(Screen.SESSIONSELECTION)
+    composeTestRule.onNodeWithTag("Main").performClick()
+
+    composeTestRule.onAllNodesWithTag("QuickWorkoutButton")[2].performClick()
+    verify(navigationActions).navigateTo(Screen.YOGA_OVERVIEW)
   }
 
   @Test
   fun testAchievemetsSectionIsDisplayed() {
+    composeTestRule.onNodeWithTag("AchievementText").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("AchievementButton").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("AchievementButton").performClick()
     verify(navigationActions).navigateTo(Screen.ACHIEVEMENTS)

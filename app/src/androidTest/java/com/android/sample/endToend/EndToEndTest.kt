@@ -1,5 +1,6 @@
 package com.android.sample.endToend
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.test.assertCountEquals
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.rule.GrantPermissionRule
 import com.android.sample.MainActivity
 import com.android.sample.model.workout.ExerciseType
 import com.android.sample.model.workout.WorkoutType
@@ -27,6 +29,13 @@ import org.junit.Test
 class EndToEndTest {
   private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
+
+  @get:Rule
+  val grantPermissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(
+          Manifest.permission.ACCESS_COARSE_LOCATION,
+          Manifest.permission.ACCESS_FINE_LOCATION,
+          Manifest.permission.POST_NOTIFICATIONS)
 
   @Before
   fun setUp() {
@@ -67,7 +76,7 @@ class EndToEndTest {
     //    composeTestRule.onNodeWithTag("backButton").performClick()
     // composeTestRule.onNodeWithTag("mainScreen").assertIsDisplayed()
     // go to the settings screen
-    composeTestRule.onNodeWithTag("SettingsButton").performClick()
+    composeTestRule.onNodeWithTag("profile").performClick()
     settingScreenIsWellDisplayed()
     // go to the preferences screen
     composeTestRule.onNodeWithTag("preferencesButton").performClick()
@@ -89,16 +98,6 @@ class EndToEndTest {
 
     mainScreenIsWellDisplayed()
 
-    // bo to the View all Screen
-
-    // simulate clicking on "View all"
-    composeTestRule.onNodeWithTag("ViewAllButton").performClick()
-
-    viewAllScreenIsWellDisplayed()
-
-    // go back to the main screen
-    composeTestRule.onNodeWithTag("Main").performClick()
-
     // go to the achivement Screen
     composeTestRule.onNodeWithTag("AchievementButton").performScrollTo().performClick()
 
@@ -108,7 +107,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("Main").performClick()
 
     // go to the setting Screen
-    composeTestRule.onNodeWithTag("SettingsButton").performClick()
+    composeTestRule.onNodeWithTag("profile").performClick()
 
     settingScreenIsWellDisplayed()
 
@@ -156,7 +155,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
 
     // go to workout creation screen
-    composeTestRule.onNodeWithTag("NewWorkoutButton").performClick()
+    composeTestRule.onNodeWithTag("Add").performClick()
 
     sessionSelectionScreenIsWellDisplayed()
 
@@ -184,7 +183,7 @@ class EndToEndTest {
   private fun workoutCreationScreenIsWellDisplayed() {
     val testName = "workoutCreationScreenIsWellDisplayed"
 
-    nodeControl("workoutTopBar", testName)
+    nodeControl("TopBar", testName)
     nodeControl("nameTextField", testName)
     nodeControl("descriptionTextField", testName)
     nodeControl("nextButton", testName)
@@ -224,7 +223,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    // composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
   }
 
   private fun importOrCreateScreenIsWellDisplayed() {
@@ -394,15 +393,11 @@ class EndToEndTest {
 
     nodeControl("Video", testName)
 
-    nodeControl("SettingsButton", testName)
-
     nodeControl("WelcomeText", testName)
 
     nodeControl("ProfilePicture", testName)
 
     nodeControl("WorkoutSection", testName)
-
-    nodeControl("ViewAllButton", testName)
 
     nodeControl("QuickSection", testName)
 
@@ -411,9 +406,9 @@ class EndToEndTest {
     nodeControlWithScroll("AchievementButton", testName)
 
     // Check that four quick workout buttons are displayed
-    composeTestRule.onAllNodesWithTag("QuickWorkoutButton").assertCountEquals(4)
+    composeTestRule.onAllNodesWithTag("QuickWorkoutButton").assertCountEquals(3)
 
-    composeTestRule.onNodeWithTag("NewWorkoutButton").assertExists("NewWorkoutButton doesn't exist")
+    composeTestRule.onNodeWithTag("DoubleArrow").assertExists("Double Arrow doesn't exist")
   }
 
   private fun achievementScreenIsWellDisplayed() {

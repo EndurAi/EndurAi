@@ -20,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -36,13 +35,14 @@ import coil.request.ImageRequest
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoViewModel
 import com.android.sample.ui.animations.DumbbellAnimation
+import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.BodyWeightTag
 import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.LightGrey
-import com.android.sample.ui.theme.Purple40
 import com.android.sample.ui.theme.WarmUpTag
 import com.android.sample.ui.theme.YogaTag
 
@@ -60,6 +60,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
   var selectedTag by remember { mutableStateOf("All") }
 
   Scaffold(
+      bottomBar = { BottomBar(navigationActions = navigationActions) },
       content = { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
             when {
@@ -271,13 +272,7 @@ fun TopBar(
         Box(
             modifier =
                 Modifier.fillMaxWidth()
-                    .background(
-                        Brush.horizontalGradient(
-                            colors =
-                                listOf(
-                                    DarkBlue, // Start of gradient
-                                    Purple40 // End of gradient
-                                    )))
+                    .background(BlueGradient)
                     .testTag("searchBarBox")
                     .padding(horizontal = 16.dp, vertical = 8.dp)) {
               // Search bar row

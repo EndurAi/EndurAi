@@ -9,9 +9,11 @@
     <string name="TitleTabBody">BodyWeight</string>
     <string name="TitleTabYoga">Yoga</string>
     <string name="TitleTabRunning">Running</string>
+    <string name="TitleTabWarmup">Warm-up</string>
     <string name="setting_title">Settings</string>
     <string name="calendar_title">Calendar</string>
     <string name="addButton">+</string>
+    <string name="runningTitle">Running</string>
     <string name="friends_title">Friends</string>
     <string name="add_friends_title">Add a new Friend</string>
     <string name="welcome_message_invitations">Hey %1$s, someone sent you a friend request!</string >
@@ -28,7 +30,6 @@
     <string name="LogoutMessage">Logged out successfully</string>
     <string name="NewWorkout">New Workout</string>
     <string name="AchievementsTitle">My Achievements</string>
-    <string name="View">View</string>
     <string name="BodyWeightWorkoutTitle">BodyWeight</string>
     <string name="YogaWorkoutTitle">Yoga</string>
     <string name="new_session">New Session</string>
@@ -40,4 +41,8 @@
     <string name="Cancel">Cancel</string>
     <string name="EditAccount">Edit Account</string>
     <string name="RunningWorkoutTitle">Running</string>
+    <string name="WorkoutsTitle">My Workouts</string>
+    <string name="QuickTitle">Quick Workout</string>
+    <string name="TotalTrainings">%1$s Workouts in Total</string>
+    <string name="RunningScreenTopBar">Running</string>
 </resources>
