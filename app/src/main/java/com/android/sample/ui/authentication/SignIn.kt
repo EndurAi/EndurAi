@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.ui.animations.DumbbellAnimation
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
@@ -137,7 +138,8 @@ fun SignInScreen(
 
   // Show Loading Dialog if `isLoading` is true
   if (isLoading) {
-    LoadingDialog()
+    //    LoadingDialog()
+    DumbbellAnimation(modifier = Modifier.testTag("loadingDialog"))
   }
 }
 
