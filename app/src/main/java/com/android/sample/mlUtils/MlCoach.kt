@@ -85,9 +85,12 @@ when (exerciseType.detail) {
     fun getFeedBackSingleExercise(data: List<List<MyPoseLandmark>>, excerciseCriterions : ExerciseCriterion , preambleCriterions : ExerciseCriterion, prependDuration: Boolean = false) : String{
         val data_preambleActived = data.filter { sample -> ExerciseFeedBack.assessLandMarks(sample, preambleCriterions).first }
 
-        val firstTimeStamp = data_preambleActived.first().first().timeStamp
-        val lastTimeStamp = data_preambleActived.last().first().timeStamp
-        val exerciseDuration = (lastTimeStamp - firstTimeStamp) / 1000L
+        var exerciseDuration = 0L
+        if (data_preambleActived.isNotEmpty()) {
+            val firstTimeStamp = data_preambleActived.first().first().timeStamp
+            val lastTimeStamp = data_preambleActived.last().first().timeStamp
+            exerciseDuration = (lastTimeStamp - firstTimeStamp) / 1000L
+        }
         //compute the distance from the target to the reference for each angle criterion
         //get the list of comments
         val assessedExercise = data_preambleActived.map { sample ->

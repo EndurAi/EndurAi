@@ -5,6 +5,8 @@ import android.util.Log
 import com.android.sample.mlUtils.exercisesCriterions.AngleCriterionComments
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
 import com.android.sample.mlUtils.exercisesCriterions.DownwardDogCriterions
+import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksClosedCriterions
+import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
@@ -180,7 +182,8 @@ class ExerciseFeedBack {
               ExerciseType.SQUATS -> TODO()
               ExerciseType.PLANK -> listOf(PlankExerciseCriterions)
               ExerciseType.CHAIR -> listOf(ChairCriterions)
-              ExerciseType.JUMPING_JACKS -> TODO()
+              ExerciseType.JUMPING_JACKS -> listOf(JumpingJacksOpenCriterions,
+                JumpingJacksClosedCriterions)
               ExerciseType.LEG_SWINGS -> TODO()
               ExerciseType.ARM_CIRCLES -> TODO()
               ExerciseType.ARM_WRIST_CIRCLES -> TODO()
