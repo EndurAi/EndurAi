@@ -1,4 +1,4 @@
-package com.android.sample.ui.components
+package com.android.sample.ui.animations
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas

@@ -35,6 +35,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoViewModel
+import com.android.sample.ui.animations.DumbbellAnimation
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
@@ -50,6 +51,9 @@ import com.android.sample.ui.theme.YogaTag
 @Composable
 fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: VideoViewModel) {
   val videoList by videoViewModel.videos.collectAsState(initial = emptyList())
+    val isLoading by videoViewModel.loading.collectAsState()
+    val error by videoViewModel.error.collectAsState()
+
   LaunchedEffect(Unit) { videoViewModel.loadVideos() }
 
   var searchQuery by remember { mutableStateOf("") }
@@ -58,31 +62,43 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
   Scaffold(
       content = { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
-          Column {
-            // Blue gradient search bar
-            TopBar(
-                searchQuery = searchQuery,
-                onSearchQueryChange = { searchQuery = it },
-                selectedTag = selectedTag,
-                onTagSelected = { selectedTag = it },
-                navigationActions = navigationActions)
+            when {
+                isLoading -> DumbbellAnimation(modifier = Modifier.align(Alignment.Center))
+                error != null -> {
+                    Text(
+                        text = "An error occurred",
+                        modifier = Modifier.align(Alignment.Center),
+                        color = MaterialTheme.colorScheme.error)
+                }
+                else -> {
+                      Column {
+                        // Blue gradient search bar
+                        TopBar(
+                            searchQuery = searchQuery,
+                            onSearchQueryChange = { searchQuery = it },
+                            selectedTag = selectedTag,
+                            onTagSelected = { selectedTag = it },
+                            navigationActions = navigationActions)
 
-            Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-            // Filtered video list with fading effect
-            VideoList(
-                videoList = videoList,
-                searchQuery = searchQuery,
-                selectedTag = selectedTag,
-                videoViewModel = videoViewModel,
-                navigationActions = navigationActions)
+                        // Filtered video list with fading effect
+                        VideoList(
+                            videoList = videoList,
+                            searchQuery = searchQuery,
+                            selectedTag = selectedTag,
+                            videoViewModel = videoViewModel,
+                            navigationActions = navigationActions)
 
-            // Fake bottom rectangle for bottom bar
-            Spacer(modifier = Modifier.weight(1f))
-            Box(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Gray))
-          }
+                        // Fake bottom rectangle for bottom bar
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Gray))
+                      }
+                }
+            }
         }
-      })
+      }
+  )
 }
 /** Function to calculate the alpha value for the fading effect. */
 fun calculateAlpha(index: Int, listState: LazyListState): Float {
