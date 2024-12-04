@@ -33,7 +33,6 @@ open class VideoViewModel(private val videoRepository: VideoRepository) : ViewMo
   private val _loading = MutableStateFlow(false)
   val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
-
   init {
     videoRepository.init {}
   }
@@ -45,18 +44,17 @@ open class VideoViewModel(private val videoRepository: VideoRepository) : ViewMo
     _loading.value = true
     val startTime = System.currentTimeMillis()
     withContext(Dispatchers.IO) {
-
       try {
         videoRepository.getVideos(
-          { videoList ->
-            _videos.update { videoList }
-//            _loading.value = false
-            Log.d("VideoViewModel", "Loaded videos: $videoList")
-          },
-          { exception ->
-            _error.update { "Failed to load videos: ${exception.message}" }
-//            _loading.value = false
-          })
+            { videoList ->
+              _videos.update { videoList }
+              //            _loading.value = false
+              Log.d("VideoViewModel", "Loaded videos: $videoList")
+            },
+            { exception ->
+              _error.update { "Failed to load videos: ${exception.message}" }
+              //            _loading.value = false
+            })
       } finally {
         val elapsedTime = System.currentTimeMillis() - startTime
         val minLoadingDuration = 2000L // 2 seconds minimum loading time

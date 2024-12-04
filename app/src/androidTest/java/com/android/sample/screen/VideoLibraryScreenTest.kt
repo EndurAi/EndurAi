@@ -58,12 +58,13 @@ class VideoLibraryScreenTest {
           navigationActions = mockNavigationActions, videoViewModel = mockVideoViewModel)
     }
 
-      // Wait for loading indicator to disappear
-      composeTestRule.onNodeWithTag("loadingIndicator").assertIsDisplayed() // Ensure it starts loading
-      composeTestRule.waitUntil(5_000) {
-          composeTestRule.onAllNodesWithTag("loadingIndicator").fetchSemanticsNodes().isEmpty()
-      }
-
+    // Wait for loading indicator to disappear
+    composeTestRule
+        .onNodeWithTag("loadingIndicator")
+        .assertIsDisplayed() // Ensure it starts loading
+    composeTestRule.waitUntil(5_000) {
+      composeTestRule.onAllNodesWithTag("loadingIndicator").fetchSemanticsNodes().isEmpty()
+    }
 
     // Verify that the search bar is displayed
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()

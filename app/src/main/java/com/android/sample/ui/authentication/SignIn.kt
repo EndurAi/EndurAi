@@ -138,8 +138,8 @@ fun SignInScreen(
 
   // Show Loading Dialog if `isLoading` is true
   if (isLoading) {
-//    LoadingDialog()
-  DumbbellAnimation(modifier = Modifier.testTag("loadingDialog"))
+    //    LoadingDialog()
+    DumbbellAnimation(modifier = Modifier.testTag("loadingDialog"))
   }
 }
 
