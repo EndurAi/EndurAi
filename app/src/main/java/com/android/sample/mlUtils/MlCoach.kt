@@ -1,19 +1,16 @@
 package com.android.sample.mlUtils
 
 import MathsPoseDetection
-import androidx.work.workDataOf
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.workout.ExerciseType
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
+import com.android.sample.mlUtils.exercisesCriterions.AngleCriterionComments
 import com.android.sample.model.workout.ExerciseDetail
-import com.android.sample.model.workout.WorkoutType
-import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
-import kotlin.time.Duration
 
 class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: ExerciseType) {
 
-    fun getFeedback(): String {
+    fun getFeedback(): List<CoachFeedback> {
         // get the criterion and the preamble
 
         val excerciseCriterionsList = ExerciseFeedBack.getCriterions(exerciseType = exerciseType )
@@ -37,17 +34,16 @@ when (exerciseType.detail) {
         //asses all preambles
         val assessedPreambles = preambleCriterionsList.map { preambleCriterions -> data.map { pose -> assessLandMarks(pose, preambleCriterions).first }  }
         val nbRep = countAlternates(assessedPreambles)
-        val adviceBuilder = StringBuilder()
 
-        adviceBuilder.append("Repetitions: $nbRep \n")
 
-        (excerciseCriterionsList zip preambleCriterionsList ).forEach { (exCriterion, preambleCriterions) ->
-            adviceBuilder.append(getFeedBackSingleExercise(data = data, excerciseCriterions = exCriterion, preambleCriterions = preambleCriterions))
+        val listOfCoachAdvice =  (excerciseCriterionsList zip preambleCriterionsList ).map { (exCriterion, preambleCriterions) ->
+           getFeedBackSingleExercise(data = data, excerciseCriterions = exCriterion, preambleCriterions = preambleCriterions, numberOfRepetition = nbRep)
         }
+        return listOfCoachAdvice
 
 
 
-        return adviceBuilder.toString()
+
 
 
 
@@ -60,7 +56,15 @@ when (exerciseType.detail) {
         if (excerciseCriterionsList.all { exerciseCriterion -> exerciseCriterion.symmetric }) {
             assert(excerciseCriterionsList.size == 2) // for the left and right part
             //select the one with the most detected preamble
-            val nbPreambleA =
+           val bestSideAssessement = (excerciseCriterionsList zip preambleCriterionsList).map { (excerciseCriterion, preambleCriterion)-> getFeedBackSingleExercise(
+               data = data,
+               excerciseCriterions = excerciseCriterion,
+               preambleCriterions = preambleCriterion,
+               isTimeBased = true
+           )}.sortedBy { it.successRate }.last()
+
+            return listOf(bestSideAssessement)
+
 
 
 
@@ -79,11 +83,12 @@ when (exerciseType.detail) {
             val timeStamps = rawData.map { pose ->
                 pose[0].timeStamp
             }
-            return getFeedBackSingleExercise(
+            return listOf(getFeedBackSingleExercise(
                 data = data,
                 excerciseCriterions = excerciseCriterionsList.first(),
-                preambleCriterions = preambleCriterionsList.first(), prependDuration = true
-            )
+                preambleCriterions = preambleCriterionsList.first(),
+                isTimeBased = true
+            ))
         }
 
     }
@@ -95,8 +100,14 @@ when (exerciseType.detail) {
     }
 
 
-    fun getFeedBackSingleExercise(data: List<List<MyPoseLandmark>>, excerciseCriterions : ExerciseCriterion , preambleCriterions : ExerciseCriterion, prependDuration: Boolean = false) : String{
+    fun getFeedBackSingleExercise(data: List<List<MyPoseLandmark>>,
+                                  excerciseCriterions : ExerciseCriterion ,
+                                  preambleCriterions : ExerciseCriterion,
+                                  isTimeBased: Boolean = false,
+                                  numberOfRepetition : Int = 0 ,
+    ) : CoachFeedback {
         val data_preambleActived = data.filter { sample -> ExerciseFeedBack.assessLandMarks(sample, preambleCriterions).first }
+
 
         var exerciseDuration = 0L
         if (data_preambleActived.isNotEmpty()) {
@@ -122,15 +133,33 @@ when (exerciseType.detail) {
             .sortedBy { (_, freq) -> freq }
 
         val adviceBuilder :StringBuilder = StringBuilder()
-        if (prependDuration){
-            adviceBuilder.append("Duration:$exerciseDuration s \n")
-        }
-        val listOfAdvice = allComments.forEach{ (comment, freq) ->
-            adviceBuilder.append(comment.description).append(" rate: ${freq*100}%").append("\n")
-        }
-        val advice = adviceBuilder.toString()
 
-        return advice
+        var successRate = 0F
+        var jointFeedbackSet: MutableSet<JointFeedback> = mutableSetOf()
+        val listOfAdvice = allComments.forEach{ (comment, freq) ->
+            if(comment == AngleCriterionComments.SUCCESS){
+                successRate = freq
+            }
+            else {
+                jointFeedbackSet.add(JointFeedback(comment = comment.description, rate = freq))
+            }
+            }
+
+
+        return if (isTimeBased){
+            CoachFeedback(
+                commentSet = jointFeedbackSet,
+                successRate = successRate,
+                repOrDuration = exerciseDuration.toInt(),
+                "s")
+        } else{
+            CoachFeedback(
+                commentSet = jointFeedbackSet,
+                successRate = successRate,
+                repOrDuration = numberOfRepetition,
+                "repetitions")
+        }
+
     }
 
 
