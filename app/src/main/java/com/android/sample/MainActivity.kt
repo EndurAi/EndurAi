@@ -1,5 +1,6 @@
 package com.android.sample
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,16 +34,13 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.resources.C
 import com.android.sample.ui.achievements.AchievementsScreen
-
-
 import com.android.sample.ui.authentication.AddAccount
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.calendar.DayCalendarScreen
-import com.android.sample.ui.components.DumbbellAnimation
-
 import com.android.sample.ui.friends.AddFriendScreen
 import com.android.sample.ui.friends.FriendsScreen
+import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -63,284 +62,299 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                // Permission for not precise location
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                // Permission for precise location
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                // Permission to post location
+                Manifest.permission.POST_NOTIFICATIONS),
+            0)
 
-    setContent {
-//      SampleAppTheme {
-//        // A surface container using the 'background' color from the theme
-//        Surface(
-//            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
-//            color = MaterialTheme.colorScheme.background) {
-//              val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
-//              MainApp(startDestination)
-//            }
-//      }
-
-        DumbbellAnimation()
+        setContent {
+            SampleAppTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
+                    color = MaterialTheme.colorScheme.background) {
+                    val startDestination = intent.getStringExtra("START_DESTINATION") ?: Route.AUTH
+                    MainApp(startDestination)
+                }
+            }
+        }
     }
-  }
 }
 
 @Composable
 fun MainApp(startDestination: String = Route.AUTH) {
-  val navController = rememberNavController()
-  val navigationActions = NavigationActions(navController)
-  val userAccountViewModel: UserAccountViewModel =
-      viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
-  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
-  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+    val navController = rememberNavController()
+    val navigationActions = NavigationActions(navController)
+    val userAccountViewModel: UserAccountViewModel =
+        viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
+    val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
+    val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
-  val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
-  val bodyweightWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
-  val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository)
-  val yogaWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
-  val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
+    val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
+    val bodyweightWorkoutRepository =
+        WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
+    val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository)
+    val yogaWorkoutRepository =
+        WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
+    val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
 
-  val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
-  val warmUpViewModel = WarmUpViewModel(warmUpRepository)
-  val calendarViewModel = CalendarViewModel()
+    val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
+    val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+    val calendarViewModel = CalendarViewModel()
 
-  val cameraViewModel = CameraViewModel(context = LocalContext.current)
-  val runningWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = RunningWorkout::class.java)
-  val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
+    val cameraViewModel = CameraViewModel(context = LocalContext.current)
+    val runningWorkoutRepository =
+        WorkoutRepositoryFirestore(Firebase.firestore, clazz = RunningWorkout::class.java)
+    val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
 
-  NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(navController = navController, startDestination = startDestination) {
 
-    // Auth Screen
-    navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
-      composable(Screen.AUTH) { SignInScreen(userAccountViewModel, navigationActions) }
-    }
-
-    // Add Account Screen
-    navigation(startDestination = Screen.ADD_ACCOUNT, route = Route.ADD_ACCOUNT) {
-      composable(Screen.ADD_ACCOUNT) { AddAccount(userAccountViewModel, navigationActions, false) }
-    }
-
-    // Main Screen
-    navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
-      composable(Screen.MAIN) {
-        MainScreen(
-            navigationActions,
-            bodyweightWorkoutViewModel,
-            yogaWorkoutViewModel,
-            userAccountViewModel)
-      }
-      composable(Screen.VIEW_ALL) {
-        ViewAllScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
-      }
-    }
-
-    // Friends Screen
-
-    navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
-      composable(Screen.FRIENDS) { FriendsScreen(navigationActions) }
-      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions) }
-    }
-
-    // Video Screen
-    navigation(startDestination = Screen.VIDEO_LIBRARY, route = Route.VIDEO_LIBRARY) {
-      composable(Screen.VIDEO_LIBRARY) { VideoLibraryScreen(navigationActions, videoViewModel) }
-      composable(Screen.VIDEO) { VideoScreen(navigationActions, videoViewModel) }
-    }
-
-    // Achievements Screen
-    navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
-      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions) }
-    }
-
-    // Preferences Screen
-    navigation(startDestination = Screen.PREFERENCES, route = Route.PREFERENCES) {
-      composable(Screen.PREFERENCES) { PreferencesScreen(navigationActions, preferencesViewModel) }
-    }
-
-    // Edit Account Screen
-    navigation(startDestination = Screen.EDIT_ACCOUNT, route = Route.EDIT_ACCOUNT) {
-      composable(Screen.EDIT_ACCOUNT) { AddAccount(userAccountViewModel, navigationActions, true) }
-    }
-
-    // Settings Screen
-    navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
-      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
-    }
-
-    // Session Selection Screen
-    navigation(startDestination = Screen.SESSIONSELECTION, route = Route.SESSIONSELECTION) {
-      composable(Screen.SESSIONSELECTION) { SessionSelectionScreen(navigationActions) }
-    }
-
-    // Import or Create Screen for body weight workout
-    navigation(
-        startDestination = Screen.IMPORTORCREATE_BODY_WEIGHT,
-        route = Route.IMPORTORCREATE_BODY_WEIGHT) {
-          composable(Screen.IMPORTORCREATE_BODY_WEIGHT) {
-            ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
-          }
+        // Auth Screen
+        navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
+            composable(Screen.AUTH) { SignInScreen(userAccountViewModel, navigationActions) }
         }
 
-    // Import or Create Screen for yoga workout
-    navigation(startDestination = Screen.IMPORTORCREATE_YOGA, route = Route.IMPORTORCREATE_YOGA) {
-      composable(Screen.IMPORTORCREATE_YOGA) {
-        ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.YOGA)
-      }
-    }
-
-    // Import or Create Screen for running workout
-    navigation(
-        startDestination = Screen.IMPORTORCREATE_RUNNING, route = Route.IMPORTORCREATE_RUNNING) {
-          composable(Screen.IMPORTORCREATE_RUNNING) { RunningSelectionScreen(navigationActions) }
+        // Add Account Screen
+        navigation(startDestination = Screen.ADD_ACCOUNT, route = Route.ADD_ACCOUNT) {
+            composable(Screen.ADD_ACCOUNT) { AddAccount(userAccountViewModel, navigationActions, false) }
         }
 
-    // Body Weight Creation Screen
-    navigation(startDestination = Screen.BODY_WEIGHT_CREATION, route = Route.BODY_WEIGHT_CREATION) {
-      composable(Screen.BODY_WEIGHT_CREATION) {
-        WorkoutCreationScreen(
-            navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, false)
-      }
-    }
+        // Main Screen
+        navigation(startDestination = Screen.MAIN, route = Route.MAIN) {
+            composable(Screen.MAIN) {
+                MainScreen(
+                    navigationActions,
+                    bodyweightWorkoutViewModel,
+                    yogaWorkoutViewModel,
+                    userAccountViewModel)
+            }
+            composable(Screen.VIEW_ALL) {
+                ViewAllScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+            }
+        }
 
-    // Body Weight Selection Screen
-    navigation(startDestination = Screen.CHOOSE_BODYWEIGHT, route = Route.CHOOSE_BODYWEIGHT) {
-      composable(Screen.CHOOSE_BODYWEIGHT) {
-        WorkoutSelectionScreen(bodyweightWorkoutViewModel, navigationActions)
-      }
-    }
+        // Friends Screen
 
-    // Body Weight Import Screen
-    navigation(startDestination = Screen.BODY_WEIGHT_IMPORT, route = Route.BODY_WEIGHT_IMPORT) {
-      composable(Screen.BODY_WEIGHT_IMPORT) {
-        WorkoutCreationScreen(
-            navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, true)
-      }
-    }
+        navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
+            composable(Screen.FRIENDS) { FriendsScreen(navigationActions) }
+            composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions) }
+        }
 
-    // Yoga Creation Screen
-    navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
-      composable(Screen.YOGA_CREATION) {
-        WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
-      }
-    }
+        // Video Screen
+        navigation(startDestination = Screen.VIDEO_LIBRARY, route = Route.VIDEO_LIBRARY) {
+            composable(Screen.VIDEO_LIBRARY) { VideoLibraryScreen(navigationActions, videoViewModel) }
+            composable(Screen.VIDEO) { VideoScreen(navigationActions, videoViewModel) }
+        }
 
-    // Yoga Selection Screen
-    navigation(startDestination = Screen.CHOOSE_YOGA, route = Route.CHOOSE_YOGA) {
-      composable(Screen.CHOOSE_YOGA) {
-        WorkoutSelectionScreen(yogaWorkoutViewModel, navigationActions)
-      }
-    }
+        // Achievements Screen
+        navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
+            composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions) }
+        }
 
-    // Yoga Import Screen
-    navigation(startDestination = Screen.YOGA_IMPORT, route = Route.YOGA_IMPORT) {
-      composable(Screen.YOGA_IMPORT) {
-        WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true)
-      }
-    }
+        // Preferences Screen
+        navigation(startDestination = Screen.PREFERENCES, route = Route.PREFERENCES) {
+            composable(Screen.PREFERENCES) { PreferencesScreen(navigationActions, preferencesViewModel) }
+        }
 
-    // Yoga Creation Screen
-    navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
-      composable(Screen.YOGA_CREATION) {
-        WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
-      }
-    }
+        // Edit Account Screen
+        navigation(startDestination = Screen.EDIT_ACCOUNT, route = Route.EDIT_ACCOUNT) {
+            composable(Screen.EDIT_ACCOUNT) { AddAccount(userAccountViewModel, navigationActions, true) }
+        }
 
-    // Body Weight Overview Screen
-    navigation(startDestination = Screen.BODY_WEIGHT_OVERVIEW, route = Route.BODY_WEIGHT_OVERVIEW) {
-      composable(Screen.BODY_WEIGHT_OVERVIEW) {
-        WorkoutOverviewScreen(
-            navigationActions = navigationActions,
-            bodyweightViewModel = bodyweightWorkoutViewModel,
-            yogaViewModel = yogaWorkoutViewModel,
-            workoutTye = WorkoutType.BODY_WEIGHT)
-      }
-    }
+        // Settings Screen
+        navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
+            composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+        }
 
-    // Body Weight Edit Screen
-    navigation(startDestination = Screen.BODY_WEIGHT_EDIT, route = Route.BODY_WEIGHT_EDIT) {
-      composable(Screen.BODY_WEIGHT_EDIT) {
-        WorkoutCreationScreen(
-            navigationActions,
-            WorkoutType.BODY_WEIGHT,
-            bodyweightWorkoutViewModel,
-            true,
-            editing = true)
-      }
-    }
+        // Session Selection Screen
+        navigation(startDestination = Screen.SESSIONSELECTION, route = Route.SESSIONSELECTION) {
+            composable(Screen.SESSIONSELECTION) { SessionSelectionScreen(navigationActions) }
+        }
 
-    // Yoga Edit Screen
-    navigation(startDestination = Screen.YOGA_EDIT, route = Route.YOGA_EDIT) {
-      composable(Screen.YOGA_EDIT) {
-        WorkoutCreationScreen(
-            navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true, editing = true)
-      }
-    }
+        // Import or Create Screen for body weight workout
+        navigation(
+            startDestination = Screen.IMPORTORCREATE_BODY_WEIGHT,
+            route = Route.IMPORTORCREATE_BODY_WEIGHT) {
+            composable(Screen.IMPORTORCREATE_BODY_WEIGHT) {
+                ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
+            }
+        }
 
-    // Yoga Overview Screen
-    navigation(startDestination = Screen.YOGA_OVERVIEW, route = Route.YOGA_OVERVIEW) {
-      composable(Screen.YOGA_OVERVIEW) {
-        WorkoutOverviewScreen(
-            navigationActions = navigationActions,
-            bodyweightViewModel = bodyweightWorkoutViewModel,
-            yogaViewModel = yogaWorkoutViewModel,
-            workoutTye = WorkoutType.YOGA)
-      }
-    }
+        // Import or Create Screen for yoga workout
+        navigation(startDestination = Screen.IMPORTORCREATE_YOGA, route = Route.IMPORTORCREATE_YOGA) {
+            composable(Screen.IMPORTORCREATE_YOGA) {
+                ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.YOGA)
+            }
+        }
 
-    // Body Weight Workout
-    navigation(startDestination = Screen.BODY_WEIGHT_WORKOUT, route = Route.BODY_WEIGHT_WORKOUT) {
-      composable(Screen.BODY_WEIGHT_WORKOUT) {
-        WorkoutScreen(
-            navigationActions = navigationActions,
-            bodyweightViewModel = bodyweightWorkoutViewModel,
-            yogaViewModel = yogaWorkoutViewModel,
-            warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.BODY_WEIGHT,
-            cameraViewModel = cameraViewModel,
-            videoViewModel = videoViewModel,
-            userAccountViewModel = userAccountViewModel)
-      }
-    }
-    // Yoga Workout
-    navigation(startDestination = Screen.YOGA_WORKOUT, route = Route.YOGA_WORKOUT) {
-      composable(Screen.YOGA_WORKOUT) {
-        WorkoutScreen(
-            navigationActions = navigationActions,
-            bodyweightViewModel = bodyweightWorkoutViewModel,
-            yogaViewModel = yogaWorkoutViewModel,
-            warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.YOGA,
-            cameraViewModel = cameraViewModel,
-            videoViewModel = videoViewModel,
-            userAccountViewModel = userAccountViewModel)
-      }
-    }
+        // Import or Create Screen for running workout
+        navigation(
+            startDestination = Screen.IMPORTORCREATE_RUNNING, route = Route.IMPORTORCREATE_RUNNING) {
+            composable(Screen.IMPORTORCREATE_RUNNING) { RunningSelectionScreen(navigationActions) }
+        }
 
-    // warmUp Workout
-    navigation(startDestination = Screen.WARMUP_WORKOUT, route = Route.WARMUP_WORKOUT) {
-      composable(Screen.WARMUP_WORKOUT) {
-        WorkoutScreen(
-            navigationActions = navigationActions,
-            bodyweightViewModel = bodyweightWorkoutViewModel,
-            yogaViewModel = yogaWorkoutViewModel,
-            warmUpViewModel = warmUpViewModel,
-            workoutType = WorkoutType.WARMUP,
-            cameraViewModel = cameraViewModel,
-            videoViewModel = videoViewModel,
-            userAccountViewModel = userAccountViewModel)
-      }
-    }
+        // Body Weight Creation Screen
+        navigation(startDestination = Screen.BODY_WEIGHT_CREATION, route = Route.BODY_WEIGHT_CREATION) {
+            composable(Screen.BODY_WEIGHT_CREATION) {
+                WorkoutCreationScreen(
+                    navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, false)
+            }
+        }
 
-    // Calendar Screen
-    navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
-      composable(Screen.CALENDAR) {
-        CalendarScreen(
-            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
-      }
-      composable(Screen.DAY_CALENDAR) {
-        DayCalendarScreen(
-            navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
-      }
+        // Body Weight Selection Screen
+        navigation(startDestination = Screen.CHOOSE_BODYWEIGHT, route = Route.CHOOSE_BODYWEIGHT) {
+            composable(Screen.CHOOSE_BODYWEIGHT) {
+                WorkoutSelectionScreen(bodyweightWorkoutViewModel, navigationActions)
+            }
+        }
+
+        // Body Weight Import Screen
+        navigation(startDestination = Screen.BODY_WEIGHT_IMPORT, route = Route.BODY_WEIGHT_IMPORT) {
+            composable(Screen.BODY_WEIGHT_IMPORT) {
+                WorkoutCreationScreen(
+                    navigationActions, WorkoutType.BODY_WEIGHT, bodyweightWorkoutViewModel, true)
+            }
+        }
+
+        // Yoga Creation Screen
+        navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
+            composable(Screen.YOGA_CREATION) {
+                WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+            }
+        }
+
+        // Yoga Selection Screen
+        navigation(startDestination = Screen.CHOOSE_YOGA, route = Route.CHOOSE_YOGA) {
+            composable(Screen.CHOOSE_YOGA) {
+                WorkoutSelectionScreen(yogaWorkoutViewModel, navigationActions)
+            }
+        }
+
+        // Yoga Import Screen
+        navigation(startDestination = Screen.YOGA_IMPORT, route = Route.YOGA_IMPORT) {
+            composable(Screen.YOGA_IMPORT) {
+                WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true)
+            }
+        }
+
+        // Yoga Creation Screen
+        navigation(startDestination = Screen.YOGA_CREATION, route = Route.YOGA_CREATION) {
+            composable(Screen.YOGA_CREATION) {
+                WorkoutCreationScreen(navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, false)
+            }
+        }
+
+        // Running Screen
+        navigation(startDestination = Screen.RUNNING_SCREEN, route = Route.RUNNING_SCREEN) {
+            composable(Screen.RUNNING_SCREEN) {
+                RunningScreen(navigationActions, runningWorkoutViewModel)
+            }
+        }
+
+        // Body Weight Overview Screen
+        navigation(startDestination = Screen.BODY_WEIGHT_OVERVIEW, route = Route.BODY_WEIGHT_OVERVIEW) {
+            composable(Screen.BODY_WEIGHT_OVERVIEW) {
+                WorkoutOverviewScreen(
+                    navigationActions = navigationActions,
+                    bodyweightViewModel = bodyweightWorkoutViewModel,
+                    yogaViewModel = yogaWorkoutViewModel,
+                    workoutTye = WorkoutType.BODY_WEIGHT)
+            }
+        }
+
+        // Body Weight Edit Screen
+        navigation(startDestination = Screen.BODY_WEIGHT_EDIT, route = Route.BODY_WEIGHT_EDIT) {
+            composable(Screen.BODY_WEIGHT_EDIT) {
+                WorkoutCreationScreen(
+                    navigationActions,
+                    WorkoutType.BODY_WEIGHT,
+                    bodyweightWorkoutViewModel,
+                    true,
+                    editing = true)
+            }
+        }
+
+        // Yoga Edit Screen
+        navigation(startDestination = Screen.YOGA_EDIT, route = Route.YOGA_EDIT) {
+            composable(Screen.YOGA_EDIT) {
+                WorkoutCreationScreen(
+                    navigationActions, WorkoutType.YOGA, yogaWorkoutViewModel, true, editing = true)
+            }
+        }
+
+        // Yoga Overview Screen
+        navigation(startDestination = Screen.YOGA_OVERVIEW, route = Route.YOGA_OVERVIEW) {
+            composable(Screen.YOGA_OVERVIEW) {
+                WorkoutOverviewScreen(
+                    navigationActions = navigationActions,
+                    bodyweightViewModel = bodyweightWorkoutViewModel,
+                    yogaViewModel = yogaWorkoutViewModel,
+                    workoutTye = WorkoutType.YOGA)
+            }
+        }
+
+        // Body Weight Workout
+        navigation(startDestination = Screen.BODY_WEIGHT_WORKOUT, route = Route.BODY_WEIGHT_WORKOUT) {
+            composable(Screen.BODY_WEIGHT_WORKOUT) {
+                WorkoutScreen(
+                    navigationActions = navigationActions,
+                    bodyweightViewModel = bodyweightWorkoutViewModel,
+                    yogaViewModel = yogaWorkoutViewModel,
+                    warmUpViewModel = warmUpViewModel,
+                    workoutType = WorkoutType.BODY_WEIGHT,
+                    cameraViewModel = cameraViewModel,
+                    videoViewModel = videoViewModel,
+                    userAccountViewModel = userAccountViewModel)
+            }
+        }
+        // Yoga Workout
+        navigation(startDestination = Screen.YOGA_WORKOUT, route = Route.YOGA_WORKOUT) {
+            composable(Screen.YOGA_WORKOUT) {
+                WorkoutScreen(
+                    navigationActions = navigationActions,
+                    bodyweightViewModel = bodyweightWorkoutViewModel,
+                    yogaViewModel = yogaWorkoutViewModel,
+                    warmUpViewModel = warmUpViewModel,
+                    workoutType = WorkoutType.YOGA,
+                    cameraViewModel = cameraViewModel,
+                    videoViewModel = videoViewModel,
+                    userAccountViewModel = userAccountViewModel)
+            }
+        }
+
+        // warmUp Workout
+        navigation(startDestination = Screen.WARMUP_WORKOUT, route = Route.WARMUP_WORKOUT) {
+            composable(Screen.WARMUP_WORKOUT) {
+                WorkoutScreen(
+                    navigationActions = navigationActions,
+                    bodyweightViewModel = bodyweightWorkoutViewModel,
+                    yogaViewModel = yogaWorkoutViewModel,
+                    warmUpViewModel = warmUpViewModel,
+                    workoutType = WorkoutType.WARMUP,
+                    cameraViewModel = cameraViewModel,
+                    videoViewModel = videoViewModel,
+                    userAccountViewModel = userAccountViewModel)
+            }
+        }
+
+        // Calendar Screen
+        navigation(startDestination = Screen.CALENDAR, route = Route.CALENDAR) {
+            composable(Screen.CALENDAR) {
+                CalendarScreen(
+                    navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
+            }
+            composable(Screen.DAY_CALENDAR) {
+                DayCalendarScreen(
+                    navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
+            }
+        }
     }
-  }
 }
