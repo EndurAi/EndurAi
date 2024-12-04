@@ -135,6 +135,13 @@ class EndToEndTest {
     // go to videos library screen
     composeTestRule.onNodeWithTag("Video").performClick()
 
+    composeTestRule
+        .onNodeWithTag("loadingIndicator")
+        .assertIsDisplayed() // Ensure it starts loading
+    composeTestRule.waitUntil(5_000) {
+      composeTestRule.onAllNodesWithTag("loadingIndicator").fetchSemanticsNodes().isEmpty()
+    }
+
     videoLibraryScreenIsWellDisplayed()
 
     // go back to main
