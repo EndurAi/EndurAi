@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +37,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.DarkGrey
+import com.android.sample.ui.theme.Line
 import com.android.sample.ui.theme.MediumGrey
 import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.PastelBlue
@@ -157,24 +159,21 @@ fun CalendarScreen(
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
           Legend()
 
-          Divider(
-              color = Color.LightGray,
-              thickness = 1.dp,
-              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
-
           LazyColumn(
               state = lazyListState,
               modifier = Modifier.fillMaxSize().padding(16.dp).testTag("lazyColumn")) {
                 items(dates) { date ->
                   DaySection(
                       date = date,
-                      workouts = workoutsByDate[date] ?: emptyList(),
+                      workouts = (workoutsByDate[date] ?: emptyList()).take(3),
                       onWorkoutClick = { workout ->
                         selectedWorkout = workout
                         showDialog = true
                       },
                       navigationActions,
                       calendarViewModel)
+                    Divider(
+                        color = Line, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 15.dp).shadow(1.dp))
                 }
               }
         }
@@ -202,7 +201,7 @@ fun DaySection(
               .testTag("daySection")
               .padding(vertical = 8.dp)
               .background(
-                  color = MediumGrey.copy(alpha = 0.3f), shape = MaterialTheme.shapes.medium)
+                  color = Color.Transparent, shape = MaterialTheme.shapes.medium)
               .padding(16.dp)
               .clickable {
                 calendarViewModel.updateSelectedDate(date)

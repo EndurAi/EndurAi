@@ -73,8 +73,7 @@ fun DayCalendarScreen(
           .sortedBy { it.workout.date.minute }
 
   Scaffold(
-      topBar = { TopBar(navigationActions, R.string.calendar_title) },
-      bottomBar = { BottomBar(navigationActions) }) { padding ->
+      topBar = { TopBar(navigationActions, R.string.calendar_title) }){ padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
           Legend()
 

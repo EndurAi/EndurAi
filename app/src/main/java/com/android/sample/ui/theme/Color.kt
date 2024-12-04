@@ -44,6 +44,9 @@ val Line = Color(0x81000000)
 val AchievementButton = Color(0xFFE7F3FE)
 val White = Color(0xFFFFFFFF)
 val Transparent = Color(0x00000000)
+val LegendBodyweight = Color(0xFF9DE3FF)
+val LegendYoga = Color(0xFFCAE5FD)
+val LegendRunning = Color(0xFF7FC3FF)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
