@@ -215,6 +215,10 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   val assessedDowndardDog =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, DownwardDogCriterions)
                   Log.d("MLFEEDBACK_RESULTExercise", "DownwardDog: ${assessedDowndardDog.first} ")
+                  val assessedDowndardDogPreamble =
+                    ExerciseFeedBack.assessLandMarks(meanedLandmark,ExerciseFeedBack.preambleCriterion(
+                      DownwardDogCriterions,{},{}))
+                  Log.d("PREAMBLE_DOWNWARD_DOG", "Preamble: ${assessedDowndardDogPreamble.first} ")
 
                   val assessedWarrior2Right =
                     ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_RIGHT_Criterions)

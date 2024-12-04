@@ -30,7 +30,7 @@ private val armUp_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_ELBOW_SHOULDER_HIP,
     targetAngle = 170.0,
-    failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
+    failCorrectionComment = AngleCriterionComments.ELBOW_SHOULDER_HIP_NOT_FLAT,
 
     delta =10.0,
     onSuccess = { Log.d("MLFeedback", "L arm up is good") },
@@ -39,6 +39,7 @@ private val armUp_L =
 private val armUp_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_HIP,
+    failCorrectionComment = AngleCriterionComments.ELBOW_SHOULDER_HIP_NOT_FLAT,
     targetAngle = 170.0,
     delta =10.0,
     onSuccess = { Log.d("MLFeedback", "R arm Up is good") },
@@ -48,6 +49,7 @@ private val armUp_R =
 private val elbowFlat_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_WRIST_ELBOW_SHOULDER,
+    failCorrectionComment = AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT,
     targetAngle = 170.0,
     delta =10.0,
     onSuccess = { Log.d("MLFeedback", "L elbow flat is good") },
@@ -56,6 +58,7 @@ private val elbowFlat_L =
 private val elbowFlat_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_WRIST_ELBOW_SHOULDER,
+    failCorrectionComment = AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT,
     targetAngle = 170.0,
     delta = 10.0,
     onSuccess = { Log.d("MLFeedback", "R elbow flat is good") },
@@ -67,6 +70,7 @@ private val bended_hip_L =
   AngleCriterion(
     joints = PoseDetectionJoints.LEFT_SHOULDER_HIP_KNEE,
     targetAngle = 80.0,
+    failCorrectionComment = AngleCriterionComments.SHOULDER_HIP_KNEE_NOT_RIGHT,
     delta =15.0,
     onSuccess = { Log.d("MLFeedback", "L bended hip is good") },
     onFailure = { Log.d("MLFeedback", "L bended hip pas cool") })
@@ -74,6 +78,7 @@ private val bended_hip_L =
 private val  bended_hip_R =
   AngleCriterion(
     joints = PoseDetectionJoints.RIGHT_SHOULDER_HIP_KNEE,
+    failCorrectionComment = AngleCriterionComments.SHOULDER_HIP_KNEE_NOT_RIGHT,
     targetAngle = 80.0,
     delta = 15.0,
     onSuccess = { Log.d("MLFeedback", "R bended hip is good") },

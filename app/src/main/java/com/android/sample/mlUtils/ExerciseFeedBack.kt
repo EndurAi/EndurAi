@@ -4,6 +4,7 @@ import MathsPoseDetection
 import android.util.Log
 import com.android.sample.mlUtils.exercisesCriterions.AngleCriterionComments
 import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
+import com.android.sample.mlUtils.exercisesCriterions.DownwardDogCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
@@ -171,7 +172,7 @@ class ExerciseFeedBack {
     }
       fun getCriterions(exerciseType: ExerciseType): List<ExerciseCriterion> {
           val ret = when (exerciseType) {
-              ExerciseType.DOWNWARD_DOG -> TODO()
+              ExerciseType.DOWNWARD_DOG -> listOf(DownwardDogCriterions)
               ExerciseType.TREE_POSE -> TODO()
               ExerciseType.SUN_SALUTATION -> TODO()
               ExerciseType.WARRIOR_II -> TODO()

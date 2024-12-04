@@ -8,6 +8,8 @@ import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.WorkoutType
+import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
+import kotlin.time.Duration
 
 class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: ExerciseType) {
 
@@ -37,7 +39,7 @@ when (exerciseType.detail) {
         val nbRep = countAlternates(assessedPreambles)
         val adviceBuilder = StringBuilder()
 
-        adviceBuilder.append("Repetitions: $nbRep /n")
+        adviceBuilder.append("Repetitions: $nbRep \n")
 
         (excerciseCriterionsList zip preambleCriterionsList ).forEach { (exCriterion, preambleCriterions) ->
             adviceBuilder.append(getFeedBackSingleExercise(data = data, excerciseCriterions = exCriterion, preambleCriterions = preambleCriterions))
@@ -55,9 +57,10 @@ when (exerciseType.detail) {
     }
     is ExerciseDetail.TimeBased -> {
         assert(excerciseCriterionsList.size == 1) //Time based exercises are single pose exercise !
+
         return getFeedBackSingleExercise(data = data,
             excerciseCriterions = excerciseCriterionsList.first(),
-            preambleCriterions = preambleCriterionsList.first())
+            preambleCriterions = preambleCriterionsList.first(), prependDuration = false)
     }
 
 }
@@ -68,8 +71,9 @@ when (exerciseType.detail) {
     }
 
 
-    fun getFeedBackSingleExercise(data: List<List<Triple<Float, Float, Float>>>, excerciseCriterions : ExerciseCriterion , preambleCriterions : ExerciseCriterion) : String{
+    fun getFeedBackSingleExercise(data: List<List<Triple<Float, Float, Float>>>, excerciseCriterions : ExerciseCriterion , preambleCriterions : ExerciseCriterion, prependDuration: Boolean = false) : String{
         val data_preambleActived = data.filter { sample -> ExerciseFeedBack.assessLandMarks(sample, preambleCriterions).first }
+        val exerciseDuration = data_preambleActived.size * PoseDetectionAnalyser.THROTTLE_TIMEOUT_MS / 1000L
         //compute the distance from the target to the reference for each angle criterion
         //get the list of comments
         val assessedExercise = data_preambleActived.map { sample ->
@@ -88,6 +92,9 @@ when (exerciseType.detail) {
             .sortedBy { (_, freq) -> freq }
 
         val adviceBuilder :StringBuilder = StringBuilder()
+        if (prependDuration){
+            adviceBuilder.append("Duration:$exerciseDuration s \n")
+        }
         val listOfAdvice = allComments.forEach{ (comment, freq) ->
             adviceBuilder.append(comment.description).append(" rate: ${freq*100}%").append("\n")
         }

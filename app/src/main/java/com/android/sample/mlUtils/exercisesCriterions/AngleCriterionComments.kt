@@ -5,11 +5,11 @@ enum class AngleCriterionComments(val description: String) {
 
     SHOULDER_HIP_KNEE_NOT_FLAT("Your back should be more right"),
     SHOULDER_HIP_KNEE_NOT_BENDED("Try bending more your body"),
-    SHOULDER_HIP_KNEE_NOT_RIGHT("Bend your body to have a 90° angle at your hips"),
+    SHOULDER_HIP_KNEE_NOT_RIGHT("Bend your body to have a 90° angle at your hips."),
 
     LEFT_WRIST_ELBOW_SHOULDER_NOT_FLAT("Keep your right elbow totally open"),
     RIGHT_WRIST_ELBOW_SHOULDER_NOT_FLAT("Keep your left elbow totally open"),
-    BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT("Keep your elbows totally open"),
+    BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT("Keep your elbows stretched and totally open"),
 
     RIGHT_WRIST_ELBOW_SHOULDER_NOT_RIGHT("Your right wrist, elbow and shoulder should make a right angle."),
     LEFT_WRIST_ELBOW_SHOULDER_NOT_RIGHT("Your left wrist, elbow and shoulder should make a right angle."),
@@ -19,6 +19,7 @@ enum class AngleCriterionComments(val description: String) {
     RIGHT_ELBOW_SHOULDER_OPPSHOULDER_NOT_FLAT("Keep your left elbow right, aligned with your shoulder."),
     BOTH_ELBOW_SHOULDER_OPPSHOULDER_NOT_FLAT("Keep elbows right, aligned with your shoulders."),
 
+    ELBOW_SHOULDER_HIP_NOT_FLAT("Put your arms aligned with your back."),
 
     LEFT_HIP_KNEE_ANKLE_NOT_FLAT("Keep your left leg stretched"),
     RIGHT_HIP_KNEE_ANKLE_NOT_FLAT("Keep your right leg stretched"),
