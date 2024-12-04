@@ -255,18 +255,19 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                 }
                 if (it.all { poseLandmark ->
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
-                })
-                // Convert into simple type
-                _poseLandMarks.value.add(
-                        it.map { poseLandmark ->
-                          val timeStamp = Clock.System.now().toEpochMilliseconds()
-                          MyPoseLandmark(
-                              poseLandmark.position3D.x,
-                              poseLandmark.position3D.y,
-                              poseLandmark.position3D.z,
-                              poseLandmark.inFrameLikelihood,
-                              timeStamp = timeStamp)
-                        })
+                }) {
+                  // Convert into simple type
+                  _poseLandMarks.value.add(
+                      it.map { poseLandmark ->
+                        val timeStamp = Clock.System.now().toEpochMilliseconds()
+                        MyPoseLandmark(
+                            poseLandmark.position3D.x,
+                            poseLandmark.position3D.y,
+                            poseLandmark.position3D.z,
+                            poseLandmark.inFrameLikelihood,
+                            timeStamp = timeStamp)
+                      })
+                }
               }))
       _bodyRecognitionIsEnabled.value = true
     }
