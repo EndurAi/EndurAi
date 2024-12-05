@@ -152,7 +152,7 @@ class EndToEndTest {
 
     // go back to main
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    composeTestRule.onNodeWithTag("Main").performClick()
 
     // go to workout creation screen
     composeTestRule.onNodeWithTag("Add").performClick()
@@ -273,8 +273,6 @@ class EndToEndTest {
     nodeControl("Date", testName)
 
     nodeControl("Hours", testName)
-
-    nodeControl("BottomBar", testName)
   }
 
   private fun calendarScreenIsWellDisplayed() {
