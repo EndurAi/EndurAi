@@ -28,7 +28,7 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
     // get the stacked value from the camera view model
     val rawData = cameraViewModel._poseLandMarks.value
     // average the data to reduce noise
-    val windowSize = 3
+    val windowSize = 5
     val windowStep = 1
     // 1st dim : Sample number, 2nd dim : a joint fo the sample, the 3rd dim : the three coordinates
     // of the joint
