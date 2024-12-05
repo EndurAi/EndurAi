@@ -41,6 +41,7 @@ object Route {
   const val BODY_WEIGHT_EDIT = "BodyWeightEdit"
   const val YOGA_EDIT = "YogaEdit"
   const val IMPORTORCREATE_RUNNING = "Import Or Create Running"
+  const val COACH_FEEDBACK = "Coach Feedback"
 }
 
 object Screen {
@@ -78,6 +79,7 @@ object Screen {
   const val BODY_WEIGHT_EDIT = "BodyWeight edit screen"
   const val YOGA_EDIT = "Yoga edit screen"
   const val IMPORTORCREATE_RUNNING = "Import Or Create Running Screen"
+  const val COACH_FEEDBACK = "Coach Feedback Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)

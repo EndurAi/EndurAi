@@ -82,7 +82,8 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                           .padding(8.dp)
                   ) {
                       AnimatedText(
-                          text = "Hey, need help learning those moves?",
+                          modifier = Modifier.testTag("coachText"),
+                          text = "Hey, want to have some feedback on your work ?",
                           style = MaterialTheme.typography.bodySmall.copy(color = White)
                       )
                   }
@@ -95,6 +96,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                       contentColor = Transparent,
                       modifier = Modifier.background(BlueGradient, shape = CircleShape)
                           .shadow(8.dp, shape = CircleShape)
+                          .testTag("coachButton")
                   ) {
                       Image(
                           painter = painterResource(id = R.drawable.endurai_coach),
