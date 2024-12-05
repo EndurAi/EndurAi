@@ -1,19 +1,24 @@
 package com.android.sample.mlUtils
 
+enum class ExerciseFeedBackUnit(val valuePrefix: String, val stringRepresentation: String) {
+  REPETITION("Counts", "Rep."),
+  SECONDS("Duration", "s")
+}
+
 /**
  * Data class representing feedback from a coach for an exercise.
  *
  * @property commentSet A set of `JointFeedback` objects containing comments and ratings for joints.
  * @property successRate The success rate of the exercise.
- * @property repOrDuration The number of repetitions or duration of the exercise.
- * @property repOrDurationUnit The unit for repetitions or duration (e.g., "s" for seconds).
+ * @property feedbackValue The number of repetitions or duration of the exercise.
+ * @property feedbackUnit The unit for repetitions or duration (e.g., "s" for seconds).
  * @property exerciseCriterion The criteria for the exercise.
  */
 data class CoachFeedback(
     val commentSet: Set<JointFeedback>,
     val successRate: Float,
-    val repOrDuration: Int,
-    val repOrDurationUnit: String,
+    val feedbackValue: Int,
+    val feedbackUnit: ExerciseFeedBackUnit,
     val exerciseCriterion: ExerciseFeedBack.Companion.ExerciseCriterion
 ) {
   /**
@@ -27,11 +32,10 @@ data class CoachFeedback(
     commentSet
         .filter { it.rate >= 0.15F }
         .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
-    if (repOrDurationUnit == "s") {
-      stringBuilder.append("Duration: $repOrDuration s\n")
-    } else {
-      stringBuilder.append("Repetitions: $repOrDuration repetitions\n")
-    }
+
+    stringBuilder.append(
+        "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
+
     return stringBuilder.toString()
   }
 }

@@ -186,7 +186,6 @@ class ExerciseFeedBack {
           when (exerciseType) {
             ExerciseType.DOWNWARD_DOG -> listOf(DownwardDogCriterions)
             ExerciseType.TREE_POSE -> TODO()
-            ExerciseType.SUN_SALUTATION -> TODO()
             ExerciseType.WARRIOR_II -> TODO()
             ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCriterions)
             ExerciseType.SQUATS -> TODO()
@@ -197,6 +196,7 @@ class ExerciseFeedBack {
             ExerciseType.LEG_SWINGS -> TODO()
             ExerciseType.ARM_CIRCLES -> TODO()
             ExerciseType.ARM_WRIST_CIRCLES -> TODO()
+            ExerciseType.UPWARD_FACING_DOG -> TODO()
           }
       return ret
     }
