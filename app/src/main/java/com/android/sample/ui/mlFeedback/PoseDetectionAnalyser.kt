@@ -16,14 +16,13 @@ import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PoseDetectionAnalyser(private val onDetectedPoseUpdated: (List<PoseLandmark>) -> Unit) :
     ImageAnalysis.Analyzer {
 
   companion object {
-    const val THROTTLE_TIMEOUT_MS = 1L
+    const val THROTTLE_TIMEOUT_MS = 200L
   }
 
   private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -53,7 +52,11 @@ class PoseDetectionAnalyser(private val onDetectedPoseUpdated: (List<PoseLandmar
                 .addOnSuccessListener { pose: Pose ->
                   val listOfLandmark = pose.allPoseLandmarks
                   if (listOfLandmark.isNotEmpty()) {
+                    Log.d("ANALYZER", "ADDED")
+
                     onDetectedPoseUpdated(listOfLandmark)
+                  } else {
+                    Log.d("ANALYZER", "EMPTY")
                   }
                 }
                 .addOnCompleteListener {
@@ -62,7 +65,7 @@ class PoseDetectionAnalyser(private val onDetectedPoseUpdated: (List<PoseLandmar
                 }
           }
 
-          delay(THROTTLE_TIMEOUT_MS)
+          // delay(THROTTLE_TIMEOUT_MS)
         }
         .invokeOnCompletion { exception ->
           exception?.printStackTrace()
