@@ -160,45 +160,45 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
           exerciseCriterion = exerciseCriterion)
     }
   }
+}
 
-  /**
-   * Counts the number of alternates in the assessed poses.
-   *
-   * @param assessedPoses A list of lists of Booleans representing the assessed poses.
-   * @return The number of alternates in the assessed poses.
-   */
-  fun countAlternates(assessedPoses: List<List<Boolean>>): Int {
-    // Each column of the matrix represent the detection state of a given exercise criterion eg: for
-    // the pushups, the 1st column is the detection of the up position and the 2nd column is the
-    // detection of the down position
-    // lists have the same length, remove when there is more than one true for the same index
+/**
+ * Counts the number of alternates in the assessed poses.
+ *
+ * @param assessedPoses A list of lists of Booleans representing the assessed poses.
+ * @return The number of alternates in the assessed poses.
+ */
+fun countAlternates(assessedPoses: List<List<Boolean>>): Int {
+  // Each column of the matrix represent the detection state of a given exercise criterion eg: for
+  // the pushups, the 1st column is the detection of the up position and the 2nd column is the
+  // detection of the down position
+  // lists have the same length, remove when there is more than one true for the same index
 
-    val stateList = ArrayList<Int>()
-    for (index in 0 until assessedPoses[0].size) {
-      var nbTrue = 0
-      var trueCriterion = -1
-      for (criteriaIndex in 0 until assessedPoses.size) {
+  val stateList = ArrayList<Int>()
+  for (index in 0 until assessedPoses[0].size) {
+    var nbTrue = 0
+    var trueCriterion = -1
+    for (criteriaIndex in 0 until assessedPoses.size) {
 
-        if (assessedPoses[criteriaIndex][index]) {
-          nbTrue++
-          trueCriterion = criteriaIndex
-        }
-      }
-      if (nbTrue == 1) {
-        stateList.add(trueCriterion) // add the state (represented by an integer)
+      if (assessedPoses[criteriaIndex][index]) {
+        nbTrue++
+        trueCriterion = criteriaIndex
       }
     }
-
-    // count the alternating number
-    var count = 0
-    var current = if (stateList.isNotEmpty()) stateList.first() else -1
-    for (i in 0 until stateList.size) {
-      if (stateList[i] ==
-          (current + 1) % (assessedPoses.size)) { // handles switching from state 1 -> 2-> 3 ...
-        count++
-        current = stateList[i]
-      }
+    if (nbTrue == 1) {
+      stateList.add(trueCriterion) // add the state (represented by an integer)
     }
-    return count / 2
   }
+
+  // count the alternating number
+  var count = 0
+  var current = if (stateList.isNotEmpty()) stateList.first() else -1
+  for (i in 0 until stateList.size) {
+    if (stateList[i] ==
+        (current + 1) % (assessedPoses.size)) { // handles switching from state 1 -> 2-> 3 ...
+      count++
+      current = stateList[i]
+    }
+  }
+  return count / 2
 }
