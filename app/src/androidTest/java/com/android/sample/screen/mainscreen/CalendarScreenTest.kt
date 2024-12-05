@@ -1,6 +1,7 @@
 package com.android.sample.screen.mainscreen
 
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -12,6 +13,7 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
@@ -87,26 +89,8 @@ class CalendarScreenTest {
     bodyWeightViewModel.getWorkouts()
   }
 
-  /*
-    @Test
-    fun displayAllComponents() {
-      composeTestRule.setContent {
-        CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel)
-      }
-
-      sleep(10000)
-
-      // Check if the top bar, legend, and lazy column are displayed
-      composeTestRule.onNodeWithTag("workoutItem").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("legendYoga").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("legendBodyweight").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("lazyColumn").assertIsDisplayed()
-    }
-  */
-
   @Test
-  fun testNavigationOnBack() {
+  fun testNavigationToDayCalendar() {
     composeTestRule.setContent {
       CalendarScreen(
           navigationActions = navigationActions,
@@ -115,30 +99,9 @@ class CalendarScreenTest {
           calendarViewModel = calendarViewModel)
     }
 
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    composeTestRule.onAllNodesWithTag("daySection")[0].performClick()
 
-    verify(navigationActions).goBack()
-  }
-
-  /*@Test
-  fun testWorkoutClickShowsDialog() {
-
-    composeTestRule.setContent {
-      CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel)
-    }
-
-    bodyWeightViewModel.getWorkouts()
-
-    // Simulate a workout click and ensure the dialog shows up
-    composeTestRule.onNodeWithTag("workoutItem").performClick()
-    composeTestRule.onNodeWithTag("alertDialog").assertIsDisplayed()
-
-    // Simulate click on the 'Edit' button
-    composeTestRule.onNodeWithTag("editButton").performClick()
-
-    // Verify that the dialog is dismissed
-    composeTestRule.onNodeWithTag("alertDialog").assertDoesNotExist()
-  }*/
+    verify(navigationActions).navigateTo(Screen.DAY_CALENDAR)  }
 
   @Test
   fun testDisplayMoreThan3Days() {
@@ -159,9 +122,11 @@ class CalendarScreenTest {
       CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel, calendarViewModel)
     }
 
-    composeTestRule.onAllNodesWithTag("Categories").assertCountEquals(3)
-    assert(composeTestRule.onAllNodesWithTag("Day").fetchSemanticsNodes().size > 3)
-    assert(composeTestRule.onAllNodesWithTag("Month").fetchSemanticsNodes().size > 3)
+    composeTestRule.onNodeWithTag("Categories").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("lazyColumn").assertIsDisplayed()
+      composeTestRule.onAllNodesWithTag("legendItem").assertCountEquals(3)
+      assert(composeTestRule.onAllNodesWithTag("daySection").fetchSemanticsNodes().isNotEmpty())
+      assert(composeTestRule.onAllNodesWithTag("Divider").fetchSemanticsNodes().isNotEmpty())
     composeTestRule.onAllNodesWithTag("workoutItem").assertCountEquals(3)
   }
 }

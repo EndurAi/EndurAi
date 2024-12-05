@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
@@ -185,7 +187,7 @@ fun CalendarScreen(
                   Divider(
                       color = Line,
                       thickness = 0.5.dp,
-                      modifier = Modifier.padding(vertical = 15.dp).shadow(1.dp))
+                      modifier = Modifier.padding(vertical = 15.dp).shadow(1.dp).testTag("Divider"))
                 }
               }
         }
@@ -228,7 +230,7 @@ fun DaySection(
               Spacer(modifier = Modifier.height(40.dp))
               Box(
                   modifier =
-                      Modifier.testTag("Day").drawBehind {
+                      Modifier.drawBehind {
                         drawIntoCanvas { canvas ->
                           shadowText(
                               canvas, context, String.format("%02d", date.dayOfMonth), 50.sp.toPx())
@@ -237,7 +239,7 @@ fun DaySection(
               Spacer(modifier = Modifier.height(20.dp))
               Box(
                   modifier =
-                      Modifier.testTag("Month").drawBehind {
+                      Modifier.drawBehind {
                         drawIntoCanvas { canvas ->
                           shadowText(canvas, context, getMonthName(date.monthNumber), 16.sp.toPx())
                         }
