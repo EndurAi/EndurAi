@@ -41,7 +41,20 @@ class ExerciseFeedBack {
       Log.d("MLFEEDBACK", "angleEqualsTo: actual = $angle target = $target")
       return abs(target - angle) <= delta || abs(target - angle + 180) <= delta
     }
-
+    /**
+     * Data class representing an angle criterion for an exercise.
+     *
+     * @property joints A `Triple` containing three integers representing the indices of the joints.
+     * @property targetAngle The target angle in degrees.
+     * @property delta The allowable deviation from the target angle.
+     * @property combination A boolean indicating if both left and right parts should be OK.
+     * @property onSuccess A callback function to be invoked on success.
+     * @property onFailure A callback function to be invoked on failure.
+     * @property failCorrectionComment A comment to be provided when the criterion fails.
+     * @property successCorrectionComment A comment to be provided when the criterion succeeds.
+     * @property LR_FailComment A comment to be provided when both left and right sides of a joint
+     *   fail.
+     */
     data class AngleCriterion(
         val joints: Triple<Int, Int, Int>,
         val targetAngle: Double,
@@ -53,15 +66,22 @@ class ExerciseFeedBack {
         val successCorrectionComment: AngleCriterionComments = AngleCriterionComments.SUCCESS,
         val LR_FailComment: AngleCriterionComments =
             AngleCriterionComments
-                .NOT_IMPLEMENTED, // Comment when the L and the R side of a joint are failed
+                .NOT_IMPLEMENTED // Comment when the L and the R side of a joint are failed
     )
 
+    /**
+     * Data class representing the criteria for an exercise.
+     *
+     * @property angleCriterionSet A set of pairs of `AngleCriterion` objects representing the
+     *   criteria for the exercise.
+     * @property symmetric A boolean indicating if the exercise is symmetric.
+     * @property name The name of the exercise.
+     */
     data class ExerciseCriterion(
         val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>,
         val symmetric: Boolean = true,
         val name: String
     )
-
     /**
      * Asses the landmarks to the given angle criterion
      *
@@ -124,41 +144,14 @@ class ExerciseFeedBack {
       return Pair(exerciseSuccess, listOfComments.toList())
     }
 
-    /* fun assessLandMarks(poseLandmarkList : List<PoseLandmark>, exerciseCriterion : ExerciseCriterion) : Boolean{
-          Log.d("MLFeedback", "-----------------------------------")
-          val listOfBoolean = exerciseCriterion.angleCriterionSet.map { (angleCriterionL,angleCriterionR) ->
-            val a_l =MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionL.joints.first].position3D)
-            val b_l = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionL.joints.second].position3D)
-            val c_l = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionL.joints.third].position3D)
-            val a_r = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionR.joints.first].position3D)
-            val b_r = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionR.joints.second].position3D)
-            val c_r = MathsPoseDetection.pointFToTriple( poseLandmarkList[angleCriterionR.joints.third].position3D)
-            val jointL = Triple(a_l,b_l,c_l)
-            val jointR = Triple(a_r,b_r,c_r)
-            val resultL = angleEqualsTo(jointL,angleCriterionL.targetAngle, delta = angleCriterionL.delta)
-            val resultR = angleEqualsTo(jointR,angleCriterionR.targetAngle, delta = angleCriterionR.delta)
-
-            if (resultL){
-              angleCriterionL.onSuccess()
-            }
-            else if (resultR){
-              angleCriterionR.onSuccess()
-
-            }
-            else{
-              angleCriterionL.onFailure()
-              angleCriterionR.onFailure()
-            }
-
-            resultL ||resultR
-          }
-          Log.d("MLFeedback", "-----------------------------------")
-
-          return listOfBoolean.all { b -> b } //Checks that all are valid
-
-        }
-    */
-
+    /**
+     * Creates a preamble criterion by adjusting the delta of the given exercise criterion.
+     *
+     * @param exerciseCriterion The original exercise criterion to be adjusted.
+     * @param onSuccess A callback function to be invoked on success.
+     * @param onFailure A callback function to be invoked on failure.
+     * @return A new `ExerciseCriterion` with adjusted delta values.
+     */
     fun preambleCriterion(
         exerciseCriterion: ExerciseCriterion,
         onSuccess: () -> Unit,
@@ -182,6 +175,12 @@ class ExerciseFeedBack {
       return ExerciseCriterion(preambleCriterion.toSet(), name = "")
     }
 
+    /**
+     * Retrieves the exercise criteria based on the given exercise type.
+     *
+     * @param exerciseType The type of exercise for which to get the criteria.
+     * @return A list of `ExerciseCriterion` objects corresponding to the given exercise type.
+     */
     fun getCriterions(exerciseType: ExerciseType): List<ExerciseCriterion> {
       val ret =
           when (exerciseType) {

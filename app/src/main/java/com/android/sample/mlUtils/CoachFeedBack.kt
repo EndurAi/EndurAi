@@ -1,5 +1,14 @@
 package com.android.sample.mlUtils
 
+/**
+ * Data class representing feedback from a coach for an exercise.
+ *
+ * @property commentSet A set of `JointFeedback` objects containing comments and ratings for joints.
+ * @property successRate The success rate of the exercise.
+ * @property repOrDuration The number of repetitions or duration of the exercise.
+ * @property repOrDurationUnit The unit for repetitions or duration (e.g., "s" for seconds).
+ * @property exerciseCriterion The criteria for the exercise.
+ */
 data class CoachFeedback(
     val commentSet: Set<JointFeedback>,
     val successRate: Float,
@@ -7,6 +16,11 @@ data class CoachFeedback(
     val repOrDurationUnit: String,
     val exerciseCriterion: ExerciseFeedBack.Companion.ExerciseCriterion
 ) {
+  /**
+   * Converts the `CoachFeedback` object to a string representation.
+   *
+   * @return A string representation of the `CoachFeedback` object.
+   */
   override fun toString(): String {
     val stringBuilder: StringBuilder = StringBuilder()
     stringBuilder.append(exerciseCriterion.name).append("\n")
@@ -22,6 +36,12 @@ data class CoachFeedback(
   }
 }
 
+/**
+ * Data class representing feedback for a specific joint.
+ *
+ * @property comment A comment about the joint.
+ * @property rate A rating for the joint.
+ */
 data class JointFeedback(val comment: String = "", val rate: Float = 0F) {
   override fun toString(): String {
     return comment

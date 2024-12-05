@@ -10,6 +10,11 @@ import com.android.sample.model.workout.ExerciseType
 
 class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: ExerciseType) {
 
+  /**
+   * Provides feedback for the exercise based on the type of exercise and the pose landmarks.
+   *
+   * @return A list of `CoachFeedback` objects containing feedback for the exercise.
+   */
   fun getFeedback(): List<CoachFeedback> {
     // get the criterion and the preamble
 
@@ -22,8 +27,8 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
 
     // get the stacked value from the camera view model
     val rawData = cameraViewModel._poseLandMarks.value
-    // mean the data
-    val windowSize = 1
+    // average the data to reduce noise
+    val windowSize = 3
     val windowStep = 1
     // 1st dim : Sample number, 2nd dim : a joint fo the sample, the 3rd dim : the three coordinates
     // of the joint
@@ -77,8 +82,6 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
         } else {
           assert(
               excerciseCriterionsList.size == 1) // Time based exercises are single pose exercise !
-
-          val timeStamps = rawData.map { pose -> pose[0].timeStamp }
           return listOf(
               getFeedBackSingleExercise(
                   data = data,
@@ -89,7 +92,16 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
       }
     }
   }
-
+  /**
+   * Provides feedback for a single exercise based on the given data and criteria.
+   *
+   * @param data A list of lists of `MyPoseLandmark` objects representing the pose landmarks.
+   * @param exerciseCriterion The criteria for the exercise.
+   * @param preambleCriterions The preamble criteria for the exercise.
+   * @param isTimeBased A boolean indicating if the exercise is time-based.
+   * @param numberOfRepetition The number of repetitions for the exercise.
+   * @return A `CoachFeedback` object containing feedback for the exercise.
+   */
   fun getFeedBackSingleExercise(
       data: List<List<MyPoseLandmark>>,
       exerciseCriterion: ExerciseCriterion,
@@ -106,15 +118,11 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
       val lastTimeStamp = data_preambleActived.last().first().timeStamp
       exerciseDuration = (lastTimeStamp - firstTimeStamp) / 1000L
     }
-    // compute the distance from the target to the reference for each angle criterion
     // get the list of comments
     val assessedExercise =
         data_preambleActived.map { sample ->
           ExerciseFeedBack.assessLandMarks(sample, exerciseCriterion = exerciseCriterion)
         }
-    val freqThreshold =
-        0.0F // If a mistake is make with a higher frequency, give advice to the user
-
     val nbComments = assessedExercise.fold(0, { acc, (boolean, list) -> acc + list.size })
     val allComments =
         assessedExercise
@@ -123,13 +131,10 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
             .eachCount()
             .toList()
             .map { (comment, count) -> Pair(comment, count / nbComments.toFloat()) }
-            .filter { (comment, freq) -> freq >= freqThreshold }
             .sortedBy { (_, freq) -> freq }
 
-    val adviceBuilder: StringBuilder = StringBuilder()
-
     var successRate = 0F
-    var jointFeedbackSet: MutableSet<JointFeedback> = mutableSetOf()
+    val jointFeedbackSet: MutableSet<JointFeedback> = mutableSetOf()
     val listOfAdvice =
         allComments.forEach { (comment, freq) ->
           if (comment == AngleCriterionComments.SUCCESS) {
@@ -156,8 +161,17 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
     }
   }
 
+  /**
+   * Counts the number of alternates in the assessed poses.
+   *
+   * @param assessedPoses A list of lists of Booleans representing the assessed poses.
+   * @return The number of alternates in the assessed poses.
+   */
   fun countAlternates(assessedPoses: List<List<Boolean>>): Int {
-    // listes have the same lenght, remove when there is more than one true for the same index
+    // Each column of the matrix represent the detection state of a given exercise criterion eg: for
+    // the pushups, the 1st column is the detection of the up position and the 2nd column is the
+    // detection of the down position
+    // lists have the same length, remove when there is more than one true for the same index
 
     val stateList = ArrayList<Int>()
     for (index in 0 until assessedPoses[0].size) {
@@ -171,7 +185,7 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
         }
       }
       if (nbTrue == 1) {
-        stateList.add(trueCriterion)
+        stateList.add(trueCriterion) // add the state (represented by an integer)
       }
     }
 
