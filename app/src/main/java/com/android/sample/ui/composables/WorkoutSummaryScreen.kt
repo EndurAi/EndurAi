@@ -252,6 +252,6 @@ object Calories {
           // Yoga exercises
           ExerciseType.DOWNWARD_DOG to 2.5,
           ExerciseType.TREE_POSE to 2.0,
-          ExerciseType.SUN_SALUTATION to 3.5,
+          ExerciseType.UPWARD_FACING_DOG to 3.5,
           ExerciseType.WARRIOR_II to 2.8)
 }

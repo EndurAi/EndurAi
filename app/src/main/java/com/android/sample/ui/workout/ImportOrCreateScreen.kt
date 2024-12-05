@@ -21,6 +21,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.Dimensions.SmallPadding
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.Transparent
@@ -79,7 +80,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                                     brush = BlueGradient, shape = RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center) {
                           Text(
-                              text = "Import",
+                              text = "Choose from existing",
                               color = White,
                               fontSize = FontSizes.SubtitleFontSize,
                               fontWeight = FontWeight.Bold)
@@ -102,7 +103,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                   contentPadding = PaddingValues(),
                   modifier =
                       Modifier.width(Dimensions.ButtonWidth)
-                          .padding(vertical = Dimensions.SmallPadding)
+                          .padding(vertical = SmallPadding)
                           .height(Dimensions.ButtonHeight)
                           .background(brush = BlueGradient, shape = LeafShape)) {
                     Box(

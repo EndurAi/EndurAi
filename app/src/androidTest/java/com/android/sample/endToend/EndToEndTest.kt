@@ -170,7 +170,7 @@ class EndToEndTest {
     importOrCreateScreenIsWellDisplayed()
 
     // we go to the import screen
-    composeTestRule.onNodeWithText("Import").performClick()
+    composeTestRule.onNodeWithText("Choose from existing").performClick()
 
     workoutSelectionScreenIsWellDisplayed()
 
@@ -233,7 +233,7 @@ class EndToEndTest {
   private fun importOrCreateScreenIsWellDisplayed() {
     val testName = "importOrCreateScreenIsWellDisplayed"
 
-    composeTestRule.onNodeWithText("Import").isDisplayed()
+    composeTestRule.onNodeWithText("Choose from existing").isDisplayed()
 
     composeTestRule.onNodeWithText("Create from scratch").isDisplayed()
 

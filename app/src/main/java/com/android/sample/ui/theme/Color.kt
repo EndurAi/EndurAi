@@ -19,10 +19,12 @@ val MediumGrey = Color(0xFFCCCCCC)
 val NeutralGrey = Color(0xFF888888)
 val DarkGrey = Color(0xFF444444)
 val Blue = Color(0xFFABC2FD)
+val LightBlue2 = Color(0xFF3A89C9)
 val TitleBlue = Color(0xFF1E3C72)
 val TopBarBlue = Color(0xFF2A5298)
 val LightBlue = Color(0xFFEAF0FF)
 val DarkBlue = Color(0xFF1E3C72)
+val DarkerBlue = Color(0xFF1B325F)
 val DarkBlue2 = Color(0xB5525A91)
 val PastelRed = Color(0xFFFFCDD2)
 val PastelBlue = Color(0xFFE3F2FD)
@@ -47,3 +49,7 @@ val Transparent = Color(0x00000000)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
+val greenGradient =
+    Brush.horizontalGradient(
+        colors = listOf(Color(0xFF367F4E), Color(0xFF09CE9B)) // Green gradient colors
+        )
