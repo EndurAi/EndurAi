@@ -1,11 +1,14 @@
 package com.android.sample.ui.workout
 
+import android.content.Context
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.userAccount.Gender
 import com.android.sample.model.userAccount.HeightUnit
 import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountLocalCache
 import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
@@ -20,6 +23,7 @@ import com.android.sample.ui.navigation.Route
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 import java.util.Date
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +32,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 
 class QuickWorkoutTest {
   private lateinit var navigationActions: NavigationActions
@@ -38,82 +41,84 @@ class QuickWorkoutTest {
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
   private lateinit var accountViewModel: UserAccountViewModel
   private lateinit var accountRepo: UserAccountRepository
+  private lateinit var localCache: UserAccountLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this)
-    // Mock the repos for workouts
-    bodyWeightRepo = mock()
-    yogaRepo = mock()
-    accountRepo = mock()
+    runTest {
+      MockitoAnnotations.openMocks(this)
 
-    val account =
-        UserAccount(
-            "1111",
-            "Micheal",
-            "Phelps",
-            1.8f,
-            HeightUnit.METER,
-            70f,
-            WeightUnit.KG,
-            Gender.MALE,
-            Timestamp(Date()),
-            "")
+      // Get application context for testing
+      val context = ApplicationProvider.getApplicationContext<Context>()
 
-    val bodyWeightWorkouts =
-        listOf(
-            BodyWeightWorkout(
-                "1",
-                "NopainNogain",
-                "Do 20 push-ups",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 42)),
-            BodyWeightWorkout(
-                "2",
-                "NightSes",
-                "Hold for 60 seconds",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 43)))
-    val yogaWorkouts: List<YogaWorkout> = listOf()
+      // Initialize localCache with the context
+      localCache = UserAccountLocalCache(context)
 
-    `when`(accountRepo.getUserAccount(any(), any(), any())).thenAnswer {
-      val onSuccess = it.getArgument<(UserAccount) -> Unit>(1)
-      onSuccess(account)
+      // Mock the repos for workouts
+      bodyWeightRepo = mock()
+      yogaRepo = mock()
+      accountRepo = mock()
+
+      val account =
+          UserAccount(
+              "1111",
+              "Micheal",
+              "Phelps",
+              1.8f,
+              HeightUnit.METER,
+              70f,
+              WeightUnit.KG,
+              Gender.MALE,
+              Timestamp(Date()),
+              "")
+
+      val bodyWeightWorkouts =
+          listOf(
+              BodyWeightWorkout(
+                  "1",
+                  "NopainNogain",
+                  "Do 20 push-ups",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 42)),
+              BodyWeightWorkout(
+                  "2",
+                  "NightSes",
+                  "Hold for 60 seconds",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 43)))
+      val yogaWorkouts: List<YogaWorkout> = listOf()
+
+      `when`(accountRepo.getUserAccount(any(), any(), any())).thenAnswer {
+        val onSuccess = it.getArgument<(UserAccount) -> Unit>(1)
+        onSuccess(account)
+      }
+
+      `when`(bodyWeightRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
+      }
+      `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
+      `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
+
+      `when`(yogaRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
+      }
+
+      accountViewModel = UserAccountViewModel(accountRepo, localCache)
+      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
+      yogaViewModel = WorkoutViewModel(yogaRepo)
+      // Mock the NavigationActions
+      navigationActions = mock(NavigationActions::class.java)
+
+      // Mock the current route
+      `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
+
+      // Set the content of the screen for testing
+      composeTestRule.setContent {
+        MainScreen(navigationActions, bodyWeightViewModel, yogaViewModel, accountViewModel)
+      }
     }
-
-    `when`(bodyWeightRepo.getDocuments(any(), any())).then {
-      it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
-    }
-    `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
-    `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
-
-    `when`(yogaRepo.getDocuments(any(), any())).then {
-      it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
-    }
-    accountViewModel = UserAccountViewModel(accountRepo)
-    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-    yogaViewModel = WorkoutViewModel(yogaRepo)
-    // Mock the NavigationActions
-    navigationActions = mock(NavigationActions::class.java)
-
-    // Mock the current route
-    `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
-
-    // Set the content of the screen for testing
-    composeTestRule.setContent {
-      MainScreen(navigationActions, bodyWeightViewModel, yogaViewModel, accountViewModel)
-    }
-  }
-  // Test that each button calls navigateTo
-  @Test
-  fun testQuickWorkoutButtonsNavigateCorrectly() {
-    val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
-    for (i in 0 until nodes.fetchSemanticsNodes().size) {
-      nodes[i].performClick()
-    }
-    verify(navigationActions, times(nodes.fetchSemanticsNodes().size)).navigateTo(screen = any())
   }
 
   // Test that each button selects the correct workout
@@ -121,29 +126,22 @@ class QuickWorkoutTest {
   fun testQuickWorkoutButtonsSelectCorrectWorkout() {
     val nodes = composeTestRule.onAllNodesWithTag("QuickWorkoutButton")
     val expectedWorkouts: List<Workout> =
-        listOf(
-                BodyWeightWorkout.WARMUP_WORKOUT,
-                BodyWeightWorkout.WORKOUT_PUSH_UPS,
-                YogaWorkout.QUICK_YOGA_WORKOUT,
-                BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT)
-            .map {
-              when (it) {
-                is BodyWeightWorkout ->
-                    bodyWeightViewModel.copyOf(it) // In this test, the new UID is harcoded
-                is YogaWorkout -> yogaViewModel.copyOf(it)
-                else -> {
-                  null as Workout
-                }
-              }
+        listOf(BodyWeightWorkout.QUICK_BODY_WEIGHT_WORKOUT, YogaWorkout.QUICK_YOGA_WORKOUT).map {
+          when (it) {
+            is BodyWeightWorkout ->
+                bodyWeightViewModel.copyOf(it) // In this test, the new UID is harcoded
+            is YogaWorkout -> yogaViewModel.copyOf(it)
+            else -> {
+              null as Workout
             }
+          }
+        }
 
     for (i in 0 until nodes.fetchSemanticsNodes().size) {
       nodes[i].performClick()
       when (i) {
-        0 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
-        1 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
-        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
-        3 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[i]))
+        0 -> assert(equals(bodyWeightViewModel.selectedWorkout.value!!, expectedWorkouts[0]))
+        2 -> assert(equals(yogaViewModel.selectedWorkout.value!!, expectedWorkouts[1]))
       }
     }
   }

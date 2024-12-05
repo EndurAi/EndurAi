@@ -2,6 +2,7 @@ package com.android.sample.model.camera
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recording
@@ -11,18 +12,23 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import com.android.sample.mlUtils.MyPoseLandmark
+import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.datetime.Clock
 
 /**
- * A ViewModel that manages camera operations for video recording.
+ * A ViewModel that manages camera operations for video recording and pose detection.
  *
  * This ViewModel provides functionality for:
  * - Controlling the camera (switching between front and back cameras)
  * - Recording videos
  * - Managing the state of the recording
+ * - Enabling and disabling pose detection
+ * - Providing detected pose landmarks
  *
  * @param context The application context.
  */
@@ -43,17 +49,35 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val videoFile: StateFlow<File>
     get() = _videoFile.asStateFlow()
 
-  /** A MutableStateFlow that holds the LifecycleCameraController. */
+  /** A MutableStateFlow that holds the state of body recognition (enabled or disabled). */
+  private val _bodyRecognitionIsEnabled = MutableStateFlow(false)
+
+  /** A StateFlow that exposes the state of body recognition (enabled or disabled). */
+  val bodyRecognitionIsEnabled: StateFlow<Boolean>
+    get() = _bodyRecognitionIsEnabled.asStateFlow()
+
+  /**
+   * A MutableStateFlow that holds the LifecycleCameraController. Initialized with the front camera
+   * selected.
+   */
   val _cameraController =
       MutableStateFlow<LifecycleCameraController>(
           LifecycleCameraController(context).apply {
-            setEnabledUseCases(CameraController.VIDEO_CAPTURE)
             cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
           })
 
   /** A StateFlow that exposes the LifecycleCameraController. */
   val cameraController: StateFlow<LifecycleCameraController>
     get() = _cameraController.asStateFlow()
+
+  /** A MutableStateFlow that holds the list of detected pose landmarks. */
+  val _poseLandMarks = MutableStateFlow<ArrayList<List<MyPoseLandmark>>>(arrayListOf())
+  /** A StateFlow that exposes the list of detected pose landmarks. */
+  val poseLandmarks: StateFlow<ArrayList<List<MyPoseLandmark>>>
+    get() = _poseLandMarks.asStateFlow()
+
+  val meanWindow = 10
+  private val inFrameLikelihoodThreshold = 0.8f
 
   /** Switches between the front and back cameras. */
   fun switchCamera() {
@@ -82,14 +106,15 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
       onFinishRecording: () -> Unit,
       onStarting: () -> Unit = {}
   ) {
-
     if (_recording.value != null) {
       _recording.value?.stop()
       onFinishRecording()
       _recording.value = null
       return
     }
+
     onStarting()
+    switchVideoCaptureUseCase() // Allow the camera to Record the video
     _recording.value =
         _cameraController.value.startRecording(
             FileOutputOptions.Builder(_videoFile.value).build(),
@@ -104,8 +129,62 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   } else {
                     onSuccess()
                   }
+                  resetCameraController() // This allows reusability of the viewModel in the body
                 }
               }
             }
+  }
+
+  /** Switches the camera controller to the video capture use case. */
+  private fun switchVideoCaptureUseCase() {
+    _cameraController.value.setEnabledUseCases(CameraController.VIDEO_CAPTURE)
+  }
+
+  /** Resets the camera controller to its initial state with the front camera selected. */
+  private fun resetCameraController() {
+    finishPoseRecognition()
+    _cameraController.value =
+        LifecycleCameraController(context).apply {
+          cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+        }
+  }
+
+  /** Enables pose recognition by setting up the image analysis analyzer. */
+  fun enablePoseRecognition() {
+    if (_bodyRecognitionIsEnabled.value.not()) {
+      _cameraController.value.imageAnalysisTargetSize =
+          CameraController.OutputSize(AspectRatio.RATIO_16_9)
+      _cameraController.value.setImageAnalysisAnalyzer(
+          ContextCompat.getMainExecutor(context),
+          PoseDetectionAnalyser(
+              onDetectedPoseUpdated = {
+                if (it.all { poseLandmark ->
+                  poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
+                }) {
+                  // Convert into simple type
+                  _poseLandMarks.value.add(
+                      it.map { poseLandmark ->
+                        val timeStamp = Clock.System.now().toEpochMilliseconds()
+                        MyPoseLandmark(
+                            poseLandmark.position3D.x,
+                            poseLandmark.position3D.y,
+                            poseLandmark.position3D.z,
+                            poseLandmark.inFrameLikelihood,
+                            timeStamp = timeStamp)
+                      })
+                }
+              }))
+      _bodyRecognitionIsEnabled.value = true
+    }
+  }
+
+  /**
+   * Disables pose recognition by clearing the image analysis analyzer and emptying the landMarks
+   * list.
+   */
+  fun finishPoseRecognition() {
+    _cameraController.value.clearImageAnalysisAnalyzer()
+    _poseLandMarks.value = arrayListOf()
+    _bodyRecognitionIsEnabled.value = false
   }
 }

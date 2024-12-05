@@ -2,9 +2,14 @@
 
 package com.android.sample.screen
 
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.video.Video
 import com.android.sample.model.video.VideoRepository
@@ -53,17 +58,48 @@ class VideoLibraryScreenTest {
           navigationActions = mockNavigationActions, videoViewModel = mockVideoViewModel)
     }
 
-    // Verify that the title is displayed
-    composeTestRule.onNodeWithTag("libraryTitle").assertIsDisplayed()
+    // Wait for loading indicator to disappear
+    composeTestRule
+        .onNodeWithTag("loadingIndicator")
+        .assertIsDisplayed() // Ensure it starts loading
+    composeTestRule.waitUntil(5_000) {
+      composeTestRule.onAllNodesWithTag("loadingIndicator").fetchSemanticsNodes().isEmpty()
+    }
 
     // Verify that the search bar is displayed
-    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
-
-    // Verify that the tag dropdown is displayed
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBarSurface").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBarBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("backButton").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("searchField")
+        .assertIsDisplayed()
+        .assertIsNotFocused()
+        .assertHasClickAction()
+        .performClick()
+        .assertIsFocused()
     composeTestRule.onNodeWithTag("tagDropdown").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("tagDropdownButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+    composeTestRule.onNodeWithTag("dropdownMenu").assertIsDisplayed()
 
-    // Verify that the sample video items are displayed
-    composeTestRule.onNodeWithTag("videoItemSample Video 1").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("videoItemSample Video 2").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("dropdownMenuItem_All").assertIsDisplayed().assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("dropdownMenuItem_Body-Weight")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("dropdownMenuItem_Warmup")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("dropdownMenuItem_Yoga")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+    composeTestRule.onNodeWithTag("videoItem_Sample Video 1").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("videoItem_Sample Video 2").assertIsDisplayed()
   }
 }

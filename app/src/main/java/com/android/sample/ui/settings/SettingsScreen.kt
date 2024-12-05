@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -40,13 +41,15 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun SettingsScreen(
     navigationActions: NavigationActions,
-    userAccountViewModel: UserAccountViewModel = viewModel(factory = UserAccountViewModel.Factory)
+    userAccountViewModel: UserAccountViewModel =
+        viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
 ) {
   val context = LocalContext.current
   var showDeleteConfirmation by remember { mutableStateOf(false) }
 
   Scaffold(
       modifier = Modifier.testTag("settingsScreen"),
+      bottomBar = { BottomBar(navigationActions = navigationActions) },
       topBar = { TopBar(navigationActions, R.string.setting_title) },
       content = { paddingValues ->
         Column(
@@ -81,6 +84,7 @@ fun SettingsScreen(
 
                     RedButton(
                         onClick = {
+                          userAccountViewModel.clearCacheOnLogout() // Clear local cache on logout
                           signOut(context)
                           navigationActions.navigateTo("Auth Screen")
                           Toast.makeText(context, R.string.LogoutMessage, Toast.LENGTH_SHORT).show()

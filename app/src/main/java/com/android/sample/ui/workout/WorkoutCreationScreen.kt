@@ -1,11 +1,13 @@
 package com.android.sample.ui.workout
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,22 +23,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,7 +51,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,11 +69,23 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.DateTimePicker
 import com.android.sample.ui.composables.ExerciseCard
 import com.android.sample.ui.composables.SaveButton
+import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.theme.Blue
+import com.android.sample.ui.theme.Black
+import com.android.sample.ui.theme.BlueGradient
+import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.Dimensions.iconSize
+import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
+import com.android.sample.ui.theme.LightBackground
+import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.Purple60
+import com.android.sample.ui.theme.TitleBlue
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.White
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,48 +125,29 @@ fun WorkoutCreationScreen(
   var repetitions_input by remember { mutableStateOf("") }
 
   Scaffold(
-      topBar = {
-        TopAppBar(
-            title = { Text(workoutType.toString(), modifier = Modifier.testTag("workoutTopBar")) },
-            navigationIcon = {
-              IconButton(
-                  modifier = Modifier.testTag("ArrowBackButton"),
-                  onClick = {
-                    if (!showNameDescriptionScreen) {
-                      showNameDescriptionScreen = true
-                    } else {
-                      navigationActions.goBack()
-                    }
-                  }) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-                  }
-            })
-      },
+      topBar = { TopBar(navigationActions, getWorkoutTypeStringRes(workoutType)) },
+      containerColor = LightBackground,
       content = { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp)) {
           if (showNameDescriptionScreen) {
             Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
               Column(
                   modifier = Modifier.fillMaxSize().padding(paddingValues),
-                  horizontalAlignment = Alignment.CenterHorizontally,
-                  verticalArrangement = Arrangement.Center) {
-                    OutlinedTextField(
+                  horizontalAlignment = Alignment.Start,
+                  verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    CustomTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Exercise Plan Name") },
-                        placeholder = { Text("Enter name of your exercise plan") },
+                        title = "Exercise Plan Name",
+                        placeholder = "Enter a name for your exercise plan",
                         modifier = Modifier.testTag("nameTextField"))
 
-                    Spacer(Modifier.height(16.dp))
-
-                    OutlinedTextField(
+                    CustomTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description") },
-                        placeholder = { Text("Describe your exercise plan") },
+                        title = "Description",
+                        placeholder = "Enter the description of your exercise plan",
                         modifier = Modifier.testTag("descriptionTextField"))
-
-                    Spacer(Modifier.height(16.dp))
 
                     DateTimePicker(
                         selectedDateTime = selectedDateTime,
@@ -158,56 +156,78 @@ fun WorkoutCreationScreen(
                         },
                         title = "Workout Date")
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(Dimensions.LargePadding))
 
                     Button(
                         onClick = {
-                          if (selectedDateTime != null) { // User need to select a date
+                          if (selectedDateTime != null) { // User needs to select a date
                             showNameDescriptionScreen = false
                           } else {
                             Toast.makeText(context, "Please select a date", Toast.LENGTH_SHORT)
                                 .show()
                           }
                         },
-                        modifier = Modifier.testTag("nextButton")) {
-                          Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Next")
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = "Next")
-                          }
+                        shape = LeafShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = Transparent),
+                        contentPadding = PaddingValues(),
+                        modifier =
+                            Modifier.width(Dimensions.ButtonWidth)
+                                .height(Dimensions.ButtonHeight)
+                                .background(brush = BlueGradient, shape = LeafShape)
+                                .align(Alignment.CenterHorizontally)
+                                .testTag("nextButton")) {
+                          Box(
+                              modifier =
+                                  Modifier.fillMaxSize()
+                                      .background(brush = BlueGradient, shape = LeafShape),
+                              contentAlignment = Alignment.Center) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                  Text(
+                                      text = "Next",
+                                      color = White,
+                                      fontSize = FontSizes.SubtitleFontSize,
+                                      fontWeight = FontWeight.Bold)
+                                  Icon(
+                                      imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                      contentDescription = "Next",
+                                      tint = White,
+                                      modifier = Modifier.padding(start = 4.dp))
+                                }
+                              }
                         }
                   }
             }
           } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
+                modifier =
+                    Modifier.fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(top = Dimensions.ExtraLargePadding),
+                horizontalAlignment = Alignment.CenterHorizontally) {
                   item {
                     Card(
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(50.dp), // More rounded corners
                         colors =
-                            CardDefaults.cardColors(
-                                containerColor = LightGrey), // Gray color for consistency
+                            CardDefaults.cardColors(containerColor = LightBlue2.copy(alpha = 0.7f)),
                         modifier =
-                            Modifier.fillMaxWidth(0.9f)
-                                .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                            Modifier.fillMaxWidth(0.7f) // Reduce the width
+                                .padding(vertical = 8.dp)) {
                           Row(
                               verticalAlignment = Alignment.CenterVertically,
-                              modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                              horizontalArrangement = Arrangement.SpaceBetween,
+                              modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()) {
                                 Text(
                                     text = "Warmup",
-                                    fontSize = 18.sp,
-                                    color = Color.DarkGray,
+                                    fontSize = SubtitleFontSize,
+                                    color = White,
+                                    fontWeight = FontWeight.Bold,
                                     modifier = Modifier.weight(1f),
                                     textAlign = TextAlign.Start)
                                 Switch(
                                     checked = warmup,
                                     onCheckedChange = { warmup = it },
-                                    colors = SwitchDefaults.colors(checkedTrackColor = Blue),
-                                    modifier =
-                                        Modifier.padding(start = 8.dp).testTag("warmupSwitch"))
+                                    colors = SwitchDefaults.colors(checkedTrackColor = LightBlue2),
+                                    modifier = Modifier.testTag("warmupSwitch"))
                               }
                         }
                   }
@@ -256,6 +276,7 @@ fun WorkoutCreationScreen(
                   }
 
                   item {
+                    Spacer(modifier = Modifier.height(Dimensions.ExtraLargePadding))
                     SaveButton(
                         onSaveClick = {
                           when (workoutType) {
@@ -318,7 +339,7 @@ fun WorkoutCreationScreen(
           selectedExerciseType = null
           exerciseDetail = null
         },
-        title = { Text("Add Exercise") },
+        title = { Text("Add Exercise", fontWeight = FontWeight.Bold) },
         text = {
           Column {
             Button(
@@ -333,28 +354,64 @@ fun WorkoutCreationScreen(
                       ExerciseType.entries
                           .filter { it.workoutType == WorkoutType.YOGA }
                           .forEach { type ->
-                            DropdownMenuItem(
-                                onClick = {
-                                  selectedExerciseType = type
-                                  exerciseDetail = type.detail
-                                  isDropdownExpanded = false
-                                },
-                                modifier = Modifier.testTag("exerciseType${type.name}"),
-                                text = { Text(type.name) })
+                            Box(
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .clickable {
+                                          selectedExerciseType = type
+                                          exerciseDetail = type.detail
+                                          isDropdownExpanded = false
+                                        }
+                                        .padding(8.dp)
+                                        .testTag("exerciseType${type.name}")) {
+                                  Row(
+                                      verticalAlignment = Alignment.CenterVertically,
+                                      modifier = Modifier.padding(horizontal = 8.dp)) {
+                                        Icon(
+                                            painter =
+                                                painterResource(id = getExerciseIcon(type.name)),
+                                            contentDescription = "${type.name} Icon",
+                                            modifier = Modifier.size(iconSize))
+                                        Spacer(
+                                            modifier =
+                                                Modifier.width(8.dp)) // Space between icon and text
+                                        Text(text = type.toString(), fontSize = SubtitleFontSize)
+                                      }
+                                }
                           }
                     }
                     WorkoutType.BODY_WEIGHT -> {
                       ExerciseType.entries
                           .filter { it.workoutType == WorkoutType.BODY_WEIGHT }
                           .forEach { type ->
-                            DropdownMenuItem(
-                                onClick = {
-                                  selectedExerciseType = type
-                                  exerciseDetail = type.detail
-                                  isDropdownExpanded = false
-                                },
-                                modifier = Modifier.testTag("exerciseType${type.name}"),
-                                text = { Text(type.name) })
+                            Box(
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .clickable {
+                                          selectedExerciseType = type
+                                          exerciseDetail = type.detail
+                                          isDropdownExpanded = false
+                                        }
+                                        .padding(8.dp)
+                                        .testTag("exerciseType${type.name}")) {
+                                  Row(
+                                      verticalAlignment = Alignment.CenterVertically,
+                                      modifier = Modifier.padding(horizontal = 8.dp)) {
+                                        Icon(
+                                            painter =
+                                                painterResource(
+                                                    id =
+                                                        getExerciseIcon(
+                                                            type.name)), // Replace with your actual
+                                            // icon resource
+                                            contentDescription = "${type.name} Icon",
+                                            modifier = Modifier.size(iconSize))
+                                        Spacer(
+                                            modifier =
+                                                Modifier.width(8.dp)) // Space between icon and text
+                                        Text(text = type.toString(), fontSize = SubtitleFontSize)
+                                      }
+                                }
                           }
                     }
                     else -> {}
@@ -503,5 +560,85 @@ fun LazyListScope.exerciseListItems(
         exercise,
         onCardClick = { onCardClick(exercise) },
         onDetailClick = { onDetailClick(exercise) })
+  }
+}
+
+@StringRes
+fun getWorkoutTypeStringRes(workoutType: WorkoutType): Int {
+  return when (workoutType) {
+    WorkoutType.BODY_WEIGHT -> R.string.TitleTabBody
+    WorkoutType.YOGA -> R.string.TitleTabYoga
+    WorkoutType.RUNNING -> R.string.TitleTabRunning
+    WorkoutType.WARMUP -> R.string.TitleTabWarmup
+  }
+}
+
+@Composable
+fun CustomTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    title: String,
+    placeholder: String,
+    modifier: Modifier = Modifier
+) {
+  Column(modifier = modifier.padding(vertical = 8.dp)) {
+    // Title outside the text field
+    Text(
+        text = title,
+        style =
+            MaterialTheme.typography.bodySmall.copy(
+                color = TitleBlue, // Title color
+                fontWeight = FontWeight.Bold,
+                fontSize = FontSizes.SubtitleFontSize),
+        modifier = Modifier.padding(bottom = 4.dp))
+
+    // Text field container
+    Card(
+        shape = LeafShape,
+        colors = CardDefaults.cardColors(containerColor = LightBackground),
+        modifier = Modifier.fillMaxWidth().height(Dimensions.ButtonHeight),
+        elevation = CardDefaults.cardElevation(4.dp)) {
+          Row(
+              verticalAlignment = Alignment.CenterVertically,
+              modifier = Modifier.fillMaxSize().padding(horizontal = Dimensions.LargePadding)) {
+                TextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    placeholder = {
+                      Text(
+                          text = placeholder,
+                          style = MaterialTheme.typography.bodyMedium.copy(color = NeutralGrey))
+                    },
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedContainerColor = Transparent,
+                            unfocusedContainerColor = Transparent,
+                            cursorColor = TitleBlue,
+                            focusedTextColor = Black,
+                            unfocusedTextColor = Black,
+                            focusedIndicatorColor = Transparent,
+                            unfocusedIndicatorColor = Transparent),
+                    modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    tint = NeutralGrey,
+                    modifier = Modifier.size(Dimensions.iconSize))
+              }
+        }
+  }
+}
+
+fun getExerciseIcon(type: String): Int {
+  return when (type) {
+    "PUSH_UPS" -> R.drawable.pushups
+    "SQUATS" -> R.drawable.squats
+    "PLANK" -> R.drawable.plank
+    "CHAIR" -> R.drawable.chair
+    "DOWNWARD_DOG" -> R.drawable.downwarddog
+    "TREE_POSE" -> R.drawable.treepose
+    "UPWARD_FACING_DOG" -> R.drawable.upwardfacingdog
+    "WARRIOR_II" -> R.drawable.warrior2
+    else -> R.drawable.dumbbell // Default icon if the type is not found
   }
 }

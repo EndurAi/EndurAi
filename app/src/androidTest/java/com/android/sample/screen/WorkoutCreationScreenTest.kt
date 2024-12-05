@@ -88,7 +88,7 @@ class WorkoutCreationScreenTest {
           isImported = false)
     }
 
-    composeTestRule.onNodeWithTag("workoutTopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nameTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("descriptionTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nextButton").assertIsDisplayed().assertHasClickAction()
@@ -104,10 +104,10 @@ class WorkoutCreationScreenTest {
     for (exerciseType in ExerciseType.entries.filter { it.workoutType == WorkoutType.YOGA }) {
       composeTestRule.onNodeWithTag("exerciseType${exerciseType.name}").assertIsDisplayed()
     }
-    composeTestRule.onNodeWithTag("exerciseTypeSUN_SALUTATION").performClick()
+    composeTestRule.onNodeWithTag("exerciseTypeUPWARD_FACING_DOG").performClick()
     composeTestRule
         .onNodeWithTag("selectedExerciseType")
-        .assertTextEquals("Selected Exercise: ${ExerciseType.SUN_SALUTATION}")
+        .assertTextEquals("Selected Exercise: ${ExerciseType.UPWARD_FACING_DOG}")
 
     composeTestRule.onNodeWithTag("durationTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("setsTextField").assertIsDisplayed()
@@ -130,7 +130,7 @@ class WorkoutCreationScreenTest {
           isImported = false)
     }
 
-    composeTestRule.onNodeWithTag("workoutTopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nameTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("descriptionTextField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("nextButton").assertIsDisplayed().assertHasClickAction()

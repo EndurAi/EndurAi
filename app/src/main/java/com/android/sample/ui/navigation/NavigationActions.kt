@@ -2,21 +2,24 @@ package com.android.sample.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 
 object Route {
   const val MAIN = "Main"
   const val AUTH = "Auth"
-  const val VIDEO_LIBRARY = "VideoLibrary"
+  const val VIDEO_LIBRARY = "Video Library"
   const val VIDEO = "Video"
   const val ACHIEVEMENTS = "Achievements"
   const val PREFERENCES = "Preferences"
   const val SETTINGS = "Settings"
   const val BODY_WEIGHT_CREATION = "BodyWeightTraining"
   const val RUNNING_CREATION = "RunningTraining"
+  const val RUNNING_SCREEN = "Running"
   const val YOGA_CREATION = "YogaTraining"
   const val SESSIONSELECTION = "Session Selection"
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight"
@@ -37,6 +40,7 @@ object Route {
   const val YOGA_OVERVIEW = "YogaOverview"
   const val BODY_WEIGHT_EDIT = "BodyWeightEdit"
   const val YOGA_EDIT = "YogaEdit"
+  const val IMPORTORCREATE_RUNNING = "Import Or Create Running"
 }
 
 object Screen {
@@ -50,6 +54,7 @@ object Screen {
   const val BODY_WEIGHT_CREATION = "BodyWeightTraining Screen"
   const val RUNNING_CREATION = "RunningTraining Screen"
   const val YOGA_CREATION = "YogaTraining Screen"
+  const val RUNNING_SCREEN = "Running Screen"
   const val SESSIONSELECTION = "Session Selection Screen"
   const val IMPORTORCREATE_BODY_WEIGHT = "Import Or Create Body Weight Screen"
   const val IMPORTORCREATE_YOGA = "Import Or Create Yoga Screen"
@@ -72,6 +77,7 @@ object Screen {
   const val YOGA_OVERVIEW = "Yoga overview screen"
   const val BODY_WEIGHT_EDIT = "BodyWeight edit screen"
   const val YOGA_EDIT = "Yoga edit screen"
+  const val IMPORTORCREATE_RUNNING = "Import Or Create Running Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
@@ -79,11 +85,18 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 object TopLevelDestinations {
   val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
   val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
+  val ADD = TopLevelDestination(Route.SESSIONSELECTION, Icons.Outlined.Add, textId = "Add")
   val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
+  val PROFILE = TopLevelDestination(Route.SETTINGS, Icons.Outlined.Person, textId = "profile")
 }
 
 val LIST_OF_TOP_LEVEL_DESTINATIONS =
-    listOf(TopLevelDestinations.MAIN, TopLevelDestinations.VIDEO, TopLevelDestinations.CALENDAR)
+    listOf(
+        TopLevelDestinations.MAIN,
+        TopLevelDestinations.VIDEO,
+        TopLevelDestinations.ADD,
+        TopLevelDestinations.CALENDAR,
+        TopLevelDestinations.PROFILE)
 
 open class NavigationActions(private val navController: NavHostController) {
   /**

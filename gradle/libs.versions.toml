@@ -1,6 +1,8 @@
 [versions]
 agp = "8.3.0"
 coilCompose = "2.1.0"
+datastorePreferences = "1.1.1"
+gson = "2.10.1"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 kotlinxDatetime = "0.5.0"
@@ -9,6 +11,7 @@ junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
+mapsCompose = "2.11.0"
 material = "1.11.0"
 composeBom = "2024.02.02"
 composeActivity = "1.8.2"
@@ -25,6 +28,7 @@ moshiAdapters = "1.15.1"
 moshiSealedReflect = "0.28.0"
 moshiSealedRuntime = "0.28.0"
 robolectric = "4.11.1"
+rules = "1.6.1"
 sonar = "4.4.1.3373"
 gms = "4.4.2"
 mockk = "1.13.5"
@@ -44,17 +48,26 @@ navigationRuntimeKtx = "2.8.2"
 navigationCompose = "2.8.2"
 espressoIntents = "3.6.1"
 junitJupiter = "5.8.1"
+playServicesMaps = "19.0.0"
+playServicesLocation = "21.3.0"
 uiTestAndroid = "1.7.5"
 cameraVideo = "1.4.0"
+foundationLayoutAndroid = "1.7.2"
+poseDetectionCommon = "17.0.0"
+datastoreCoreAndroid = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 
@@ -106,6 +119,11 @@ androidx-espresso-intents = { group = "androidx.test.espresso", name = "espresso
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
 androidx-camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "cameraVideo" }
+androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+pose-detection-common = { group = "com.google.mlkit", name = "pose-detection-common", version.ref = "poseDetectionCommon" }
+androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
