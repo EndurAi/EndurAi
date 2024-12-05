@@ -45,8 +45,8 @@ class YogaWorkout(
                         detail = ExerciseType.TREE_POSE.detail),
                     Exercise(
                         id = "YOGA_3",
-                        type = ExerciseType.SUN_SALUTATION,
-                        detail = ExerciseType.SUN_SALUTATION.detail),
+                        type = ExerciseType.UPWARD_FACING_DOG,
+                        detail = ExerciseType.UPWARD_FACING_DOG.detail),
                     Exercise(
                         id = "YOGA_4",
                         type = ExerciseType.WARRIOR_II,

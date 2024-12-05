@@ -374,11 +374,7 @@ fun QuickWorkoutSection(
               })
           QuickWorkoutButton(
               R.drawable.quick_running,
-              onClick = {
-                bodyWeightViewModel.selectWorkout(
-                    bodyWeightViewModel.copyOf(BodyWeightWorkout.WARMUP_WORKOUT))
-                navigationActions.navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
-              })
+              onClick = { navigationActions.navigateTo(Screen.RUNNING_SCREEN) })
           QuickWorkoutButton(
               R.drawable.quick_yoga,
               onClick = {

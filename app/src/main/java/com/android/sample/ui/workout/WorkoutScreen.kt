@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
@@ -68,7 +67,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
-import com.android.sample.mlUtils.MlCoach
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.video.VideoViewModel
@@ -89,7 +87,6 @@ import com.android.sample.ui.composables.convertSecondsToTime
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import kotlinx.coroutines.delay
-import kotlin.math.log
 
 // Data class to hold the state of an exercise
 data class ExerciseState(val exercise: Exercise, var isDone: Boolean)
@@ -109,7 +106,6 @@ fun WorkoutScreenBody(
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
   val context = LocalContext.current
-  var feedback by remember {mutableStateOf("")}
   val exerciseState =
       exerciseStateList?.get(exerciseIndex)
           ?: run {
@@ -261,11 +257,10 @@ fun WorkoutScreenBody(
               Text(
                   workoutName,
                   modifier =
-                  Modifier
-                    .background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
-                    .padding(horizontal = 10.dp)
-                    .padding(1.dp)
-                    .testTag("WorkoutName"),
+                      Modifier.background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
+                          .padding(horizontal = 10.dp)
+                          .padding(1.dp)
+                          .testTag("WorkoutName"),
                   fontWeight = FontWeight(500),
                   color = MaterialTheme.colorScheme.onSurface)
             },
@@ -273,11 +268,10 @@ fun WorkoutScreenBody(
       }) { innerPadding ->
         Column(
             modifier =
-            Modifier
-              .fillMaxSize()
-              .padding(innerPadding)
-              .verticalScroll(rememberScrollState())
-              .testTag("WorkoutScreenBodyColumn"),
+                Modifier.fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .testTag("WorkoutScreenBodyColumn"),
             horizontalAlignment = Alignment.CenterHorizontally) {
               if (summaryScreenIsDisplayed) {
                 WorkoutSummaryScreen(
@@ -295,9 +289,7 @@ fun WorkoutScreenBody(
                           text = exerciseState.exercise.type.toString(),
                           style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
                           fontWeight = FontWeight.Bold,
-                          modifier = Modifier
-                            .height(50.dp)
-                            .testTag("ExerciseName"))
+                          modifier = Modifier.height(50.dp).testTag("ExerciseName"))
                       Spacer(modifier = Modifier.height(16.dp))
                       // display the instruction
                       Text(
@@ -307,10 +299,7 @@ fun WorkoutScreenBody(
                                   fontSize = 20.sp, lineHeight = 25.sp),
                           textAlign = TextAlign.Center,
                           modifier =
-                          Modifier
-                            .width(317.dp)
-                            .height(79.dp)
-                            .testTag("ExerciseDescription"))
+                              Modifier.width(317.dp).height(79.dp).testTag("ExerciseDescription"))
                     }
 
                 // Box for the video player
@@ -324,10 +313,9 @@ fun WorkoutScreenBody(
                   if (URL.isNotEmpty()) {
                     Box(
                         modifier =
-                        Modifier
-                          .size(width = 350.dp, height = 200.dp)
-                          .testTag("VideoPlayer")
-                          .composed { key(URL) { this } }) {
+                            Modifier.size(width = 350.dp, height = 200.dp)
+                                .testTag("VideoPlayer")
+                                .composed { key(URL) { this } }) {
                           VideoPlayer(context = LocalContext.current, url = URL)
                           Spacer(Modifier.height(5.dp))
                         }
@@ -335,14 +323,11 @@ fun WorkoutScreenBody(
                     // Show a progress circle if the video list is not yet fetched
                     Box(
                         modifier =
-                        Modifier
-                          .size(width = 350.dp, height = 200.dp)
-                          .testTag("LoadingIndicator"),
+                            Modifier.size(width = 350.dp, height = 200.dp)
+                                .testTag("LoadingIndicator"),
                         contentAlignment = Alignment.Center) {
                           androidx.compose.material3.CircularProgressIndicator(
-                              modifier = Modifier
-                                .size(50.dp)
-                                .padding(16.dp),
+                              modifier = Modifier.size(50.dp).padding(16.dp),
                               color = MaterialTheme.colorScheme.primary)
                         }
                   }
@@ -360,9 +345,7 @@ fun WorkoutScreenBody(
                                     if (exerciseIsRepetitionBased) R.drawable.baseline_timeline_24
                                     else R.drawable.baseline_access_time_24),
                             contentDescription = "repetition",
-                            modifier = Modifier
-                              .padding(horizontal = (5).dp)
-                              .testTag("GoalIcon"))
+                            modifier = Modifier.padding(horizontal = (5).dp).testTag("GoalIcon"))
                         Text(
                             text =
                                 (if (exerciseIsRepetitionBased) "$repetitions Rep."
@@ -400,10 +383,7 @@ fun WorkoutScreenBody(
 
                         if (comparisonVideoIsDisplayed) {
                           //
-                          Column(
-                            Modifier
-                              .height(500.dp)
-                              .fillMaxWidth()) {
+                          Column(Modifier.height(500.dp).fillMaxWidth()) {
                             DualVideoPlayer(cameraViewModel.videoFile.value, url = URL, context)
                           }
                         } else if (!cameraRecordAsked) {
@@ -422,23 +402,17 @@ fun WorkoutScreenBody(
                                             }),
                                 contentDescription = "Goal Counter",
                                 modifier =
-                                Modifier
-                                  .size(350.dp, 200.dp)
-                                  .testTag("ExerciseTypeIcon"))
+                                    Modifier.size(350.dp, 200.dp).testTag("ExerciseTypeIcon"))
                           } else {
                             CountDownTimer(
                                 timer,
                                 timeLimit,
                                 modifier =
-                                Modifier
-                                  .size(220.dp)
-                                  .testTag("CountDownTimer")
-                                  .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                  ) {
-                                    countDownTimerIsPaused = !countDownTimerIsPaused
-                                  },
+                                    Modifier.size(220.dp).testTag("CountDownTimer").clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null) {
+                                          countDownTimerIsPaused = !countDownTimerIsPaused
+                                        },
                                 isPaused = countDownTimerIsPaused,
                                 isFinished = (timer == 0 && currentSet == numberOfSets),
                                 countDownCurrentValue = countDownValue,
@@ -446,8 +420,6 @@ fun WorkoutScreenBody(
                             Spacer(modifier = Modifier.height(5.dp))
                           }
                         } else {
-                          cameraViewModel.enablePoseRecognition()
-
                           CameraFeedBack.CameraScreen(
                               cameraViewModel, modifier = Modifier.size(220.dp, 350.dp))
                         }
@@ -467,23 +439,18 @@ fun WorkoutScreenBody(
                   Row(
                       verticalAlignment = Alignment.CenterVertically,
                       modifier =
-                      Modifier
-                        .clip(RoundedCornerShape(25.dp)) // Add rounded corners
-                        .background(Color.White) // Add background color
-                        .border(
-                          BorderStroke(4.dp, Color.Yellow),
-                          shape =
-                          RoundedCornerShape(
-                            25.dp
-                          )
-                        ) // Add yellow stroke with rounded corners
-                        .padding(8.dp)) {
+                          Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
+                              .background(Color.White) // Add background color
+                              .border(
+                                  BorderStroke(4.dp, Color.Yellow),
+                                  shape =
+                                      RoundedCornerShape(
+                                          25.dp)) // Add yellow stroke with rounded corners
+                              .padding(8.dp)) {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_camera_24),
                             contentDescription = "Record Video",
-                            modifier = Modifier
-                              .padding(end = 8.dp)
-                              .rotate(angle))
+                            modifier = Modifier.padding(end = 8.dp).rotate(angle))
 
                         Text("Record", fontSize = 10.sp) // Add text "Record"
                         Spacer(modifier = Modifier.width(3.dp))
@@ -500,10 +467,7 @@ fun WorkoutScreenBody(
                         finishButtonBoxIsDisplayed = true
                         videoBoxIsDisplayed = false
                       },
-                      modifier = Modifier
-                        .width(200.dp)
-                        .height(50.dp)
-                        .testTag("StartButton"),
+                      modifier = Modifier.width(200.dp).height(50.dp).testTag("StartButton"),
                       colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
                       shape = RoundedCornerShape(size = 11.dp)) {
                         Text("Start", color = Color.Black, fontSize = 20.sp)
@@ -514,17 +478,6 @@ fun WorkoutScreenBody(
                       modifier = Modifier.size(height = 250.dp, width = 180.dp),
                       horizontalAlignment = Alignment.CenterHorizontally,
                       verticalArrangement = Arrangement.Top) {
-                    Button(onClick =
-                    {
-                      val mlCoach = MlCoach(cameraViewModel,exerciseState.exercise.type)
-                      val feedBack_str = mlCoach.getFeedback()
-                      Log.d("MLCOACH", "Feedback for ${exerciseState.exercise.type} \n ${feedBack_str}")
-                      feedback = feedBack_str
-                    }) {
-                      Text("Generate feedback")
-                    }
-                    Text(feedback)
-
                         if (cameraRecordAsked) {
                           Button(
                               colors =
@@ -533,7 +486,6 @@ fun WorkoutScreenBody(
                                           if (isRecordingInCamera) Color.Red
                                           else if (userHasRecorded) Color.Green else Color.Cyan),
                               onClick = {
-
                                 userHasRecorded = true
                                 cameraViewModel.recordVideo(
                                     onSuccess = {
@@ -567,11 +519,10 @@ fun WorkoutScreenBody(
                               }
                             },
                             modifier =
-                            Modifier
-                              .width(200.dp)
-                              .height(50.dp)
-                              .padding()
-                              .testTag("FinishButton"),
+                                Modifier.width(200.dp)
+                                    .height(50.dp)
+                                    .padding()
+                                    .testTag("FinishButton"),
                             colors =
                                 ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
                             shape = RoundedCornerShape(size = 11.dp)) {

@@ -30,7 +30,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -73,11 +73,13 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
-import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.Dimensions.iconSize
 import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.LightBackground
+import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.Purple60
@@ -197,33 +199,35 @@ fun WorkoutCreationScreen(
             }
           } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
+                modifier =
+                    Modifier.fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(top = Dimensions.ExtraLargePadding),
+                horizontalAlignment = Alignment.CenterHorizontally) {
                   item {
                     Card(
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(50.dp), // More rounded corners
                         colors =
-                            CardDefaults.cardColors(
-                                containerColor = LightGrey), // Gray color for consistency
+                            CardDefaults.cardColors(containerColor = LightBlue2.copy(alpha = 0.7f)),
                         modifier =
-                            Modifier.fillMaxWidth(0.9f)
-                                .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                            Modifier.fillMaxWidth(0.7f) // Reduce the width
+                                .padding(vertical = 8.dp)) {
                           Row(
                               verticalAlignment = Alignment.CenterVertically,
-                              modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                              horizontalArrangement = Arrangement.SpaceBetween,
+                              modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()) {
                                 Text(
                                     text = "Warmup",
-                                    fontSize = 18.sp,
-                                    color = Color.DarkGray,
+                                    fontSize = SubtitleFontSize,
+                                    color = White,
+                                    fontWeight = FontWeight.Bold,
                                     modifier = Modifier.weight(1f),
                                     textAlign = TextAlign.Start)
                                 Switch(
                                     checked = warmup,
                                     onCheckedChange = { warmup = it },
-                                    colors = SwitchDefaults.colors(checkedTrackColor = Blue),
-                                    modifier =
-                                        Modifier.padding(start = 8.dp).testTag("warmupSwitch"))
+                                    colors = SwitchDefaults.colors(checkedTrackColor = LightBlue2),
+                                    modifier = Modifier.testTag("warmupSwitch"))
                               }
                         }
                   }
@@ -272,6 +276,7 @@ fun WorkoutCreationScreen(
                   }
 
                   item {
+                    Spacer(modifier = Modifier.height(Dimensions.ExtraLargePadding))
                     SaveButton(
                         onSaveClick = {
                           when (workoutType) {
@@ -334,7 +339,7 @@ fun WorkoutCreationScreen(
           selectedExerciseType = null
           exerciseDetail = null
         },
-        title = { Text("Add Exercise") },
+        title = { Text("Add Exercise", fontWeight = FontWeight.Bold) },
         text = {
           Column {
             Button(
@@ -349,28 +354,64 @@ fun WorkoutCreationScreen(
                       ExerciseType.entries
                           .filter { it.workoutType == WorkoutType.YOGA }
                           .forEach { type ->
-                            DropdownMenuItem(
-                                onClick = {
-                                  selectedExerciseType = type
-                                  exerciseDetail = type.detail
-                                  isDropdownExpanded = false
-                                },
-                                modifier = Modifier.testTag("exerciseType${type.name}"),
-                                text = { Text(type.name) })
+                            Box(
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .clickable {
+                                          selectedExerciseType = type
+                                          exerciseDetail = type.detail
+                                          isDropdownExpanded = false
+                                        }
+                                        .padding(8.dp)
+                                        .testTag("exerciseType${type.name}")) {
+                                  Row(
+                                      verticalAlignment = Alignment.CenterVertically,
+                                      modifier = Modifier.padding(horizontal = 8.dp)) {
+                                        Icon(
+                                            painter =
+                                                painterResource(id = getExerciseIcon(type.name)),
+                                            contentDescription = "${type.name} Icon",
+                                            modifier = Modifier.size(iconSize))
+                                        Spacer(
+                                            modifier =
+                                                Modifier.width(8.dp)) // Space between icon and text
+                                        Text(text = type.toString(), fontSize = SubtitleFontSize)
+                                      }
+                                }
                           }
                     }
                     WorkoutType.BODY_WEIGHT -> {
                       ExerciseType.entries
                           .filter { it.workoutType == WorkoutType.BODY_WEIGHT }
                           .forEach { type ->
-                            DropdownMenuItem(
-                                onClick = {
-                                  selectedExerciseType = type
-                                  exerciseDetail = type.detail
-                                  isDropdownExpanded = false
-                                },
-                                modifier = Modifier.testTag("exerciseType${type.name}"),
-                                text = { Text(type.name) })
+                            Box(
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .clickable {
+                                          selectedExerciseType = type
+                                          exerciseDetail = type.detail
+                                          isDropdownExpanded = false
+                                        }
+                                        .padding(8.dp)
+                                        .testTag("exerciseType${type.name}")) {
+                                  Row(
+                                      verticalAlignment = Alignment.CenterVertically,
+                                      modifier = Modifier.padding(horizontal = 8.dp)) {
+                                        Icon(
+                                            painter =
+                                                painterResource(
+                                                    id =
+                                                        getExerciseIcon(
+                                                            type.name)), // Replace with your actual
+                                            // icon resource
+                                            contentDescription = "${type.name} Icon",
+                                            modifier = Modifier.size(iconSize))
+                                        Spacer(
+                                            modifier =
+                                                Modifier.width(8.dp)) // Space between icon and text
+                                        Text(text = type.toString(), fontSize = SubtitleFontSize)
+                                      }
+                                }
                           }
                     }
                     else -> {}
@@ -585,5 +626,19 @@ fun CustomTextField(
                     modifier = Modifier.size(Dimensions.iconSize))
               }
         }
+  }
+}
+
+fun getExerciseIcon(type: String): Int {
+  return when (type) {
+    "PUSH_UPS" -> R.drawable.pushups
+    "SQUATS" -> R.drawable.squats
+    "PLANK" -> R.drawable.plank
+    "CHAIR" -> R.drawable.chair
+    "DOWNWARD_DOG" -> R.drawable.downwarddog
+    "TREE_POSE" -> R.drawable.treepose
+    "UPWARD_FACING_DOG" -> R.drawable.upwardfacingdog
+    "WARRIOR_II" -> R.drawable.warrior2
+    else -> R.drawable.dumbbell // Default icon if the type is not found
   }
 }

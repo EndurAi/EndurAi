@@ -1,9 +1,7 @@
 package com.android.sample.model.camera
 
-import MathsPoseDetection
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.video.FileOutputOptions
@@ -14,30 +12,13 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import com.android.sample.mlUtils.ExerciseFeedBack
-import com.android.sample.mlUtils.ExerciseFeedBack.Companion.assessLandMarks
-import com.android.sample.mlUtils.ExerciseFeedBack.Companion.getCriterions
-import com.android.sample.mlUtils.ExerciseFeedBack.Companion.preambleCriterion
 import com.android.sample.mlUtils.MyPoseLandmark
-import com.android.sample.mlUtils.exercisesCriterions.ChairCriterions
-import com.android.sample.mlUtils.exercisesCriterions.DownwardDogCriterions
-import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksClosedCriterions
-import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
-import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
-import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCrierions
-import com.android.sample.model.workout.ExerciseType
-import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
-import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_LEFT_Criterions
-import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_RIGHT_Criterions
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
-import com.google.mlkit.vision.common.PointF3D
-import com.google.mlkit.vision.pose.PoseLandmark
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 /**
  * A ViewModel that manages camera operations for video recording and pose detection.
@@ -95,12 +76,6 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val poseLandmarks: StateFlow<ArrayList<List<MyPoseLandmark>>>
     get() = _poseLandMarks.asStateFlow()
 
-  /** A MutableStateFlow that holds the list of detected pose landmarks. */
-  val _poseLandMarks_means = MutableStateFlow<ArrayList<List<PointF3D>>>(arrayListOf())
-  /** A StateFlow that exposes the list of detected pose landmarks. */
-  val poseLandmarks_means: StateFlow<ArrayList<List<PointF3D>>>
-    get() = _poseLandMarks_means.asStateFlow()
-
   val meanWindow = 10
   private val inFrameLikelihoodThreshold = 0.8f
 
@@ -155,7 +130,6 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                     onSuccess()
                   }
                   resetCameraController() // This allows reusability of the viewModel in the body
-                  // recognition mode
                 }
               }
             }
@@ -177,8 +151,6 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
 
   /** Enables pose recognition by setting up the image analysis analyzer. */
   fun enablePoseRecognition() {
-    val windowSize = 1 // Window Size used to compute the mean
-
     if (_bodyRecognitionIsEnabled.value.not()) {
       _cameraController.value.imageAnalysisTargetSize =
           CameraController.OutputSize(AspectRatio.RATIO_16_9)
@@ -186,134 +158,25 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
           ContextCompat.getMainExecutor(context),
           PoseDetectionAnalyser(
               onDetectedPoseUpdated = {
-                if (poseLandmarks.value.size > windowSize) {
-                  val lastLandMark = poseLandmarks.value.takeLast(windowSize)
-                  val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
-                  val assessedChair =
-                      ExerciseFeedBack.assessLandMarks(meanedLandmark, ChairCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "chair: $assessedChair.first ")
-
-                  val assessedPushUpsDown =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsDownCrierions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsDown: $assessedPushUpsDown.first ")
-
-
-                  val assessedPushUpsUp =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PushUpsUpCrierions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "PushUpsUp: $assessedPushUpsUp.first ")
-
-
-                  Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown.first")
-
-
-                  val assessedJumpingJackOpen =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksOpenCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksOpen: $assessedJumpingJackOpen.first ")
-
-                  val assessedJumpingJackCLosed =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, JumpingJacksClosedCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "JumpingJacksClosed: ${assessedJumpingJackCLosed.first} ")
-
-                  val assessedDowndardDog =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, DownwardDogCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "DownwardDog: ${assessedDowndardDog.first} ")
-                  val assessedDowndardDogPreamble =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark,ExerciseFeedBack.preambleCriterion(
-                      DownwardDogCriterions,{},{}))
-                  Log.d("PREAMBLE_DOWNWARD_DOG", "Preamble: ${assessedDowndardDogPreamble.first} ")
-
-                  val assessedWarrior2Right =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_RIGHT_Criterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "Warrior 2 right: ${assessedWarrior2Right.first} ")
-
-                  val assessedWarrior2Left =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, Warrior_2_LEFT_Criterions)
-                  Log.d("MLFEEDBACK_RESULTExercise", "Warrior 2 left: ${assessedWarrior2Left.first} ")
-
-                  val assessedPlank =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, PlankExerciseCriterions)
-                  Log.d("MLFEEDBACK_RESULTExercisePLANK", "PLANK: ${assessedPlank.first} ")
-
-                  val assessedPlank_preamble =
-                    ExerciseFeedBack.assessLandMarks(meanedLandmark, ExerciseFeedBack.preambleCriterion(
-                      PlankExerciseCriterions,{},{}))
-                  Log.d("MLFEEDBACK_RESULTExercisePLANK_PREAMBLE", "PLANK_PREAMBLE: ${assessedPlank_preamble.first} ")
-
-
-
-                  val jjstate = when {
-    assessedJumpingJackOpen.first && !assessedJumpingJackCLosed.first -> "open"
-    !assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first -> "closed"
-    assessedJumpingJackOpen.first && assessedJumpingJackCLosed.first -> "both"
-    else -> "None"
-}
-                  Log.d("JumpingJacksState", jjstate)
-
-                  Log.d("PushUpState", "Up: $assessedPushUpsUp, Down:$assessedPushUpsDown")
-
-
-
-
-
-                }
                 if (it.all { poseLandmark ->
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
-                })
-                  //Convert into simple type
-                    _poseLandMarks.value.add(it.map { poseLandmark ->
-                      val timeStamp = Clock.System.now().toEpochMilliseconds()
-                      MyPoseLandmark(poseLandmark.position3D.x,poseLandmark.position3D.y,poseLandmark.position3D.z,poseLandmark.inFrameLikelihood, timeStamp = timeStamp) })
+                }) {
+                  // Convert into simple type
+                  _poseLandMarks.value.add(
+                      it.map { poseLandmark ->
+                        val timeStamp = Clock.System.now().toEpochMilliseconds()
+                        MyPoseLandmark(
+                            poseLandmark.position3D.x,
+                            poseLandmark.position3D.y,
+                            poseLandmark.position3D.z,
+                            poseLandmark.inFrameLikelihood,
+                            timeStamp = timeStamp)
+                      })
+                }
               }))
       _bodyRecognitionIsEnabled.value = true
     }
   }
-
-/*
-  fun enablePoseRecognition(exerciseType : ExerciseType): String {
-    var exerciseWasDetected = false
-    val criterions = getCriterions(exerciseType)
-    val preamble = preambleCriterion(criterions, onSuccess =  {
-      exerciseWasDetected = true //When the preamble criterions succeed, then we start assessing the exercise
-    },
-      onFailure = {
-        exerciseWasDetected = false
-      })
-    _bodyRecognitionIsEnabled.value = true
-    _cameraController.value.imageAnalysisTargetSize =
-        CameraController.OutputSize(AspectRatio.RATIO_16_9)
-    _cameraController.value.setImageAnalysisAnalyzer(
-      ContextCompat.getMainExecutor(context),
-      PoseDetectionAnalyser(
-        onDetectedPoseUpdated = { it ->
-          // If the new pose is detected, we add it to the list of poses
-          if (it.all { poseLandmark ->
-            poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
-          }) {
-            _poseLandMarks.value.add(it)
-          }
-          if (poseLandmarks.value.size > meanWindow) {
-            val lastLandMark = poseLandmarks.value.takeLast(meanWindow)
-            val meanedLandmark = MathsPoseDetection.window_mean(lastLandMark)
-
-            //Check if the user is trying to do the exercise, this can switch exerciseWasDetected to true or false
-            assessLandMarks(meanedLandmark, preamble)
-
-            if (exerciseWasDetected) {
-              val result = assessLandMarks(meanedLandmark, criterions)
-              val isSuccessful = result.all { it.first } //True only if all criterions are successful
-              if (!isSuccessful) {
-                val returnMessage = result.filter { !it.first }.joinToString { it.second }
-                finishPoseRecognition()
-              }
-            }
-
-          }
-
-        }
-      )
-    )
-  }
-*/
 
   /**
    * Disables pose recognition by clearing the image analysis analyzer and emptying the landMarks
