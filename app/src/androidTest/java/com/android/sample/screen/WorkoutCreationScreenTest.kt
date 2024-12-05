@@ -104,7 +104,7 @@ class WorkoutCreationScreenTest {
     for (exerciseType in ExerciseType.entries.filter { it.workoutType == WorkoutType.YOGA }) {
       composeTestRule.onNodeWithTag("exerciseType${exerciseType.name}").assertIsDisplayed()
     }
-    composeTestRule.onNodeWithTag("exerciseTypeSUN_SALUTATION").performClick()
+    composeTestRule.onNodeWithTag("exerciseTypeUPWARD_FACING_DOG").performClick()
     composeTestRule
         .onNodeWithTag("selectedExerciseType")
         .assertTextEquals("Selected Exercise: ${ExerciseType.UPWARD_FACING_DOG}")
