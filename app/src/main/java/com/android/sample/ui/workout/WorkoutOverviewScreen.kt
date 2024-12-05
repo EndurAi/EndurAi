@@ -1,26 +1,33 @@
 package com.android.sample.ui.workout
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -28,7 +35,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
@@ -40,10 +50,25 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
+import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.ui.theme.DarkGreen
+import com.android.sample.ui.theme.DarkGrey
+import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.Green
+import com.android.sample.ui.theme.LightBackground
+import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.Line
+import com.android.sample.ui.theme.NeutralGrey
+import com.android.sample.ui.theme.OpenSans
+import com.android.sample.ui.theme.Orange
 import com.android.sample.ui.theme.Red
+import com.android.sample.ui.theme.TitleBlue
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.White
 
 /**
  * Displays the workout overview screen with the selected workout details. This screen displays the
@@ -84,7 +109,7 @@ fun WorkoutOverviewScreen(
       content = { pd ->
         Box(modifier = Modifier.fillMaxSize().padding(pd)) {
           Column(
-              modifier = Modifier.fillMaxSize(),
+              modifier = Modifier.fillMaxSize().padding(bottom = 100.dp),
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.Top) {
                 LazyColumn(
@@ -97,19 +122,16 @@ fun WorkoutOverviewScreen(
                             modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center) {
-                              Card(
-                                  modifier = Modifier.padding(end = 8.dp).height(40.dp),
-                                  colors =
-                                      CardDefaults.cardColors(
-                                          containerColor = LightGrey), // Couleur de fond gris clair
-                                  shape = RoundedCornerShape(4.dp)) {
-                                    Text(
-                                        text = selectedWorkout?.name ?: "BodyWeight Plan",
-                                        modifier =
-                                            Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                                                .testTag("workoutName"),
-                                    )
-                                  }
+                            Text(
+                                text = selectedWorkout?.name ?: "BodyWeight Plan",
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .testTag("workoutName"),
+                                fontSize = 20.sp,
+                                color = TitleBlue,
+                                fontFamily = OpenSans,
+                                fontWeight = FontWeight.Bold // Makes the text bold
+                            )
                               IconButton(
                                   onClick = {
                                     when (workoutTye) {
@@ -123,38 +145,52 @@ fun WorkoutOverviewScreen(
                                   },
                                   modifier = Modifier.size(40.dp).testTag("editButton"),
                               ) {
-                                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Black)
+                                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = NeutralGrey)
                               }
                             }
                       }
 
+                    item {
+                        Divider(
+                            color = Line,
+                            thickness = 0.5.dp,
+                            modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).padding(bottom = 10.dp)
+                                .shadow(1.dp)
+                        )
+                    }
                       // Section Warmup avec l'icône activé/désactivé
                       item {
                         Card(
-                            shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.cardColors(containerColor = LightGrey),
+                            shape = RoundedCornerShape(50.dp),
+                            colors =
+                            CardDefaults.cardColors(containerColor = LightBlue2.copy(alpha = 0.7f)),
                             modifier =
-                                Modifier.fillMaxWidth(0.9f)
-                                    .padding(vertical = 8.dp)
+                            Modifier.fillMaxWidth(0.7f)
+                                .padding(vertical = 8.dp)
+                                .height(40.dp)
                                     .testTag("warmupCard")) {
                               Row(
                                   verticalAlignment = Alignment.CenterVertically,
-                                  modifier = Modifier.padding(16.dp)) {
-                                    Text(
-                                        text = "Warmup",
-                                        modifier = Modifier.weight(1f),
-                                        fontSize = 18.sp)
+                                  horizontalArrangement = Arrangement.SpaceBetween,
+                                  modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().fillMaxHeight()) {
+                                  Text(
+                                      text = "Warmup",
+                                      fontSize = SubtitleFontSize,
+                                      color = White,
+                                      fontWeight = FontWeight.Bold,
+                                      modifier = Modifier.weight(1f),
+                                      textAlign = TextAlign.Start)
                                     if (selectedWorkout?.warmup == true) {
                                       Icon(
-                                          Icons.Default.Check,
+                                          Icons.Default.CheckCircle,
                                           contentDescription = "Checkmark",
-                                          tint = Green, // Couleur bleue pour l'état activé
+                                          tint = DarkGreen, // Etat activé
                                           modifier = Modifier.testTag("warmupGreenIcon"))
                                     } else {
                                       Icon(
                                           Icons.Default.Close,
                                           contentDescription = "Close",
-                                          tint = Red, // Couleur rouge pour l'état désactivé
+                                          tint = Orange, // Etat désactivé
                                           modifier = Modifier.testTag("warmupRedIcon"))
                                     }
                                   }
@@ -165,7 +201,7 @@ fun WorkoutOverviewScreen(
                       exerciseListItems(selectedWorkout?.exercises ?: emptyList(), {}, {})
                     }
 
-                // Bouton Start
+              // Bouton Start
                 Button(
                     onClick = {
                       when (workoutTye) {
@@ -176,21 +212,36 @@ fun WorkoutOverviewScreen(
                         WorkoutType.RUNNING -> TODO()
                       }
                     },
-                    modifier =
-                        Modifier.fillMaxWidth(0.8f)
-                            .padding(vertical = 24.dp)
-                            .height(50.dp)
-                            .testTag("startButton"),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
-                    shape = RoundedCornerShape(25.dp)) {
-                      Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "Start", fontSize = 20.sp)
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Next")
-                      }
+                    modifier = Modifier.width(Dimensions.ButtonWidth)
+                        .height(Dimensions.ButtonHeight)
+                        .background(brush = BlueGradient, shape = LeafShape)
+                        .align(Alignment.CenterHorizontally)
+                        .testTag("startButton"),
+                    colors = ButtonDefaults.buttonColors(containerColor = Transparent),
+                    contentPadding = PaddingValues(),
+                    shape = LeafShape) {
+                    Box(
+                        modifier =
+                        Modifier.fillMaxSize()
+                            .background(brush = BlueGradient, shape = LeafShape),
+                        contentAlignment = Alignment.Center) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Start",
+                                color = White,
+                                fontSize = SubtitleFontSize,
+                                fontWeight = FontWeight.Bold)
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = "Next",
+                                tint = White,
+                                modifier = Modifier.padding(start = 4.dp))
+                        }
+                    }
                     }
               }
         }
-      })
+      },
+      containerColor = LightBackground
+  )
 }
