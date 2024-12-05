@@ -5,7 +5,7 @@ data class Exercise(val id: String, val type: ExerciseType, val detail: Exercise
 enum class ExerciseType(val workoutType: WorkoutType, val detail: ExerciseDetail) {
   DOWNWARD_DOG(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
   TREE_POSE(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
-  SUN_SALUTATION(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(60, sets = 2)),
+  UPWARD_FACING_DOG(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(60, sets = 2)),
   WARRIOR_II(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
   PUSH_UPS(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.RepetitionBased(10)),
   SQUATS(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.RepetitionBased(15)),
@@ -20,7 +20,7 @@ enum class ExerciseType(val workoutType: WorkoutType, val detail: ExerciseDetail
     return when (this) {
       DOWNWARD_DOG -> "Hands shoulder-width, feet hip-width, form an inverted V."
       TREE_POSE -> "Balance on one leg, other foot on inner thigh."
-      SUN_SALUTATION -> "Flowing sequence of poses, coordinating breath."
+      UPWARD_FACING_DOG -> "Lie face down, lift chest and thighs off floor, straight arms."
       WARRIOR_II -> "Lunge pose, arms parallel to the floor."
       PUSH_UPS -> "Lower chest to floor, push back up with arms."
       SQUATS -> "Stand with feet apart, lower hips as if sitting."
@@ -37,7 +37,7 @@ enum class ExerciseType(val workoutType: WorkoutType, val detail: ExerciseDetail
     return when (this) {
       DOWNWARD_DOG -> "Downward Dog"
       TREE_POSE -> "Tree Pose"
-      SUN_SALUTATION -> "Sun Salutation"
+      UPWARD_FACING_DOG -> "Sun Salutation"
       WARRIOR_II -> "Warrior 2 Pose"
       PUSH_UPS -> "Push-ups"
       SQUATS -> "Squats"

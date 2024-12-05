@@ -8,6 +8,7 @@ object Dimensions {
   val ButtonWidth = 200.dp
   val SmallPadding = 8.dp
   val LargePadding = 16.dp
+  val ExtraLargePadding = 32.dp
   val iconSize = 24.dp
 }
 
