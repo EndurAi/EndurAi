@@ -12,8 +12,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -407,16 +405,14 @@ fun WorkoutScreenBody(
                             CountDownTimer(
                                 timer,
                                 timeLimit,
-                                modifier =
-                                    Modifier.size(220.dp).testTag("CountDownTimer").clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = null) {
-                                          countDownTimerIsPaused = !countDownTimerIsPaused
-                                        },
+                                modifier = Modifier.size(220.dp),
                                 isPaused = countDownTimerIsPaused,
                                 isFinished = (timer == 0 && currentSet == numberOfSets),
                                 countDownCurrentValue = countDownValue,
-                                isCountDownTime = isCountdownTime)
+                                isCountDownTime = isCountdownTime,
+                                onPauseClicked = {
+                                  countDownTimerIsPaused = countDownTimerIsPaused.not()
+                                })
                             Spacer(modifier = Modifier.height(5.dp))
                           }
                         } else {
