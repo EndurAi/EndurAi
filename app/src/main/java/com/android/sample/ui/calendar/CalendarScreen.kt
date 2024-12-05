@@ -2,8 +2,6 @@ package com.android.sample.ui.calendar
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Typeface
-import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,12 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
@@ -52,15 +47,11 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
-import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.LegendBodyweight
 import com.android.sample.ui.theme.LegendYoga
 import com.android.sample.ui.theme.Line
-import com.android.sample.ui.theme.MediumGrey
 import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.OpenSans
-import com.android.sample.ui.theme.PastelBlue
-import com.android.sample.ui.theme.PastelRed
 import com.android.sample.ui.theme.Red
 import com.android.sample.ui.theme.Yellow
 import java.time.LocalDateTime
@@ -70,7 +61,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toLocalDateTime
-import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter.All
 
 data class ColoredWorkout(val workout: Workout, val backgroundColor: Color, val type: WorkoutType)
 
@@ -192,8 +182,10 @@ fun CalendarScreen(
                       },
                       navigationActions,
                       calendarViewModel)
-                    Divider(
-                        color = Line, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 15.dp).shadow(1.dp))
+                  Divider(
+                      color = Line,
+                      thickness = 0.5.dp,
+                      modifier = Modifier.padding(vertical = 15.dp).shadow(1.dp))
                 }
               }
         }
@@ -216,41 +208,48 @@ fun DaySection(
     navigationActions: NavigationActions,
     calendarViewModel: CalendarViewModel
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
   Row(
       modifier =
           Modifier.fillMaxWidth()
               .testTag("daySection")
               .padding(vertical = 8.dp)
-              .background(
-                  color = Color.Transparent, shape = MaterialTheme.shapes.medium)
+              .background(color = Color.Transparent, shape = MaterialTheme.shapes.medium)
               .padding(16.dp)
               .clickable {
                 calendarViewModel.updateSelectedDate(date)
                 navigationActions.navigateTo(Screen.DAY_CALENDAR)
               },
       verticalAlignment = Alignment.CenterVertically) {
-        Column(modifier = Modifier, horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
-            Spacer(modifier = Modifier.height(40.dp))
-            Box(
-              modifier = Modifier.drawBehind {
-                  drawIntoCanvas { canvas ->
-                      shadowText(canvas, context, String.format("%02d", date.dayOfMonth),  50.sp.toPx())
-                  }
-              })
-          Spacer(modifier = Modifier.height(20.dp))
-            Box(
-                modifier = Modifier.drawBehind {
-                    drawIntoCanvas { canvas ->
-                        shadowText(canvas, context,  getMonthName(date.monthNumber),  16.sp.toPx())
-                    }
-                }
-            )
-        }
-      Spacer(modifier = Modifier.width(150.dp))
+        Column(
+            modifier = Modifier,
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center) {
+              Spacer(modifier = Modifier.height(40.dp))
+              Box(
+                  modifier =
+                      Modifier.testTag("Day").drawBehind {
+                        drawIntoCanvas { canvas ->
+                          shadowText(
+                              canvas, context, String.format("%02d", date.dayOfMonth), 50.sp.toPx())
+                        }
+                      })
+              Spacer(modifier = Modifier.height(20.dp))
+              Box(
+                  modifier =
+                      Modifier.testTag("Month").drawBehind {
+                        drawIntoCanvas { canvas ->
+                          shadowText(canvas, context, getMonthName(date.monthNumber), 16.sp.toPx())
+                        }
+                      })
+            }
+        Spacer(modifier = Modifier.width(150.dp))
         if (workouts.isEmpty()) {
           Text(
-              text = stringResource(id = R.string.NoWorkout), style = MaterialTheme.typography.bodyMedium, color = NeutralGrey, fontFamily = OpenSans)
+              text = stringResource(id = R.string.NoWorkout),
+              style = MaterialTheme.typography.bodyMedium,
+              color = NeutralGrey,
+              fontFamily = OpenSans)
         } else {
           Column(modifier = Modifier) {
             workouts
@@ -267,57 +266,56 @@ fun shadowText(
     text: String,
     textSizeSp: Float,
     y: Float = 0f
-){
-    val openSansTypeface = ResourcesCompat.getFont(context, R.font.open_sans_regular)
+) {
+  val openSansTypeface = ResourcesCompat.getFont(context, R.font.open_sans_regular)
 
-    val textPaint = android.graphics.Paint().apply {
+  val textPaint =
+      android.graphics.Paint().apply {
         color = android.graphics.Color.BLACK
         textSize = textSizeSp
         setShadowLayer(8f, 4f, 4f, android.graphics.Color.GRAY)
         typeface = openSansTypeface
-    }
+      }
 
-    canvas.nativeCanvas.drawText(
-        text,
-        0f,
-        y,
-        textPaint
-    )
+  canvas.nativeCanvas.drawText(text, 0f, y, textPaint)
 }
 
 @Composable
-fun WorkoutItem(coloredWorkout: ColoredWorkout, onClick: (ColoredWorkout) -> Unit, context: Context) {
+fun WorkoutItem(
+    coloredWorkout: ColoredWorkout,
+    onClick: (ColoredWorkout) -> Unit,
+    context: Context
+) {
   Card(
       modifier =
-          Modifier
-              .clickable { onClick(coloredWorkout) }
+          Modifier.clickable { onClick(coloredWorkout) }
               .padding(vertical = 4.dp)
               .testTag("workoutItem"),
       colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
         Row(modifier = Modifier.width(200.dp).height(30.dp)) {
-            Spacer(modifier = Modifier.width(20.dp))
-            CircleDot(coloredWorkout.backgroundColor)
-            Spacer(modifier = Modifier.width(20.dp))
-            Box(
-                modifier = Modifier.drawBehind {
+          Spacer(modifier = Modifier.width(20.dp))
+          CircleDot(coloredWorkout.backgroundColor)
+          Spacer(modifier = Modifier.width(20.dp))
+          Box(
+              modifier =
+                  Modifier.drawBehind {
                     drawIntoCanvas { canvas ->
-                        shadowText(canvas, context, coloredWorkout.workout.name,  18.sp.toPx(), 35f)
+                      shadowText(canvas, context, coloredWorkout.workout.name, 18.sp.toPx(), 35f)
                     }
-                }
-            )
+                  })
         }
       }
 }
 
 @Composable
-fun CircleDot(color: Color){
-    Column(
-        modifier = Modifier
-            .size(15.dp)
-            .shadow(4.dp, shape = CircleShape)
-            .background(color, shape = CircleShape)
-    ){}
+fun CircleDot(color: Color) {
+  Column(
+      modifier =
+          Modifier.size(15.dp)
+              .shadow(4.dp, shape = CircleShape)
+              .background(color, shape = CircleShape)) {}
 }
+
 private fun getMonthName(monthNumber: Int): String {
   return when (monthNumber) {
     1 -> "January"

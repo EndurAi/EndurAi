@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,22 +25,17 @@ import com.android.sample.R
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
-import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
-import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.composables.Legend
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.mainscreen.navigateToWorkoutScreen
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.theme.BodyWeightTag
 import com.android.sample.ui.theme.CalendarBackground
 import com.android.sample.ui.theme.LegendBodyweight
 import com.android.sample.ui.theme.LegendRunning
 import com.android.sample.ui.theme.LegendYoga
 import com.android.sample.ui.theme.OpenSans
-import com.android.sample.ui.theme.RunningTag
-import com.android.sample.ui.theme.YogaTag
 import java.time.format.DateTimeFormatter
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
@@ -53,7 +47,11 @@ import kotlinx.datetime.toKotlinLocalDate
  * @param backgroundColor The color of the card.
  * @param viewModel The associated viewModel.
  */
-data class DayColoredWorkout(val workout: Workout, val backgroundColor: Color, val viewModel: WorkoutViewModel<Workout>)
+data class DayColoredWorkout(
+    val workout: Workout,
+    val backgroundColor: Color,
+    val viewModel: WorkoutViewModel<Workout>
+)
 
 /**
  * Displays the Day Calendar screen with workouts for the selected date.
@@ -85,47 +83,51 @@ fun DayCalendarScreen(
             when (it) {
               is BodyWeightWorkout -> DayColoredWorkout(it, LegendBodyweight, bodyworkoutViewModel)
               is YogaWorkout -> DayColoredWorkout(it, LegendYoga, yogaworkoutViewModel)
-              else -> DayColoredWorkout(it, LegendRunning, bodyworkoutViewModel) // Temps until we got some saved runnng workouts
+              else ->
+                  DayColoredWorkout(
+                      it,
+                      LegendRunning,
+                      bodyworkoutViewModel) // Temps until we got some saved runnng workouts
             }
           }
           .sortedBy { it.workout.date.minute }
 
-  Scaffold(
-      topBar = { TopBar(navigationActions, R.string.calendar_title) }){ padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-          Legend()
+  Scaffold(topBar = { TopBar(navigationActions, R.string.calendar_title) }) { padding ->
+    Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+      Legend()
 
-          Divider(
-              color = Color.LightGray,
-              thickness = 1.dp,
-              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+      Divider(
+          color = Color.LightGray,
+          thickness = 1.dp,
+          modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
-          Text(
-              text =
-                  selectedDate?.toJavaLocalDate()?.format(DateTimeFormatter.ofPattern("dd MMMM"))
-                      ?: "",
-              fontFamily = OpenSans,
-              fontWeight = FontWeight.SemiBold,
-              fontSize = 45.sp,
-              modifier =
-                  Modifier.padding(top = 8.dp, start = 16.dp, bottom = 16.dp).testTag("Date"))
+      Text(
+          text =
+              selectedDate?.toJavaLocalDate()?.format(DateTimeFormatter.ofPattern("dd MMMM")) ?: "",
+          fontFamily = OpenSans,
+          fontWeight = FontWeight.SemiBold,
+          fontSize = 45.sp,
+          modifier = Modifier.padding(top = 8.dp, start = 16.dp, bottom = 16.dp).testTag("Date"))
 
-          Box(
-              modifier =
-                  Modifier.testTag("Hours")
-                      .fillMaxWidth()
-                      .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
-                      .shadow(4.dp, shape = RoundedCornerShape(25.dp))
-                      .background(CalendarBackground, shape = RoundedCornerShape(25.dp))) {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                  items(25) { hourInput ->
-                      val hour = if(hourInput == 24) 0 else hourInput
-                    HourBlock(hour, coloredWorkouts.filter { it.workout.date.hour == hour }, navigationActions)
-                  }
-                }
+      Box(
+          modifier =
+              Modifier.testTag("Hours")
+                  .fillMaxWidth()
+                  .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
+                  .shadow(4.dp, shape = RoundedCornerShape(25.dp))
+                  .background(CalendarBackground, shape = RoundedCornerShape(25.dp))) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+              items(25) { hourInput ->
+                val hour = if (hourInput == 24) 0 else hourInput
+                HourBlock(
+                    hour,
+                    coloredWorkouts.filter { it.workout.date.hour == hour },
+                    navigationActions)
               }
-        }
-      }
+            }
+          }
+    }
+  }
 }
 
 /**
@@ -144,11 +146,11 @@ fun HourBlock(hour: Int, workouts: List<DayColoredWorkout>, navigationActions: N
         text = String.format("%02d:00", hour),
         modifier = Modifier.padding(start = 25.dp))
 
-      if(workouts.isEmpty()){
-          Spacer(modifier = Modifier.height(25.dp))
-      } else {
-          workouts.forEach { workout -> WorkoutItem(workout, navigationActions) }
-      }
+    if (workouts.isEmpty()) {
+      Spacer(modifier = Modifier.height(25.dp))
+    } else {
+      workouts.forEach { workout -> WorkoutItem(workout, navigationActions) }
+    }
   }
 }
 
@@ -159,24 +161,34 @@ fun HourBlock(hour: Int, workouts: List<DayColoredWorkout>, navigationActions: N
  */
 @Composable
 fun WorkoutItem(coloredWorkout: DayColoredWorkout, navigationActions: NavigationActions) {
-    val shape = RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
-    Row(){
-        Spacer(modifier = Modifier.width(30.dp))
-        Card(
-            modifier =
-            Modifier
-                .padding(horizontal = 50.dp)
+  val shape =
+      RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
+  Row() {
+    Spacer(modifier = Modifier.width(30.dp))
+    Card(
+        modifier =
+            Modifier.padding(horizontal = 50.dp)
                 .testTag("WorkoutCard")
-                .clickable { navigateToWorkoutScreen(coloredWorkout.workout, coloredWorkout.viewModel, navigationActions) }
+                .clickable {
+                  navigateToWorkoutScreen(
+                      coloredWorkout.workout, coloredWorkout.viewModel, navigationActions)
+                }
                 .shadow(4.dp, shape = shape),
-            colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
-            shape = shape) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp ,horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = coloredWorkout.workout.name, fontFamily = OpenSans, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = formatTime(coloredWorkout.workout.date), fontFamily = OpenSans, fontSize = 18.sp)
-            }
+        colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
+        shape = shape) {
+          Row(
+              modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp, horizontal = 16.dp),
+              horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = coloredWorkout.workout.name,
+                    fontFamily = OpenSans,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = formatTime(coloredWorkout.workout.date),
+                    fontFamily = OpenSans,
+                    fontSize = 18.sp)
+              }
         }
-    }
+  }
 }

@@ -1,5 +1,6 @@
 package com.android.sample.screen.mainscreen
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -38,12 +39,31 @@ class CalendarScreenTest {
     val bodyWeightWorkouts =
         listOf(
             BodyWeightWorkout(
+                "0",
+                "NightSes",
+                "Hold for 60 seconds",
+                false,
+                date = LocalDateTime.now().plusDays(1)),
+            BodyWeightWorkout(
+                "1",
+                "NightSes",
+                "Hold for 60 seconds",
+                false,
+                date = LocalDateTime.now().plusDays(1)),
+            BodyWeightWorkout(
                 "2",
                 "NightSes",
                 "Hold for 60 seconds",
                 false,
                 date = LocalDateTime.now().plusDays(1)))
-    val yogaWorkouts: List<YogaWorkout> = listOf()
+    val yogaWorkouts: List<YogaWorkout> =
+        listOf(
+            YogaWorkout(
+                "2",
+                "NightSes",
+                "Hold for 60 seconds",
+                false,
+                date = LocalDateTime.now().plusDays(1)))
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
@@ -131,5 +151,17 @@ class CalendarScreenTest {
 
     // Assert that there are 3 day sections displayed
     assert(3 < dayNodes.fetchSemanticsNodes().size)
+  }
+
+  @Test
+  fun testAllComponentsDisplayed() {
+    composeTestRule.setContent {
+      CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel, calendarViewModel)
+    }
+
+    composeTestRule.onAllNodesWithTag("Categories").assertCountEquals(3)
+    assert(composeTestRule.onAllNodesWithTag("Day").fetchSemanticsNodes().size > 3)
+    assert(composeTestRule.onAllNodesWithTag("Month").fetchSemanticsNodes().size > 3)
+    composeTestRule.onAllNodesWithTag("workoutItem").assertCountEquals(3)
   }
 }

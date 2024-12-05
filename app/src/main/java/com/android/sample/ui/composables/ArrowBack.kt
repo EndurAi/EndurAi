@@ -1,8 +1,5 @@
 package com.android.sample.ui.composables
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -19,6 +16,10 @@ import com.android.sample.ui.navigation.NavigationActions
 fun ArrowBack(navigationActions: NavigationActions, color: Color = Color.Black) {
   IconButton(
       onClick = { navigationActions.goBack() }, modifier = Modifier.testTag("ArrowBackButton")) {
-        Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "Back", tint = color, modifier = Modifier.size(30.dp))
+        Icon(
+            imageVector = Icons.Outlined.ArrowBack,
+            contentDescription = "Back",
+            tint = color,
+            modifier = Modifier.size(30.dp))
       }
 }

@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.BlueGradient
-import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.White
 
@@ -36,25 +35,36 @@ import com.android.sample.ui.theme.White
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navigationActions: NavigationActions, @StringRes title: Int, displayArrow : Boolean = true) {
+fun TopBar(
+    navigationActions: NavigationActions,
+    @StringRes title: Int,
+    displayArrow: Boolean = true
+) {
 
   androidx.compose.foundation.layout.Box(
-      modifier = Modifier.fillMaxWidth().wrapContentHeight().background(brush = BlueGradient).height(90.dp)) {
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .background(brush = BlueGradient)
+              .height(90.dp)) {
         TopAppBar(
             title = {
-                Row() {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = stringResource(id = title),
-                        fontSize = 30.sp,
-                        fontFamily = OpenSans,
-                        fontWeight = FontWeight.SemiBold,
-                        color = White,
-                        modifier = Modifier.testTag("ScreenTitle")
-                    )
-                }
+              Row() {
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(
+                    text = stringResource(id = title),
+                    fontSize = 30.sp,
+                    fontFamily = OpenSans,
+                    fontWeight = FontWeight.SemiBold,
+                    color = White,
+                    modifier = Modifier.testTag("ScreenTitle"))
+              }
             },
-            navigationIcon = { if(displayArrow){ArrowBack(navigationActions, Color.White) }},
+            navigationIcon = {
+              if (displayArrow) {
+                ArrowBack(navigationActions, Color.White)
+              }
+            },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
             modifier = Modifier.testTag("TopBar").align(Alignment.Center))
       }

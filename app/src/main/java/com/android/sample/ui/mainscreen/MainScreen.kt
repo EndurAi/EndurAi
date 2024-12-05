@@ -399,9 +399,8 @@ fun QuickWorkoutButton(
     iconId: Int,
     onClick: () -> Unit,
 ) {
-    val shape =
-        RoundedCornerShape(
-            topStart = 25.dp, topEnd = 11.dp, bottomEnd = 25.dp, bottomStart = 11.dp)
+  val shape =
+      RoundedCornerShape(topStart = 25.dp, topEnd = 11.dp, bottomEnd = 25.dp, bottomStart = 11.dp)
   Box(
       modifier =
           Modifier.height(76.dp)
@@ -412,7 +411,12 @@ fun QuickWorkoutButton(
             painter = painterResource(id = iconId),
             contentDescription = "Quick Workout Icon",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize().shadow(4.dp, shape = shape).clip(shape).testTag("QuickWorkoutButton").clickable { onClick() })
+            modifier =
+                Modifier.fillMaxSize()
+                    .shadow(4.dp, shape = shape)
+                    .clip(shape)
+                    .testTag("QuickWorkoutButton")
+                    .clickable { onClick() })
       }
 }
 

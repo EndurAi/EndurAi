@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,17 +14,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
-import com.android.sample.ui.theme.BodyWeightTag
 import com.android.sample.ui.theme.LegendBodyweight
 import com.android.sample.ui.theme.LegendRunning
 import com.android.sample.ui.theme.LegendYoga
 import com.android.sample.ui.theme.OpenSans
-import com.android.sample.ui.theme.RunningTag
-import com.android.sample.ui.theme.YogaTag
 
 /**
  * Displays an individual legend item with a colored background and text.
@@ -35,11 +30,11 @@ import com.android.sample.ui.theme.YogaTag
  */
 @Composable
 fun LegendItem(color: Color, text: String) {
-    val shape = RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
+  val shape =
+      RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
   Box(
       modifier =
-          Modifier
-              .shadow(4.dp, shape = shape)
+          Modifier.shadow(4.dp, shape = shape)
               .background(color, shape = shape)
               .padding(horizontal = 12.dp, vertical = 4.dp)) {
         Text(text = text, color = Color.Black, fontSize = 20.sp, fontFamily = OpenSans)
