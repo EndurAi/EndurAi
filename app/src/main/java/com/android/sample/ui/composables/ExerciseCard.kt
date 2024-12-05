@@ -12,17 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
-import com.android.sample.ui.theme.Black
-import com.android.sample.ui.theme.Blue
-import com.android.sample.ui.theme.DarkGrey
-import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.DarkerBlue
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
+import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.Purple20
+import com.android.sample.ui.theme.White
 
 /**
  * Displays a card representing an exercise with its name and details.
@@ -34,7 +35,7 @@ fun ExerciseCard(
     exercise: Exercise,
     onCardClick: () -> Unit,
     onDetailClick: () -> Unit,
-    innerColor: Color = Blue,
+    innerColor: Color = DarkerBlue,
     textToDisplay: String = "",
     modifier: Modifier = Modifier,
     innerModifier: Modifier = Modifier
@@ -50,7 +51,7 @@ fun ExerciseCard(
 
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = LightGrey), // Grey color
+        colors = CardDefaults.cardColors(containerColor = LightBlue2), // Blue color
         modifier =
             Modifier.fillMaxWidth(0.9f)
                 .testTag("exerciseCard")
@@ -62,8 +63,9 @@ fun ExerciseCard(
                 // Exercise name (on the left)
                 Text(
                     text = exercise.type.toString(),
-                    fontSize = 18.sp,
-                    color = DarkGrey,
+                    fontSize = SubtitleFontSize,
+                    color = White,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start)
 
@@ -88,7 +90,7 @@ fun ExerciseCard(
 fun ExerciseDetailCard(
     detail: ExerciseDetail,
     onClick: () -> Unit,
-    cardColor: Color = Blue,
+    cardColor: Color = DarkerBlue,
     textToDisplay: String = "",
     modifier: Modifier = Modifier
 ) {
@@ -108,7 +110,7 @@ fun ExerciseDetailCard(
                       painter = painterResource(id = R.drawable.pace),
                       contentDescription = "Time Based",
                       modifier = Modifier.size(20.dp),
-                      tint = Black // Black icon
+                      tint = White // White icon
                       )
                   Spacer(modifier = Modifier.width(4.dp))
                   Text(
@@ -117,7 +119,8 @@ fun ExerciseDetailCard(
                               "${formatTime(detail.durationInSeconds)} X ${detail.sets}"
                           else textToDisplay,
                       fontSize = 14.sp,
-                      color = Black, // Black text
+                      color = White, // Black text
+                      fontWeight = FontWeight.Bold,
                       modifier = modifier)
                 }
                 is ExerciseDetail.RepetitionBased -> {
@@ -125,14 +128,15 @@ fun ExerciseDetailCard(
                       painter = painterResource(id = R.drawable.timeline),
                       contentDescription = "Repetition Based",
                       modifier = Modifier.size(20.dp),
-                      tint = Black // Black icon
+                      tint = White // White icon
                       )
                   Spacer(modifier = Modifier.width(4.dp))
                   Text(
                       text =
                           if (textToDisplay.isBlank()) "X ${detail.repetitions}" else textToDisplay,
                       fontSize = 14.sp,
-                      color = Black, // Black text
+                      color = White, // White text
+                      fontWeight = FontWeight.Bold,
                       modifier = modifier)
                 }
               }

@@ -135,6 +135,13 @@ class EndToEndTest {
     // go to videos library screen
     composeTestRule.onNodeWithTag("Video").performClick()
 
+    composeTestRule
+        .onNodeWithTag("loadingIndicator")
+        .assertIsDisplayed() // Ensure it starts loading
+    composeTestRule.waitUntil(5_000) {
+      composeTestRule.onAllNodesWithTag("loadingIndicator").fetchSemanticsNodes().isEmpty()
+    }
+
     videoLibraryScreenIsWellDisplayed()
 
     // go back to main
@@ -157,15 +164,13 @@ class EndToEndTest {
     // go to workout creation screen
     composeTestRule.onNodeWithTag("Add").performClick()
 
-    sessionSelectionScreenIsWellDisplayed()
-
     // we decide to go to body weight
-    composeTestRule.onNodeWithTag("sessionCard_Body weight").performClick()
+    composeTestRule.onNodeWithTag("BottomBarBodyweight").performClick()
 
     importOrCreateScreenIsWellDisplayed()
 
     // we go to the import screen
-    composeTestRule.onNodeWithText("Import").performClick()
+    composeTestRule.onNodeWithText("Choose from existing").performClick()
 
     workoutSelectionScreenIsWellDisplayed()
 
@@ -222,14 +227,13 @@ class EndToEndTest {
 
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     // composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
   }
 
   private fun importOrCreateScreenIsWellDisplayed() {
     val testName = "importOrCreateScreenIsWellDisplayed"
 
-    composeTestRule.onNodeWithText("Import").isDisplayed()
+    composeTestRule.onNodeWithText("Choose from existing").isDisplayed()
 
     composeTestRule.onNodeWithText("Create from scratch").isDisplayed()
 
@@ -244,23 +248,6 @@ class EndToEndTest {
     nodeControl("emptyWorkoutPrompt", testName)
 
     nodeControl("TopBar", testName)
-  }
-
-  private fun sessionSelectionScreenIsWellDisplayed() {
-    val testName = "sessionSelectionScreenIsWellDisplayed"
-
-    nodeControl("sessionSelectionScreen", testName)
-
-    nodeControl("sessionCard_Body weight", testName)
-
-    nodeControl("sessionCard_Running", testName)
-
-    nodeControl("sessionCard_Yoga", testName)
-
-    // check that the right text is displayed
-    composeTestRule.onNodeWithText("Body weight").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Running").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Yoga").assertIsDisplayed()
   }
 
   private fun dayCalendarScreenIsWellDisplayed() {

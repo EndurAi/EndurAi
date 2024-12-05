@@ -30,19 +30,39 @@ open class VideoViewModel(private val videoRepository: VideoRepository) : ViewMo
   private val selectedVideo_ = MutableStateFlow<Video?>(null)
   open val selectedVideo: StateFlow<Video?> = selectedVideo_.asStateFlow()
 
+  private val _loading = MutableStateFlow(false)
+  val loading: StateFlow<Boolean> = _loading.asStateFlow()
+
   init {
     videoRepository.init {}
   }
 
   /** Load videos from the repository. */
   suspend fun loadVideos() {
+
+    _loading.value = true
+    _loading.value = true
+    val startTime = System.currentTimeMillis()
     withContext(Dispatchers.IO) {
-      videoRepository.getVideos(
-          { videoList ->
-            _videos.update { videoList }
-            Log.d("VideoViewModel", "Loaded videos: $videoList")
-          },
-          { exception -> _error.update { "Failed to load videos: ${exception.message}" } })
+      try {
+        videoRepository.getVideos(
+            { videoList ->
+              _videos.update { videoList }
+              //            _loading.value = false
+              Log.d("VideoViewModel", "Loaded videos: $videoList")
+            },
+            { exception ->
+              _error.update { "Failed to load videos: ${exception.message}" }
+              //            _loading.value = false
+            })
+      } finally {
+        val elapsedTime = System.currentTimeMillis() - startTime
+        val minLoadingDuration = 2000L // 2 seconds minimum loading time
+        if (elapsedTime < minLoadingDuration) {
+          kotlinx.coroutines.delay(minLoadingDuration - elapsedTime)
+        }
+        _loading.value = false
+      }
     }
   }
 
