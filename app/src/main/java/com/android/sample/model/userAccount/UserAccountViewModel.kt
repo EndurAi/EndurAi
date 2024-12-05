@@ -176,7 +176,7 @@ open class UserAccountViewModel(
   }
 
   // synchronous friends
-  fun getFriends(): List<UserAccount> {
+  suspend fun getFriends(): List<UserAccount> {
     val friends = mutableListOf<UserAccount>()
     userAccount.value?.friends?.forEach { friendId ->
       repository.getUserAccount(
@@ -208,7 +208,7 @@ open class UserAccountViewModel(
         })
   }
 
-  fun getSentRequests(): List<UserAccount> {
+  suspend fun getSentRequests(): List<UserAccount> {
     val sentRequests = mutableListOf<UserAccount>()
     userAccount.value?.sentRequests?.forEach { requestId ->
       repository.getUserAccount(
@@ -221,7 +221,7 @@ open class UserAccountViewModel(
     return sentRequests
   }
 
-  fun getReceivedRequests(): List<UserAccount> {
+  suspend fun getReceivedRequests(): List<UserAccount> {
     val receivedRequests = mutableListOf<UserAccount>()
     userAccount.value?.receivedRequests?.forEach { requestId ->
       repository.getUserAccount(
