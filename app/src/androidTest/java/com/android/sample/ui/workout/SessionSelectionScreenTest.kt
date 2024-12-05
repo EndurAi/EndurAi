@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import org.junit.Before
@@ -87,7 +88,7 @@ class SessionSelectionScreenTest {
     composeTestRule.setContent { SessionSelectionScreen(navigationActions) }
 
     // Perform click on the "Yoga" session card
-    composeTestRule.onNodeWithTag("sessionCard_Yoga").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("sessionCard_Yoga").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("sessionCard_Yoga").performClick()
 
     // Verify navigation to Import or Create screen
