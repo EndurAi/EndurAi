@@ -87,7 +87,7 @@ fun DayCalendarScreen(
                   DayColoredWorkout(
                       it,
                       LegendRunning,
-                      bodyworkoutViewModel) // Temps until we got some saved runnng workouts
+                      bodyworkoutViewModel) // Temps until we got some saved running workouts
             }
           }
           .sortedBy { it.workout.date.minute }

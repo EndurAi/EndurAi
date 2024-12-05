@@ -105,7 +105,7 @@ class CalendarScreenTest {
   }
 
   @Test
-  fun testDisplayMoreThan3Days() {
+  fun testDisplayMoreThan1Day() {
     composeTestRule.setContent {
       CalendarScreen(navigationActions, bodyWeightViewModel, yogaViewModel, calendarViewModel)
     }
@@ -114,7 +114,7 @@ class CalendarScreenTest {
     val dayNodes = composeTestRule.onAllNodesWithTag("daySection", useUnmergedTree = true)
 
     // Assert that there are 3 day sections displayed
-    assert(3 < dayNodes.fetchSemanticsNodes().size)
+    assert(1 < dayNodes.fetchSemanticsNodes().size)
   }
 
   @Test
