@@ -32,6 +32,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -52,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -86,6 +88,9 @@ import com.android.sample.ui.composables.WorkoutSummaryScreen
 import com.android.sample.ui.composables.convertSecondsToTime
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Line
+import com.android.sample.ui.theme.OpenSans
+import com.android.sample.ui.theme.TitleBlue
 import kotlinx.coroutines.delay
 
 // Data class to hold the state of an exercise
@@ -252,17 +257,17 @@ fun WorkoutScreenBody(
       topBar = {
         CenterAlignedTopAppBar(
             title = {
-
-              // Display the workout name
-              Text(
-                  workoutName,
-                  modifier =
-                      Modifier.background(Color(0xFFD9D9D9), shape = RoundedCornerShape(20.dp))
-                          .padding(horizontal = 10.dp)
-                          .padding(1.dp)
-                          .testTag("WorkoutName"),
-                  fontWeight = FontWeight(500),
-                  color = MaterialTheme.colorScheme.onSurface)
+                // Display the workout name
+                Text(
+                    text = workoutName,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .testTag("WorkoutName"),
+                    fontSize = 20.sp,
+                    color = TitleBlue,
+                    fontFamily = OpenSans,
+                    fontWeight = FontWeight.Bold // Makes the text bold
+                )
             },
             navigationIcon = { ArrowBack(navigationActions) })
       }) { innerPadding ->
@@ -289,7 +294,14 @@ fun WorkoutScreenBody(
                           text = exerciseState.exercise.type.toString(),
                           style = MaterialTheme.typography.labelLarge.copy(fontSize = 35.sp),
                           fontWeight = FontWeight.Bold,
+                          color = TitleBlue,
                           modifier = Modifier.height(50.dp).testTag("ExerciseName"))
+                    Divider(
+                        color = Line,
+                        thickness = 0.5.dp,
+                        modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).padding(bottom = 10.dp)
+                            .shadow(1.dp)
+                    )
                       Spacer(modifier = Modifier.height(16.dp))
                       // display the instruction
                       Text(
@@ -297,6 +309,7 @@ fun WorkoutScreenBody(
                           style =
                               MaterialTheme.typography.displaySmall.copy(
                                   fontSize = 20.sp, lineHeight = 25.sp),
+                          fontFamily = OpenSans,
                           textAlign = TextAlign.Center,
                           modifier =
                               Modifier.width(317.dp).height(79.dp).testTag("ExerciseDescription"))
@@ -336,7 +349,7 @@ fun WorkoutScreenBody(
                 // Column for displaying exercise goals (repetitions or timer)
 
                 Column(
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier.fillMaxHeight().padding(top = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                       Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
@@ -552,7 +565,7 @@ fun VideoPlayer(url: String, context: Context) {
     exoPlayer.playWhenReady = true
   }
   AndroidView(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxSize().shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp)).clip(RoundedCornerShape(16.dp)),
       factory = {
         PlayerView(context).apply {
           player = exoPlayer
