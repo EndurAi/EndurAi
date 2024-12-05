@@ -20,6 +20,7 @@ import com.android.sample.R
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.ui.theme.DarkerBlue
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.Purple20
 import com.android.sample.ui.theme.White
@@ -62,7 +63,7 @@ fun ExerciseCard(
                 // Exercise name (on the left)
                 Text(
                     text = exercise.type.toString(),
-                    fontSize = 16.sp,
+                    fontSize = SubtitleFontSize,
                     color = White,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f),

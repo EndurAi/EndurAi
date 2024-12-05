@@ -75,7 +75,9 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.Dimensions.iconSize
 import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.LightGrey
@@ -216,7 +218,7 @@ fun WorkoutCreationScreen(
                               modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()) {
                                 Text(
                                     text = "Warmup",
-                                    fontSize = 16.sp,
+                                    fontSize = SubtitleFontSize,
                                     color = White,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.weight(1f),
@@ -369,11 +371,11 @@ fun WorkoutCreationScreen(
                                             painter =
                                                 painterResource(id = getExerciseIcon(type.name)),
                                             contentDescription = "${type.name} Icon",
-                                            modifier = Modifier.size(24.dp))
+                                            modifier = Modifier.size(iconSize))
                                         Spacer(
                                             modifier =
                                                 Modifier.width(8.dp)) // Space between icon and text
-                                        Text(text = type.toString(), fontSize = 16.sp)
+                                        Text(text = type.toString(), fontSize = SubtitleFontSize)
                                       }
                                 }
                           }
@@ -403,11 +405,11 @@ fun WorkoutCreationScreen(
                                                             type.name)), // Replace with your actual
                                             // icon resource
                                             contentDescription = "${type.name} Icon",
-                                            modifier = Modifier.size(24.dp))
+                                            modifier = Modifier.size(iconSize))
                                         Spacer(
                                             modifier =
                                                 Modifier.width(8.dp)) // Space between icon and text
-                                        Text(text = type.toString(), fontSize = 16.sp)
+                                        Text(text = type.toString(), fontSize = SubtitleFontSize)
                                       }
                                 }
                           }

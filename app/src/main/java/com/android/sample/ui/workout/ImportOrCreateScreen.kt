@@ -21,6 +21,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.Dimensions.SmallPadding
 import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.Transparent
@@ -102,7 +103,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                   contentPadding = PaddingValues(),
                   modifier =
                       Modifier.width(Dimensions.ButtonWidth)
-                          .padding(vertical = Dimensions.SmallPadding)
+                          .padding(vertical = SmallPadding)
                           .height(Dimensions.ButtonHeight)
                           .background(brush = BlueGradient, shape = LeafShape)) {
                     Box(

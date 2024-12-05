@@ -23,7 +23,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.ui.theme.Dimensions
-import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
+import com.android.sample.ui.theme.White
 import com.android.sample.ui.theme.greenGradient
 import com.android.sample.ui.workout.LeafShape
 
@@ -35,7 +36,7 @@ fun SaveButton(onSaveClick: () -> Unit, testTag: String) {
       modifier =
           Modifier.width(Dimensions.ButtonWidth)
               .height(Dimensions.ButtonHeight)
-              .padding(16.dp)
+              .padding(Dimensions.LargePadding)
               .background(brush = greenGradient, shape = LeafShape)
               .testTag(testTag),
       colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -47,9 +48,9 @@ fun SaveButton(onSaveClick: () -> Unit, testTag: String) {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Save",
-                color = Color.White,
+                color = White,
                 fontWeight = FontWeight.Bold,
-                fontSize = FontSizes.SubtitleFontSize,
+                fontSize = SubtitleFontSize,
             )
           }
         }
