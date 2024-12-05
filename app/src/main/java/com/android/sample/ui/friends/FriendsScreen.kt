@@ -66,7 +66,7 @@ fun FriendsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(Color(0xFFF4F4F4), shape = RoundedCornerShape(25.dp)) // Rounded search bar background
+                .background(Color.White, shape = RoundedCornerShape(topStart = 25.dp, topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 25.dp)) // Rounded search bar background
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -88,36 +88,30 @@ fun FriendsScreen(
                     placeholder = { Text("Search Bar", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
                         focusedPlaceholderColor = Color.White,
                         unfocusedPlaceholderColor = Color.White,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
                         cursorColor = Color.White),
                     maxLines = 1,
                     singleLine = true
                 )
-
-
-
-
-
             }
 
             // Add Button
             Button(
                 onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
-                modifier = Modifier
-                    .size(40.dp) // Match the Figma size
-                    .background(Color(0xFF6C63FF), CircleShape), // Purple color
+                modifier = Modifier.size(40.dp), // Match the Figma size
                 shape = CircleShape,
+                contentPadding = PaddingValues(0.dp), // Remove default padding
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C63FF)) // Purple color
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Friend",
-                    tint = Color.White // White icon for the cross
+                    tint = Color.Black // White icon for the cross
                 )
             }
         }
