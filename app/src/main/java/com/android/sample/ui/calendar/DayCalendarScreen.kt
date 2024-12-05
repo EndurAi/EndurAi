@@ -144,7 +144,7 @@ fun HourBlock(hour: Int, workouts: List<DayColoredWorkout>, navigationActions: N
         fontFamily = OpenSans,
         fontWeight = FontWeight.SemiBold,
         text = String.format("%02d:00", hour),
-        modifier = Modifier.padding(start = 25.dp))
+        modifier = Modifier.padding(start = 25.dp).testTag("hour"))
 
     if (workouts.isEmpty()) {
       Spacer(modifier = Modifier.height(25.dp))

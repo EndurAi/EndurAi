@@ -101,7 +101,8 @@ class CalendarScreenTest {
 
     composeTestRule.onAllNodesWithTag("daySection")[0].performClick()
 
-    verify(navigationActions).navigateTo(Screen.DAY_CALENDAR)  }
+    verify(navigationActions).navigateTo(Screen.DAY_CALENDAR)
+  }
 
   @Test
   fun testDisplayMoreThan3Days() {
@@ -123,10 +124,10 @@ class CalendarScreenTest {
     }
 
     composeTestRule.onNodeWithTag("Categories").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("lazyColumn").assertIsDisplayed()
-      composeTestRule.onAllNodesWithTag("legendItem").assertCountEquals(3)
-      assert(composeTestRule.onAllNodesWithTag("daySection").fetchSemanticsNodes().isNotEmpty())
-      assert(composeTestRule.onAllNodesWithTag("Divider").fetchSemanticsNodes().isNotEmpty())
+    composeTestRule.onNodeWithTag("lazyColumn").assertIsDisplayed()
+    composeTestRule.onAllNodesWithTag("legendItem").assertCountEquals(3)
+    assert(composeTestRule.onAllNodesWithTag("daySection").fetchSemanticsNodes().isNotEmpty())
+    assert(composeTestRule.onAllNodesWithTag("Divider").fetchSemanticsNodes().isNotEmpty())
     composeTestRule.onAllNodesWithTag("workoutItem").assertCountEquals(3)
   }
 }

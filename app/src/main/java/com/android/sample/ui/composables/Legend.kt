@@ -34,8 +34,7 @@ fun LegendItem(color: Color, text: String) {
       RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
   Box(
       modifier =
-          Modifier
-              .testTag("legendItem")
+          Modifier.testTag("legendItem")
               .shadow(4.dp, shape = shape)
               .background(color, shape = shape)
               .padding(horizontal = 12.dp, vertical = 4.dp)) {
