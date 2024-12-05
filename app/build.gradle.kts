@@ -254,7 +254,7 @@ tasks.withType<Test> {
     // Configure Jacoco for each tests
     configure<JacocoTaskExtension> {
         isIncludeNoLocationClasses = true
-        excludes = listOf("jdk.internal.*")
+        excludes =listOf("jdk.internal.*", "src/main/mlUtils/exercisesCriterions/**/*")
     }
 }
 
@@ -272,6 +272,8 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         "**/BuildConfig.*",
         "**/Manifest*.*",
         "**/*Test*.*",
+        "src/main/mlUtils/exercisesCriterions/**/*",
+        "**/*Criterion*.*",
         "android/**/*.*",
     )
 
