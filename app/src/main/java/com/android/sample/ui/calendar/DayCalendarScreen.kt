@@ -32,6 +32,7 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.composables.Legend
 import com.android.sample.ui.composables.TopBar
+import com.android.sample.ui.mainscreen.navigateToWorkoutScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.BodyWeightTag
 import com.android.sample.ui.theme.CalendarBackground
@@ -44,6 +45,15 @@ import com.android.sample.ui.theme.YogaTag
 import java.time.format.DateTimeFormatter
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
+
+/**
+ * Class that store the workout and its associated informations.
+ *
+ * @param workout The workout.
+ * @param backgroundColor The color of the card.
+ * @param viewModel The associated viewModel.
+ */
+data class DayColoredWorkout(val workout: Workout, val backgroundColor: Color, val viewModel: WorkoutViewModel<Workout>)
 
 /**
  * Displays the Day Calendar screen with workouts for the selected date.
@@ -73,9 +83,9 @@ fun DayCalendarScreen(
       dailyWorkouts
           .map {
             when (it) {
-              is BodyWeightWorkout -> ColoredWorkout(it, LegendBodyweight, WorkoutType.BODY_WEIGHT)
-              is YogaWorkout -> ColoredWorkout(it, LegendYoga, WorkoutType.YOGA)
-              else -> ColoredWorkout(it, LegendRunning, WorkoutType.RUNNING)
+              is BodyWeightWorkout -> DayColoredWorkout(it, LegendBodyweight, bodyworkoutViewModel)
+              is YogaWorkout -> DayColoredWorkout(it, LegendYoga, yogaworkoutViewModel)
+              else -> DayColoredWorkout(it, LegendRunning, bodyworkoutViewModel) // Temps until we got some saved runnng workouts
             }
           }
           .sortedBy { it.workout.date.minute }
@@ -110,7 +120,7 @@ fun DayCalendarScreen(
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                   items(25) { hourInput ->
                       val hour = if(hourInput == 24) 0 else hourInput
-                    HourBlock(hour, coloredWorkouts.filter { it.workout.date.hour == hour })
+                    HourBlock(hour, coloredWorkouts.filter { it.workout.date.hour == hour }, navigationActions)
                   }
                 }
               }
@@ -126,7 +136,7 @@ fun DayCalendarScreen(
  */
 @SuppressLint("DefaultLocale")
 @Composable
-fun HourBlock(hour: Int, workouts: List<ColoredWorkout>) {
+fun HourBlock(hour: Int, workouts: List<DayColoredWorkout>, navigationActions: NavigationActions) {
   Column(modifier = Modifier.fillMaxWidth()) {
     Text(
         fontFamily = OpenSans,
@@ -137,7 +147,7 @@ fun HourBlock(hour: Int, workouts: List<ColoredWorkout>) {
       if(workouts.isEmpty()){
           Spacer(modifier = Modifier.height(25.dp))
       } else {
-          workouts.forEach { workout -> WorkoutItem(workout) }
+          workouts.forEach { workout -> WorkoutItem(workout, navigationActions) }
       }
   }
 }
@@ -148,7 +158,7 @@ fun HourBlock(hour: Int, workouts: List<ColoredWorkout>) {
  * @param coloredWorkout The colored workout to display, which includes workout name and color.
  */
 @Composable
-fun WorkoutItem(coloredWorkout: ColoredWorkout) {
+fun WorkoutItem(coloredWorkout: DayColoredWorkout, navigationActions: NavigationActions) {
     val shape = RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
     Row(){
         Spacer(modifier = Modifier.width(30.dp))
@@ -157,7 +167,7 @@ fun WorkoutItem(coloredWorkout: ColoredWorkout) {
             Modifier
                 .padding(horizontal = 50.dp)
                 .testTag("WorkoutCard")
-                .clickable { /*navigate to edit or start workout screen*/}
+                .clickable { navigateToWorkoutScreen(coloredWorkout.workout, coloredWorkout.viewModel, navigationActions) }
                 .shadow(4.dp, shape = shape),
             colors = CardDefaults.cardColors(containerColor = coloredWorkout.backgroundColor),
             shape = shape) {
