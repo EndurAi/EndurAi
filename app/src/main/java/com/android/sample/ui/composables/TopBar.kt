@@ -62,7 +62,7 @@ fun TopBar(
             },
             navigationIcon = {
               if (displayArrow) {
-                ArrowBack(navigationActions, Color.White)
+                ArrowBack(navigationActions, White)
               }
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),

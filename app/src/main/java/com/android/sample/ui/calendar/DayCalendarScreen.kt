@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
@@ -32,9 +31,12 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.mainscreen.navigateToWorkoutScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.CalendarBackground
+import com.android.sample.ui.theme.FontSizes.BigTitleFontSize
+import com.android.sample.ui.theme.FontSizes.MediumTitleFontSize
 import com.android.sample.ui.theme.LegendBodyweight
 import com.android.sample.ui.theme.LegendRunning
 import com.android.sample.ui.theme.LegendYoga
+import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.OpenSans
 import java.time.format.DateTimeFormatter
 import kotlinx.datetime.toJavaLocalDate
@@ -97,7 +99,7 @@ fun DayCalendarScreen(
       Legend()
 
       Divider(
-          color = Color.LightGray,
+          color = LightGrey,
           thickness = 1.dp,
           modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
@@ -106,7 +108,7 @@ fun DayCalendarScreen(
               selectedDate?.toJavaLocalDate()?.format(DateTimeFormatter.ofPattern("dd MMMM")) ?: "",
           fontFamily = OpenSans,
           fontWeight = FontWeight.SemiBold,
-          fontSize = 45.sp,
+          fontSize = BigTitleFontSize,
           modifier = Modifier.padding(top = 8.dp, start = 16.dp, bottom = 16.dp).testTag("Date"))
 
       Box(
@@ -182,12 +184,12 @@ fun WorkoutItem(coloredWorkout: DayColoredWorkout, navigationActions: Navigation
                 Text(
                     text = coloredWorkout.workout.name,
                     fontFamily = OpenSans,
-                    fontSize = 18.sp,
+                    fontSize = MediumTitleFontSize,
                     fontWeight = FontWeight.SemiBold)
                 Text(
                     text = formatTime(coloredWorkout.workout.date),
                     fontFamily = OpenSans,
-                    fontSize = 18.sp)
+                    fontSize = MediumTitleFontSize)
               }
         }
   }

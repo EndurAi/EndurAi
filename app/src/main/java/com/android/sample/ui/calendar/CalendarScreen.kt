@@ -47,6 +47,7 @@ import com.android.sample.ui.theme.LegendYoga
 import com.android.sample.ui.theme.Line
 import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.OpenSans
+import com.android.sample.ui.theme.Transparent
 import java.time.LocalDateTime
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -226,7 +227,7 @@ fun WorkoutItem(
           Modifier.clickable { onClick(coloredWorkout) }
               .padding(vertical = 4.dp)
               .testTag("workoutItem"),
-      colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
+      colors = CardDefaults.cardColors(containerColor = Transparent)) {
         Row(modifier = Modifier.width(200.dp).height(30.dp)) {
           Spacer(modifier = Modifier.width(20.dp))
           CircleDot(coloredWorkout.backgroundColor)
