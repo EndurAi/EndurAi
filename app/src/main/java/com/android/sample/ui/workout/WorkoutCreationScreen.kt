@@ -68,6 +68,7 @@ import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.DateTimePicker
 import com.android.sample.ui.composables.ExerciseCard
+import com.android.sample.ui.composables.NextButton
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
@@ -158,43 +159,21 @@ fun WorkoutCreationScreen(
 
                     Spacer(modifier = Modifier.height(Dimensions.LargePadding))
 
-                    Button(
-                        onClick = {
-                          if (selectedDateTime != null) { // User needs to select a date
-                            showNameDescriptionScreen = false
-                          } else {
-                            Toast.makeText(context, "Please select a date", Toast.LENGTH_SHORT)
-                                .show()
-                          }
-                        },
-                        shape = LeafShape,
-                        colors = ButtonDefaults.buttonColors(containerColor = Transparent),
-                        contentPadding = PaddingValues(),
-                        modifier =
-                            Modifier.width(Dimensions.ButtonWidth)
-                                .height(Dimensions.ButtonHeight)
-                                .background(brush = BlueGradient, shape = LeafShape)
-                                .align(Alignment.CenterHorizontally)
-                                .testTag("nextButton")) {
-                          Box(
-                              modifier =
-                                  Modifier.fillMaxSize()
-                                      .background(brush = BlueGradient, shape = LeafShape),
-                              contentAlignment = Alignment.Center) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                  Text(
-                                      text = "Next",
-                                      color = White,
-                                      fontSize = FontSizes.SubtitleFontSize,
-                                      fontWeight = FontWeight.Bold)
-                                  Icon(
-                                      imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                      contentDescription = "Next",
-                                      tint = White,
-                                      modifier = Modifier.padding(start = 4.dp))
-                                }
-                              }
-                        }
+                  NextButton(onClick = {
+                      if (selectedDateTime != null) { // User needs to select a date
+                          showNameDescriptionScreen = false
+                      } else {
+                          Toast.makeText(context, "Please select a date", Toast.LENGTH_SHORT)
+                              .show()
+                      }
+                  },
+                      text = "Next",
+                      modifier = Modifier
+                          .width(Dimensions.ButtonWidth)
+                          .height(Dimensions.ButtonHeight)
+                          .align(Alignment.CenterHorizontally)
+                          .background(brush = BlueGradient, shape = LeafShape)
+                          .testTag("nextButton"))
                   }
             }
           } else {

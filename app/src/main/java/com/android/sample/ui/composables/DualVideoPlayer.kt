@@ -3,13 +3,19 @@ package com.android.sample.ui.composables
 import android.content.Context
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
@@ -17,6 +23,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.android.sample.ui.theme.Line
 import java.io.File
 
 /**
@@ -55,6 +62,15 @@ fun DualVideoPlayer(file: File, url: String, context: Context) {
         })
 
     DisposableEffect(exoPlayer1) { onDispose { exoPlayer1.release() } }
+
+      Spacer(modifier = Modifier.height(15.dp))
+
+      Divider(
+          color = Line,
+          thickness = 0.5.dp,
+          modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).padding(bottom = 10.dp)
+              .shadow(1.dp)
+      )
 
     // Video from URL
     val exoPlayer2 = remember { ExoPlayer.Builder(context).build() }

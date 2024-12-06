@@ -46,6 +46,7 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
+import com.android.sample.ui.composables.NextButton
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -202,43 +203,22 @@ fun WorkoutOverviewScreen(
                     }
 
               // Bouton Start
-                Button(
-                    onClick = {
+              NextButton(text = "Start",
+                  onClick = {
                       when (workoutTye) {
-                        WorkoutType.BODY_WEIGHT ->
-                            navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
-                        WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_WORKOUT)
-                        WorkoutType.WARMUP -> TODO()
-                        WorkoutType.RUNNING -> TODO()
+                          WorkoutType.BODY_WEIGHT ->
+                              navigationActions.navigateTo(Screen.BODY_WEIGHT_WORKOUT)
+                          WorkoutType.YOGA -> navigationActions.navigateTo(Screen.YOGA_WORKOUT)
+                          WorkoutType.WARMUP -> TODO()
+                          WorkoutType.RUNNING -> TODO()
                       }
-                    },
-                    modifier = Modifier.width(Dimensions.ButtonWidth)
-                        .height(Dimensions.ButtonHeight)
-                        .background(brush = BlueGradient, shape = LeafShape)
-                        .align(Alignment.CenterHorizontally)
-                        .testTag("startButton"),
-                    colors = ButtonDefaults.buttonColors(containerColor = Transparent),
-                    contentPadding = PaddingValues(),
-                    shape = LeafShape) {
-                    Box(
-                        modifier =
-                        Modifier.fillMaxSize()
-                            .background(brush = BlueGradient, shape = LeafShape),
-                        contentAlignment = Alignment.Center) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Start",
-                                color = White,
-                                fontSize = SubtitleFontSize,
-                                fontWeight = FontWeight.Bold)
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = "Next",
-                                tint = White,
-                                modifier = Modifier.padding(start = 4.dp))
-                        }
-                    }
-                    }
+                  },
+                  modifier = Modifier
+                      .width(Dimensions.ButtonWidth)
+                      .height(Dimensions.ButtonHeight)
+                      .align(Alignment.CenterHorizontally)
+                      .background(brush = BlueGradient, shape = LeafShape)
+                      .testTag("startButton"))
               }
         }
       },
