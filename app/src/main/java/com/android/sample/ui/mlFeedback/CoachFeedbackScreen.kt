@@ -1,11 +1,9 @@
 package com.android.sample.ui.mlFeedback
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.mlUtils.MlCoach
@@ -39,108 +36,93 @@ import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
-    var isExerciseSelected by remember { mutableStateOf(false)}
-    var isDropdownExpanded by remember { mutableStateOf(false)}
-    var isRecordingInCamera by remember { mutableStateOf(false)}
-    var userHasRecorded by remember { mutableStateOf(false)}
-    var selectedExercise by remember { mutableStateOf(ExerciseType.PLANK)}
-    var feedback by remember { mutableStateOf("")}
-    val context = LocalContext.current
-    Scaffold(
-        topBar = {
-            TopBar(
-                navigationActions = navigationActions,
-                title = R.string.coach_feedback_title,
-            )
-        },
-        content = { pd->
-            if (!isExerciseSelected) {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(pd),
-                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
-                ) {
-                    Button(
-                        onClick = {isDropdownExpanded = true},
-                        modifier = Modifier.testTag("selectExerciseButton")
-                    ) {
-                        Text("Select Exercise")
+  var isExerciseSelected by remember { mutableStateOf(false) }
+  var isDropdownExpanded by remember { mutableStateOf(false) }
+  var isRecordingInCamera by remember { mutableStateOf(false) }
+  var userHasRecorded by remember { mutableStateOf(false) }
+  var selectedExercise by remember { mutableStateOf(ExerciseType.PLANK) }
+  var feedback by remember { mutableStateOf("") }
+  val context = LocalContext.current
+  Scaffold(
+      topBar = {
+        TopBar(
+            navigationActions = navigationActions,
+            title = R.string.coach_feedback_title,
+        )
+      },
+      content = { pd ->
+        if (!isExerciseSelected) {
+          Column(
+              modifier = Modifier.fillMaxWidth().padding(pd),
+              horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
+                Button(
+                    onClick = { isDropdownExpanded = true },
+                    modifier = Modifier.testTag("selectExerciseButton")) {
+                      Text("Select Exercise")
                     }
-                        DropdownMenu(
-                            expanded = isDropdownExpanded,
-                            onDismissRequest = { isDropdownExpanded = false },
-                            modifier = Modifier.testTag("exerciseDropdownMenu")
-                        ) {
-                            ExerciseType.entries
-                                .filter {it.hasMlFeedback}
-                                .forEach { exerciseType ->
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth()
-                                            .clickable {
-                                                selectedExercise = exerciseType
-                                                isDropdownExpanded = false
-                                            }
-                                    ) {
-                                        Text(text = exerciseType.toString(), fontSize = SubtitleFontSize)
-                                    }
-
+                DropdownMenu(
+                    expanded = isDropdownExpanded,
+                    onDismissRequest = { isDropdownExpanded = false },
+                    modifier = Modifier.testTag("exerciseDropdownMenu")) {
+                      ExerciseType.entries
+                          .filter { it.hasMlFeedback }
+                          .forEach { exerciseType ->
+                            Box(
+                                modifier =
+                                    Modifier.fillMaxWidth().clickable {
+                                      selectedExercise = exerciseType
+                                      isDropdownExpanded = false
+                                    }) {
+                                  Text(text = exerciseType.toString(), fontSize = SubtitleFontSize)
                                 }
-                        }
-                    SaveButton(
-                        onSaveClick = {
-                            isExerciseSelected = true
-                        },
-                        testTag = "saveButton"
-                    )
-
-                }
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(pd),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column {
-                        CameraFeedBack.CameraScreen(
-                            cameraViewModel = cameraViewModel,
-                            modifier = Modifier.size(220.dp, 350.dp).testTag("cameraFeedback"),
-                        )
-                        Button(
-                            colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor =
-                                if (isRecordingInCamera) Color.Red
-                                else if (userHasRecorded) Color.Green else Color.Cyan),
-                            onClick = {
-                                if (userHasRecorded) {
-                                    isRecordingInCamera = false
-                                } else {
-                                    userHasRecorded = true
-                                    cameraViewModel.enablePoseRecognition()
-                                    isRecordingInCamera = true
-                                }
-                            }) {
-                            Text(
-                                if (isRecordingInCamera) "Recording..."
-                                else if (userHasRecorded) "Record again" else "Tap to record")
-                        }
-                        if (userHasRecorded && !isRecordingInCamera) {
-                            Button(
-                                onClick = {
-                                    val mlCoach = MlCoach(cameraViewModel, selectedExercise)
-                                    val feedBackList = mlCoach.getFeedback()
-                                    val stringBuilder = StringBuilder()
-                                    feedBackList.forEach { stringBuilder.append(it.toString()) }
-                                    val feedBack_str = stringBuilder.toString()
-
-                                    feedback = feedBack_str
-                                    cameraViewModel.finishPoseRecognition()
-                                }) {
-                                Text("Generate feedback")
-                            }
-                            Text(feedback)
-                        }
+                          }
                     }
-                }
+                SaveButton(onSaveClick = { isExerciseSelected = true }, testTag = "saveButton")
+              }
+        } else {
+          Box(modifier = Modifier.fillMaxWidth().padding(pd), contentAlignment = Alignment.Center) {
+            Column {
+              CameraFeedBack.CameraScreen(
+                  cameraViewModel = cameraViewModel,
+                  modifier = Modifier.size(220.dp, 350.dp).testTag("cameraFeedback"),
+              )
+              Button(
+                  colors =
+                      ButtonDefaults.buttonColors(
+                          containerColor =
+                              if (isRecordingInCamera) Color.Red
+                              else if (userHasRecorded) Color.Green else Color.Cyan),
+                  onClick = {
+                    if (userHasRecorded) {
+                      isRecordingInCamera = false
+                    } else {
+                      userHasRecorded = true
+                      cameraViewModel.enablePoseRecognition()
+                      isRecordingInCamera = true
+                    }
+                  }) {
+                    Text(
+                        if (isRecordingInCamera) "Recording..."
+                        else if (userHasRecorded) "Record again" else "Tap to record")
+                  }
+              if (userHasRecorded && !isRecordingInCamera) {
+                Button(
+                    onClick = {
+                      val mlCoach = MlCoach(cameraViewModel, selectedExercise)
+                      val feedBackList = mlCoach.getFeedback()
+                      val stringBuilder = StringBuilder()
+                      feedBackList.forEach { stringBuilder.append(it.toString()) }
+                      val feedBack_str = stringBuilder.toString()
+
+                      feedback = feedBack_str
+                      cameraViewModel.finishPoseRecognition()
+                    }) {
+                      Text("Generate feedback")
+                    }
+                Text(feedback)
+              }
             }
+          }
         }
-    )
+      })
 }

@@ -69,43 +69,40 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
   Scaffold(
       bottomBar = { BottomBar(navigationActions = navigationActions) },
       floatingActionButton = {
-          Box(
-              modifier = Modifier
-                  .padding(16.dp)
+        Box(modifier = Modifier.padding(16.dp)) {
+          Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(
+                modifier =
+                    Modifier.width(
+                            175
+                                .dp) // Set a fixed width for the text box to prevent everything
+                                     // from moving
+                        .background(
+                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                        .padding(8.dp)) {
+                  AnimatedText(
+                      modifier = Modifier.testTag("coachText"),
+                      text = "Hey, want to have some feedback on your work ?",
+                      style = MaterialTheme.typography.bodySmall.copy(color = White))
+                }
 
-          ) {
-              Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                  Box(
-                      modifier = Modifier
-                          .width(175.dp) // Set a fixed width for the text box to prevent everything from moving
-                          .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
-                          .padding(8.dp)
-                  ) {
-                      AnimatedText(
-                          modifier = Modifier.testTag("coachText"),
-                          text = "Hey, want to have some feedback on your work ?",
-                          style = MaterialTheme.typography.bodySmall.copy(color = White)
-                      )
-                  }
-
-                  Spacer(modifier = Modifier.height(8.dp))
-                  FloatingActionButton(
-                      onClick = { navigationActions.navigateTo(Screen.COACH_FEEDBACK) },
-                      shape = CircleShape,
-                      containerColor = Transparent,
-                      contentColor = Transparent,
-                      modifier = Modifier.background(BlueGradient, shape = CircleShape)
-                          .shadow(8.dp, shape = CircleShape)
-                          .testTag("coachButton")
-                  ) {
-                      Image(
-                          painter = painterResource(id = R.drawable.endurai_coach),
-                          contentDescription = "Coach",
-                          modifier = Modifier.size(150.dp).clip(CircleShape)
-                      )
-                  }
-              }
+            Spacer(modifier = Modifier.height(8.dp))
+            FloatingActionButton(
+                onClick = { navigationActions.navigateTo(Screen.COACH_FEEDBACK) },
+                shape = CircleShape,
+                containerColor = Transparent,
+                contentColor = Transparent,
+                modifier =
+                    Modifier.background(BlueGradient, shape = CircleShape)
+                        .shadow(8.dp, shape = CircleShape)
+                        .testTag("coachButton")) {
+                  Image(
+                      painter = painterResource(id = R.drawable.endurai_coach),
+                      contentDescription = "Coach",
+                      modifier = Modifier.size(150.dp).clip(CircleShape))
+                }
           }
+        }
       },
       content = { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize().testTag("topBar")) {
