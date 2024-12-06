@@ -163,8 +163,8 @@ class RunningScreenTest {
   fun locationButton_clickDisplayStats() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -181,8 +181,8 @@ class RunningScreenTest {
   fun statsScreenBottomBarWorks() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -197,8 +197,8 @@ class RunningScreenTest {
   fun locationButtonCanSwitchScreen() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()

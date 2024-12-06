@@ -29,15 +29,15 @@ import com.android.sample.R
 import com.android.sample.model.location.LocationService
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutViewModel
+import com.android.sample.ui.composables.ChronoDisplay
+import com.android.sample.ui.composables.DistanceDisplay
+import com.android.sample.ui.composables.PaceDisplay
+import com.android.sample.ui.composables.PathDisplay
 import com.android.sample.ui.composables.RunningBottomBarControl
 import com.android.sample.ui.composables.RunningDesignButton
 import com.android.sample.ui.composables.RunningStatsScreen
 import com.android.sample.ui.composables.ToggleButton
 import com.android.sample.ui.composables.TopBar
-import com.android.sample.ui.composables.ChronoDisplay
-import com.android.sample.ui.composables.DistanceDisplay
-import com.android.sample.ui.composables.PaceDisplay
-import com.android.sample.ui.composables.PathDisplay
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.LightGrey
@@ -57,7 +57,7 @@ fun RunningScreen(
     runningWorkoutViewModel: WorkoutViewModel<RunningWorkout>
 ) {
 
-    var finalPathPoints by remember { mutableStateOf(mutableListOf<LatLng>()) }
+  var finalPathPoints by remember { mutableStateOf(mutableListOf<LatLng>()) }
 
   var isPaused by remember { mutableStateOf(false) }
 
@@ -69,7 +69,7 @@ fun RunningScreen(
 
   var isFinished by remember { mutableStateOf(false) }
 
-    var isStatsDisplayed by remember { mutableStateOf(false) }
+  var isStatsDisplayed by remember { mutableStateOf(false) }
 
   var name by remember { mutableStateOf("") }
 
@@ -84,10 +84,11 @@ fun RunningScreen(
   var elapsedTime by remember { mutableStateOf(0L) }
   val timer = remember { mutableStateOf<Timer?>(null) }
 
-    val offsetX by animateDpAsState(
-        targetValue = if (isStatsDisplayed) 0.dp else (-500).dp, // Start off-screen to the left
-        animationSpec = tween(durationMillis = 600) // Animation duration
-    )
+  val offsetX by
+      animateDpAsState(
+          targetValue = if (isStatsDisplayed) 0.dp else (-500).dp, // Start off-screen to the left
+          animationSpec = tween(durationMillis = 600) // Animation duration
+          )
 
   when {
     isFirstTime -> {
@@ -128,124 +129,117 @@ fun RunningScreen(
       }
     }
     isRunning -> {
-      Scaffold(
-          modifier = Modifier.fillMaxSize().testTag("MainRunningScreen")) {
-            Box(modifier = Modifier.fillMaxSize()) {
-              GoogleMap(
-                  modifier = Modifier.fillMaxSize(),
-                  cameraPositionState = cameraPositionState.value) {
-                    // Display the polyline for the running path
-                    if (pathPoints.value.isNotEmpty()) {
-                      Polyline(points = pathPoints.value, color = Color.Blue, width = 16f)
-                    }
-                  }
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    RunningBottomBarControl(pauseOnClick = {
-                        isPaused = true
-                        // Stop the timer and location service
-                        timer.value?.cancel()
-                        timer.value = null
-                        LocationServiceManager.stopLocationService(context)
-                    },
-                        resumeOnClick = {
-                            // Start the location service and timer
-                            isPaused = false
-                            LocationServiceManager.startLocationService(context)
-
-                            timer.value =
-                                Timer().apply {
-                                    scheduleAtFixedRate(
-                                        object : TimerTask() {
-                                            override fun run() {
-                                                elapsedTime += 1
-                                            }
-                                        },
-                                        1000,
-                                        1000
-                                    )
-                                }
-                        }, finishOnClick = {
-                            // Stop and Reset the location service
-
-                            finalPathPoints = pathPoints.value.toMutableList()
-
-                            LocationServiceManager.stopAndResetLocationService(context)
-                            isRunning = false
-                            isFirstTime = false
-                            isPaused = false
-                            isFinished = true
-                        }, locationOnClick = {
-                            isStatsDisplayed = true
-                        }, isSplit = isPaused,
-                        isSelected = true,
-                        PauseTestTag = "PauseButton",
-                        ResumeTestTag = "ResumeButton",
-                        FinishTestTag = "FinishButton",
-                        LocationTestTag = "LocationButton")
+      Scaffold(modifier = Modifier.fillMaxSize().testTag("MainRunningScreen")) {
+        Box(modifier = Modifier.fillMaxSize()) {
+          GoogleMap(
+              modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState.value) {
+                // Display the polyline for the running path
+                if (pathPoints.value.isNotEmpty()) {
+                  Polyline(points = pathPoints.value, color = Color.Blue, width = 16f)
                 }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .offset(x = offsetX)
-                            .background(color = White) // Animate the horizontal offset
-                    ) {
-                        RunningStatsScreen(
-                            elapsedTime = elapsedTime,
-                            paceString = calculatePace(elapsedTime, calculateDistance(pathPoints.value)),
-                            distance = calculateDistance(pathPoints.value),
-                            locationOnClick = {isStatsDisplayed = false},
-                            isSplit = isPaused,
-                            resumeOnClick = {
-                                // Start the location service and timer
-                                isPaused = false
-                                LocationServiceManager.startLocationService(context)
+              }
+          Column(
+              modifier = Modifier.fillMaxSize().padding(16.dp),
+              verticalArrangement = Arrangement.Bottom,
+              horizontalAlignment = Alignment.CenterHorizontally) {
+                RunningBottomBarControl(
+                    pauseOnClick = {
+                      isPaused = true
+                      // Stop the timer and location service
+                      timer.value?.cancel()
+                      timer.value = null
+                      LocationServiceManager.stopLocationService(context)
+                    },
+                    resumeOnClick = {
+                      // Start the location service and timer
+                      isPaused = false
+                      LocationServiceManager.startLocationService(context)
 
-                                timer.value =
-                                    Timer().apply {
-                                        scheduleAtFixedRate(
-                                            object : TimerTask() {
-                                                override fun run() {
-                                                    elapsedTime += 1
-                                                }
-                                            },
-                                            1000,
-                                            1000
-                                        )
-                                    }
-                            },
-                            pauseOnClick = {
-                                isPaused = true
-                                // Stop the timer and location service
-                                timer.value?.cancel()
-                                timer.value = null
-                                LocationServiceManager.stopLocationService(context)
-                            },
-                            finishOnClick = {
-                                // Stop and Reset the location service
+                      timer.value =
+                          Timer().apply {
+                            scheduleAtFixedRate(
+                                object : TimerTask() {
+                                  override fun run() {
+                                    elapsedTime += 1
+                                  }
+                                },
+                                1000,
+                                1000)
+                          }
+                    },
+                    finishOnClick = {
+                      // Stop and Reset the location service
 
-                                finalPathPoints = pathPoints.value.toMutableList()
+                      finalPathPoints = pathPoints.value.toMutableList()
 
-                                LocationServiceManager.stopAndResetLocationService(context)
-                                isRunning = false
-                                isFirstTime = false
-                                isPaused = false
-                                isFinished = true
-                            },
-                            PauseTestTag = "PauseButtonStats",
-                            ResumeTestTag = "ResumeButtonStats",
-                            FinishTestTag = "FinishButtonStats",
-                            LocationTestTag = "LocationButtonStats"
+                      LocationServiceManager.stopAndResetLocationService(context)
+                      isRunning = false
+                      isFirstTime = false
+                      isPaused = false
+                      isFinished = true
+                    },
+                    locationOnClick = { isStatsDisplayed = true },
+                    isSplit = isPaused,
+                    isSelected = true,
+                    PauseTestTag = "PauseButton",
+                    ResumeTestTag = "ResumeButton",
+                    FinishTestTag = "FinishButton",
+                    LocationTestTag = "LocationButton")
+              }
+          Box(
+              modifier =
+                  Modifier.fillMaxSize()
+                      .offset(x = offsetX)
+                      .background(color = White) // Animate the horizontal offset
+              ) {
+                RunningStatsScreen(
+                    elapsedTime = elapsedTime,
+                    paceString = calculatePace(elapsedTime, calculateDistance(pathPoints.value)),
+                    distance = calculateDistance(pathPoints.value),
+                    locationOnClick = { isStatsDisplayed = false },
+                    isSplit = isPaused,
+                    resumeOnClick = {
+                      // Start the location service and timer
+                      isPaused = false
+                      LocationServiceManager.startLocationService(context)
 
-                        )
-                    }
+                      timer.value =
+                          Timer().apply {
+                            scheduleAtFixedRate(
+                                object : TimerTask() {
+                                  override fun run() {
+                                    elapsedTime += 1
+                                  }
+                                },
+                                1000,
+                                1000)
+                          }
+                    },
+                    pauseOnClick = {
+                      isPaused = true
+                      // Stop the timer and location service
+                      timer.value?.cancel()
+                      timer.value = null
+                      LocationServiceManager.stopLocationService(context)
+                    },
+                    finishOnClick = {
+                      // Stop and Reset the location service
 
+                      finalPathPoints = pathPoints.value.toMutableList()
 
-            }
-
-          }
+                      LocationServiceManager.stopAndResetLocationService(context)
+                      isRunning = false
+                      isFirstTime = false
+                      isPaused = false
+                      isFinished = true
+                    },
+                    PauseTestTag = "PauseButtonStats",
+                    ResumeTestTag = "ResumeButtonStats",
+                    FinishTestTag = "FinishButtonStats",
+                    LocationTestTag = "LocationButtonStats")
+              }
+        }
+      }
     }
     isFinished -> {
 
@@ -262,15 +256,15 @@ fun RunningScreen(
               modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                 Spacer(Modifier.height(60.dp))
                 ChronoDisplay(elapsedTime)
-              Divider(
-                  color = LightGrey,
-                  thickness = 1.dp,
-                  modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
+                Divider(
+                    color = LightGrey,
+                    thickness = 1.dp,
+                    modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
                 DistanceDisplay(calculateDistance(pathPoints.value))
-              Divider(
-                  color = LightGrey,
-                  thickness = 1.dp,
-                  modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
+                Divider(
+                    color = LightGrey,
+                    thickness = 1.dp,
+                    modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
                 PaceDisplay(calculatePace(elapsedTime, calculateDistance(pathPoints.value)))
 
                 Spacer(Modifier.height(10.dp))
@@ -282,14 +276,14 @@ fun RunningScreen(
 
                 Spacer(Modifier.height(5.dp))
 
-              PathDisplay(modifier = Modifier,finalPathPoints)
+                PathDisplay(modifier = Modifier, finalPathPoints)
 
-              Divider(
-                  color = LightGrey,
-                  thickness = 2.dp,
-                  modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
+                Divider(
+                    color = LightGrey,
+                    thickness = 2.dp,
+                    modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
 
-              Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(5.dp))
 
                 ToggleButton(onClick = { isSavingRunning = it }, isSavingRunning, "Save Running")
 
@@ -342,14 +336,14 @@ fun RunningScreen(
                               timeMs = elapsedTime)
 
                       runningWorkoutViewModel.addWorkout(runningWorkout)
-                        LocationServiceManager.stopAndResetLocationService(context)
+                      LocationServiceManager.stopAndResetLocationService(context)
 
                       navigationActions.navigateTo(Screen.MAIN)
                     },
                     title = "Save",
                     showIcon = false,
                     testTag = "SaveButton")
-              Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(20.dp))
               }
         }
       } else {
@@ -365,27 +359,27 @@ fun RunningScreen(
               modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                 Spacer(Modifier.height(60.dp))
                 ChronoDisplay(elapsedTime)
-              Divider(
-                  color = LightGrey,
-                  thickness = 1.dp,
-                  modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
+                Divider(
+                    color = LightGrey,
+                    thickness = 1.dp,
+                    modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
                 DistanceDisplay(calculateDistance(pathPoints.value))
-              Divider(
-                  color = LightGrey,
-                  thickness = 1.dp,
-                  modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
+                Divider(
+                    color = LightGrey,
+                    thickness = 1.dp,
+                    modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally))
                 PaceDisplay(calculatePace(elapsedTime, calculateDistance(pathPoints.value)))
 
                 Spacer(Modifier.height(10.dp))
 
-              Divider(
-                  color = LightGrey,
-                  thickness = 2.dp,
-                  modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
+                Divider(
+                    color = LightGrey,
+                    thickness = 2.dp,
+                    modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally))
 
-              Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(5.dp))
 
-              PathDisplay(modifier = Modifier,finalPathPoints)
+                PathDisplay(modifier = Modifier, finalPathPoints)
 
                 Divider(
                     color = LightGrey,
@@ -417,8 +411,7 @@ fun RunningScreen(
                     showIcon = false,
                     testTag = "FinishButton")
 
-              Spacer(Modifier.height(20.dp))
-
+                Spacer(Modifier.height(20.dp))
               }
         }
       }
