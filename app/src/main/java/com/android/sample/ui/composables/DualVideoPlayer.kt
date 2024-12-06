@@ -63,14 +63,15 @@ fun DualVideoPlayer(file: File, url: String, context: Context) {
 
     DisposableEffect(exoPlayer1) { onDispose { exoPlayer1.release() } }
 
-      Spacer(modifier = Modifier.height(15.dp))
+    Spacer(modifier = Modifier.height(15.dp))
 
-      Divider(
-          color = Line,
-          thickness = 0.5.dp,
-          modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).padding(bottom = 10.dp)
-              .shadow(1.dp)
-      )
+    Divider(
+        color = Line,
+        thickness = 0.5.dp,
+        modifier =
+            Modifier.padding(horizontal = 25.dp, vertical = 1.dp)
+                .padding(bottom = 10.dp)
+                .shadow(1.dp))
 
     // Video from URL
     val exoPlayer2 = remember { ExoPlayer.Builder(context).build() }

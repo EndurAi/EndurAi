@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,7 +41,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -105,7 +103,6 @@ import com.android.sample.ui.theme.Green2
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.Line
-import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.Red2
 import com.android.sample.ui.theme.TitleBlue
@@ -274,26 +271,28 @@ fun WorkoutScreenBody(
   // Scaffold for basic material design layout
   Scaffold(
       topBar = {
-        CenterAlignedTopAppBar(
-            title = {
+        if (!summaryScreenIsDisplayed) {
+          CenterAlignedTopAppBar(
+              title = {
                 // Display the workout name
                 Text(
                     text = workoutName,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .testTag("WorkoutName"),
+                    modifier = Modifier.padding(end = 8.dp).testTag("WorkoutName"),
                     fontSize = 20.sp,
                     color = TitleBlue,
                     fontFamily = OpenSans,
                     fontWeight = FontWeight.Bold // Makes the text bold
-                )
-            },
-            navigationIcon = { ArrowBack(navigationActions) },
-            colors = TopAppBarColors(containerColor = LightBackground,
-                scrolledContainerColor = LightBackground,
-                navigationIconContentColor = Black,
-                titleContentColor = TitleBlue,
-                actionIconContentColor = TitleBlue))
+                    )
+              },
+              navigationIcon = { ArrowBack(navigationActions) },
+              colors =
+                  TopAppBarColors(
+                      containerColor = LightBackground,
+                      scrolledContainerColor = LightBackground,
+                      navigationIconContentColor = Black,
+                      titleContentColor = TitleBlue,
+                      actionIconContentColor = TitleBlue))
+        } else TopBar(navigationActions, R.string.Summary)
       },
       containerColor = LightBackground) { innerPadding ->
         Column(
@@ -305,6 +304,7 @@ fun WorkoutScreenBody(
             horizontalAlignment = Alignment.CenterHorizontally) {
               if (summaryScreenIsDisplayed) {
                 WorkoutSummaryScreen(
+                    workoutName = workoutName,
                     hasWarmUp = hasWarmUp,
                     exerciseStateList.filter { it.exercise.type.workoutType != WorkoutType.WARMUP },
                     onfinishButtonClicked = { nextExercise() },
@@ -321,12 +321,13 @@ fun WorkoutScreenBody(
                           fontWeight = FontWeight.Bold,
                           color = TitleBlue,
                           modifier = Modifier.height(50.dp).testTag("ExerciseName"))
-                    Divider(
-                        color = Line,
-                        thickness = 0.5.dp,
-                        modifier = Modifier.padding(horizontal = 25.dp, vertical = 1.dp).padding(bottom = 10.dp)
-                            .shadow(1.dp)
-                    )
+                      Divider(
+                          color = Line,
+                          thickness = 0.5.dp,
+                          modifier =
+                              Modifier.padding(horizontal = 25.dp, vertical = 1.dp)
+                                  .padding(bottom = 10.dp)
+                                  .shadow(1.dp))
                       Spacer(modifier = Modifier.height(16.dp))
                       // display the instruction
                       Text(
@@ -384,8 +385,7 @@ fun WorkoutScreenBody(
                                     else R.drawable.baseline_access_time_24),
                             contentDescription = "repetition",
                             modifier = Modifier.padding(horizontal = (5).dp).testTag("GoalIcon"),
-                            colorFilter = ColorFilter.tint(TitleBlue)
-                        )
+                            colorFilter = ColorFilter.tint(TitleBlue))
                         Text(
                             text =
                                 (if (exerciseIsRepetitionBased) "$repetitions Rep."
@@ -472,68 +472,70 @@ fun WorkoutScreenBody(
                 // Presentation button box
                 if (presentationButtonBoxIsDisplayed) {
 
-                    SkipButton(
-                        onClick = {
-                            exerciseStateList[exerciseIndex].isDone = false
-                            nextExercise()
-                        })
-                    Spacer(modifier = Modifier.height(30.dp))
-                    // Switch to ask if the user wants to record itself
-                    Card(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp) // Adjust padding as needed
-                            .shadow(elevation = 3.dp, shape = RoundedCornerShape(25.dp)) // Add shadow
-                            .clip(RoundedCornerShape(25.dp)), // Ensure rounded corners
-                        colors = CardDefaults.cardColors(containerColor = White), // Set card background color
-                        elevation = CardDefaults.elevatedCardElevation(8.dp), // Add elevation
-                    ) {
+                  SkipButton(
+                      onClick = {
+                        exerciseStateList[exerciseIndex].isDone = false
+                        nextExercise()
+                      })
+                  Spacer(modifier = Modifier.height(30.dp))
+                  // Switch to ask if the user wants to record itself
+                  Card(
+                      modifier =
+                          Modifier.padding(
+                                  horizontal = 16.dp, vertical = 8.dp) // Adjust padding as needed
+                              .shadow(
+                                  elevation = 3.dp, shape = RoundedCornerShape(25.dp)) // Add shadow
+                              .clip(RoundedCornerShape(25.dp)), // Ensure rounded corners
+                      colors =
+                          CardDefaults.cardColors(
+                              containerColor = White), // Set card background color
+                      elevation = CardDefaults.elevatedCardElevation(8.dp), // Add elevation
+                  ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier =
-                        Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
-                            .background(White) // Add background color
-                            .padding(8.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_camera_24),
-                            contentDescription = "Record Video",
-                            modifier = Modifier.padding(end = 8.dp).rotate(angle)
-                        )
+                            Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
+                                .background(White) // Add background color
+                                .padding(8.dp)) {
+                          Image(
+                              painter = painterResource(id = R.drawable.baseline_camera_24),
+                              contentDescription = "Record Video",
+                              modifier = Modifier.padding(end = 8.dp).rotate(angle))
 
-                        Text(
-                            "Record yourself",
-                            fontSize = SubtitleFontSize,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = OpenSans,
-                            color = TitleBlue
-                        ) // Add text "Record"
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Switch(
-                            checked = cameraRecordAsked,
-                            onCheckedChange = { cameraRecordAsked = it },
-                            colors = SwitchDefaults.colors(checkedTrackColor = LightBlue2),
-                            modifier = Modifier.testTag("recordSwitch")
-                        )
-                    }
-                }
+                          Text(
+                              "Record yourself",
+                              fontSize = SubtitleFontSize,
+                              fontWeight = FontWeight.Bold,
+                              fontFamily = OpenSans,
+                              color = TitleBlue) // Add text "Record"
+                          Spacer(modifier = Modifier.width(5.dp))
+                          Switch(
+                              checked = cameraRecordAsked,
+                              onCheckedChange = { cameraRecordAsked = it },
+                              colors = SwitchDefaults.colors(checkedTrackColor = LightBlue2),
+                              modifier = Modifier.testTag("recordSwitch"))
+                        }
+                  }
                   Spacer(Modifier.height(30.dp))
-                    NextButton(text = "Start",
-                        onClick = {
-                            presentationButtonBoxIsDisplayed = false
-                            goalCounterBoxIsDisplayed = true
-                            finishButtonBoxIsDisplayed = true
-                            videoBoxIsDisplayed = false
-                        },
-                        modifier = Modifier
-                            .width(Dimensions.ButtonWidth)
-                            .height(Dimensions.ButtonHeight)
-                            .align(Alignment.CenterHorizontally)
-                            .background(brush = BlueGradient, shape = LeafShape)
-                            .testTag("StartButton"))
+                  NextButton(
+                      text = "Start",
+                      onClick = {
+                        presentationButtonBoxIsDisplayed = false
+                        goalCounterBoxIsDisplayed = true
+                        finishButtonBoxIsDisplayed = true
+                        videoBoxIsDisplayed = false
+                      },
+                      modifier =
+                          Modifier.width(Dimensions.ButtonWidth)
+                              .height(Dimensions.ButtonHeight)
+                              .align(Alignment.CenterHorizontally)
+                              .background(brush = BlueGradient, shape = LeafShape)
+                              .testTag("StartButton"))
                 } else if (finishButtonBoxIsDisplayed) {
                   // Finish button box to be displayed during a exercise to be executing
                   Column(
-                      modifier = Modifier.size(height = 250.dp, width = 180.dp).padding(top = 20.dp),
+                      modifier =
+                          Modifier.size(height = 250.dp, width = 180.dp).padding(top = 20.dp),
                       horizontalAlignment = Alignment.CenterHorizontally,
                       verticalArrangement = Arrangement.Top) {
                         if (cameraRecordAsked) {
@@ -542,7 +544,8 @@ fun WorkoutScreenBody(
                                   ButtonDefaults.buttonColors(
                                       containerColor =
                                           if (isRecordingInCamera) Red2
-                                          else if (userHasRecorded) Green2 else LightBlue2.copy(alpha = 0.7F)),
+                                          else if (userHasRecorded) Green2
+                                          else LightBlue2.copy(alpha = 0.7F)),
                               onClick = {
                                 userHasRecorded = true
                                 cameraViewModel.recordVideo(
@@ -571,23 +574,23 @@ fun WorkoutScreenBody(
                             })
                         Spacer(Modifier.size(25.dp))
 
-
-                      NextButton(text = "Finish",
-                          onClick = {
+                        NextButton(
+                            text = "Finish",
+                            onClick = {
                               if (cameraRecordAsked && userHasRecorded) {
-                                  comparisonVideoIsDisplayed = true
-                                  cameraRecordAsked = false // acknowledge the record demand
+                                comparisonVideoIsDisplayed = true
+                                cameraRecordAsked = false // acknowledge the record demand
                               } else {
-                                  nextExercise()
+                                nextExercise()
                               }
-                          },
-                          modifier = Modifier
-                              .width(Dimensions.ButtonWidth)
-                              .height(Dimensions.ButtonHeight)
-                              .align(Alignment.CenterHorizontally)
-                              .background(brush = BlueGradient, shape = LeafShape)
-                              .testTag("FinishButton"),
-                          arrow = false)
+                            },
+                            modifier =
+                                Modifier.width(Dimensions.ButtonWidth)
+                                    .height(Dimensions.ButtonHeight)
+                                    .align(Alignment.CenterHorizontally)
+                                    .background(brush = BlueGradient, shape = LeafShape)
+                                    .testTag("FinishButton"),
+                            arrow = false)
                         Spacer(Modifier.size(25.dp))
                       }
                 }
@@ -611,7 +614,10 @@ fun VideoPlayer(url: String, context: Context) {
     exoPlayer.playWhenReady = true
   }
   AndroidView(
-      modifier = Modifier.fillMaxSize().shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp)).clip(RoundedCornerShape(16.dp)),
+      modifier =
+          Modifier.fillMaxSize()
+              .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp))
+              .clip(RoundedCornerShape(16.dp)),
       factory = {
         PlayerView(context).apply {
           player = exoPlayer

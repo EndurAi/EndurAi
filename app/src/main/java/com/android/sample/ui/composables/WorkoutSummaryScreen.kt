@@ -1,6 +1,8 @@
 package com.android.sample.ui.composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +16,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,10 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
@@ -40,10 +42,20 @@ import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.ExerciseType
+import com.android.sample.ui.theme.BlueGradient
+import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.Green
-import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.LightBackground
+import com.android.sample.ui.theme.LightBlue2
+import com.android.sample.ui.theme.Line
+import com.android.sample.ui.theme.OpenSans
+import com.android.sample.ui.theme.PinkRed
 import com.android.sample.ui.theme.Red
+import com.android.sample.ui.theme.TitleBlue
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.White
 import com.android.sample.ui.workout.ExerciseState
+import com.android.sample.ui.workout.LeafShape
 
 /**
  * Composable function that displays a summary screen for a workout.
@@ -59,6 +71,7 @@ import com.android.sample.ui.workout.ExerciseState
  */
 @Composable
 fun WorkoutSummaryScreen(
+    workoutName: String,
     hasWarmUp: Boolean,
     exerciseList: List<ExerciseState>,
     onfinishButtonClicked: () -> Unit,
@@ -68,56 +81,106 @@ fun WorkoutSummaryScreen(
   Column(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Top,
-      modifier = Modifier.testTag("WorkoutSummaryScreen")) {
+      modifier =
+          Modifier.testTag("WorkoutSummaryScreen")
+              .padding(top = 20.dp)
+              .background(LightBackground)) {
+        Text(
+            text = workoutName,
+            modifier = Modifier.padding(end = 8.dp),
+            fontSize = 20.sp,
+            color = TitleBlue,
+            fontFamily = OpenSans,
+            fontWeight = FontWeight.Bold // Makes the text bold
+            )
+        Spacer(Modifier.height(20.dp))
+        Divider(
+            color = Line,
+            thickness = 0.5.dp,
+            modifier =
+                Modifier.padding(horizontal = 25.dp, vertical = 1.dp)
+                    .padding(bottom = 10.dp)
+                    .shadow(1.dp))
+        // Card container for summary
         Card(
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = LightGrey),
-            modifier = Modifier.fillMaxWidth(0.5f).padding(vertical = 8.dp).testTag("warmupCard")) {
-              Row(
-                  verticalAlignment = Alignment.CenterVertically,
-                  modifier = Modifier.padding(16.dp)) {
-                    Text(text = "Warmup", modifier = Modifier.weight(2f), fontSize = 18.sp)
-                    if (hasWarmUp) {
-                      Icon(
-                          Icons.Default.Check,
-                          contentDescription = "Checkmark",
-                          tint = Green, // Green color for completed state
-                          modifier = Modifier.testTag("warmupGreenIcon"))
-                    } else {
-                      Icon(
-                          Icons.Default.Close,
-                          contentDescription = "Close",
-                          tint = Red, // Red color for skipped state
-                          modifier = Modifier.testTag("warmupRedIcon"))
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = White),
+            elevation = CardDefaults.cardElevation(8.dp),
+            modifier = Modifier.fillMaxWidth(0.9f).padding(vertical = 16.dp)) {
+              Column(
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement = Arrangement.Top,
+                  modifier = Modifier.padding(16.dp).padding(bottom = 20.dp)) {
+                    Card(
+                        shape = RoundedCornerShape(20.dp),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = Transparent, contentColor = LightBlue2),
+                        modifier =
+                            Modifier.fillMaxWidth(0.5f)
+                                .padding(vertical = 8.dp)
+                                .border(1.dp, LightBlue2, RoundedCornerShape(20.dp))
+                                .testTag("warmupCard")) {
+                          Row(
+                              verticalAlignment = Alignment.CenterVertically,
+                              modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "Warmup",
+                                    modifier = Modifier.weight(2f),
+                                    fontSize = 18.sp,
+                                    fontFamily = OpenSans,
+                                    fontWeight = FontWeight.Bold)
+                                if (hasWarmUp) {
+                                  Icon(
+                                      Icons.Default.Check,
+                                      contentDescription = "Checkmark",
+                                      tint = Green, // Green color for completed state
+                                      modifier = Modifier.testTag("warmupGreenIcon"))
+                                } else {
+                                  Icon(
+                                      Icons.Default.Close,
+                                      contentDescription = "Close",
+                                      tint = Red, // Red color for skipped state
+                                      modifier = Modifier.testTag("warmupRedIcon"))
+                                }
+                              }
+                        }
+
+                    exerciseList.forEach { exerciseState ->
+                      if (exerciseState.isDone) {
+                        ExerciseCard(
+                            exerciseState.exercise,
+                            onCardClick = {},
+                            onDetailClick = {},
+                            modifier =
+                                Modifier.testTag("ExerciseCardID${exerciseState.exercise.id}"),
+                            innerModifier =
+                                Modifier.testTag(
+                                    "InnerTextExerciseCardID${exerciseState.exercise.id}"),
+                            summary = true)
+                      } else {
+                        var currTextValue by remember { mutableStateOf("Skipped") }
+                        ExerciseCard(
+                            exerciseState.exercise,
+                            innerColor = PinkRed,
+                            textToDisplay = currTextValue,
+                            onDetailClick = {
+                              currTextValue = if (currTextValue.isBlank()) "Skipped" else ""
+                            },
+                            onCardClick = {},
+                            modifier =
+                                Modifier.testTag("ExerciseCardID${exerciseState.exercise.id}"),
+                            innerModifier =
+                                Modifier.testTag(
+                                    "InnerTextExerciseCardID${exerciseState.exercise.id}"),
+                            summary = true)
+                      }
                     }
                   }
             }
-
-        exerciseList.forEach { exerciseState ->
-          if (exerciseState.isDone) {
-            ExerciseCard(
-                exerciseState.exercise,
-                onCardClick = {},
-                onDetailClick = {},
-                modifier = Modifier.testTag("ExerciseCardID${exerciseState.exercise.id}"),
-                innerModifier =
-                    Modifier.testTag("InnerTextExerciseCardID${exerciseState.exercise.id}"))
-          } else {
-            var currTextValue by remember { mutableStateOf("Skipped") }
-            ExerciseCard(
-                exerciseState.exercise,
-                innerColor = Red,
-                textToDisplay = currTextValue,
-                onDetailClick = { currTextValue = if (currTextValue.isBlank()) "Skipped" else "" },
-                onCardClick = {},
-                modifier = Modifier.testTag("ExerciseCardID${exerciseState.exercise.id}"),
-                innerModifier =
-                    Modifier.testTag("InnerTextExerciseCardID${exerciseState.exercise.id}"))
-          }
-        }
       }
 
-  Spacer(Modifier.size(25.dp))
+  Spacer(Modifier.size(15.dp))
 
   Row(modifier = Modifier.testTag("Calories")) {
     Image(
@@ -127,16 +190,23 @@ fun WorkoutSummaryScreen(
     Text(
         text =
             stringResource(
-                R.string.CaloriesMessage, Calories.computeCalories(exerciseList, userAccount)))
+                R.string.CaloriesMessage, Calories.computeCalories(exerciseList, userAccount)),
+        fontFamily = OpenSans,
+        fontWeight = FontWeight.Bold,
+    )
   }
+  Spacer(Modifier.size(15.dp))
 
-  Button(
+  NextButton(
+      text = "Finish",
       onClick = { onfinishButtonClicked() },
-      modifier = Modifier.width(200.dp).height(50.dp).padding().testTag("FinishButton"),
-      colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA9B0FF)),
-      shape = RoundedCornerShape(size = 11.dp)) {
-        Text("Finish", color = Color.Black, fontSize = 20.sp)
-      }
+      modifier =
+          Modifier.width(Dimensions.ButtonWidth)
+              .height(Dimensions.ButtonHeight)
+              .padding()
+              .background(brush = BlueGradient, shape = LeafShape)
+              .testTag("FinishButton"),
+      arrow = false)
 }
 
 /**
