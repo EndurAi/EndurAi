@@ -16,16 +16,20 @@ import kotlinx.coroutines.delay
  * @param style The style to be applied to the text. Default is a font size of 16.sp.
  */
 @Composable
-fun AnimatedText(modifier: Modifier = Modifier, text: String, style: TextStyle = TextStyle(fontSize = 16.sp)) {
-    var displayedText by remember { mutableStateOf("") }
-    val textLength = text.length
+fun AnimatedText(
+    modifier: Modifier = Modifier,
+    text: String,
+    style: TextStyle = TextStyle(fontSize = 16.sp)
+) {
+  var displayedText by remember { mutableStateOf("") }
+  val textLength = text.length
 
-    LaunchedEffect(text) {
-        for (i in 1..textLength) {
-            displayedText = text.substring(0, i)
-            delay(50) // Adjust the delay to control the speed of the animation
-        }
+  LaunchedEffect(text) {
+    for (i in 1..textLength) {
+      displayedText = text.substring(0, i)
+      delay(50) // Adjust the delay to control the speed of the animation
     }
+  }
 
-    Text(text = displayedText, style = style, modifier = modifier)
+  Text(text = displayedText, style = style, modifier = modifier)
 }

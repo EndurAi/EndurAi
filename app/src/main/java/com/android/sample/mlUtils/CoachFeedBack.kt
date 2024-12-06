@@ -35,7 +35,7 @@ data class CoachFeedback(
 
     stringBuilder.append(
         "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
-      stringBuilder.append("Accuracy: ${successRate * 100}%\n")
+    stringBuilder.append("Accuracy: ${successRate * 100}%\n")
 
     return stringBuilder.toString()
   }
