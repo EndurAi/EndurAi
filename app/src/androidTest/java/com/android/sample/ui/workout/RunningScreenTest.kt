@@ -168,12 +168,12 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("LocationButton").performClick()
-    composeTestRule.onNodeWithText("TIME").assertIsDisplayed()
-    composeTestRule.onNodeWithText("AVG PACE").assertIsDisplayed()
-    composeTestRule.onNodeWithText("DISTANCE").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("DistanceValueText").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("PaceValueText").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("TimeValueText").assertIsDisplayed()
+    composeTestRule.onNodeWithText("TIME").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithText("AVG PACE").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithText("DISTANCE").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DistanceValueText").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("PaceValueText").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TimeValueText").performScrollTo().assertIsDisplayed()
   }
 
   @Test
@@ -188,8 +188,8 @@ class RunningScreenTest {
     composeTestRule.onNodeWithTag("LocationButton").performClick()
     composeTestRule.onNodeWithTag("PauseButtonStats").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("PauseButtonStats").performScrollTo().performClick()
-    composeTestRule.onNodeWithTag("FinishButtonStats").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("ResumeButtonStats").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("FinishButtonStats").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ResumeButtonStats").performScrollTo().assertIsDisplayed()
   }
 
   @Test
@@ -203,7 +203,7 @@ class RunningScreenTest {
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("LocationButton").performClick()
     composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("LocationButtonStats").performClick()
+    composeTestRule.onNodeWithTag("LocationButtonStats").performScrollTo().performClick()
     composeTestRule.onNodeWithTag("MainRunningScreen").assertIsDisplayed()
   }
 }
