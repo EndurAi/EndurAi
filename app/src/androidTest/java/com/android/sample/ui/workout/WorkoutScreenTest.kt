@@ -370,6 +370,56 @@ class WorkoutScreenTest {
   }
 
   @Test
+  fun startingTimeBasedExerciseIsDisplayed() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel,
+          userAccountViewModel = userAccountViewModel)
+    }
+    // check that permanent composable are still there
+    // ArrowBack
+    composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
+    // Workout Name
+    composeTestRule.onNodeWithTag("WorkoutName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("WorkoutName").assertTextEquals("MyWorkout")
+    // Exercise name
+    composeTestRule.onNodeWithTag("ExerciseName").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("ExerciseName")
+        .assertTextEquals(
+            bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type.toString())
+    // Exercise description
+    composeTestRule.onNodeWithTag("ExerciseDescription").assertIsDisplayed()
+    bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type?.let {
+      composeTestRule.onNodeWithTag("ExerciseDescription").assertTextEquals(it.getInstruction())
+    }
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
+    // skip the 1st exercise wich is rep. based
+    composeTestRule.onNodeWithTag("SkipButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SkipButton").performClick()
+    // start the 2nd exercise wich is time based
+    composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("StartButton").performClick()
+    // Check that the presentation specific components are hidden
+    // startButton is not displayed
+    composeTestRule.onNodeWithTag("StartButton").assertIsNotDisplayed()
+    // VideoPlayer is not displayed
+    composeTestRule.onNodeWithTag("VideoPlayer").assertIsNotDisplayed()
+
+    // check that the timer is displayed
+    composeTestRule.onNodeWithTag("CountDownTimer").assertIsDisplayed()
+    // check that the play resume button is displayed
+    composeTestRule.onNodeWithTag("CounterPauseResumeButton").assertIsDisplayed()
+  }
+
+  @Test
   fun skipButtonGoesToNextExercise() {
     composeTestRule.setContent {
       WorkoutScreen(
