@@ -46,4 +46,5 @@
     <string name="TotalTrainings">%1$s Workouts in Total</string>
     <string name="RunningScreenTopBar">Running</string>
     <string name="NoWorkout">No Workout</string>
+    <string name="Summary">Summary</string>
 </resources>
