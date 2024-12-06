@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.rule.GrantPermissionRule
@@ -65,7 +66,8 @@ class RunningScreenTest {
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
-    composeTestRule.onNodeWithTag("PauseButton").assertExists()
+    composeTestRule.onNodeWithTag("PauseButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("LocationButton").assertIsDisplayed()
   }
 
   @Test
@@ -78,7 +80,8 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("ResumeButton").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ResumeButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("FinishButton").assertIsDisplayed()
   }
 
   @Test
@@ -91,8 +94,8 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("ResumeButton").performScrollTo().performClick()
-    composeTestRule.onNodeWithTag("PauseButton").assertExists()
+    composeTestRule.onNodeWithTag("ResumeButton").performClick()
+    composeTestRule.onNodeWithTag("PauseButton").assertIsDisplayed()
   }
 
   @Test
@@ -105,7 +108,7 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performScrollTo().assertHasClickAction()
   }
 
@@ -119,7 +122,7 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performClick()
 
     composeTestRule.onNodeWithTag("Save Running switchToggle").performScrollTo().assertIsDisplayed()
   }
@@ -134,10 +137,10 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performClick()
     composeTestRule.onNodeWithTag("Save Running switchToggle").performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag("SaveButton").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SaveButton").assertExists()
   }
 
   @Test
@@ -150,9 +153,58 @@ class RunningScreenTest {
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("PauseButton").performClick()
-    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performClick()
     composeTestRule.onNodeWithTag("Save Running switchToggle").performScrollTo().performClick()
     composeTestRule.onNodeWithTag("nameTextField").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("descriptionTextField").performScrollTo().assertIsDisplayed()
+  }
+
+  @Test
+  fun locationButton_clickDisplayStats() {
+    composeTestRule.setContent {
+      RunningScreen(
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel)
+    }
+
+    composeTestRule.onNodeWithTag("StartButton").performClick()
+    composeTestRule.onNodeWithTag("LocationButton").performClick()
+    composeTestRule.onNodeWithText("TIME").assertIsDisplayed()
+    composeTestRule.onNodeWithText("AVG PACE").assertIsDisplayed()
+    composeTestRule.onNodeWithText("DISTANCE").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DistanceValueText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("PaceValueText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TimeValueText").assertIsDisplayed()
+  }
+
+  @Test
+  fun statsScreenBottomBarWorks() {
+    composeTestRule.setContent {
+      RunningScreen(
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel)
+    }
+
+    composeTestRule.onNodeWithTag("StartButton").performClick()
+    composeTestRule.onNodeWithTag("LocationButton").performClick()
+    composeTestRule.onNodeWithTag("PauseButtonStats").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("PauseButtonStats").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("FinishButtonStats").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ResumeButtonStats").assertIsDisplayed()
+  }
+
+  @Test
+  fun locationButtonCanSwitchScreen() {
+    composeTestRule.setContent {
+      RunningScreen(
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel)
+    }
+
+    composeTestRule.onNodeWithTag("StartButton").performClick()
+    composeTestRule.onNodeWithTag("LocationButton").performClick()
+    composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("LocationButtonStats").performClick()
+    composeTestRule.onNodeWithTag("MainRunningScreen").assertIsDisplayed()
   }
 }
