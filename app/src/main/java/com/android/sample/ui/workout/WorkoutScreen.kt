@@ -262,6 +262,8 @@ fun WorkoutScreenBody(
     } else if (!summaryScreenIsDisplayed) {
       summaryScreenIsDisplayed = true
     } else {
+        //delete workout from user
+
       navigationActions.navigateTo(Screen.MAIN)
     }
   }
