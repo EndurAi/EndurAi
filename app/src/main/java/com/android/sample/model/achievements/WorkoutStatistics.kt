@@ -11,8 +11,8 @@ import java.time.LocalDateTime
  */
 class WorkoutStatistics(
     val id: String,
-    val duration: Int, // Minutes
     val date: LocalDateTime,
+    val duration: Int = 0, //Not implemented for the moment
     val caloriesBurnt: Int,
     val type: WorkoutType
 )

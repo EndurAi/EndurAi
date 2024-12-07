@@ -5,6 +5,11 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
+/**
+ * Repository implementation for storing and managing `workoutStatistics` documents in Firebase Firestore.
+ *
+ * @property db Firebase Firestore instance.
+ */
 class StatisticsRepositoryFirestore(
     private val db: FirebaseFirestore
 ) : StatisticsRepository {
@@ -23,6 +28,12 @@ class StatisticsRepositoryFirestore(
         }
     }
 
+    /**
+     * Retrieves the workouts statistics
+     *
+     * @return The list of workoutStatistics.
+     * @throws Exception if something went wrong.
+     */
     override fun getStatistics(
         onSuccess: (List<WorkoutStatistics>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -48,6 +59,13 @@ class StatisticsRepositoryFirestore(
             }
     }
 
+/**
+ * Adds a workout statistics to the current repository list.
+ *
+ * @param workout  The workout statistics to be stored.
+ * @param onSuccess Callback triggered upon successful addition.
+ * @param onFailure Callback triggered upon failure with the exception.
+ */
     override fun addWorkout(
         workout: WorkoutStatistics,
         onSuccess: () -> Unit,
