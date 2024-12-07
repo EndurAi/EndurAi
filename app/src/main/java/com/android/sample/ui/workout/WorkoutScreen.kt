@@ -65,6 +65,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -78,6 +79,8 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.WarmUpViewModel
+import com.android.sample.model.workout.Workout
+import com.android.sample.model.workout.WorkoutID
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
@@ -120,7 +123,9 @@ fun WorkoutScreenBody(
     cameraViewModel: CameraViewModel,
     videoViewModel: VideoViewModel,
     hasWarmUp: Boolean,
-    userAccountViewModel: UserAccountViewModel
+    userAccountViewModel: UserAccountViewModel,
+    viewModel: WorkoutViewModel<Workout>,
+    workoutID: String
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
@@ -262,8 +267,8 @@ fun WorkoutScreenBody(
     } else if (!summaryScreenIsDisplayed) {
       summaryScreenIsDisplayed = true
     } else {
-        //delete workout from user
-
+        //delete the workout
+        viewModel.deleteWorkoutById(workoutID)
       navigationActions.navigateTo(Screen.MAIN)
     }
   }
@@ -643,13 +648,15 @@ fun WorkoutScreen(
     userAccountViewModel: UserAccountViewModel
 ) {
   // Get the selected workout based on the workout type
-  val selectedWorkout =
+  val viewModel =
       when (workoutType) {
-        WorkoutType.YOGA -> yogaViewModel.selectedWorkout.value
-        WorkoutType.WARMUP -> warmUpViewModel.selectedWorkout.value
-        WorkoutType.BODY_WEIGHT -> bodyweightViewModel.selectedWorkout.value
+        WorkoutType.YOGA -> yogaViewModel
+        WorkoutType.WARMUP -> warmUpViewModel
+        WorkoutType.BODY_WEIGHT -> bodyweightViewModel
         WorkoutType.RUNNING -> TODO()
       }
+
+    val selectedWorkout = viewModel.selectedWorkout.value
 
   // Create a list of ExerciseState objects from the selected workout, add the workout to it on
   // condition
@@ -660,6 +667,8 @@ fun WorkoutScreen(
             ?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
       }
 
+    val workoutID = selectedWorkout?.workoutId ?: ""
+
   // Display the WarmUpScreenBody with the exercise list and workout name
   selectedWorkout?.name?.let {
     WorkoutScreenBody(
@@ -669,6 +678,8 @@ fun WorkoutScreen(
         cameraViewModel = cameraViewModel,
         videoViewModel = videoViewModel,
         hasWarmUp = selectedWorkout.warmup,
-        userAccountViewModel = userAccountViewModel)
+        userAccountViewModel = userAccountViewModel,
+        viewModel = viewModel,
+        workoutID = workoutID)
   }
 }
