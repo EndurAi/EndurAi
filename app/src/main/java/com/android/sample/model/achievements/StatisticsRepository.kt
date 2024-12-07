@@ -17,7 +17,7 @@ interface StatisticsRepository {
     /**
      * Retrieves the user's stastistics.
      *
-     * @param onSuccess A lambda function that is called with the retrieved [Preferences] object when
+     * @param onSuccess A lambda function that is called with the retrieved [List<WorkoutStatistics>] object when
      *   the operation is successful.
      * @param onFailure A lambda function that is called with an [Exception] if the operation fails.
      */
@@ -26,17 +26,9 @@ interface StatisticsRepository {
     /**
      * Updates the user's preferences in the persistent storage.
      *
-     * @param pref The [Preferences] object containing the updated preferences to be saved.
+     * @param workout The statistics to be added to repository.
      * @param onSuccess A lambda function that is called when the update is successful.
      * @param onFailure A lambda function that is called with an [Exception] if the update fails.
      */
-    fun updatePreferences(pref: Preferences, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
-
-    /**
-     * Deletes the user's preferences from the persistent storage.
-     *
-     * @param onSuccess A lambda function that is called when the deletion is successful.
-     * @param onFailure A lambda function that is called with an [Exception] if the deletion fails.
-     */
-    fun deletePreferences(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+    fun addWorkout(workout: WorkoutStatistics, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
