@@ -23,7 +23,7 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
     }
 
     /** Fetch all workout statistics from the repository. */
-    private fun getWorkoutStatistics() {
+    fun getWorkoutStatistics() {
         repository.getStatistics(
             onSuccess = { workoutStatistics_.value = it },
             onFailure = {}
@@ -68,7 +68,7 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
         // Construct the WorkoutStatistics object
         return WorkoutStatistics(
             id = workout.workoutId,
-            date = LocalDateTime.now(),
+            date = workout.date,
             caloriesBurnt = caloriesBurnt,
             type = workoutType
         )
