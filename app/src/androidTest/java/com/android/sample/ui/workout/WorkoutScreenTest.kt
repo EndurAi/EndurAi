@@ -10,6 +10,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.achievements.StatisticsRepositoryFirestore
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountLocalCache
 import com.android.sample.model.userAccount.UserAccountRepository
@@ -60,6 +62,8 @@ class WorkoutScreenTest {
   private val mockVideoRepository2 = mock(VideoRepository::class.java)
   private val mockVideoViewModel = VideoViewModel(mockVideoRepository)
   private val mockVideoViewModel2 = VideoViewModel(mockVideoRepository2)
+  private val statisticsRepository = mock(StatisticsRepositoryFirestore::class.java)
+  private val mockStatisticsViewModel = StatisticsViewModel(statisticsRepository)
   private lateinit var mockFirebaseAuth: FirebaseAuth
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -175,7 +179,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -230,7 +235,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.YOGA,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -282,7 +288,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.YOGA,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -334,7 +341,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // check that permanent composable are still there
     // ArrowBack
@@ -379,7 +387,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // check that permanent composable are still there
     // ArrowBack
@@ -429,7 +438,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
 
     // Exercise name
@@ -462,7 +472,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
 
     // Exercise name
@@ -496,7 +507,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ex1
     composeTestRule
@@ -532,7 +544,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel2,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
 
     composeTestRule.onNodeWithTag("LoadingIndicator").assertIsDisplayed()
@@ -549,7 +562,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // Check that on launching the composable, the videoViewModel tries to fetch the videos on
     // firestore
@@ -566,7 +580,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ex1
     composeTestRule
