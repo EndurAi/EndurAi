@@ -18,6 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.sample.model.achievements.StatisticsRepositoryFirestore
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
@@ -114,6 +116,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val runningWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = RunningWorkout::class.java)
   val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
+  val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
+  val statisticsViewModel = StatisticsViewModel(statisticsRepository)
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -156,7 +160,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Achievements Screen
     navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
-      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions) }
+      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions, statisticsViewModel) }
     }
 
     // Preferences Screen
@@ -312,7 +316,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             workoutType = WorkoutType.BODY_WEIGHT,
             cameraViewModel = cameraViewModel,
             videoViewModel = videoViewModel,
-            userAccountViewModel = userAccountViewModel)
+            userAccountViewModel = userAccountViewModel,
+            statisticsViewModel = statisticsViewModel)
       }
     }
     // Yoga Workout
@@ -326,7 +331,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             workoutType = WorkoutType.YOGA,
             cameraViewModel = cameraViewModel,
             videoViewModel = videoViewModel,
-            userAccountViewModel = userAccountViewModel)
+            userAccountViewModel = userAccountViewModel,
+            statisticsViewModel = statisticsViewModel)
       }
     }
 
@@ -341,7 +347,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
             workoutType = WorkoutType.WARMUP,
             cameraViewModel = cameraViewModel,
             videoViewModel = videoViewModel,
-            userAccountViewModel = userAccountViewModel)
+            userAccountViewModel = userAccountViewModel,
+            statisticsViewModel = statisticsViewModel)
       }
     }
 
