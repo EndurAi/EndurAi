@@ -1,4 +1,5 @@
 package com.android.sample.model.achievements
+import android.util.Log
 import com.android.sample.model.workout.WorkoutRepositoryFirestore.LatLngAdapter
 import com.android.sample.model.workout.WorkoutRepositoryFirestore.LatLngListAdapter
 import com.android.sample.model.workout.WorkoutRepositoryFirestore.LocalDateTimeAdapter
@@ -50,24 +51,26 @@ open class StatisticsRepositoryFirestore(
         onFailure: (Exception) -> Unit
     ) {
         val uid = Firebase.auth.currentUser?.uid ?: return onFailure(Exception("User not authenticated"))
-
         db.collection(collectionName)
             .document(uid)
             .collection("workouts")
             .get()
-            .addOnSuccessListener { result ->
-                val stats = result.mapNotNull { document ->
-                    try {
-                        adapter.fromJson(document.data.toString())
-                    } catch (e: Exception) {
-                        null
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val stats =
+                        task.result?.mapNotNull { document ->
+                            val json = moshi.adapter(Map::class.java).toJson(document.data)
+                            adapter.fromJson(json)
+                        } ?: emptyList()
+
+                    onSuccess(stats)
+                } else {
+                    task.exception?.let { e ->
+                        Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
+                        onFailure(e)
                     }
                 }
-                onSuccess(stats)
-            }
-            .addOnFailureListener { e ->
-                onFailure(e)
-            }
+        }
     }
 
 /**
