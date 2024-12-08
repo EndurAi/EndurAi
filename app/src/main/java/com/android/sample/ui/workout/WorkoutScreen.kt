@@ -72,6 +72,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.android.sample.R
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.video.VideoViewModel
@@ -124,8 +125,10 @@ fun WorkoutScreenBody(
     videoViewModel: VideoViewModel,
     hasWarmUp: Boolean,
     userAccountViewModel: UserAccountViewModel,
-    viewModel: WorkoutViewModel<Workout>,
-    workoutID: String
+    workoutViewModel: WorkoutViewModel<Workout>,
+    workoutID: String,
+    statisticsViewModel: StatisticsViewModel,
+    workout: Workout
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
@@ -268,7 +271,9 @@ fun WorkoutScreenBody(
       summaryScreenIsDisplayed = true
     } else {
         //delete the workout
-        viewModel.deleteWorkoutById(workoutID)
+        val stats = statisticsViewModel.computeWorkoutStatistics(workout = workout, exerciseList =  exerciseStateList ?: emptyList(), userAccountViewModel = userAccountViewModel)
+        statisticsViewModel.addWorkoutStatistics(stats)
+        workoutViewModel.deleteWorkoutById(workoutID)
       navigationActions.navigateTo(Screen.MAIN)
     }
   }
@@ -645,7 +650,8 @@ fun WorkoutScreen(
     workoutType: WorkoutType,
     cameraViewModel: CameraViewModel = CameraViewModel(LocalContext.current),
     videoViewModel: VideoViewModel,
-    userAccountViewModel: UserAccountViewModel
+    userAccountViewModel: UserAccountViewModel,
+    statisticsViewModel: StatisticsViewModel
 ) {
   // Get the selected workout based on the workout type
   val viewModel =
@@ -679,7 +685,9 @@ fun WorkoutScreen(
         videoViewModel = videoViewModel,
         hasWarmUp = selectedWorkout.warmup,
         userAccountViewModel = userAccountViewModel,
-        viewModel = viewModel,
-        workoutID = workoutID)
+        workoutViewModel = viewModel,
+        workoutID = workoutID,
+        statisticsViewModel = statisticsViewModel,
+        workout = selectedWorkout)
   }
 }

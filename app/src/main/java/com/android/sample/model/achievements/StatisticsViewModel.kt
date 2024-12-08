@@ -12,14 +12,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 
-class WorkoutStatisticsViewModel(private val repository: StatisticsRepository) : ViewModel() {
+class StatisticsViewModel(private val repository: StatisticsRepository) : ViewModel() {
 
     private val workoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
     val workoutStatistics: StateFlow<List<WorkoutStatistics>> = workoutStatistics_
 
     init {
         // Initialize by fetching all statistics
-        getWorkoutStatistics()
+        repository.init { getWorkoutStatistics() }
     }
 
     /** Fetch all workout statistics from the repository. */

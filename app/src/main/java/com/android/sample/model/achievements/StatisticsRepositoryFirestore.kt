@@ -1,28 +1,39 @@
 package com.android.sample.model.achievements
+import com.android.sample.model.workout.WorkoutRepositoryFirestore.LatLngAdapter
+import com.android.sample.model.workout.WorkoutRepositoryFirestore.LatLngListAdapter
+import com.android.sample.model.workout.WorkoutRepositoryFirestore.LocalDateTimeAdapter
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dev.zacsweers.moshix.sealed.reflect.MoshiSealedJsonAdapterFactory
 
 /**
  * Repository implementation for storing and managing `workoutStatistics` documents in Firebase Firestore.
  *
  * @property db Firebase Firestore instance.
  */
-class StatisticsRepositoryFirestore(
+open class StatisticsRepositoryFirestore(
     private val db: FirebaseFirestore
 ) : StatisticsRepository {
-
-    private val auth = FirebaseAuth.getInstance()
-    private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    private val moshi =
+        Moshi.Builder()
+            .add(MoshiSealedJsonAdapterFactory())
+            .add(KotlinJsonAdapterFactory())
+            .add(LocalDateTimeAdapter())
+            .add(LatLngAdapter())
+            .add(LatLngListAdapter(LatLngAdapter()))
+            .build()
     private val adapter: JsonAdapter<WorkoutStatistics> = moshi.adapter(WorkoutStatistics::class.java)
 
     private val collectionName = "user_statistics"
 
     override fun init(onSuccess: () -> Unit) {
-        auth.addAuthStateListener {
-            if (auth.currentUser != null) {
+        Firebase.auth.addAuthStateListener {
+            if (it.currentUser != null) {
                 onSuccess()
             }
         }
@@ -38,7 +49,7 @@ class StatisticsRepositoryFirestore(
         onSuccess: (List<WorkoutStatistics>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val uid = auth.currentUser?.uid ?: return onFailure(Exception("User not authenticated"))
+        val uid = Firebase.auth.currentUser?.uid ?: return onFailure(Exception("User not authenticated"))
 
         db.collection(collectionName)
             .document(uid)
@@ -71,7 +82,7 @@ class StatisticsRepositoryFirestore(
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val uid = auth.currentUser?.uid ?: return onFailure(Exception("User not authenticated"))
+        val uid = Firebase.auth.currentUser?.uid ?: return onFailure(Exception("User not authenticated"))
         val json = adapter.toJson(workout)
 
         val dataMap: Map<String, Any> =
