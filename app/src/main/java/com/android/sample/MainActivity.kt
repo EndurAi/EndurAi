@@ -18,7 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.android.sample.model.achievements.StatisticsRepository
 import com.android.sample.model.achievements.StatisticsRepositoryFirestore
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.calendar.CalendarViewModel
@@ -117,8 +116,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val runningWorkoutRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, clazz = RunningWorkout::class.java)
   val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
-    val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
-    val statisticsViewModel = StatisticsViewModel(statisticsRepository)
+  val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
+  val statisticsViewModel = StatisticsViewModel(statisticsRepository)
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -318,7 +317,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
             cameraViewModel = cameraViewModel,
             videoViewModel = videoViewModel,
             userAccountViewModel = userAccountViewModel,
-            statisticsViewModel =  statisticsViewModel)
+            statisticsViewModel = statisticsViewModel)
       }
     }
     // Yoga Workout
@@ -333,7 +332,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
             cameraViewModel = cameraViewModel,
             videoViewModel = videoViewModel,
             userAccountViewModel = userAccountViewModel,
-            statisticsViewModel =  statisticsViewModel)
+            statisticsViewModel = statisticsViewModel)
       }
     }
 
@@ -349,7 +348,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
             cameraViewModel = cameraViewModel,
             videoViewModel = videoViewModel,
             userAccountViewModel = userAccountViewModel,
-            statisticsViewModel =  statisticsViewModel)
+            statisticsViewModel = statisticsViewModel)
       }
     }
 

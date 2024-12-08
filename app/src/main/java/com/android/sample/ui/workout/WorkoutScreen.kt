@@ -81,7 +81,6 @@ import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.WarmUpViewModel
 import com.android.sample.model.workout.Workout
-import com.android.sample.model.workout.WorkoutID
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
@@ -270,10 +269,14 @@ fun WorkoutScreenBody(
     } else if (!summaryScreenIsDisplayed) {
       summaryScreenIsDisplayed = true
     } else {
-        //delete the workout
-        val stats = statisticsViewModel.computeWorkoutStatistics(workout = workout, exerciseList =  exerciseStateList ?: emptyList(), userAccountViewModel = userAccountViewModel)
-        statisticsViewModel.addWorkoutStatistics(stats)
-        workoutViewModel.deleteWorkoutById(workoutID)
+      // delete the workout
+      val stats =
+          statisticsViewModel.computeWorkoutStatistics(
+              workout = workout,
+              exerciseList = exerciseStateList ?: emptyList(),
+              userAccountViewModel = userAccountViewModel)
+      statisticsViewModel.addWorkoutStatistics(stats)
+      workoutViewModel.deleteWorkoutById(workoutID)
       navigationActions.navigateTo(Screen.MAIN)
     }
   }
@@ -662,7 +665,7 @@ fun WorkoutScreen(
         WorkoutType.RUNNING -> TODO()
       }
 
-    val selectedWorkout = viewModel.selectedWorkout.value
+  val selectedWorkout = viewModel.selectedWorkout.value
 
   // Create a list of ExerciseState objects from the selected workout, add the workout to it on
   // condition
@@ -673,7 +676,7 @@ fun WorkoutScreen(
             ?.map { warmUpExercise -> ExerciseState(warmUpExercise, true) }
       }
 
-    val workoutID = selectedWorkout?.workoutId ?: ""
+  val workoutID = selectedWorkout?.workoutId ?: ""
 
   // Display the WarmUpScreenBody with the exercise list and workout name
   selectedWorkout?.name?.let {

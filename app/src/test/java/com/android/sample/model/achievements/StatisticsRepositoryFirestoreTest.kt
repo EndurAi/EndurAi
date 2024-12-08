@@ -2,10 +2,6 @@ package com.android.sample.model.achievements
 
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
-import com.android.sample.model.preferences.Preferences
-import com.android.sample.model.preferences.PreferencesRepositoryFirestore
-import com.android.sample.model.preferences.UnitsSystem
-import com.android.sample.model.preferences.WeightUnit
 import com.android.sample.model.workout.WorkoutType
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
@@ -16,10 +12,9 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import java.time.LocalDateTime
 import junit.framework.TestCase.fail
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,102 +28,97 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
-import java.time.LocalDateTime
 
 @RunWith(RobolectricTestRunner::class)
 class StatisticsRepositoryFirestoreTest {
 
-    @Mock
-    private lateinit var mockFirestore: FirebaseFirestore
-    @Mock
-    private lateinit var mockCollectionReference: CollectionReference
-    @Mock
-    private lateinit var mockDocumentReference: DocumentReference
-    @Mock
-    private lateinit var mockSubCollectionReference: CollectionReference
-    @Mock
-    private lateinit var mockSubDocumentReference: DocumentReference
-    @Mock
-    private lateinit var mockUser: FirebaseUser
-    @Mock
-    private lateinit var mockAuth: FirebaseAuth
-    private lateinit var firebaseAuthMock: MockedStatic<FirebaseAuth>
+  @Mock private lateinit var mockFirestore: FirebaseFirestore
+  @Mock private lateinit var mockCollectionReference: CollectionReference
+  @Mock private lateinit var mockDocumentReference: DocumentReference
+  @Mock private lateinit var mockSubCollectionReference: CollectionReference
+  @Mock private lateinit var mockSubDocumentReference: DocumentReference
+  @Mock private lateinit var mockUser: FirebaseUser
+  @Mock private lateinit var mockAuth: FirebaseAuth
+  private lateinit var firebaseAuthMock: MockedStatic<FirebaseAuth>
 
-    private lateinit var statisticsRepositoryFirestore: StatisticsRepositoryFirestore
+  private lateinit var statisticsRepositoryFirestore: StatisticsRepositoryFirestore
 
-    private val workoutStatistics = WorkoutStatistics(id = "test", date = LocalDateTime.now(), caloriesBurnt = 10, type = WorkoutType.BODY_WEIGHT)
+  private val workoutStatistics =
+      WorkoutStatistics(
+          id = "test",
+          date = LocalDateTime.now(),
+          caloriesBurnt = 10,
+          type = WorkoutType.BODY_WEIGHT)
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
 
-        if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-            FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-        }
-
-        firebaseAuthMock = mockStatic(FirebaseAuth::class.java)
-
-        // Mock FirebaseAuth and FirebaseUser behavior
-        `when`(FirebaseAuth.getInstance()).thenReturn(mockAuth)
-        `when`(mockAuth.currentUser).thenReturn(mockUser)
-        `when`(mockUser.uid).thenReturn("mocked-uid")
-
-        statisticsRepositoryFirestore = StatisticsRepositoryFirestore(mockFirestore)
-
-        `when`(mockFirestore.collection(any())).thenReturn(mockCollectionReference)
-        `when`(mockCollectionReference.document(any())).thenReturn(mockDocumentReference)
-        `when`(mockDocumentReference.collection("workouts")).thenReturn(mockSubCollectionReference)
-        `when`(mockSubCollectionReference.document(any())).thenReturn(mockSubDocumentReference)
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
-    @After
-    fun tearDown() {
-        // Clean up the static mock after each test
-        firebaseAuthMock.close()
-    }
+    firebaseAuthMock = mockStatic(FirebaseAuth::class.java)
 
-    /**
-     * This test verifies that when we add a new workout statistics, the Firestore `set()` is called on
-     * the document reference. This does NOT CHECK the actual data being added
-     */
-    @Test
-    fun addWorkoutStatistics_shouldCallFirestoreSet() {
-        `when`(mockSubDocumentReference.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
+    // Mock FirebaseAuth and FirebaseUser behavior
+    `when`(FirebaseAuth.getInstance()).thenReturn(mockAuth)
+    `when`(mockAuth.currentUser).thenReturn(mockUser)
+    `when`(mockUser.uid).thenReturn("mocked-uid")
 
-        statisticsRepositoryFirestore.addWorkout(
-            workoutStatistics,
-            onSuccess = {},
-            onFailure = {})
+    statisticsRepositoryFirestore = StatisticsRepositoryFirestore(mockFirestore)
 
-        shadowOf(Looper.getMainLooper()).idle()
+    `when`(mockFirestore.collection(any())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(any())).thenReturn(mockDocumentReference)
+    `when`(mockDocumentReference.collection("workouts")).thenReturn(mockSubCollectionReference)
+    `when`(mockSubCollectionReference.document(any())).thenReturn(mockSubDocumentReference)
+  }
 
-        // Verify that the document reference's set method was called
-        verify(mockSubDocumentReference).set(any())
-    }
+  @After
+  fun tearDown() {
+    // Clean up the static mock after each test
+    firebaseAuthMock.close()
+  }
 
-    /**
-     * This test verifies that when fetching a Preferences class, the Firestore `get()` is called on
-     * the collection reference and not the document reference.
-     */
-    @Test
-    fun getWorkoutStatistics_callsDocuments() {
+  /**
+   * This test verifies that when we add a new workout statistics, the Firestore `set()` is called
+   * on the document reference. This does NOT CHECK the actual data being added
+   */
+  @Test
+  fun addWorkoutStatistics_shouldCallFirestoreSet() {
+    `when`(mockSubDocumentReference.set(any()))
+        .thenReturn(Tasks.forResult(null)) // Simulate success
 
-        val mockQuerySnapshot = mock(QuerySnapshot::class.java)
-        val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    statisticsRepositoryFirestore.addWorkout(workoutStatistics, onSuccess = {}, onFailure = {})
 
-        // Mock behavior for the collection reference to return a QuerySnapshot containing the document
-        `when`(mockSubCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
-        // Mock behavior for the QuerySnapshot to return a list of DocumentSnapshots
-        `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    shadowOf(Looper.getMainLooper()).idle()
 
-        statisticsRepositoryFirestore.getStatistics(
-            onSuccess = { documents ->
-                // Here you can check the documents received
-                assert(documents.isNotEmpty())
-            },
-            onFailure = { fail("Failure callback should not be called") })
+    // Verify that the document reference's set method was called
+    verify(mockSubDocumentReference).set(any())
+  }
 
-        // Verify that the collection reference's get method was called
-        verify(mockSubCollectionReference).get()
-    }
+  /**
+   * This test verifies that when fetching a Preferences class, the Firestore `get()` is called on
+   * the collection reference and not the document reference.
+   */
+  @Test
+  fun getWorkoutStatistics_callsDocuments() {
+
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+
+    // Mock behavior for the collection reference to return a QuerySnapshot containing the document
+    `when`(mockSubCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    // Mock behavior for the QuerySnapshot to return a list of DocumentSnapshots
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+
+    statisticsRepositoryFirestore.getStatistics(
+        onSuccess = { documents ->
+          // Here you can check the documents received
+          assert(documents.isNotEmpty())
+        },
+        onFailure = { fail("Failure callback should not be called") })
+
+    // Verify that the collection reference's get method was called
+    verify(mockSubCollectionReference).get()
+  }
 }

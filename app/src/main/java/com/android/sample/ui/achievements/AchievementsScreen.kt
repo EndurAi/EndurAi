@@ -15,16 +15,20 @@ import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 
 @Composable
-fun AchievementsScreen(navigationActions: NavigationActions, statisticsViewModel: StatisticsViewModel) {
-    val workouts = statisticsViewModel.workoutStatistics.collectAsState().value
-    val statistics = Statistics(statisticsViewModel.workoutStatistics)
+fun AchievementsScreen(
+    navigationActions: NavigationActions,
+    statisticsViewModel: StatisticsViewModel
+) {
+  val workouts = statisticsViewModel.workoutStatistics.collectAsState().value
+  val statistics = Statistics(statisticsViewModel.workoutStatistics)
   Scaffold(
       modifier = Modifier.testTag("achievementsScreen"),
       content = { padding ->
-          Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-              if(workouts.isNotEmpty()) {
-                  Text(text = statistics.getTotalWorkouts().toString())
-              }
-          } },
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+          if (workouts.isNotEmpty()) {
+            Text(text = statistics.getTotalWorkouts().toString())
+          }
+        }
+      },
       bottomBar = { BottomBar(navigationActions) })
 }
