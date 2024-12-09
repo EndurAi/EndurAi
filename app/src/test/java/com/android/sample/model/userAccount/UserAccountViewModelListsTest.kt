@@ -7,6 +7,7 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import junit.framework.TestCase.fail
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -127,5 +128,46 @@ class UserAccountViewModelListsTest {
     val receivedRequests = userAccountViewModel.getReceivedRequests()
     assertThat(receivedRequests.size, `is`(1))
     assertThat(receivedRequests[0], `is`(receivedRequestAccount))
+  }
+
+  @Test
+  fun `searchUsers returns list of matching users when query is valid`() = runTest {
+    val query = "John"
+    val expectedUsers = listOf(friendAccount1, friendAccount2)
+    `when`(userAccountRepository.searchUsers(eq(query), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as (List<UserAccount>) -> Unit
+      onSuccess(expectedUsers)
+    }
+
+    var result: List<UserAccount>? = null
+    userAccountViewModel.searchUsers(
+        query = query, onResult = { result = it }, onFailure = { fail("Unexpected failure") })
+
+    assertThat(result, `is`(expectedUsers))
+  }
+
+  @Test
+  fun `searchUsers returns empty list when query is blank`() = runTest {
+    var result: List<UserAccount>? = null
+    userAccountViewModel.searchUsers(
+        query = "", onResult = { result = it }, onFailure = { fail("Unexpected failure") })
+
+    assertThat(result, `is`(emptyList()))
+  }
+
+  @Test
+  fun `searchUsers calls onFailure when repository fails`() = runTest {
+    val query = "Invalid"
+    val exception = RuntimeException("Search error")
+    `when`(userAccountRepository.searchUsers(eq(query), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
+      onFailure(exception)
+    }
+
+    var failure: Exception? = null
+    userAccountViewModel.searchUsers(
+        query = query, onResult = { fail("Unexpected success") }, onFailure = { failure = it })
+
+    assertThat(failure, `is`(exception))
   }
 }

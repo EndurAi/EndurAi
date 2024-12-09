@@ -86,6 +86,13 @@ interface UserAccountRepository {
       onFailure: (Exception) -> Unit
   )
 
+  /** Searches for users based on the given query. */
+  fun searchUsers(
+      query: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
   /**
    * Deletes a user account.
    *
@@ -94,4 +101,41 @@ interface UserAccountRepository {
    * @param onFailure Callback function to be invoked with an Exception if the deletion fails.
    */
   fun deleteUserAccount(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Retrieves the friends of the user from Firestore.
+   *
+   * @param uid The ID of the user whose friends are to be retrieved.
+   * @param onSuccess Callback function to be invoked with the list of friends.
+   * @param onFailure Callback function to be invoked with an Exception if the retrieval fails.
+   */
+  fun getFriendsFromFirestore(
+      uid: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+  /**
+   * Retrieves the sent friend requests of the user from Firestore.
+   *
+   * @param userId The ID of the user whose sent requests are to be retrieved.
+   * @param onSuccess Callback function to be invoked with the list of sent requests.
+   * @param onFailure Callback function to be invoked with an Exception if the retrieval fails.
+   */
+  fun getSentRequestsFromFirestore(
+      userId: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+  /**
+   * Retrieves the received friend requests of the user from Firestore.
+   *
+   * @param userId The ID of the user whose received requests are to be retrieved.
+   * @param onSuccess Callback function to be invoked with the list of received requests.
+   * @param onFailure Callback function to be invoked with an Exception if the retrieval fails.
+   */
+  fun getReceivedRequestsFromFirestore(
+      userId: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }

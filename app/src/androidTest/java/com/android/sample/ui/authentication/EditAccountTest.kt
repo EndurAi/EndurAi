@@ -192,6 +192,14 @@ class FakeUserAccountRepository : UserAccountRepository {
     onSuccess()
   }
 
+  override fun searchUsers(
+      query: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
   override fun sendFriendRequest(
       fromUser: UserAccount,
       toUserId: String,
@@ -223,6 +231,30 @@ class FakeUserAccountRepository : UserAccountRepository {
       userAccount: UserAccount,
       friendId: String,
       onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
+  override fun getFriendsFromFirestore(
+      uid: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
+  override fun getSentRequestsFromFirestore(
+      userId: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // not needed here
+  }
+
+  override fun getReceivedRequestsFromFirestore(
+      userId: String,
+      onSuccess: (List<UserAccount>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     // not needed here

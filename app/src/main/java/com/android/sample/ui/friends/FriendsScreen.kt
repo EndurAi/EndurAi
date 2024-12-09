@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
-import com.android.sample.model.userAccount.UserAccount
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.CustomSearchBar
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
@@ -29,17 +29,15 @@ import com.android.sample.ui.theme.DarkBlue
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
+    userAccountViewModel: UserAccountViewModel
 ) {
   val searchQuery = remember { mutableStateOf("") }
 
-  // Hardcoded list of friends
-  val friendsList =
-      setOf(
-          UserAccount(userId = "1", firstName = "Pierre"),
-          UserAccount(userId = "2", firstName = "Alex"),
-          UserAccount(userId = "3", firstName = "Edouard"))
+  LaunchedEffect(Unit) { userAccountViewModel.fetchFriends() }
 
   val selectedFriends = remember { mutableStateListOf<String>() }
+
+  val friendsList by userAccountViewModel.friends.collectAsState()
 
   val filteredFriendsList =
       friendsList.filter { friend ->
@@ -87,7 +85,10 @@ fun FriendsScreen(
                 selectedFriends.add(friend.userId)
               }
             },
-            onRemoveClick = { /* Handle remove friend action */},
+            onRemoveClick = {
+              userAccountViewModel.removeFriend(friend.userId)
+              userAccountViewModel.fetchFriends()
+            },
         )
         Spacer(modifier = Modifier.height(8.dp))
       }

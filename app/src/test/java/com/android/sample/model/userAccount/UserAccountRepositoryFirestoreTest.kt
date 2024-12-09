@@ -247,16 +247,11 @@ class UserAccountRepositoryFirestoreTest {
   @Test
   fun acceptFriendRequest_success() {
     val friendId = "2"
-    val updatedUserAccount =
-        userAccount.copy(
-            friends = userAccount.friends + friendId,
-            receivedRequests = userAccount.receivedRequests - friendId)
-    val friendAccount =
-        userAccount.copy(userId = friendId, sentRequests = listOf(userAccount.userId))
-    val updatedFriendAccount =
-        friendAccount.copy(
-            friends = friendAccount.friends + userAccount.userId,
-            sentRequests = friendAccount.sentRequests - userAccount.userId)
+    val userRef = mock<DocumentReference>()
+    val friendRef = mock<DocumentReference>()
+
+    `when`(mockFirestore.collection(any()).document(userAccount.userId)).thenReturn(userRef)
+    `when`(mockFirestore.collection(any()).document(friendId)).thenReturn(friendRef)
 
     `when`(mockFirestore.runTransaction(any<Transaction.Function<Void>>())).thenAnswer {
         invocation: InvocationOnMock ->
@@ -265,12 +260,9 @@ class UserAccountRepositoryFirestoreTest {
       Tasks.forResult<Void>(null)
     }
 
-    `when`(mockTransaction.get(mockDocumentReference)).thenReturn(mockDocumentSnapshot)
-    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(friendAccount)
-    `when`(mockTransaction.set(mockDocumentReference, updatedFriendAccount))
-        .thenReturn(mockTransaction)
-    `when`(mockTransaction.set(mockDocumentReference, updatedUserAccount))
-        .thenReturn(mockTransaction)
+    `when`(mockTransaction.get(userRef)).thenReturn(mockDocumentSnapshot)
+    `when`(mockTransaction.get(friendRef)).thenReturn(mockDocumentSnapshot)
+    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(userAccount)
 
     var successCalled = false
 
@@ -283,21 +275,21 @@ class UserAccountRepositoryFirestoreTest {
     shadowOf(Looper.getMainLooper()).idle()
 
     verify(mockFirestore).runTransaction(any<Transaction.Function<Void>>())
-    verify(mockTransaction).get(mockDocumentReference)
-    verify(mockTransaction).set(mockDocumentReference, updatedFriendAccount)
-    verify(mockTransaction).set(mockDocumentReference, updatedUserAccount)
+    verify(mockTransaction).update(userRef, "friends", listOf(friendId))
+    verify(mockTransaction).update(userRef, "receivedRequests", emptyList<String>())
+    verify(mockTransaction).update(friendRef, "friends", listOf(userAccount.userId))
+    verify(mockTransaction).update(friendRef, "sentRequests", emptyList<String>())
     assertTrue("Success callback should be called", successCalled)
   }
 
   @Test
   fun rejectFriendRequest_success() {
     val friendId = "2"
-    val updatedUserAccount =
-        userAccount.copy(receivedRequests = userAccount.receivedRequests - friendId)
-    val friendAccount =
-        userAccount.copy(userId = friendId, sentRequests = listOf(userAccount.userId))
-    val updatedFriendAccount =
-        friendAccount.copy(sentRequests = friendAccount.sentRequests - userAccount.userId)
+    val userRef = mock<DocumentReference>()
+    val friendRef = mock<DocumentReference>()
+
+    `when`(mockFirestore.collection(any()).document(userAccount.userId)).thenReturn(userRef)
+    `when`(mockFirestore.collection(any()).document(friendId)).thenReturn(friendRef)
 
     `when`(mockFirestore.runTransaction(any<Transaction.Function<Void>>())).thenAnswer {
         invocation: InvocationOnMock ->
@@ -306,12 +298,9 @@ class UserAccountRepositoryFirestoreTest {
       Tasks.forResult<Void>(null)
     }
 
-    `when`(mockTransaction.get(mockDocumentReference)).thenReturn(mockDocumentSnapshot)
-    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(friendAccount)
-    `when`(mockTransaction.set(mockDocumentReference, updatedFriendAccount))
-        .thenReturn(mockTransaction)
-    `when`(mockTransaction.set(mockDocumentReference, updatedUserAccount))
-        .thenReturn(mockTransaction)
+    `when`(mockTransaction.get(userRef)).thenReturn(mockDocumentSnapshot)
+    `when`(mockTransaction.get(friendRef)).thenReturn(mockDocumentSnapshot)
+    `when`(mockDocumentSnapshot.toObject(UserAccount::class.java)).thenReturn(userAccount)
 
     var successCalled = false
 
@@ -324,9 +313,8 @@ class UserAccountRepositoryFirestoreTest {
     shadowOf(Looper.getMainLooper()).idle()
 
     verify(mockFirestore).runTransaction(any<Transaction.Function<Void>>())
-    verify(mockTransaction).get(mockDocumentReference)
-    verify(mockTransaction).set(mockDocumentReference, updatedFriendAccount)
-    verify(mockTransaction).set(mockDocumentReference, updatedUserAccount)
+    verify(mockTransaction).update(userRef, "receivedRequests", emptyList<String>())
+    verify(mockTransaction).update(friendRef, "sentRequests", emptyList<String>())
     assertTrue("Success callback should be called", successCalled)
   }
 
