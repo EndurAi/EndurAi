@@ -109,8 +109,12 @@ interface UserAccountRepository {
    * @param onSuccess Callback function to be invoked with the list of friends.
    * @param onFailure Callback function to be invoked with an Exception if the retrieval fails.
    */
-  fun getFriendsFromFirestore(uid: String, onSuccess: (List<UserAccount>) -> Unit, onFailure: (Exception) -> Unit)
-/**
+  fun getFriendsFromFirestore(
+      uid: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+  /**
    * Retrieves the sent friend requests of the user from Firestore.
    *
    * @param userId The ID of the user whose sent requests are to be retrieved.
@@ -118,10 +122,10 @@ interface UserAccountRepository {
    * @param onFailure Callback function to be invoked with an Exception if the retrieval fails.
    */
   fun getSentRequestsFromFirestore(
-        userId: String,
-        onSuccess: (List<UserAccount>) -> Unit,
-        onFailure: (Exception) -> Unit
-    )
+      userId: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
   /**
    * Retrieves the received friend requests of the user from Firestore.
    *
@@ -130,8 +134,8 @@ interface UserAccountRepository {
    * @param onFailure Callback function to be invoked with an Exception if the retrieval fails.
    */
   fun getReceivedRequestsFromFirestore(
-        userId: String,
-        onSuccess: (List<UserAccount>) -> Unit,
-        onFailure: (Exception) -> Unit
-    )
+      userId: String,
+      onSuccess: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }
