@@ -33,7 +33,9 @@ fun FriendsScreen(
 ) {
   val searchQuery = remember { mutableStateOf("") }
 
-  LaunchedEffect(Unit) { userAccountViewModel.fetchFriends() }
+  LaunchedEffect(Unit) {
+      userAccountViewModel.fetchFriends()
+  }
 
   val selectedFriends = remember { mutableStateListOf<String>() }
 

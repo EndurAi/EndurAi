@@ -208,7 +208,7 @@ class UserAccountRepositoryFirestore(
     val firestore = FirebaseFirestore.getInstance()
     Log.d("UserAccountRepo", "Searching users with query: $query")
     firestore
-        .collection("userAccounts")
+        .collection(collectionPath)
         .whereGreaterThanOrEqualTo("firstName", query)
         .whereLessThan("firstName", query + "\uf8ff") // Firebase query for prefix matching
         .get()
@@ -244,7 +244,7 @@ class UserAccountRepositoryFirestore(
         onSuccess: (List<UserAccount>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        db.collection("userAccounts").document(userId).get()
+        db.collection(collectionPath).document(userId).get()
             .addOnSuccessListener { document ->
                 val friendIds = document.toObject(UserAccount::class.java)?.friends ?: emptyList()
                 Log.d("UserAccountRepof", "Friend IDs: $friendIds")
@@ -252,7 +252,7 @@ class UserAccountRepositoryFirestore(
 
                 val tasks = friendIds.map { friendId ->
                     Log.d("UserAccountRepof", "Fetching friend with ID: $friendId")
-                    db.collection("userAccounts").document(friendId).get()
+                    db.collection(collectionPath).document(friendId).get()
                         .addOnSuccessListener { friendDoc ->
                             friendDoc.toObject(UserAccount::class.java)?.let {
                                 friendAccounts.add(it)
@@ -265,6 +265,67 @@ class UserAccountRepositoryFirestore(
                 Tasks.whenAllComplete(tasks).addOnSuccessListener {
                     Log.d("UserAccountRepof1", "Fetched friend accounts: $friendAccounts")
                     onSuccess(friendAccounts)
+                }.addOnFailureListener(onFailure)
+            }
+    }
+
+
+    override fun getSentRequestsFromFirestore(
+        userId: String,
+        onSuccess: (List<UserAccount>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(collectionPath).document(userId).get()
+            .addOnSuccessListener { document ->
+                val sentRequestIds = document.toObject(UserAccount::class.java)?.sentRequests ?: emptyList()
+                Log.d("UserAccountRepof", "Sent Request IDs: $sentRequestIds")
+                val sentRequestAccounts = mutableListOf<UserAccount>()
+
+                val tasks = sentRequestIds.map { requestId ->
+                    Log.d("UserAccountRepof", "Fetching sent request with ID: $requestId")
+                    db.collection(collectionPath).document(requestId).get()
+                        .addOnSuccessListener { requestDoc ->
+                            requestDoc.toObject(UserAccount::class.java)?.let {
+                                sentRequestAccounts.add(it)
+                                Log.d("UserAccountRepof", "Added sent request account: $it")
+                            }
+                        }
+                        .addOnFailureListener(onFailure)
+                }
+
+                Tasks.whenAllComplete(tasks).addOnSuccessListener {
+                    Log.d("UserAccountRepof1", "Fetched sent request accounts: $sentRequestAccounts")
+                    onSuccess(sentRequestAccounts)
+                }.addOnFailureListener(onFailure)
+            }
+    }
+
+    override fun getReceivedRequestsFromFirestore(
+        userId: String,
+        onSuccess: (List<UserAccount>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(collectionPath).document(userId).get()
+            .addOnSuccessListener { document ->
+                val receivedRequestIds = document.toObject(UserAccount::class.java)?.receivedRequests ?: emptyList()
+                Log.d("UserAccountRepof", "Received Request IDs: $receivedRequestIds")
+                val receivedRequestAccounts = mutableListOf<UserAccount>()
+
+                val tasks = receivedRequestIds.map { requestId ->
+                    Log.d("UserAccountRepof", "Fetching received request with ID: $requestId")
+                    db.collection(collectionPath).document(requestId).get()
+                        .addOnSuccessListener { requestDoc ->
+                            requestDoc.toObject(UserAccount::class.java)?.let {
+                                receivedRequestAccounts.add(it)
+                                Log.d("UserAccountRepof", "Added received request account: $it")
+                            }
+                        }
+                        .addOnFailureListener(onFailure)
+                }
+
+                Tasks.whenAllComplete(tasks).addOnSuccessListener {
+                    Log.d("UserAccountRepof1", "Fetched received request accounts: $receivedRequestAccounts")
+                    onSuccess(receivedRequestAccounts)
                 }.addOnFailureListener(onFailure)
             }
     }

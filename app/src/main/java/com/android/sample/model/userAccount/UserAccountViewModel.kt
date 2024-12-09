@@ -287,35 +287,70 @@ open class UserAccountViewModel(
     }
 
 
-    fun fetchSentRequests() {
-    viewModelScope.launch {
-      userAccount.value?.let { currentUser ->
-        _sentRequests.value = emptyList()
-        val sentRequestsList =
-            currentUser.sentRequests
-                .map { requestId -> async { getUserAccountAsync(requestId) } }
-                .awaitAll()
-                .filterNotNull()
-        _sentRequests.value = sentRequestsList
-        Log.d("UserAccountViewModel", "Fetched sent requests list: $sentRequestsList")
-        Log.d("UserAccountViewModel", "Fetched sent requests list length: ${sentRequestsList.size}")
-      }
-    }
-  }
 
-  fun fetchReceivedRequests() {
-    viewModelScope.launch {
-      userAccount.value?.let { currentUser ->
-        val receivedRequestsList =
-            currentUser.receivedRequests
-                .map { requestId -> async { getUserAccountAsync(requestId) } }
-                .awaitAll()
-                .filterNotNull()
-        _receivedRequests.value = receivedRequestsList
-        Log.d("UserAccountViewModel", "Fetched received requests list: $receivedRequestsList")
-      }
+    fun fetchSentRequests() {
+        viewModelScope.launch {
+            FirebaseAuth.getInstance().currentUser?.let { currentUser ->
+                repository.getSentRequestsFromFirestore(currentUser.uid,
+                    onSuccess = { sentRequestsList ->
+                        _sentRequests.value = sentRequestsList
+                        Log.d("UserAccountViewModel", "Sent requests list: $sentRequestsList")
+                    },
+                    onFailure = { exception ->
+                        Log.e("UserAccountViewModel", "Error fetching sent requests: $exception")
+                    }
+                )
+            }
+        }
     }
-  }
+
+
+    fun fetchReceivedRequests() {
+        viewModelScope.launch {
+            FirebaseAuth.getInstance().currentUser?.let { currentUser ->
+                repository.getReceivedRequestsFromFirestore(currentUser.uid,
+                    onSuccess = { receivedRequestsList ->
+                        _receivedRequests.value = receivedRequestsList
+                        Log.d("UserAccountViewModel", "Received requests list: $receivedRequestsList")
+                    },
+                    onFailure = { exception ->
+                        Log.e("UserAccountViewModel", "Error fetching received requests: $exception")
+                    }
+                )
+            }
+        }
+    }
+
+//
+//    fun fetchSentRequests() {
+//    viewModelScope.launch {
+//      userAccount.value?.let { currentUser ->
+//        _sentRequests.value = emptyList()
+//        val sentRequestsList =
+//            currentUser.sentRequests
+//                .map { requestId -> async { getUserAccountAsync(requestId) } }
+//                .awaitAll()
+//                .filterNotNull()
+//        _sentRequests.value = sentRequestsList
+//        Log.d("UserAccountViewModel", "Fetched sent requests list: $sentRequestsList")
+//        Log.d("UserAccountViewModel", "Fetched sent requests list length: ${sentRequestsList.size}")
+//      }
+//    }
+//  }
+//
+//  fun fetchReceivedRequests() {
+//    viewModelScope.launch {
+//      userAccount.value?.let { currentUser ->
+//        val receivedRequestsList =
+//            currentUser.receivedRequests
+//                .map { requestId -> async { getUserAccountAsync(requestId) } }
+//                .awaitAll()
+//                .filterNotNull()
+//        _receivedRequests.value = receivedRequestsList
+//        Log.d("UserAccountViewModel", "Fetched received requests list: $receivedRequestsList")
+//      }
+//    }
+//  }
 
   fun deleteAccount(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val user = firebaseAuth?.currentUser ?: FirebaseAuth.getInstance().currentUser
