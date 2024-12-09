@@ -35,6 +35,7 @@ import com.android.sample.ui.theme.DarkBlue
 @OptIn(ExperimentalMaterial3Api::class)
 
 
+
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
@@ -50,18 +51,15 @@ fun FriendsScreen(
         friend.firstName.contains(searchQuery.value, ignoreCase = true)
     }
 
-    // Exact background color/gradient from the image
-    val gradientColors = listOf(
-        Color(0xFFD5D6D6), // Light gray from image background
-        Color(0xFFBABBBB)  // Slightly darker gray for depth
-    )
+    // Gradient background
+    val gradientColors = listOf(Color(0xFFAAB0B0), Color(0xFFECECEC)) // Light gray to soft white gradient
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = gradientColors // Apply the matching gradient
+                    colors = gradientColors
                 )
             )
     ) {
@@ -74,25 +72,26 @@ fun FriendsScreen(
             TopBar(navigationActions = navigationActions, title = R.string.friends_title)
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Search bar and Add button (unchanged)
+            // Search bar and Add button remain unchanged
             SearchBarWithAddButton(searchQuery, navigationActions)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             if (filteredFriendsList.isEmpty()) {
-                // Empty State Design without the circle
+                // Empty State Design with blended background and image shadow
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Sad face image
+                    // Image with shadow
                     Image(
                         painter = painterResource(id = R.drawable.sadface), // Replace with your image
                         contentDescription = "Sad Image",
                         modifier = Modifier
                             .size(200.dp)
                             .align(Alignment.CenterHorizontally)
+                            .shadow(12.dp, CircleShape) // Add subtle shadow
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Surface(
@@ -151,9 +150,6 @@ fun FriendsScreen(
         }
     }
 }
-
-
-
 @Composable
 fun SearchBarWithAddButton(
     searchQuery: MutableState<String>,
@@ -166,14 +162,15 @@ fun SearchBarWithAddButton(
             .background(
                 Color.White,
                 shape = RoundedCornerShape(topStart = 25.dp, topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 25.dp)
-            )
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         // Search Field
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(start = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -205,8 +202,8 @@ fun SearchBarWithAddButton(
         Button(
             onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
             modifier = Modifier
-                .height(50.dp)
-                .width(90.dp),
+                .fillMaxHeight() // Ensure it stretches fully vertically
+                .width(90.dp),  // Optional fixed width
             shape = RoundedCornerShape(topStart = 0.dp, topEnd = 10.dp, bottomStart = 0.dp, bottomEnd = 25.dp),
             contentPadding = PaddingValues(0.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C63FF)) // Purple color
