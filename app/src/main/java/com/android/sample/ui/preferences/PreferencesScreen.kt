@@ -168,7 +168,8 @@ fun <T> DropdownMenuItem(
                 painter = rememberImagePainter(data = R.drawable.arrow_white),
                 contentDescription = "Rectangle",
                 modifier = Modifier.size(15.dp))
-            Text(text = currentValue.toString(), color = Color.White, fontFamily = OpenSans, fontSize = ButtonFontSize)
+            Text(text = currentValue.toString(), color = Color.White, modifier = Modifier.testTag(testTag + "Text"),
+                fontFamily = OpenSans, fontSize = ButtonFontSize)
         }
 
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {

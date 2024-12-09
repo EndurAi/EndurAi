@@ -57,9 +57,9 @@ class PreferencesScreenTest {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
 
     composeTestRule.onNodeWithTag("unitsSystemButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
+    composeTestRule.onNodeWithTag("unitsSystemText").assertTextEquals("METRIC")
     composeTestRule.onNodeWithTag("weightUnitButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
+    composeTestRule.onNodeWithTag("weightUnitText").assertTextEquals("KG")
 
     // Simulate user changing the system of units and weight unit
     composeTestRule.onNodeWithTag("unitsSystemButton").performClick()
@@ -73,8 +73,8 @@ class PreferencesScreenTest {
     composeTestRule.onNodeWithTag("weightUnitLBS").performClick()
 
     // Verify that the selections were updated
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
+    composeTestRule.onNodeWithTag("unitsSystemText").assertTextEquals("IMPERIAL")
+    composeTestRule.onNodeWithTag("weightUnitText").assertTextEquals("LBS")
   }
 
   @Test
@@ -82,8 +82,8 @@ class PreferencesScreenTest {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
     val secondPreferences = Preferences(unitsSystem = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
     // check that users has default value of preferences
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
+    composeTestRule.onNodeWithTag("unitsSystemText").assertTextEquals("METRIC")
+    composeTestRule.onNodeWithTag("weightUnitText").assertTextEquals("KG")
 
     // Simulate user changing the system of units and weight unit
     // from (METRIC, KG) to (IMPERIAL, LBS)
@@ -96,8 +96,8 @@ class PreferencesScreenTest {
     composeTestRule.onNodeWithTag("preferencesSaveButton").performClick()
 
     // check that users has default (IMPERIAL, LBS) of preferences
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
+    composeTestRule.onNodeWithTag("unitsSystemText").assertTextEquals("IMPERIAL")
+    composeTestRule.onNodeWithTag("weightUnitText").assertTextEquals("LBS")
 
     // check if the preferences were updated in the repository
     verify(mockPreferencesRepository).updatePreferences(eq(secondPreferences), any(), any())
@@ -116,8 +116,8 @@ class PreferencesScreenTest {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
     val secondPreferences = Preferences(unitsSystem = UnitsSystem.METRIC, weight = WeightUnit.KG)
     // check that users has default value of preferences
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
+    composeTestRule.onNodeWithTag("unitsSystemText").assertTextEquals("METRIC")
+    composeTestRule.onNodeWithTag("weightUnitText").assertTextEquals("KG")
 
     // Simulate user changing the system of units and weight unit
     // from (METRIC, KG) to (METRIC, KG)
@@ -130,8 +130,8 @@ class PreferencesScreenTest {
     composeTestRule.onNodeWithTag("preferencesSaveButton").performClick()
 
     // check that users has default (IMPERIAL, LBS) of preferences
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("METRIC")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("KG")
+    composeTestRule.onNodeWithTag("unitsSystemText").assertTextEquals("METRIC")
+    composeTestRule.onNodeWithTag("weightUnitText").assertTextEquals("KG")
 
     // check if the the user doesn't make unnecessary update in teh firestore repository
     verify(mockPreferencesRepository, never())
