@@ -1,6 +1,7 @@
 package com.android.sample.model.userAccount
 
 import android.util.Log
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -243,22 +244,29 @@ class UserAccountRepositoryFirestore(
         onSuccess: (List<UserAccount>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        db.collection("users").document(userId).get()
+        db.collection("userAccounts").document(userId).get()
             .addOnSuccessListener { document ->
                 val friendIds = document.toObject(UserAccount::class.java)?.friends ?: emptyList()
+                Log.d("UserAccountRepof", "Friend IDs: $friendIds")
                 val friendAccounts = mutableListOf<UserAccount>()
 
-                friendIds.forEach { friendId ->
-                    db.collection("users").document(friendId).get()
+                val tasks = friendIds.map { friendId ->
+                    Log.d("UserAccountRepof", "Fetching friend with ID: $friendId")
+                    db.collection("userAccounts").document(friendId).get()
                         .addOnSuccessListener { friendDoc ->
-                            friendDoc.toObject(UserAccount::class.java)?.let { friendAccounts.add(it) }
+                            friendDoc.toObject(UserAccount::class.java)?.let {
+                                friendAccounts.add(it)
+                                Log.d("UserAccountRepof", "Added friend account: $it")
+                            }
                         }
                         .addOnFailureListener(onFailure)
                 }
 
-                onSuccess(friendAccounts)
+                Tasks.whenAllComplete(tasks).addOnSuccessListener {
+                    Log.d("UserAccountRepof1", "Fetched friend accounts: $friendAccounts")
+                    onSuccess(friendAccounts)
+                }.addOnFailureListener(onFailure)
             }
-            .addOnFailureListener(onFailure)
     }
 
 

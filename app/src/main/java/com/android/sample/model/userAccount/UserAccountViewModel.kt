@@ -276,6 +276,7 @@ open class UserAccountViewModel(
                 repository.getFriendsFromFirestore(currentUser.uid,
                     onSuccess = { friendsList ->
                         _friends.value = friendsList
+                        Log.d("UserAccountViewModel", "Friends list: $friendsList")
                     },
                     onFailure = { exception ->
                         Log.e("UserAccountViewModel", "Error fetching friends: $exception")
