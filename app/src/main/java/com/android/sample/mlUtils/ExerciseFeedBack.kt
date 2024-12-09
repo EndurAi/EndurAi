@@ -10,6 +10,8 @@ import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
+import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_LEFT_Criterions
+import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_RIGHT_Criterions
 import com.android.sample.model.workout.ExerciseType
 import kotlin.math.abs
 
@@ -186,7 +188,7 @@ class ExerciseFeedBack {
           when (exerciseType) {
             ExerciseType.DOWNWARD_DOG -> listOf(DownwardDogCriterions)
             ExerciseType.TREE_POSE -> TODO()
-            ExerciseType.WARRIOR_II -> TODO()
+            ExerciseType.WARRIOR_II -> listOf(Warrior_2_RIGHT_Criterions, Warrior_2_LEFT_Criterions)
             ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCriterions)
             ExerciseType.SQUATS -> TODO()
             ExerciseType.PLANK -> listOf(PlankExerciseCriterions)
