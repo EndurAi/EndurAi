@@ -11,6 +11,7 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.camera.view.video.AudioConfig
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,19 +23,29 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.android.sample.R
+import com.android.sample.mlUtils.ExerciseFeedBack
+import com.android.sample.mlUtils.MyPoseLandmark
+import com.android.sample.mlUtils.PoseDetectionJoints
 import com.android.sample.model.camera.CameraViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.launch
 import java.io.File
 
 /** A class that provides composables for displaying and interacting with the camera feed. */
@@ -56,10 +67,12 @@ class CameraFeedBack {
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     public fun CameraScreen(
-        cameraViewModel: CameraViewModel,
-        modifier: Modifier = Modifier,
-        poseDetectionRequired: Boolean = false // Not yet used
+      cameraViewModel: CameraViewModel,
+      modifier: Modifier = Modifier,
+      poseDetectionRequired: Boolean = false, // Not yet used,
+      exerciseCriterions: ExerciseFeedBack.Companion.ExerciseCriterion? = null
     ) {
+
 
       val cameraPermissionState: PermissionState =
           rememberPermissionState(android.Manifest.permission.CAMERA)
@@ -79,10 +92,30 @@ class CameraFeedBack {
      * @param cameraViewModel The ViewModel that manages the camera state.
      */
     @Composable
-    fun CameraBody(cameraViewModel: CameraViewModel, poseDetectionRequired: Boolean) {
+    fun CameraBody(cameraViewModel: CameraViewModel, poseDetectionRequired: Boolean, exerciseCriterions: ExerciseFeedBack.Companion.ExerciseCriterion? = null) {
 
       val context = LocalContext.current
       val lifecycleOwner = LocalLifecycleOwner.current
+      var lastPose by remember { mutableStateOf<List<MyPoseLandmark>>(ArrayList()) } // latest position of the joints
+      var displayedJoints by remember { mutableStateOf(setOf<Triple<Int, Int, Int>>()) } // joints that need to be displayed
+
+
+
+
+
+
+      lifecycleOwner.lifecycleScope.launch {
+        cameraViewModel.lastPose.collect{
+          lastPose = it
+          val assesment = ExerciseFeedBack.assessLandMarks(it, exerciseCriterions!!)
+          assesment.second.forEach {
+
+          }
+
+        }
+      }
+
+
 
       Scaffold(
           modifier = Modifier.fillMaxSize(),
@@ -93,25 +126,47 @@ class CameraFeedBack {
                       painter = painterResource(id = R.drawable.baseline_flip_camera_android_24),
                       contentDescription = "Switch camera")
                 }
-          }) { pd: PaddingValues ->
-            AndroidView(
-                modifier = Modifier.padding(pd).fillMaxSize(),
-                factory = { context ->
-                  PreviewView(context)
-                      .apply {
-                        layoutParams =
-                            LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT)
-                        setBackgroundColor(android.graphics.Color.BLACK)
-                        scaleType = PreviewView.ScaleType.FIT_CENTER
-                      }
-                      .also { previewView ->
-                        previewView.controller = cameraViewModel.cameraController.value
-                        // cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
-                      }
-                })
-          }
+          }){ pd: PaddingValues ->
+  Box(modifier = Modifier
+    .padding(pd)
+    .fillMaxSize()) {
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { context ->
+          PreviewView(context)
+              .apply {
+                layoutParams =
+                    LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.FILL_PARENT,
+                        ViewGroup.LayoutParams.FILL_PARENT)
+                setBackgroundColor(android.graphics.Color.BLACK)
+                scaleType = PreviewView.ScaleType.FIT_START
+              }
+              .also { previewView ->
+                previewView.controller = cameraViewModel.cameraController.value
+                // cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
+              }
+        })
+
+    Canvas(modifier = Modifier) {
+      val off = 15
+      if (lastPose.isNotEmpty()) {
+        drawCircle(
+          color = androidx.compose.ui.graphics.Color.Yellow,
+          radius = 5f,
+          center = Offset(0f/(16/9),0f/(16/9))
+        )
+        lastPose.forEach {
+          drawCircle(
+            color = androidx.compose.ui.graphics.Color.Yellow,
+            radius = 5f,
+            center = Offset(it.x*0.628f,it.y*0.628f)
+          )
+        }
+      }
+    }
+  }
+}
 
       // Bind the camera feedback stream to the composable and unbind when it the composable is no
       // longer displayed

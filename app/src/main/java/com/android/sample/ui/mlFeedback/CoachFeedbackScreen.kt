@@ -85,6 +85,7 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
               CameraFeedBack.CameraScreen(
                   cameraViewModel = cameraViewModel,
                   modifier = Modifier.size(220.dp, 350.dp).testTag("cameraFeedback"),
+                poseDetectionRequired = true
               )
               Button(
                   colors =
