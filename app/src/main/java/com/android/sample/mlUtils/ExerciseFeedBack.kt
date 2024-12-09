@@ -156,8 +156,8 @@ class ExerciseFeedBack {
      */
     fun preambleCriterion(
         exerciseCriterion: ExerciseCriterion,
-        onSuccess: () -> Unit,
-        onFailure: () -> Unit
+        onSuccess: () -> Unit = {},
+        onFailure: () -> Unit = {}
     ): ExerciseCriterion {
       val preambleCriterion =
           exerciseCriterion.angleCriterionSet.map { (angleCriterionL, angleCriterionR) ->

@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.mlUtils.ExerciseFeedBack
 import com.android.sample.mlUtils.MlCoach
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.workout.ExerciseType
@@ -42,6 +43,7 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
   var userHasRecorded by remember { mutableStateOf(false) }
   var selectedExercise by remember { mutableStateOf(ExerciseType.PLANK) }
   var feedback by remember { mutableStateOf("") }
+  var jointPositionRequested by remember { mutableStateOf(false) }
   val context = LocalContext.current
   Scaffold(
       topBar = {
@@ -85,7 +87,9 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
               CameraFeedBack.CameraScreen(
                   cameraViewModel = cameraViewModel,
                   modifier = Modifier.size(220.dp, 350.dp).testTag("cameraFeedback"),
-                poseDetectionRequired = true
+                poseDetectionRequired = jointPositionRequested,
+                exerciseCriterions = ExerciseFeedBack.getCriterions(selectedExercise)
+
               )
               Button(
                   colors =
@@ -96,6 +100,7 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                   onClick = {
                     if (userHasRecorded) {
                       isRecordingInCamera = false
+                      jointPositionRequested = false
                     } else {
                       userHasRecorded = true
                       cameraViewModel.enablePoseRecognition()
@@ -106,6 +111,12 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                         if (isRecordingInCamera) "Recording..."
                         else if (userHasRecorded) "Record again" else "Tap to record")
                   }
+              if (isRecordingInCamera){
+                //ask the user if he wats to see in live his joints for correction
+                Button(onClick = {jointPositionRequested = jointPositionRequested.not()}) {
+                  Text(text = if (!jointPositionRequested) "See joints"  else "Hide joints")
+                }
+              }
               if (userHasRecorded && !isRecordingInCamera) {
                 Button(
                     onClick = {

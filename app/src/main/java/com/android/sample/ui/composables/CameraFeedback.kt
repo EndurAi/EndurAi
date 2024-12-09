@@ -39,7 +39,7 @@ import androidx.lifecycle.lifecycleScope
 import com.android.sample.R
 import com.android.sample.mlUtils.ExerciseFeedBack
 import com.android.sample.mlUtils.MyPoseLandmark
-import com.android.sample.mlUtils.PoseDetectionJoints
+import com.android.sample.mlUtils.exercisesCriterions.AngleCriterionComments
 import com.android.sample.model.camera.CameraViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -70,8 +70,9 @@ class CameraFeedBack {
       cameraViewModel: CameraViewModel,
       modifier: Modifier = Modifier,
       poseDetectionRequired: Boolean = false, // Not yet used,
-      exerciseCriterions: ExerciseFeedBack.Companion.ExerciseCriterion? = null
-    ) {
+      exerciseCriterions: List<ExerciseFeedBack.Companion.ExerciseCriterion>? = null,
+
+      ) {
 
 
       val cameraPermissionState: PermissionState =
@@ -79,7 +80,7 @@ class CameraFeedBack {
 
       if (cameraPermissionState.status.isGranted) {
         Box(modifier = modifier) {
-          CameraBody(cameraViewModel, poseDetectionRequired = poseDetectionRequired)
+          CameraBody(cameraViewModel, poseDetectionRequired = poseDetectionRequired, exerciseCriterions)
         }
       } else {
         LaunchedEffect(Unit) { cameraPermissionState.launchPermissionRequest() }
@@ -92,7 +93,7 @@ class CameraFeedBack {
      * @param cameraViewModel The ViewModel that manages the camera state.
      */
     @Composable
-    fun CameraBody(cameraViewModel: CameraViewModel, poseDetectionRequired: Boolean, exerciseCriterions: ExerciseFeedBack.Companion.ExerciseCriterion? = null) {
+    fun CameraBody(cameraViewModel: CameraViewModel, poseDetectionRequired: Boolean, exerciseCriterions: List<ExerciseFeedBack.Companion.ExerciseCriterion>? ) {
 
       val context = LocalContext.current
       val lifecycleOwner = LocalLifecycleOwner.current
@@ -105,13 +106,27 @@ class CameraFeedBack {
 
 
       lifecycleOwner.lifecycleScope.launch {
-        cameraViewModel.lastPose.collect{
-          lastPose = it
-          val assesment = ExerciseFeedBack.assessLandMarks(it, exerciseCriterions!!)
-          assesment.second.forEach {
+        if(!poseDetectionRequired){return@launch}
+        cameraViewModel.lastPose.collect{ pose ->
+          lastPose = pose
+          if (pose.isNotEmpty()) {
+            val preambleAssesmentList = exerciseCriterions?.map { ExerciseFeedBack.assessLandMarks(pose, ExerciseFeedBack.preambleCriterion(it))}
+            val assesmentList = exerciseCriterions?.map { ExerciseFeedBack.assessLandMarks(pose, it)}
+           val assesment =
+             assesmentList?.zip(preambleAssesmentList ?: emptyList())?.filter{(assesement, preamble) -> preamble.first}
+               ?.firstOrNull()?.first
+            //take the mos probable
+            if (assesment!=null) {
+
+
+              val temp = assesment.second
+                .filter { it != AngleCriterionComments.SUCCESS }
+                .flatMap { angleCriterionComments -> angleCriterionComments.focusedJoints }
+                .toSet()
+              displayedJoints = temp
+            }
 
           }
-
         }
       }
 
@@ -148,20 +163,55 @@ class CameraFeedBack {
               }
         })
 
-    Canvas(modifier = Modifier) {
-      val off = 15
-      if (lastPose.isNotEmpty()) {
-        drawCircle(
-          color = androidx.compose.ui.graphics.Color.Yellow,
-          radius = 5f,
-          center = Offset(0f/(16/9),0f/(16/9))
-        )
-        lastPose.forEach {
-          drawCircle(
-            color = androidx.compose.ui.graphics.Color.Yellow,
-            radius = 5f,
-            center = Offset(it.x*0.628f,it.y*0.628f)
-          )
+    if (poseDetectionRequired) {
+      Canvas(modifier = Modifier) {
+        val off = 15
+        if (lastPose.isNotEmpty()) {
+
+          displayedJoints.forEach { triple ->
+            //get the 3 points position
+            val a = lastPose[triple.first]
+            val b = lastPose[triple.second]
+            val c = lastPose[triple.third]
+
+            //draw the 3 points
+            val offset = 0.628f
+            drawCircle(
+              color = androidx.compose.ui.graphics.Color.Yellow,
+              radius = 5f,
+              center = Offset(a.x * offset, a.y * offset)
+            )
+
+            drawCircle(
+              color = androidx.compose.ui.graphics.Color.Yellow,
+              radius = 5f,
+              center = Offset(b.x * offset, b.y * offset)
+            )
+
+            drawCircle(
+              color = androidx.compose.ui.graphics.Color.Yellow,
+              radius = 5f,
+              center = Offset(c.x * offset, c.y * offset)
+            )
+
+            // Draw a red line from a to b
+            drawLine(
+              color = androidx.compose.ui.graphics.Color.Red,
+              start = Offset(a.x * offset, a.y * offset),
+              end = Offset(b.x * offset, b.y * offset),
+              strokeWidth = 3f
+            )
+
+// Draw a red line from b to c
+            drawLine(
+              color = androidx.compose.ui.graphics.Color.Red,
+              start = Offset(b.x * offset, b.y * offset),
+              end = Offset(c.x * offset, c.y * offset),
+              strokeWidth = 3f
+            )
+
+
+          }
         }
       }
     }
