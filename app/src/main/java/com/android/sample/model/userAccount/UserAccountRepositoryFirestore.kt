@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class UserAccountRepositoryFirestore(
     private val db: FirebaseFirestore,
@@ -16,6 +17,12 @@ class UserAccountRepositoryFirestore(
 ) : UserAccountRepository {
 
   private val collectionPath = "userAccounts"
+    private val logTag = "UserAccountRepo"
+
+    private val searchedField = "firstName"
+    private val receivedRequestsField = "receivedRequests"
+    private val sentRequestsField = "sentRequests"
+    private val friendsField = "friends"
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {
@@ -51,7 +58,7 @@ class UserAccountRepositoryFirestore(
               }
             }
             .addOnFailureListener { exception ->
-              Log.e("UserAccountRepo", "Error getting user account", exception)
+              Log.e(logTag, "Error getting user account", exception)
               onFailure(exception)
             }
       }
@@ -73,7 +80,7 @@ class UserAccountRepositoryFirestore(
           saveUserAccountToCache(userAccount) // Cache locally
         }
         .addOnFailureListener { exception ->
-          Log.e("UserAccountRepo", "Error creating user account", exception)
+          Log.e(logTag, "Error creating user account", exception)
           onFailure(exception)
         }
   }
@@ -91,7 +98,7 @@ class UserAccountRepositoryFirestore(
           saveUserAccountToCache(userAccount) // Cache locally
         }
         .addOnFailureListener { exception ->
-          Log.e("UserAccountRepo", "Error updating user account", exception)
+          Log.e(logTag, "Error updating user account", exception)
           onFailure(exception)
         }
   }
@@ -118,8 +125,8 @@ class UserAccountRepositoryFirestore(
             val updatedUserFriends = currentUser.friends - friendId
             val updatedFriendFriends = friend.friends - userAccount.userId
 
-            transaction.update(userRef, "friends", updatedUserFriends)
-            transaction.update(friendRef, "friends", updatedFriendFriends)
+            transaction.update(userRef, friendsField, updatedUserFriends)
+            transaction.update(friendRef, friendsField, updatedFriendFriends)
         }
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
@@ -155,8 +162,8 @@ class UserAccountRepositoryFirestore(
             val newSentRequests = fromUserUpdated.sentRequests + toUserId
             val newReceivedRequests = toUserUpdated.receivedRequests + fromUser.userId
 
-            transaction.update(fromUserRef, "sentRequests", newSentRequests)
-            transaction.update(toUserRef, "receivedRequests", newReceivedRequests)
+            transaction.update(fromUserRef, sentRequestsField, newSentRequests)
+            transaction.update(toUserRef, receivedRequestsField, newReceivedRequests)
         }
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
@@ -188,11 +195,11 @@ class UserAccountRepositoryFirestore(
             val updatedFriendFriends = friend.friends + userAccount.userId
             val updatedFriendSentRequests = friend.sentRequests - userAccount.userId
 
-            transaction.update(userRef, "friends", updatedUserFriends)
-            transaction.update(userRef, "receivedRequests", updatedUserReceivedRequests)
+            transaction.update(userRef, friendsField, updatedUserFriends)
+            transaction.update(userRef, receivedRequestsField, updatedUserReceivedRequests)
 
-            transaction.update(friendRef, "friends", updatedFriendFriends)
-            transaction.update(friendRef, "sentRequests", updatedFriendSentRequests)
+            transaction.update(friendRef, friendsField, updatedFriendFriends)
+            transaction.update(friendRef, sentRequestsField, updatedFriendSentRequests)
         }
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
@@ -221,8 +228,8 @@ class UserAccountRepositoryFirestore(
             val updatedUserReceivedRequests = currentUser.receivedRequests - friendId
             val updatedFriendSentRequests = friend.sentRequests - userAccount.userId
 
-            transaction.update(userRef, "receivedRequests", updatedUserReceivedRequests)
-            transaction.update(friendRef, "sentRequests", updatedFriendSentRequests)
+            transaction.update(userRef, receivedRequestsField, updatedUserReceivedRequests)
+            transaction.update(friendRef, sentRequestsField, updatedFriendSentRequests)
         }
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
@@ -235,19 +242,19 @@ class UserAccountRepositoryFirestore(
       onFailure: (Exception) -> Unit
   ) {
     val firestore = FirebaseFirestore.getInstance()
-    Log.d("UserAccountRepo", "Searching users with query: $query")
+    Log.d(logTag, "Searching users with query: $query")
     firestore
         .collection(collectionPath)
-        .whereGreaterThanOrEqualTo("firstName", query)
-        .whereLessThan("firstName", query + "\uf8ff") // Firebase query for prefix matching
+        .whereGreaterThanOrEqualTo(searchedField, query)
+        .whereLessThan(searchedField, query + "\uf8ff") // Firebase query for prefix matching
         .get()
         .addOnSuccessListener { result ->
           val users = result.documents.mapNotNull { it.toObject(UserAccount::class.java) }
-          Log.d("UserAccountRepo", "Found users: $users")
+          Log.d(logTag, "Found users: $users")
           onSuccess(users)
         }
         .addOnFailureListener { exception ->
-          Log.e("UserAccountRepo", "Error searching users", exception)
+          Log.e(logTag, "Error searching users", exception)
           onFailure(exception)
         }
   }
@@ -262,7 +269,7 @@ class UserAccountRepositoryFirestore(
         .delete()
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { exception ->
-          Log.e("UserAccountRepo", "Error deleting user account", exception)
+          Log.e(logTag, "Error deleting user account", exception)
           onFailure(exception)
         }
   }
@@ -276,23 +283,23 @@ class UserAccountRepositoryFirestore(
         db.collection(collectionPath).document(userId).get()
             .addOnSuccessListener { document ->
                 val friendIds = document.toObject(UserAccount::class.java)?.friends ?: emptyList()
-                Log.d("UserAccountRepof", "Friend IDs: $friendIds")
+                Log.d( logTag, "Friend IDs: $friendIds")
                 val friendAccounts = mutableListOf<UserAccount>()
 
                 val tasks = friendIds.map { friendId ->
-                    Log.d("UserAccountRepof", "Fetching friend with ID: $friendId")
+                    Log.d(logTag, "Fetching friend with ID: $friendId")
                     db.collection(collectionPath).document(friendId).get()
                         .addOnSuccessListener { friendDoc ->
                             friendDoc.toObject(UserAccount::class.java)?.let {
                                 friendAccounts.add(it)
-                                Log.d("UserAccountRepof", "Added friend account: $it")
+                                Log.d(logTag, "Added friend account: $it")
                             }
                         }
                         .addOnFailureListener(onFailure)
                 }
 
                 Tasks.whenAllComplete(tasks).addOnSuccessListener {
-                    Log.d("UserAccountRepof1", "Fetched friend accounts: $friendAccounts")
+                    Log.d(logTag, "Fetched friend accounts: $friendAccounts")
                     onSuccess(friendAccounts)
                 }.addOnFailureListener(onFailure)
             }
@@ -307,23 +314,23 @@ class UserAccountRepositoryFirestore(
         db.collection(collectionPath).document(userId).get()
             .addOnSuccessListener { document ->
                 val sentRequestIds = document.toObject(UserAccount::class.java)?.sentRequests ?: emptyList()
-                Log.d("UserAccountRepof", "Sent Request IDs: $sentRequestIds")
+                Log.d(logTag, "Sent Request IDs: $sentRequestIds")
                 val sentRequestAccounts = mutableListOf<UserAccount>()
 
                 val tasks = sentRequestIds.map { requestId ->
-                    Log.d("UserAccountRepof", "Fetching sent request with ID: $requestId")
+                    Log.d(logTag, "Fetching sent request with ID: $requestId")
                     db.collection(collectionPath).document(requestId).get()
                         .addOnSuccessListener { requestDoc ->
                             requestDoc.toObject(UserAccount::class.java)?.let {
                                 sentRequestAccounts.add(it)
-                                Log.d("UserAccountRepof", "Added sent request account: $it")
+                                Log.d(logTag, "Added sent request account: $it")
                             }
                         }
                         .addOnFailureListener(onFailure)
                 }
 
                 Tasks.whenAllComplete(tasks).addOnSuccessListener {
-                    Log.d("UserAccountRepof1", "Fetched sent request accounts: $sentRequestAccounts")
+                    Log.d(logTag, "Fetched sent request accounts: $sentRequestAccounts")
                     onSuccess(sentRequestAccounts)
                 }.addOnFailureListener(onFailure)
             }
@@ -337,23 +344,23 @@ class UserAccountRepositoryFirestore(
         db.collection(collectionPath).document(userId).get()
             .addOnSuccessListener { document ->
                 val receivedRequestIds = document.toObject(UserAccount::class.java)?.receivedRequests ?: emptyList()
-                Log.d("UserAccountRepof", "Received Request IDs: $receivedRequestIds")
+                Log.d(logTag, "Received Request IDs: $receivedRequestIds")
                 val receivedRequestAccounts = mutableListOf<UserAccount>()
 
                 val tasks = receivedRequestIds.map { requestId ->
-                    Log.d("UserAccountRepof", "Fetching received request with ID: $requestId")
+                    Log.d(logTag, "Fetching received request with ID: $requestId")
                     db.collection(collectionPath).document(requestId).get()
                         .addOnSuccessListener { requestDoc ->
                             requestDoc.toObject(UserAccount::class.java)?.let {
                                 receivedRequestAccounts.add(it)
-                                Log.d("UserAccountRepof", "Added received request account: $it")
+                                Log.d(logTag, "Added received request account: $it")
                             }
                         }
                         .addOnFailureListener(onFailure)
                 }
 
                 Tasks.whenAllComplete(tasks).addOnSuccessListener {
-                    Log.d("UserAccountRepof1", "Fetched received request accounts: $receivedRequestAccounts")
+                    Log.d(logTag, "Fetched received request accounts: $receivedRequestAccounts")
                     onSuccess(receivedRequestAccounts)
                 }.addOnFailureListener(onFailure)
             }
