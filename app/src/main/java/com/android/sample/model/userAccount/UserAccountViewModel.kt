@@ -176,7 +176,7 @@ open class UserAccountViewModel(
   }
 
   // synchronous friends
-  fun getFriends(): List<UserAccount> {
+  suspend fun getFriends(): List<UserAccount> {
     val friends = mutableListOf<UserAccount>()
     userAccount.value?.friends?.forEach { friendId ->
       repository.getUserAccount(
@@ -208,7 +208,7 @@ open class UserAccountViewModel(
         })
   }
 
-  fun getSentRequests(): List<UserAccount> {
+  suspend fun getSentRequests(): List<UserAccount> {
     val sentRequests = mutableListOf<UserAccount>()
     userAccount.value?.sentRequests?.forEach { requestId ->
       repository.getUserAccount(
@@ -221,7 +221,7 @@ open class UserAccountViewModel(
     return sentRequests
   }
 
-  fun getReceivedRequests(): List<UserAccount> {
+  suspend fun getReceivedRequests(): List<UserAccount> {
     val receivedRequests = mutableListOf<UserAccount>()
     userAccount.value?.receivedRequests?.forEach { requestId ->
       repository.getUserAccount(
@@ -255,22 +255,38 @@ open class UserAccountViewModel(
     return deferred.await()
   }
 
-  fun fetchFriends() {
-    viewModelScope.launch {
-      userAccount.value?.let { currentUser ->
-        val friendsList =
-            currentUser.friends
-                .map { friendId -> async { getUserAccountAsync(friendId) } }
-                .awaitAll()
-                .filterNotNull()
+//  fun fetchFriends() {
+//    viewModelScope.launch {
+//      userAccount.value?.let { currentUser ->
+//        val friendsList =
+//            currentUser.friends
+//                .map { friendId -> async { getUserAccountAsync(friendId) } }
+//                .awaitAll()
+//                .filterNotNull()
+//
+//        _friends.value = friendsList
+//        Log.d("UserAccountViewModel", "Fetched friends list: $friendsList")
+//      }
+//    }
+//  }
 
-        _friends.value = friendsList
-        Log.d("UserAccountViewModel", "Fetched friends list: $friendsList")
-      }
+    fun fetchFriends() {
+        viewModelScope.launch {
+            FirebaseAuth.getInstance().currentUser?.let { currentUser ->
+                repository.getFriendsFromFirestore(currentUser.uid,
+                    onSuccess = { friendsList ->
+                        _friends.value = friendsList
+                    },
+                    onFailure = { exception ->
+                        Log.e("UserAccountViewModel", "Error fetching friends: $exception")
+                    }
+                )
+            }
+        }
     }
-  }
 
-  fun fetchSentRequests() {
+
+    fun fetchSentRequests() {
     viewModelScope.launch {
       userAccount.value?.let { currentUser ->
         _sentRequests.value = emptyList()

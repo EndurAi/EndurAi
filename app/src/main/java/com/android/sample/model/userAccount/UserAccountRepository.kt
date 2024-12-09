@@ -101,4 +101,6 @@ interface UserAccountRepository {
    * @param onFailure Callback function to be invoked with an Exception if the deletion fails.
    */
   fun deleteUserAccount(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  fun getFriendsFromFirestore(uid: String, onSuccess: (List<UserAccount>) -> Unit, onFailure: (Exception) -> Unit)
 }

@@ -237,7 +237,32 @@ class UserAccountRepositoryFirestore(
         }
   }
 
-  private fun saveUserAccountToCache(userAccount: UserAccount) {
+
+    override fun getFriendsFromFirestore(
+        userId: String,
+        onSuccess: (List<UserAccount>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                val friendIds = document.toObject(UserAccount::class.java)?.friends ?: emptyList()
+                val friendAccounts = mutableListOf<UserAccount>()
+
+                friendIds.forEach { friendId ->
+                    db.collection("users").document(friendId).get()
+                        .addOnSuccessListener { friendDoc ->
+                            friendDoc.toObject(UserAccount::class.java)?.let { friendAccounts.add(it) }
+                        }
+                        .addOnFailureListener(onFailure)
+                }
+
+                onSuccess(friendAccounts)
+            }
+            .addOnFailureListener(onFailure)
+    }
+
+
+    private fun saveUserAccountToCache(userAccount: UserAccount) {
     CoroutineScope(Dispatchers.IO).launch { localCache.saveUserAccount(userAccount) }
   }
 }
