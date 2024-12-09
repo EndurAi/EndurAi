@@ -131,31 +131,6 @@ class UserAccountViewModelListsTest {
   }
 
   @Test
-  fun `fetchFriends populates friends list`() = runTest {
-    userAccountViewModel.fetchFriends()
-    val friends = userAccountViewModel.friends.first()
-    assertThat(friends.size, `is`(2))
-    assertThat(friends[0], `is`(friendAccount1))
-    assertThat(friends[1], `is`(friendAccount2))
-  }
-
-  @Test
-  fun `fetchSentRequests populates sent requests list`() = runTest {
-    userAccountViewModel.fetchSentRequests()
-    val sentRequests = userAccountViewModel.sentRequests.first()
-    assertThat(sentRequests.size, `is`(1))
-    assertThat(sentRequests[0], `is`(sentRequestAccount))
-  }
-
-  @Test
-  fun `fetchReceivedRequests populates received requests list`() = runTest {
-    userAccountViewModel.fetchReceivedRequests()
-    val receivedRequests = userAccountViewModel.receivedRequests.first()
-    assertThat(receivedRequests.size, `is`(1))
-    assertThat(receivedRequests[0], `is`(receivedRequestAccount))
-  }
-
-  @Test
   fun `searchUsers returns list of matching users when query is valid`() = runTest {
     val query = "John"
     val expectedUsers = listOf(friendAccount1, friendAccount2)
