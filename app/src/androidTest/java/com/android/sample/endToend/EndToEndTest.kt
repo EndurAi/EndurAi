@@ -405,7 +405,7 @@ class EndToEndTest {
   private fun preferencesScreenIsWellDisplayed() {
     val testName = "preferencesScreenIsWellDisplayed"
 
-    nodeControl("preferencesTopBar", testName)
+    nodeControl("TopBar", testName)
 
     nodeControl("ArrowBackButton", testName)
 

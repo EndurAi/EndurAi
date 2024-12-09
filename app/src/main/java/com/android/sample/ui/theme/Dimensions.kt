@@ -24,4 +24,5 @@ object FontSizes {
 object Shape {
     val buttonShape = RoundedCornerShape(topStart = 40.dp, topEnd = 15.dp, bottomStart = 15.dp, bottomEnd = 40.dp)
     val roundButtonShape = RoundedCornerShape(30.dp)
+    val smallButtonShape = RoundedCornerShape(topStart = 30.dp, topEnd = 9.dp, bottomStart = 9.dp, bottomEnd = 30.dp)
 }

@@ -42,7 +42,7 @@ class PreferencesScreenTest {
   fun displayAllComponents() {
     composeTestRule.setContent { PreferencesScreen(mockNavHostController, preferencesViewModel) }
 
-    composeTestRule.onNodeWithTag("preferencesTopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("preferencesSaveButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("preferencesSaveButton").assertHasClickAction()
 
