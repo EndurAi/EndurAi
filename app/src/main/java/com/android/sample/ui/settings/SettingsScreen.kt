@@ -56,6 +56,7 @@ fun SettingsScreen(
   Scaffold(
       modifier = Modifier.testTag("settingsScreen"),
       bottomBar = { BottomBar(navigationActions = navigationActions) },
+      // Disable arrow as the bottom bar is displayed
       topBar = { TopBar(navigationActions, R.string.setting_title, displayArrow = false) },
       content = { paddingValues ->
         Column(
