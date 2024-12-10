@@ -10,33 +10,23 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.android.sample.R
 import com.android.sample.model.preferences.Preferences
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitsSystem
 import com.android.sample.model.preferences.WeightUnit
-import com.android.sample.ui.composables.ArrowBack
-import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.BlueGradient
-import com.android.sample.ui.theme.BlueWorkoutCard
-import com.android.sample.ui.theme.DarkBlue
-import com.android.sample.ui.theme.FontSizes
 import com.android.sample.ui.theme.FontSizes.ButtonFontSize
-import com.android.sample.ui.theme.FontSizes.MediumTitleFontSize
 import com.android.sample.ui.theme.FontSizes.TitleFontSize
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.Shape.buttonShape
@@ -61,28 +51,24 @@ fun PreferencesScreen(
   var unitsSystem by remember { mutableStateOf(preferences.unitsSystem) }
   var weightUnit by remember { mutableStateOf(preferences.weight) }
 
-  Scaffold(
-      topBar = { TopBar(navigationActions, R.string.Preferences) })
-
-  { paddingValues ->
-      Column(
-          horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-          PreferencesContent(
-              modifier = Modifier.padding(paddingValues),
-              distanceSystem = unitsSystem,
-              onDistanceChange = { unitsSystem = it },
-              weightUnit = weightUnit,
-              onWeightChange = { weightUnit = it })
-          Spacer(modifier = Modifier.fillMaxHeight(0.7f))
-          SubmitButton(
-              onClick = {
-                  val newPreferences = Preferences(unitsSystem, weightUnit)
-                  preferencesViewModel.updatePreferences(newPreferences)
-                  Toast.makeText(context, "Changes successful", Toast.LENGTH_SHORT).show()
-                  navigationActions.goBack()
-              })}
-      }
+  Scaffold(topBar = { TopBar(navigationActions, R.string.Preferences) }) { paddingValues ->
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+      PreferencesContent(
+          modifier = Modifier.padding(paddingValues),
+          distanceSystem = unitsSystem,
+          onDistanceChange = { unitsSystem = it },
+          weightUnit = weightUnit,
+          onWeightChange = { weightUnit = it })
+      Spacer(modifier = Modifier.fillMaxHeight(0.7f))
+      SubmitButton(
+          onClick = {
+            val newPreferences = Preferences(unitsSystem, weightUnit)
+            preferencesViewModel.updatePreferences(newPreferences)
+            Toast.makeText(context, "Changes successful", Toast.LENGTH_SHORT).show()
+            navigationActions.goBack()
+          })
+    }
+  }
 }
 
 @Composable
@@ -133,9 +119,10 @@ fun <T> PreferenceItem(
                   fontWeight = FontWeight.SemiBold,
                   fontFamily = OpenSans,
                   fontSize = TitleFontSize,
-                  modifier = Modifier.padding(10.dp).fillMaxWidth(0.6f).testTag(testTag + "MenuText"))
+                  modifier =
+                      Modifier.padding(10.dp).fillMaxWidth(0.6f).testTag(testTag + "MenuText"))
 
-               Spacer(modifier = Modifier.fillMaxWidth(0.07f))
+              Spacer(modifier = Modifier.fillMaxWidth(0.07f))
               DropdownMenuItem(
                   currentValue = currentValue,
                   onValueChange = onValueChange,
@@ -154,23 +141,23 @@ fun <T> DropdownMenuItem(
 ) {
   var expanded by remember { mutableStateOf(false) }
 
-  Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier.height(50.dp).fillMaxWidth(0.8f)
-  )
-    {
-        Image(
-            painter = rememberImagePainter(data = R.drawable.rectangle_inner_shadow),
-            contentDescription = "Rectangle",
-            modifier = Modifier.size(150.dp).clickable { expanded = true }.testTag(testTag + "Button"))
-        Row{
-            Image(
-                painter = rememberImagePainter(data = R.drawable.arrow_white),
-                contentDescription = "Rectangle",
-                modifier = Modifier.size(15.dp))
-            Text(text = currentValue.toString(), color = Color.White, modifier = Modifier.testTag(testTag + "Text"),
-                fontFamily = OpenSans, fontSize = ButtonFontSize)
-        }
+  Box(contentAlignment = Alignment.Center, modifier = Modifier.height(50.dp).fillMaxWidth(0.8f)) {
+    Image(
+        painter = rememberImagePainter(data = R.drawable.rectangle_inner_shadow),
+        contentDescription = "Rectangle",
+        modifier = Modifier.size(150.dp).clickable { expanded = true }.testTag(testTag + "Button"))
+    Row {
+      Image(
+          painter = rememberImagePainter(data = R.drawable.arrow_white),
+          contentDescription = "Rectangle",
+          modifier = Modifier.size(15.dp))
+      Text(
+          text = currentValue.toString(),
+          color = Color.White,
+          modifier = Modifier.testTag(testTag + "Text"),
+          fontFamily = OpenSans,
+          fontSize = ButtonFontSize)
+    }
 
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
       options.forEach { option ->
@@ -187,18 +174,23 @@ fun <T> DropdownMenuItem(
 }
 
 @Composable
-fun SubmitButton(onClick: () -> Unit){
-    Column(horizontalAlignment = Alignment.CenterHorizontally){
-        Button(
-            onClick = {onClick()},
-            shape = smallButtonShape,
-            modifier = Modifier.testTag("preferencesSaveButton")
+fun SubmitButton(onClick: () -> Unit) {
+  Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Button(
+        onClick = { onClick() },
+        shape = smallButtonShape,
+        modifier =
+            Modifier.testTag("preferencesSaveButton")
                 .fillMaxWidth(0.4f)
                 .shadow(4.dp, smallButtonShape)
                 .background(brush = BlueGradient, shape = smallButtonShape),
-            colors = ButtonDefaults.buttonColors(Transparent)
-        ) {
-            Text(text = stringResource(id = R.string.SubmitButton), color = White, fontFamily = OpenSans, fontSize = TitleFontSize, fontWeight = FontWeight.SemiBold)
+        colors = ButtonDefaults.buttonColors(Transparent)) {
+          Text(
+              text = stringResource(id = R.string.SubmitButton),
+              color = White,
+              fontFamily = OpenSans,
+              fontSize = TitleFontSize,
+              fontWeight = FontWeight.SemiBold)
         }
-    }
+  }
 }

@@ -3,10 +3,8 @@ package com.android.sample.ui.settings
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ExitToApp
@@ -33,7 +31,6 @@ import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.BlueWorkoutCard
 import com.android.sample.ui.theme.FontSizes.TitleFontSize
 import com.android.sample.ui.theme.LightRed
@@ -68,7 +65,7 @@ fun SettingsScreen(
                     .padding(horizontal = 24.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+              Spacer(modifier = Modifier.fillMaxHeight(0.05f))
               // User data button
               BlueButton(
                   onClick = { navigationActions.navigateTo(Screen.EDIT_ACCOUNT) },
@@ -134,7 +131,12 @@ fun BlueButton(onClick: () -> Unit, modifier: Modifier = Modifier, title: Int) {
       onClick = onClick,
       modifier = modifier.padding(10.dp).fillMaxWidth(0.7f).shadow(4.dp, shape = buttonShape),
       colors = ButtonDefaults.buttonColors(containerColor = BlueWorkoutCard)) {
-        Text(text = stringResource(id = title), color = Color.Black, fontFamily = OpenSans, fontSize = TitleFontSize, fontWeight = FontWeight.SemiBold)
+        Text(
+            text = stringResource(id = title),
+            color = Color.Black,
+            fontFamily = OpenSans,
+            fontSize = TitleFontSize,
+            fontWeight = FontWeight.SemiBold)
       }
 }
 
@@ -149,11 +151,19 @@ fun RedButton(onClick: () -> Unit, image: ImageVector, title: Int, modifier: Mod
               .fillMaxWidth(0.8f)
               .shadow(4.dp, shape = roundButtonShape)
               .border(BorderStroke(1.dp, RedStroke), roundButtonShape),
-      colors =
-          ButtonDefaults.buttonColors(LightRed)) {
-        Icon(imageVector = image, modifier = Modifier.size(30.dp), contentDescription = stringResource(title), tint = RedStroke)
+      colors = ButtonDefaults.buttonColors(LightRed)) {
+        Icon(
+            imageVector = image,
+            modifier = Modifier.size(30.dp),
+            contentDescription = stringResource(title),
+            tint = RedStroke)
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = stringResource(title), color = RedStroke, fontFamily = OpenSans, fontSize = TitleFontSize, fontWeight = FontWeight.SemiBold)
+        Text(
+            text = stringResource(title),
+            color = RedStroke,
+            fontFamily = OpenSans,
+            fontSize = TitleFontSize,
+            fontWeight = FontWeight.SemiBold)
       }
 }
 
