@@ -10,7 +10,7 @@
     <string name="TitleTabYoga">Yoga</string>
     <string name="TitleTabRunning">Running</string>
     <string name="TitleTabWarmup">Warm-up</string>
-    <string name="setting_title">Settings</string>
+    <string name="setting_title">My Profile</string>
     <string name="calendar_title">Calendar</string>
     <string name="addButton">+</string>
     <string name="runningTitle">Running</string>
@@ -47,4 +47,5 @@
     <string name="RunningScreenTopBar">Running</string>
     <string name="NoWorkout">No Workout</string>
     <string name="Summary">Summary</string>
+    <string name="SubmitButton">Submit</string>
 </resources>

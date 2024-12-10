@@ -56,6 +56,10 @@ val LegendYoga = Color(0xFFCAE5FD)
 val LegendRunning = Color(0xFF7FC3FF)
 val BlueLocation = Color(0xFFA0BBEA)
 val RunningGrey = Color(0xFF424242)
+val RedStroke = Color(0xFFF26C4F)
+val LightRed = Color(0xFFFEF6F4)
+val VeryLightBlue = Color(0xFFE8EFFF)
+val Grey = Color(0xFFBBBBBB)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
