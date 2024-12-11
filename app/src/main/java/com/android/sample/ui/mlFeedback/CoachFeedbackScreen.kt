@@ -7,9 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +49,7 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
   var selectedExercise by remember { mutableStateOf(ExerciseType.PLANK) }
   var feedback by remember { mutableStateOf("") }
   var jointPositionRequested by remember { mutableStateOf(false) }
+    var showInfoDialogue by remember { mutableStateOf(true) }
   val context = LocalContext.current
   Scaffold(
       topBar = {
@@ -55,7 +61,9 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
       content = { pd ->
         if (!isExerciseSelected) {
           Column(
-              modifier = Modifier.fillMaxWidth().padding(pd),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(pd),
               horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
                 Button(
                     onClick = { isDropdownExpanded = true },
@@ -71,9 +79,11 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                           .forEach { exerciseType ->
                             Box(
                                 modifier =
-                                    Modifier.fillMaxWidth().clickable {
-                                      selectedExercise = exerciseType
-                                      isDropdownExpanded = false
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedExercise = exerciseType
+                                        isDropdownExpanded = false
                                     }) {
                                   Text(text = exerciseType.toString(), fontSize = SubtitleFontSize)
                                 }
@@ -82,11 +92,19 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                 SaveButton(onSaveClick = { isExerciseSelected = true }, testTag = "saveButton")
               }
         } else {
-          Box(modifier = Modifier.fillMaxWidth().padding(pd), contentAlignment = Alignment.Center) {
+            if (showInfoDialogue){
+                CoachInfoDialogue { showInfoDialogue = false }
+            }
+
+          Box(modifier = Modifier
+              .fillMaxWidth()
+              .padding(pd), contentAlignment = Alignment.Center) {
             Column {
               CameraFeedBack.CameraScreen(
                   cameraViewModel = cameraViewModel,
-                  modifier = Modifier.size(220.dp, 350.dp).testTag("cameraFeedback"),
+                  modifier = Modifier
+                      .size(220.dp, 350.dp)
+                      .testTag("cameraFeedback"),
                 poseDetectionRequired = jointPositionRequested,
                 exerciseCriterions = ExerciseFeedBack.getCriterions(selectedExercise)
 
@@ -137,4 +155,28 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
           }
         }
       })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CoachInfoDialogue(onDismissRequest: () -> Unit) {
+    BasicAlertDialog(
+        onDismissRequest = onDismissRequest
+    ) {
+        Card {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "How to use the ML Coach",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text("Press record and start your exercise")
+                Text("Your whole body has to be visible in the camera frame.")
+                Text("To ensure proper feedback, please be perpendicular to the camera. For instance if you are doing a plank, you should no be facing the camera.")
+                Text("When you're done, press the button again")
+                Text("If you are doing mistakes, the coach will highlight them on the screen in real time.")
+                Text("After you finish the exercise, press the 'Generate feedback' button to get your feedback.")
+            }
+        }
+    }
 }
