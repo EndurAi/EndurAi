@@ -25,7 +25,7 @@ class WarmUpViewModel(val repository: WorkoutRepository<WarmUp>) :
 
   init {
     repository.init { getWorkouts() }
-    if (workouts_.value.isEmpty()) {
+    if (_workouts.value.isEmpty()) {
       selectWorkout(DEFAULT_WARMUP)
     }
   }

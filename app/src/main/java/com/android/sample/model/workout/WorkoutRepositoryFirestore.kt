@@ -16,6 +16,11 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dev.zacsweers.moshix.sealed.reflect.MoshiSealedJsonAdapterFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.full.companionObject
@@ -31,6 +36,7 @@ import kotlin.reflect.full.companionObjectInstance
  */
 open class WorkoutRepositoryFirestore<T : Workout>(
     private val db: FirebaseFirestore,
+    private val localCache: WorkoutLocalCache,
     private val clazz: Class<T>
 ) : WorkoutRepository<T> {
 
@@ -124,7 +130,10 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .document(obj.workoutId)
         .set(dataMapWorkout)
         .addOnFailureListener { e -> onFailure(e) }
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener {
+            onSuccess()
+            saveWorkoutsToCache(listOf(obj)) // Save to cache
+        }
   }
 
   /**
@@ -133,52 +142,67 @@ open class WorkoutRepositoryFirestore<T : Workout>(
    * @param onSuccess Callback triggered with the list of workout documents on success.
    * @param onFailure Callback triggered with an exception on failure.
    */
-  override fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
-
-    // we first get document'ids from user document
-    db.collection(collectionPath)
-        .document(documentToCollectionName)
-        .collection(documentName)
-        .get()
-        .addOnCompleteListener { task ->
-          if (task.isSuccessful) {
-            val workoutids =
-                task.result?.mapNotNull { document ->
-                  documentSnapshotToObject(document, adapterWorkoutID) { it?.workoutid } as? String
-                } ?: emptyList()
-            val workouts = mutableListOf<T>()
-            val tasks = mutableListOf<Task<DocumentSnapshot>>()
-
-            // for each id we get the content of the workout in "allworkouts" document
-
-            for (id in workoutids) {
-              val task =
-                  db.collection(mainDocumentName)
-                      .document(id)
-                      .get()
-                      .addOnSuccessListener { document ->
-                        val workout = documentSnapshotToObject(document, adapter) as T
-                        workout.let { workouts.add(workout) }
-                      }
-                      .addOnFailureListener { e ->
-                        Log.e("WorkoutRepositoryFirestore", "Error getting workout document", e)
-                        onFailure(e)
-                      }
-              tasks.add(task)
-            }
-
-            // Wait for all tasks to complete and give all the workouts to "onSuccess"
-            Tasks.whenAllComplete(tasks)
-                .addOnSuccessListener { onSuccess(workouts) }
-                .addOnFailureListener { e -> onFailure(e) }
+  override suspend fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
+      // Fetch from cache first
+      withContext(Dispatchers.IO) {
+          val cachedWorkouts = localCache.getWorkouts().firstOrNull()
+          if (!cachedWorkouts.isNullOrEmpty()) {
+              onSuccess(cachedWorkouts.filterIsInstance(clazz))
           } else {
-            task.exception?.let { e ->
-              Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
-              onFailure(e)
-            }
+              // If no cache, fetch from Firestore
+              getDocumentsFirestore(onSuccess, onFailure)
           }
-        }
+      }
   }
+
+    private fun getDocumentsFirestore(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
+
+        // we first get document'ids from user document
+        db.collection(collectionPath)
+            .document(documentToCollectionName)
+            .collection(documentName)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val workoutids =
+                        task.result?.mapNotNull { document ->
+                            documentSnapshotToObject(document, adapterWorkoutID) { it?.workoutid } as? String
+                        } ?: emptyList()
+                    val workouts = mutableListOf<T>()
+                    val tasks = mutableListOf<Task<DocumentSnapshot>>()
+
+                    // for each id we get the content of the workout in "allworkouts" document
+
+                    for (id in workoutids) {
+                        val task =
+                            db.collection(mainDocumentName)
+                                .document(id)
+                                .get()
+                                .addOnSuccessListener { document ->
+                                    val workout = documentSnapshotToObject(document, adapter) as T
+                                    workout.let { workouts.add(workout) }
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("WorkoutRepositoryFirestore", "Error getting workout document", e)
+                                    onFailure(e)
+                                }
+                        tasks.add(task)
+                    }
+
+                    // Wait for all tasks to complete and give all the workouts to "onSuccess"
+                    Tasks.whenAllComplete(tasks)
+                        .addOnSuccessListener { onSuccess(workouts) }
+                        .addOnFailureListener { e -> onFailure(e) }
+                } else {
+                    task.exception?.let { e ->
+                        Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
+                        onFailure(e)
+                    }
+                }
+            }
+    }
+
+
 
   /**
    * Updates a workout document in the Firestore.
@@ -198,7 +222,10 @@ open class WorkoutRepositoryFirestore<T : Workout>(
     db.collection(mainDocumentName)
         .document(obj.workoutId)
         .set(dataMap)
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener {
+            onSuccess()
+            updateWorkoutInCache(obj) // Update in cache
+        }
         .addOnFailureListener { e -> onFailure(e) }
   }
 
@@ -226,8 +253,34 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .document(id)
         .delete()
         .addOnFailureListener { e -> onFailure(e) }
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener {
+            onSuccess()
+            removeWorkoutFromCache(id) // Remove from cache
+        }
   }
+    private fun saveWorkoutsToCache(workouts: List<T>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            localCache.saveWorkouts(workouts)
+        }
+    }
+
+    private fun updateWorkoutInCache(workout: T) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val currentCache = localCache.getWorkouts().firstOrNull() ?: emptyList()
+            val updatedCache = currentCache.map {
+                if (it.workoutId == workout.workoutId) workout else it
+            }
+            localCache.saveWorkouts(updatedCache)
+        }
+    }
+
+    private fun removeWorkoutFromCache(workoutId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val currentCache = localCache.getWorkouts().firstOrNull() ?: emptyList()
+            val updatedCache = currentCache.filterNot { it.workoutId == workoutId }
+            localCache.saveWorkouts(updatedCache)
+        }
+    }
 
   /**
    * Converts a Firestore `DocumentSnapshot` to an object of type `R`. Serializes the document data

@@ -1,20 +1,43 @@
 package com.android.sample.model.workout
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepository<T>) :
+open class WorkoutViewModel<out T : Workout>(
+    private val repository: WorkoutRepository<T>,
+    private val localCache: WorkoutLocalCache) :
     ViewModel() {
 
-  val workouts_ = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
-  val workouts: StateFlow<List<T>> = workouts_
+  val _workouts = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
+  val workouts: StateFlow<List<T>> = _workouts.asStateFlow()
 
   private val selectedWorkout_ = MutableStateFlow<T?>(null)
-  open val selectedWorkout: StateFlow<T?> = selectedWorkout_
+  open val selectedWorkout: StateFlow<T?> = selectedWorkout_.asStateFlow()
 
   init {
-    repository.init { getWorkouts() }
+      loadCachedWorkouts()
   }
+
+    private fun loadCachedWorkouts() {
+        viewModelScope.launch {
+            localCache.getWorkouts().collect { cachedWorkouts ->
+                if (cachedWorkouts.isNotEmpty()) {
+                    _workouts.value = cachedWorkouts as List<T>
+                } else {
+                    // Fetch from the repository if the cache is empty
+                    getWorkouts()
+                }
+            }
+        }
+    }
+
+    private fun cacheWorkouts(workouts: List<T>) {
+        viewModelScope.launch {
+            localCache.saveWorkouts(workouts)
+        }
+    }
 
   /**
    * Generates a new unique ID.
@@ -27,10 +50,18 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
 
   /** Gets all Workout documents. */
   fun getWorkouts() {
-    repository.getDocuments(onSuccess = { workouts_.value = it }, onFailure = {})
+      viewModelScope.launch {
+          repository.getDocuments(
+              onSuccess = { fetchedWorkouts ->
+                  _workouts.value = fetchedWorkouts
+                  cacheWorkouts(fetchedWorkouts)
+              },
+              onFailure = {}
+          )
+      }
   }
 
-  /**
+    /**
    * Adds a Workout document.
    *
    * @param workout The Workout document to be added.
