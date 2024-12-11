@@ -12,6 +12,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.MyPoseLandmark
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import java.io.File
@@ -80,6 +81,8 @@ val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
   /** A StateFlow that exposes the list of detected pose landmarks. */
   val lastPose: StateFlow<List<MyPoseLandmark>>
     get() = _lastPose.asStateFlow()
+  var feedback : List<CoachFeedback>? = null
+
 
   val meanWindow = 10
   private val inFrameLikelihoodThreshold = 0.8f

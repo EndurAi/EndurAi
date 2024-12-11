@@ -19,9 +19,9 @@ data class CoachFeedback(
     val successRate: Float,
     val feedbackValue: Int,
     val feedbackUnit: ExerciseFeedBackUnit,
-    val exerciseCriterion: ExerciseFeedBack.Companion.ExerciseCriterion
+    val exerciseCriterion: ExerciseFeedBack.Companion.ExerciseCriterion,
 ) {
-  /**
+    /**
    * Converts the `CoachFeedback` object to a string representation.
    *
    * @return A string representation of the `CoachFeedback` object.
@@ -51,4 +51,20 @@ data class JointFeedback(val comment: String = "", val rate: Float = 0F) {
   override fun toString(): String {
     return comment
   }
+}
+enum class FeedbackRank {
+    S,
+    A,
+    B,
+    C,
+    D,
+}
+fun rateToRank(rate: Float): FeedbackRank {
+    return when {
+        rate >= 0.9 -> FeedbackRank.S
+        rate >= 0.8 -> FeedbackRank.A
+        rate >= 0.7 -> FeedbackRank.B
+        rate >= 0.6 -> FeedbackRank.C
+        else -> FeedbackRank.D
+    }
 }
