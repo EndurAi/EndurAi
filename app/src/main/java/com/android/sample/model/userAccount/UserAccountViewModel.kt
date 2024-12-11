@@ -18,6 +18,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -142,7 +143,7 @@ open class UserAccountViewModel(
       repository.sendFriendRequest(
           fromUser = currentUser,
           toUserId = toUserId,
-          onSuccess = { getUserAccount(currentUser.userId) },
+          onSuccess = {},
           onFailure = { exception ->
             Log.e("UserAccountViewModel", "Failed to send friend request", exception)
           })
@@ -173,6 +174,7 @@ open class UserAccountViewModel(
     }
   }
 
+  // synchronous friends
   suspend fun getFriends(): List<UserAccount> {
     val friends = mutableListOf<UserAccount>()
     userAccount.value?.friends?.forEach { friendId ->
@@ -184,6 +186,25 @@ open class UserAccountViewModel(
           })
     }
     return friends
+  }
+
+  fun searchUsers(
+      query: String,
+      onResult: (List<UserAccount>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (query.isBlank()) {
+      onResult(emptyList()) // If query is blank, return no results
+      return
+    }
+
+    repository.searchUsers(
+        query = query,
+        onSuccess = { userList -> onResult(userList) },
+        onFailure = { exception ->
+          Log.e("UserAccountViewModel", "Failed to search users", exception)
+          onFailure(exception)
+        })
   }
 
   suspend fun getSentRequests(): List<UserAccount> {
@@ -211,6 +232,122 @@ open class UserAccountViewModel(
     }
     return receivedRequests
   }
+
+  // asynchronous friends
+
+  private val _friends = MutableStateFlow<List<UserAccount>>(emptyList())
+  val friends: StateFlow<List<UserAccount>>
+    get() = _friends.asStateFlow()
+
+  private val _sentRequests = MutableStateFlow<List<UserAccount>>(emptyList())
+  val sentRequests: StateFlow<List<UserAccount>>
+    get() = _sentRequests.asStateFlow()
+
+  private val _receivedRequests = MutableStateFlow<List<UserAccount>>(emptyList())
+  val receivedRequests: StateFlow<List<UserAccount>>
+    get() = _receivedRequests.asStateFlow()
+
+  private suspend fun getUserAccountAsync(userId: String): UserAccount? {
+    val deferred = CompletableDeferred<UserAccount?>()
+    repository.getUserAccount(
+        userId, onSuccess = { deferred.complete(it) }, onFailure = { deferred.complete(null) })
+    return deferred.await()
+  }
+
+  //  fun fetchFriends() {
+  //    viewModelScope.launch {
+  //      userAccount.value?.let { currentUser ->
+  //        val friendsList =
+  //            currentUser.friends
+  //                .map { friendId -> async { getUserAccountAsync(friendId) } }
+  //                .awaitAll()
+  //                .filterNotNull()
+  //
+  //        _friends.value = friendsList
+  //        Log.d("UserAccountViewModel", "Fetched friends list: $friendsList")
+  //      }
+  //    }
+  //  }
+
+  fun fetchFriends() {
+    viewModelScope.launch {
+      FirebaseAuth.getInstance().currentUser?.let { currentUser ->
+        repository.getFriendsFromFirestore(
+            currentUser.uid,
+            onSuccess = { friendsList ->
+              _friends.value = friendsList
+              Log.d("UserAccountViewModel", "Friends list: $friendsList")
+            },
+            onFailure = { exception ->
+              Log.e("UserAccountViewModel", "Error fetching friends: $exception")
+            })
+      }
+    }
+  }
+
+  fun fetchSentRequests() {
+    viewModelScope.launch {
+      FirebaseAuth.getInstance().currentUser?.let { currentUser ->
+        repository.getSentRequestsFromFirestore(
+            currentUser.uid,
+            onSuccess = { sentRequestsList ->
+              _sentRequests.value = sentRequestsList
+              Log.d("UserAccountViewModel", "Sent requests list: $sentRequestsList")
+            },
+            onFailure = { exception ->
+              Log.e("UserAccountViewModel", "Error fetching sent requests: $exception")
+            })
+      }
+    }
+  }
+
+  fun fetchReceivedRequests() {
+    viewModelScope.launch {
+      FirebaseAuth.getInstance().currentUser?.let { currentUser ->
+        repository.getReceivedRequestsFromFirestore(
+            currentUser.uid,
+            onSuccess = { receivedRequestsList ->
+              _receivedRequests.value = receivedRequestsList
+              Log.d("UserAccountViewModel", "Received requests list: $receivedRequestsList")
+            },
+            onFailure = { exception ->
+              Log.e("UserAccountViewModel", "Error fetching received requests: $exception")
+            })
+      }
+    }
+  }
+
+  //
+  //    fun fetchSentRequests() {
+  //    viewModelScope.launch {
+  //      userAccount.value?.let { currentUser ->
+  //        _sentRequests.value = emptyList()
+  //        val sentRequestsList =
+  //            currentUser.sentRequests
+  //                .map { requestId -> async { getUserAccountAsync(requestId) } }
+  //                .awaitAll()
+  //                .filterNotNull()
+  //        _sentRequests.value = sentRequestsList
+  //        Log.d("UserAccountViewModel", "Fetched sent requests list: $sentRequestsList")
+  //        Log.d("UserAccountViewModel", "Fetched sent requests list length:
+  // ${sentRequestsList.size}")
+  //      }
+  //    }
+  //  }
+  //
+  //  fun fetchReceivedRequests() {
+  //    viewModelScope.launch {
+  //      userAccount.value?.let { currentUser ->
+  //        val receivedRequestsList =
+  //            currentUser.receivedRequests
+  //                .map { requestId -> async { getUserAccountAsync(requestId) } }
+  //                .awaitAll()
+  //                .filterNotNull()
+  //        _receivedRequests.value = receivedRequestsList
+  //        Log.d("UserAccountViewModel", "Fetched received requests list: $receivedRequestsList")
+  //      }
+  //    }
+  //  }
 
   fun deleteAccount(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val user = firebaseAuth?.currentUser ?: FirebaseAuth.getInstance().currentUser

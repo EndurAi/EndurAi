@@ -144,8 +144,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Friends Screen
 
     navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
-      composable(Screen.FRIENDS) { FriendsScreen(navigationActions) }
-      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions) }
+      composable(Screen.FRIENDS) { FriendsScreen(navigationActions, userAccountViewModel) }
+      composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions, userAccountViewModel) }
     }
 
     // Video Screen
