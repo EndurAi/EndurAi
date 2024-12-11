@@ -6,11 +6,11 @@
     <string name="welcome_message">What\'s up %1$s?</string>
     <string name="ViewAllTitle">View All</string>
     <string name="noWorkouts">You have no Workouts yet.</string>
-    <string name="TitleTabBody">BodyWeight</string>
+    <string name="TitleTabBody">Bodyweight</string>
     <string name="TitleTabYoga">Yoga</string>
     <string name="TitleTabRunning">Running</string>
     <string name="TitleTabWarmup">Warm-up</string>
-    <string name="setting_title">Settings</string>
+    <string name="setting_title">My Profile</string>
     <string name="calendar_title">Calendar</string>
     <string name="addButton">+</string>
     <string name="runningTitle">Running</string>
@@ -45,6 +45,8 @@
     <string name="QuickTitle">Quick Workout</string>
     <string name="TotalTrainings">%1$s Workouts in Total</string>
     <string name="RunningScreenTopBar">Running</string>
+    <string name="NoWorkout">No Workout</string>
     <string name="Summary">Summary</string>
     <string name="coach_feedback_title">Coach Feedback</string>
+    <string name="SubmitButton">Submit</string>
 </resources>

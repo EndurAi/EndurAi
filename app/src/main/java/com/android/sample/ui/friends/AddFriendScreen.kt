@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.DarkBlue
@@ -19,6 +20,7 @@ import com.android.sample.ui.theme.DarkBlue
 @Composable
 fun AddFriendScreen(
     navigationActions: NavigationActions,
+    userAccountViewModel: UserAccountViewModel
 ) {
   var selectedTab by remember { mutableStateOf("New Connections") }
   val searchQuery = remember { mutableStateOf("") }
@@ -50,9 +52,12 @@ fun AddFriendScreen(
 
     when (selectedTab) {
       "New Connections" -> {
-        NewConnectionsContent(searchQuery, modifier = Modifier.testTag("newConnectionsContent"))
+        NewConnectionsContent(
+            searchQuery, modifier = Modifier.testTag("newConnectionsContent"), userAccountViewModel)
       }
-      "Invitations" -> InvitationsContent(modifier = Modifier.testTag("invitationsContent"))
+      "Invitations" ->
+          InvitationsContent(
+              modifier = Modifier.testTag("invitationsContent"), userAccountViewModel)
     }
   }
 }

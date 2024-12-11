@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,10 +17,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,6 +33,15 @@ import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
+import com.android.sample.ui.theme.BlueGradient
+import com.android.sample.ui.theme.FontSizes.MediumTitleFontSize
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
+import com.android.sample.ui.theme.Grey
+import com.android.sample.ui.theme.OpenSans
+import com.android.sample.ui.theme.Shape.buttonShape
+import com.android.sample.ui.theme.Shape.roundFieldShape
+import com.android.sample.ui.theme.Transparent
+import com.android.sample.ui.theme.VeryLightBlue
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
@@ -181,7 +193,7 @@ fun ProfileImagePicker(profileImageUri: Uri?, onImageClick: () -> Unit) {
               painter = rememberAsyncImagePainter(profileImageUri),
               contentDescription = "Profile Image",
               contentScale = ContentScale.Crop,
-              modifier = Modifier.size(80.dp).clip(CircleShape))
+              modifier = Modifier.shadow(4.dp, shape = CircleShape).size(80.dp).clip(CircleShape))
         } else {
           Text("Tap to add photo", fontSize = 8.sp, color = Color.Gray)
         }
@@ -196,17 +208,33 @@ fun NameInputFields(
     onLastNameChange: (String) -> Unit
 ) {
   TextField(
+      shape = roundFieldShape,
+      textStyle = TextStyle(fontFamily = OpenSans, fontSize = SubtitleFontSize),
       value = firstName,
       onValueChange = onFirstNameChange,
-      label = { Text("First Name") },
+      label = { Text("First Name", fontSize = SubtitleFontSize, fontFamily = OpenSans) },
       modifier =
-          Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp).testTag("firstName"))
+          Modifier.fillMaxWidth()
+              .padding(horizontal = 8.dp, vertical = 4.dp)
+              .shadow(4.dp, shape = roundFieldShape)
+              .testTag("firstName"),
+      colors =
+          TextFieldDefaults.colors(
+              focusedContainerColor = VeryLightBlue, unfocusedContainerColor = VeryLightBlue))
   TextField(
+      shape = roundFieldShape,
+      textStyle = TextStyle(fontFamily = OpenSans, fontSize = SubtitleFontSize),
       value = lastName,
       onValueChange = onLastNameChange,
-      label = { Text("Last Name") },
+      label = { Text("Last Name", fontSize = SubtitleFontSize, fontFamily = OpenSans) },
       modifier =
-          Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp).testTag("lastName"))
+          Modifier.fillMaxWidth()
+              .padding(horizontal = 8.dp, vertical = 4.dp)
+              .shadow(4.dp, shape = roundFieldShape)
+              .testTag("lastName"),
+      colors =
+          TextFieldDefaults.colors(
+              focusedContainerColor = VeryLightBlue, unfocusedContainerColor = VeryLightBlue))
 }
 
 @Composable
@@ -224,10 +252,15 @@ fun HeightWeightInput(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)) {
         TextField(
+            shape = roundFieldShape,
             value = height,
+            textStyle = TextStyle(fontFamily = OpenSans, fontSize = SubtitleFontSize),
             onValueChange = onHeightChange,
-            label = { Text("Height") },
-            modifier = Modifier.weight(1f).testTag("height"))
+            label = { Text("Height", fontFamily = OpenSans, fontSize = SubtitleFontSize) },
+            modifier = Modifier.weight(1f).shadow(4.dp, shape = roundFieldShape).testTag("height"),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedContainerColor = VeryLightBlue, unfocusedContainerColor = VeryLightBlue))
         Spacer(modifier = Modifier.width(6.dp))
         DropdownMenuButton(
             selectedOption = heightUnit,
@@ -239,16 +272,21 @@ fun HeightWeightInput(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)) {
         TextField(
+            shape = roundFieldShape,
+            textStyle = TextStyle(fontFamily = OpenSans, fontSize = SubtitleFontSize),
             value = weight,
             onValueChange = onWeightChange,
-            label = { Text("Weight") },
-            modifier = Modifier.weight(1f).testTag("weight"))
+            label = { Text("Weight", fontSize = SubtitleFontSize, fontFamily = OpenSans) },
+            modifier = Modifier.weight(1f).shadow(4.dp, shape = roundFieldShape).testTag("weight"),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedContainerColor = VeryLightBlue, unfocusedContainerColor = VeryLightBlue))
         Spacer(modifier = Modifier.width(6.dp))
         DropdownMenuButton(
             selectedOption = weightUnit,
             options = WeightUnit.entries,
             onOptionSelected = onWeightUnitChange,
-            modifier = Modifier.width(90.dp).testTag("weightUnit"))
+            modifier = Modifier.width(100.dp).testTag("weightUnit"))
       }
 }
 
@@ -257,41 +295,66 @@ fun GenderSelection(gender: Gender, onGenderChange: (Gender) -> Unit) {
   Row(modifier = Modifier.fillMaxWidth().testTag("gender")) {
     Button(
         onClick = { onGenderChange(Gender.MALE) },
-        modifier = Modifier.weight(1f).height(40.dp),
+        modifier =
+            Modifier.weight(1f)
+                .height(40.dp)
+                .then(
+                    if (gender == Gender.MALE)
+                        Modifier.shadow(4.dp, shape = MaterialTheme.shapes.large)
+                    else Modifier),
         colors =
             ButtonDefaults.buttonColors(
-                if (gender == Gender.MALE) MaterialTheme.colorScheme.primary else Color.Gray)) {
-          Text("Male", fontSize = 12.sp)
+                if (gender == Gender.MALE) MaterialTheme.colorScheme.primary else Grey)) {
+          Text("Male", fontSize = MediumTitleFontSize, fontFamily = OpenSans)
         }
     Spacer(modifier = Modifier.width(6.dp))
     Button(
         onClick = { onGenderChange(Gender.FEMALE) },
-        modifier = Modifier.weight(1f).height(40.dp),
+        modifier =
+            Modifier.weight(1f)
+                .height(40.dp)
+                .then(
+                    if (gender == Gender.FEMALE)
+                        Modifier.shadow(4.dp, shape = MaterialTheme.shapes.large)
+                    else Modifier),
         colors =
             ButtonDefaults.buttonColors(
-                if (gender == Gender.FEMALE) MaterialTheme.colorScheme.primary else Color.Gray)) {
-          Text("Female", fontSize = 12.sp)
+                if (gender == Gender.FEMALE) MaterialTheme.colorScheme.primary else Grey)) {
+          Text("Female", fontSize = MediumTitleFontSize, fontFamily = OpenSans)
         }
   }
 }
 
 @Composable
 fun BirthdayInput(birthDate: String, onBirthDateChange: (String) -> Unit) {
-  OutlinedTextField(
+  TextField(
+      shape = roundFieldShape,
+      textStyle = TextStyle(fontFamily = OpenSans, fontSize = SubtitleFontSize),
       value = birthDate,
       onValueChange = onBirthDateChange,
-      label = { Text("Birthday") },
-      placeholder = { Text("DD/MM/YYYY") },
-      modifier = Modifier.fillMaxWidth().testTag("birthday"))
+      label = { Text("Birthday", fontFamily = OpenSans, fontSize = SubtitleFontSize) },
+      placeholder = { Text("DD/MM/YYYY", fontFamily = OpenSans) },
+      modifier = Modifier.fillMaxWidth().shadow(4.dp, shape = roundFieldShape).testTag("birthday"),
+      colors =
+          TextFieldDefaults.colors(
+              focusedContainerColor = VeryLightBlue, unfocusedContainerColor = VeryLightBlue))
 }
 
 @Composable
 fun ActionButton(text: String, onClick: () -> Unit, enabled: Boolean) {
   Button(
+      shape = buttonShape,
+      colors = ButtonDefaults.buttonColors(Transparent),
       onClick = onClick,
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).height(48.dp).testTag("submit"),
+      modifier =
+          Modifier.fillMaxWidth(0.7f)
+              .padding(horizontal = 8.dp)
+              .height(48.dp)
+              .shadow(4.dp, shape = buttonShape)
+              .background(brush = BlueGradient, shape = buttonShape)
+              .testTag("submit"),
       enabled = enabled) {
-        Text(text, fontSize = 14.sp)
+        Text(text, fontSize = MediumTitleFontSize)
       }
 }
 
@@ -417,6 +480,7 @@ fun AccountForm(
             onWeightUnitChange)
         GenderSelection(gender, onGenderChange)
         BirthdayInput(birthDate, onBirthDateChange)
+        Spacer(modifier = Modifier.fillMaxHeight(0.3f))
         ActionButton(buttonText, onButtonClick, isButtonEnabled)
       }
 }
@@ -432,13 +496,17 @@ fun <T> DropdownMenuButton(
   var expanded by remember { mutableStateOf(false) }
 
   ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
-    OutlinedTextField(
+    TextField(
         value = selectedOption.toString(),
         onValueChange = {},
+        textStyle = TextStyle(fontFamily = OpenSans, fontSize = SubtitleFontSize),
         readOnly = true,
-        label = { Text("Unit") },
+        label = { Text("Unit", fontFamily = OpenSans) },
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-        modifier = modifier.menuAnchor().clickable { expanded = true })
+        modifier = modifier.shadow(4.dp).menuAnchor().clickable { expanded = true },
+        colors =
+            TextFieldDefaults.colors(
+                focusedContainerColor = VeryLightBlue, unfocusedContainerColor = VeryLightBlue))
 
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
       options.forEach { option ->
