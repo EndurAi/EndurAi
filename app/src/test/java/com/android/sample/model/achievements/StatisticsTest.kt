@@ -6,9 +6,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Test
 
+/** Unit tests for the `Statistics` class to validate its functionality and ensure correctness. */
 class StatisticsTest {
   private lateinit var statistics: Statistics
 
+  // Mock workout statistics data used for testing
   private val mockWorkoutStatistics =
       listOf(
           WorkoutStatistics(
@@ -27,18 +29,24 @@ class StatisticsTest {
               caloriesBurnt = 400,
               type = WorkoutType.YOGA))
 
+  /** Sets up the test environment by initializing the `Statistics` instance with mock data. */
   @Before
   fun setUp() {
     val statisticsStateFlow = MutableStateFlow(mockWorkoutStatistics)
     statistics = Statistics(statisticsStateFlow)
   }
 
+  /**
+   * Tests the `getTotalWorkouts` method to ensure it correctly calculates the total number of
+   * workouts in the dataset.
+   */
   @Test
   fun testGetTotalWorkouts() {
     val totalWorkouts = statistics.getTotalWorkouts()
     assert(3 == totalWorkouts)
   }
 
+  /** Tests the `getDates` method to ensure it returns the correct list of workout dates. */
   @Test
   fun testGetDates() {
     val dates = statistics.getDates()
@@ -49,12 +57,17 @@ class StatisticsTest {
             LocalDateTime.of(2024, 12, 5, 18, 0)) == dates)
   }
 
+  /**
+   * Tests the `getTotalCalories` method to ensure it correctly calculates the total calories burnt
+   * across all workouts.
+   */
   @Test
   fun testGetTotalCalories() {
     val totalCalories = statistics.getTotalCalories()
     assert(900 == totalCalories)
   }
 
+  /** Tests the `getWorkoutsByType` method to ensure it groups workouts correctly by their type. */
   @Test
   fun testGetWorkoutsByType() {
     val workoutsByType = statistics.getWorkoutsByType()

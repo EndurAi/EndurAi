@@ -19,12 +19,17 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 
+/**
+ * Unit tests for the `StatisticsViewModel` class to ensure its correctness and interaction with the
+ * repository and other components.
+ */
 class StatisticsViewModelTest {
 
   private lateinit var repository: StatisticsRepository
   private lateinit var statisticsViewModel: StatisticsViewModel
   private lateinit var userAccountViewModel: UserAccountViewModel
 
+  // Sample workout data representing a bodyweight workout used in test cases.
   private val workout =
       BodyWeightWorkout(
           workoutId = "1",
@@ -34,6 +39,7 @@ class StatisticsViewModelTest {
           userIdSet = mutableSetOf(),
           date = LocalDateTime.of(2024, 12, 8, 7, 30))
 
+  // Sample list of exercise states used to simulate workout progress and completion.
   private val exerciseStateList =
       listOf(
           ExerciseState(
@@ -43,6 +49,7 @@ class StatisticsViewModelTest {
               Exercise("2", ExerciseType.SQUATS, ExerciseDetail.RepetitionBased(10)),
               isDone = true))
 
+  // Sample workout statistics representing a completed workout session.
   private val workoutStats =
       WorkoutStatistics(
           id = "1",
@@ -50,6 +57,7 @@ class StatisticsViewModelTest {
           caloriesBurnt = 3,
           type = WorkoutType.BODY_WEIGHT)
 
+  // List of sample workout statistics used to simulate the repository's response.
   private val workoutsStats =
       listOf(
           workoutStats,
@@ -59,10 +67,15 @@ class StatisticsViewModelTest {
               caloriesBurnt = 4,
               type = WorkoutType.RUNNING))
 
+  // Sample user account data used for testing account-related logic.
   private val account =
       UserAccount(
           userId = "user123", firstName = "John", lastName = "Doe", height = 180f, weight = 75f)
 
+  /**
+   * Sets up the test environment by initializing mocked dependencies and the ViewModel before each
+   * test case.
+   */
   @Before
   fun setUp() {
     // Mock the repository
@@ -72,7 +85,8 @@ class StatisticsViewModelTest {
       onSuccess(workoutsStats)
     }
 
-    `when`(repository.addWorkout(eq(workoutStats), any(), any())).thenAnswer { invocation ->
+    `when`(repository.addWorkoutStatistics(eq(workoutStats), any(), any())).thenAnswer { invocation
+      ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
     }
@@ -85,12 +99,14 @@ class StatisticsViewModelTest {
     statisticsViewModel = StatisticsViewModel(repository)
   }
 
+  /** Tests if the `getWorkoutStatistics` method calls the repository's `getStatistics` method. */
   @Test
   fun getWorkoutStatisticsCallsRepository() = runBlocking {
     statisticsViewModel.getWorkoutStatistics()
     verify(repository).getStatistics(any(), any())
   }
 
+  /** Tests if the `workoutStatistics` flow is initialized with the correct list of statistics. */
   @Test
   fun workoutStatisticsFlowShouldStartWithCorrectList() = runBlocking {
     statisticsViewModel.getWorkoutStatistics()
@@ -98,12 +114,17 @@ class StatisticsViewModelTest {
     assert(workoutStatistics == workoutsStats)
   }
 
+  /** Tests if the `addWorkoutStatistics` method calls the repository's corresponding method. */
   @Test
   fun addWorkoutStatisticsCallsRepository() = runBlocking {
     statisticsViewModel.addWorkoutStatistics(workoutStats)
-    verify(repository).addWorkout(eq(workoutStats), any(), any())
+    verify(repository).addWorkoutStatistics(eq(workoutStats), any(), any())
   }
 
+  /**
+   * Tests if the `computeWorkoutStatistics` method correctly calculates workout statistics based on
+   * the workout and exercise states.
+   */
   @Test
   fun computeWorkoutStatisticsReturnsCorrectWorkoutStatistics() = runBlocking {
     val computedStats =

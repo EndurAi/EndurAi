@@ -88,7 +88,8 @@ class StatisticsRepositoryFirestoreTest {
     `when`(mockSubDocumentReference.set(any()))
         .thenReturn(Tasks.forResult(null)) // Simulate success
 
-    statisticsRepositoryFirestore.addWorkout(workoutStatistics, onSuccess = {}, onFailure = {})
+    statisticsRepositoryFirestore.addWorkoutStatistics(
+        workoutStatistics, onSuccess = {}, onFailure = {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -97,8 +98,8 @@ class StatisticsRepositoryFirestoreTest {
   }
 
   /**
-   * This test verifies that when fetching a Preferences class, the Firestore `get()` is called on
-   * the collection reference and not the document reference.
+   * This test verifies that when fetching the statistics, the Firestore `get()` is called on the
+   * collection reference and not the document reference.
    */
   @Test
   fun getWorkoutStatistics_callsDocuments() {

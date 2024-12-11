@@ -22,11 +22,15 @@ interface StatisticsRepository {
   fun getStatistics(onSuccess: (List<WorkoutStatistics>) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
-   * Updates the user's preferences in the persistent storage.
+   * Updates the user's statistics in the persistent storage.
    *
    * @param workout The statistics to be added to repository.
    * @param onSuccess A lambda function that is called when the update is successful.
    * @param onFailure A lambda function that is called with an [Exception] if the update fails.
    */
-  fun addWorkout(workout: WorkoutStatistics, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  fun addWorkoutStatistics(
+      workout: WorkoutStatistics,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }

@@ -32,7 +32,8 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
    * @param stats The WorkoutStatistics object to be added.
    */
   fun addWorkoutStatistics(stats: WorkoutStatistics) {
-    repository.addWorkout(workout = stats, onSuccess = { getWorkoutStatistics() }, onFailure = {})
+    repository.addWorkoutStatistics(
+        workout = stats, onSuccess = { getWorkoutStatistics() }, onFailure = {})
   }
 
   /**

@@ -30,6 +30,21 @@ open class StatisticsRepositoryFirestore(private val db: FirebaseFirestore) : St
   private val adapter: JsonAdapter<WorkoutStatistics> = moshi.adapter(WorkoutStatistics::class.java)
 
   private val collectionName = "user_statistics"
+  private val subCollectionName = "workouts"
+
+  /**
+   * Centralized function to retrieve the current user ID.
+   *
+   * @param onFailure Callback for handling failure.
+   * @return The current user ID or null if the user is not authenticated.
+   */
+  private fun getCurrentUserId(onFailure: (Exception) -> Unit): String? {
+    val currentUserId = Firebase.auth.currentUser?.uid
+    if (currentUserId == null) {
+      onFailure(Exception("User not authenticated"))
+    }
+    return currentUserId
+  }
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {
@@ -49,11 +64,10 @@ open class StatisticsRepositoryFirestore(private val db: FirebaseFirestore) : St
       onSuccess: (List<WorkoutStatistics>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val uid =
-        Firebase.auth.currentUser?.uid ?: return onFailure(Exception("User not authenticated"))
+    val currentUserId = getCurrentUserId(onFailure) ?: return
     db.collection(collectionName)
-        .document(uid)
-        .collection("workouts")
+        .document(currentUserId)
+        .collection(subCollectionName)
         .get()
         .addOnCompleteListener { task ->
           if (task.isSuccessful) {
@@ -80,21 +94,20 @@ open class StatisticsRepositoryFirestore(private val db: FirebaseFirestore) : St
    * @param onSuccess Callback triggered upon successful addition.
    * @param onFailure Callback triggered upon failure with the exception.
    */
-  override fun addWorkout(
+  override fun addWorkoutStatistics(
       workout: WorkoutStatistics,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val uid =
-        Firebase.auth.currentUser?.uid ?: return onFailure(Exception("User not authenticated"))
+    val currentUserId = getCurrentUserId(onFailure) ?: return
     val json = adapter.toJson(workout)
 
     val dataMap: Map<String, Any> =
         (moshi.adapter(Map::class.java).fromJson(json) as? Map<String, Any>) ?: emptyMap()
 
     db.collection(collectionName)
-        .document(uid)
-        .collection("workouts")
+        .document(currentUserId)
+        .collection(subCollectionName)
         .document(workout.id)
         .set(dataMap)
         .addOnSuccessListener { onSuccess() }
