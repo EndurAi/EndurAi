@@ -13,6 +13,8 @@ import androidx.camera.view.PreviewView
 import androidx.camera.view.video.AudioConfig
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -143,19 +147,18 @@ class CameraFeedBack {
                 }
           }){ pd: PaddingValues ->
   Box(modifier = Modifier
-    .padding(pd)
     .fillMaxSize()) {
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().matchParentSize(),
         factory = { context ->
           PreviewView(context)
               .apply {
                 layoutParams =
                     LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.FILL_PARENT,
-                        ViewGroup.LayoutParams.FILL_PARENT)
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT)
                 setBackgroundColor(android.graphics.Color.BLACK)
-                scaleType = PreviewView.ScaleType.FIT_START
+                scaleType = PreviewView.ScaleType.FILL_START
               }
               .also { previewView ->
                 previewView.controller = cameraViewModel.cameraController.value
@@ -164,8 +167,24 @@ class CameraFeedBack {
         })
 
     if (poseDetectionRequired) {
-      Canvas(modifier = Modifier) {
-        val off = 15
+      var cumulatedOffset by remember { mutableStateOf(Offset(0F, 0F)) }
+
+      Canvas(
+        modifier = Modifier
+          .fillMaxSize()
+          .matchParentSize()
+          .border(5.dp, color = Color.Blue)
+          .pointerInput(Unit) {
+            detectDragGestures { change, dragAmount ->
+              change.consume()
+              cumulatedOffset += dragAmount
+            }
+          }
+      ){
+        val lineStroke = 5f
+        val roundStroke = 10f
+        val lineColor = Color.Red
+        val roundColor = Color.Yellow
         if (lastPose.isNotEmpty()) {
 
           displayedJoints.forEach { triple ->
@@ -175,39 +194,39 @@ class CameraFeedBack {
             val c = lastPose[triple.third]
 
             //draw the 3 points
-            val offset = 0.628f
+            val offset = 1f
             drawCircle(
-              color = androidx.compose.ui.graphics.Color.Yellow,
-              radius = 5f,
-              center = Offset(a.x * offset, a.y * offset)
+              color =roundColor,
+              radius = roundStroke,
+              center = Offset(a.x * offset +cumulatedOffset.x, a.y * offset+cumulatedOffset.y)
             )
 
             drawCircle(
-              color = androidx.compose.ui.graphics.Color.Yellow,
-              radius = 5f,
-              center = Offset(b.x * offset, b.y * offset)
+              color =roundColor,
+              radius = roundStroke,
+              center = Offset(b.x * offset+cumulatedOffset.x, b.y * offset+cumulatedOffset.y)
             )
 
             drawCircle(
-              color = androidx.compose.ui.graphics.Color.Yellow,
-              radius = 5f,
-              center = Offset(c.x * offset, c.y * offset)
+              color =roundColor,
+              radius = roundStroke,
+              center = Offset(c.x * offset+cumulatedOffset.x, c.y * offset+cumulatedOffset.y)
             )
 
             // Draw a red line from a to b
             drawLine(
-              color = androidx.compose.ui.graphics.Color.Red,
-              start = Offset(a.x * offset, a.y * offset),
-              end = Offset(b.x * offset, b.y * offset),
-              strokeWidth = 3f
+              color = lineColor,
+              start = Offset(a.x * offset+cumulatedOffset.x, a.y * offset+cumulatedOffset.y),
+              end = Offset(b.x * offset+cumulatedOffset.x, b.y * offset+cumulatedOffset.y),
+              strokeWidth = lineStroke
             )
 
 // Draw a red line from b to c
             drawLine(
-              color = androidx.compose.ui.graphics.Color.Red,
-              start = Offset(b.x * offset, b.y * offset),
-              end = Offset(c.x * offset, c.y * offset),
-              strokeWidth = 3f
+              color = lineColor,
+              start = Offset(b.x * offset+cumulatedOffset.x, b.y * offset+cumulatedOffset.y),
+              end = Offset(c.x * offset+cumulatedOffset.x, c.y * offset+cumulatedOffset.y),
+              strokeWidth = lineStroke
             )
 
 
