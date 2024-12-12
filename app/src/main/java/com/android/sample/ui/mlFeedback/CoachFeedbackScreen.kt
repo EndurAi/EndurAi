@@ -1,12 +1,9 @@
 package com.android.sample.ui.mlFeedback
 
-import android.annotation.SuppressLint
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -23,37 +20,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.FeedbackRank
 import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
-import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.mlUtils.rateToRank
 import com.android.sample.model.camera.CameraViewModel
@@ -62,14 +48,10 @@ import com.android.sample.ui.composables.TalkingCoach
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.theme.Blue
-import com.android.sample.ui.theme.BlueGradient
+import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueWorkoutCard
-import com.android.sample.ui.theme.ContrailOne
 import com.android.sample.ui.theme.FontSizes.BigTitleFontSize
 import com.android.sample.ui.theme.Green
-import com.android.sample.ui.theme.LightBackground
-import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.MediumGrey
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.Red
@@ -77,7 +59,6 @@ import com.android.sample.ui.theme.RunningTag
 import com.android.sample.ui.theme.Yellow
 import com.android.sample.ui.theme.YogaTag
 import com.android.sample.ui.workout.LeafShape
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -170,6 +151,7 @@ private fun genericFeedbackFromRank(rank: FeedbackRank): String {
         FeedbackRank.B -> "Good job! But you can surely do better! Here are some tips to improve :"
         FeedbackRank.C -> "Ok, there is room for improvement! Here are some tips to improve :"
         FeedbackRank.D -> "You need to improve in order to do the exercise correctly! Here are some tips to improve :"
+        FeedbackRank.X -> "I couldn't see you. Make sure your whole body is in the camera frame."
     }
 }
 private fun durationString(feedbacks: List<CoachFeedback>): String {
@@ -300,6 +282,7 @@ private fun getColorForRank(rank: FeedbackRank): Color {
         FeedbackRank.B -> RunningTag
         FeedbackRank.C -> Yellow
         FeedbackRank.D -> Red
+        FeedbackRank.X -> Black
     }
 }
 

@@ -57,6 +57,7 @@ enum class FeedbackRank {
     B,
     C,
     D,
+  X,
 }
 fun rateToRank(rate: Float): FeedbackRank {
     return when {
@@ -64,6 +65,7 @@ fun rateToRank(rate: Float): FeedbackRank {
         rate >= 0.8 -> FeedbackRank.A
         rate >= 0.7 -> FeedbackRank.B
         rate >= 0.6 -> FeedbackRank.C
-        else -> FeedbackRank.D
+        rate > 0.1 -> FeedbackRank.D
+        else -> FeedbackRank.X
     }
 }

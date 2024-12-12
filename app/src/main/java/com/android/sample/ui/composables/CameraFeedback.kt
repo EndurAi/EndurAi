@@ -113,7 +113,7 @@ class CameraFeedBack {
         if(!poseDetectionRequired){return@launch}
         cameraViewModel.lastPose.collect{ pose ->
           val poseLandmarks = cameraViewModel.getPoseLandMarks()
-          val DURATION_OF_ANALYSIS = 1500L //duration in ms the sample should represent for the live feedback -> this avoids blinkings
+          val DURATION_OF_ANALYSIS = 1000L //duration in ms the sample should represent for the live feedback -> this avoids blinkings
 
           if (poseLandmarks.isNotEmpty()) {
             //take the last pose
@@ -170,9 +170,9 @@ class CameraFeedBack {
                 // cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
               }
         })
-
+    var cumulatedOffset by remember { mutableStateOf(Offset(0F, 0F)) }
     if (poseDetectionRequired) {
-      var cumulatedOffset by remember { mutableStateOf(Offset(0F, 0F)) }
+
         if (lastPose.isNotEmpty()) {
           PoseDetectionJoints.DrawBody(lastPose= lastPose, wrongJointsLinks = displayedJoints,cumulatedOffset= cumulatedOffset,modifier = Modifier
             .fillMaxSize()
