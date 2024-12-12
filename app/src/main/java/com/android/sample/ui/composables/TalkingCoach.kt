@@ -32,7 +32,7 @@ fun TalkingCoach(text: String, size: Dp = 150.dp) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
-            modifier = Modifier.width(size)
+            modifier = Modifier.width((size.value * 1.5f).dp)
                 .background(Black.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
                 .padding(8.dp)
         ) {

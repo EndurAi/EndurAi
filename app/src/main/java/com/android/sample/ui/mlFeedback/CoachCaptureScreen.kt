@@ -82,7 +82,7 @@ import com.android.sample.ui.theme.White
 
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
+fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel, isTesting: Boolean = false) {
   var isExerciseSelected by remember { mutableStateOf(false) }
   var isDropdownExpanded by remember { mutableStateOf(false) }
   var isRecordingInCamera by remember { mutableStateOf(false) }
@@ -91,6 +91,7 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
   var jointPositionRequested by remember { mutableStateOf(false) }
     var showInfoDialogue by remember { mutableStateOf(true) }
   Scaffold(
+      modifier = Modifier.testTag("coachCaptureScreen"),
       topBar = {
         TopBar(
             navigationActions = navigationActions,
@@ -178,15 +179,17 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
           Box(modifier = Modifier
               .fillMaxWidth()
               .padding(pd), contentAlignment = Alignment.Center) {
-              CameraFeedBack.CameraScreen(
-                  cameraViewModel = cameraViewModel,
-                  modifier = Modifier
-                      .fillMaxSize()
-                      .testTag("cameraFeedback"),
-                  poseDetectionRequired = jointPositionRequested,
-                  exerciseCriterions = ExerciseFeedBack.getCriterions(selectedExercise)
+              if (!isTesting) {
+                  CameraFeedBack.CameraScreen(
+                      cameraViewModel = cameraViewModel,
+                      modifier = Modifier
+                          .fillMaxSize()
+                          .testTag("cameraFeedback"),
+                      poseDetectionRequired = jointPositionRequested,
+                      exerciseCriterions = ExerciseFeedBack.getCriterions(selectedExercise)
 
-              )
+                  )
+              }
               Column(
                   modifier = Modifier.fillMaxSize().padding(32.dp),
                   verticalArrangement = Arrangement.Bottom,
