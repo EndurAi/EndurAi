@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.CustomSearchBar
-import kotlin.math.log
 
 /** Composable part of the Add Friend screen */
 @Composable
@@ -33,8 +32,7 @@ fun NewConnectionsContent(
     userAccountViewModel: UserAccountViewModel
 ) {
 
-
-    val logTag = "NewConnectionsContent"
+  val logTag = "NewConnectionsContent"
   val searchResults = remember { mutableStateOf<List<UserAccount>>(emptyList()) }
 
   LaunchedEffect(Unit) { userAccountViewModel.fetchSentRequests() }
@@ -53,10 +51,9 @@ fun NewConnectionsContent(
   }
 
   Box(modifier) {
-      HorizontalDivider(thickness = 1.dp, color = Color.Gray)
+    HorizontalDivider(thickness = 1.dp, color = Color.Gray)
 
     Column(modifier = Modifier.fillMaxWidth()) {
-
       CustomSearchBar(
           query = searchQuery.value,
           onQueryChange = { searchQuery.value = it },

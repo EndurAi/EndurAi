@@ -175,9 +175,11 @@ class UserAccountViewModelListsTest {
   fun `updateFriendsListAfterRemoval removes friend from list`() = runTest {
     val initialFriends = listOf(friendAccount1, friendAccount2)
     userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache, mockFirebaseAuth)
-    val friendsProperty = UserAccountViewModel::class.declaredMemberProperties.first { it.name == "_friends" }
+    val friendsProperty =
+        UserAccountViewModel::class.declaredMemberProperties.first { it.name == "_friends" }
     friendsProperty.isAccessible = true
-    (friendsProperty.get(userAccountViewModel) as MutableStateFlow<List<UserAccount>>).value = initialFriends
+    (friendsProperty.get(userAccountViewModel) as MutableStateFlow<List<UserAccount>>).value =
+        initialFriends
 
     userAccountViewModel.updateFriendsListAfterRemoval("2")
 
@@ -188,11 +190,14 @@ class UserAccountViewModelListsTest {
   fun `updateReceivedListAfterRemoval removes received request from list`() = runTest {
     val initialReceivedRequests = listOf(friendAccount1)
     userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache, mockFirebaseAuth)
-    val receivedProperty = UserAccountViewModel::class.declaredMemberProperties.first { it.name == "_receivedRequests" }
+    val receivedProperty =
+        UserAccountViewModel::class.declaredMemberProperties.first {
+          it.name == "_receivedRequests"
+        }
 
     receivedProperty.isAccessible = true
-    (receivedProperty.get(userAccountViewModel) as MutableStateFlow<List<UserAccount>>).value = initialReceivedRequests
-
+    (receivedProperty.get(userAccountViewModel) as MutableStateFlow<List<UserAccount>>).value =
+        initialReceivedRequests
 
     userAccountViewModel.updateReceivedListAfterRemoval("2")
 

@@ -21,22 +21,22 @@ fun CustomSearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Mo
   Box(
       modifier =
           modifier.clip(RoundedCornerShape(24.dp)).background(Color(0xFFF0F0F0)).padding(8.dp)) {
-Row {
-      Icon(
-          imageVector = Icons.Default.Search,
-          contentDescription = "Search Icon",
-          tint = Color.Gray
-      )
-        BasicTextField(
-            value = query,
-            onValueChange = onQueryChange,
-            modifier = Modifier.fillMaxWidth(),
-            decorationBox = { innerTextField ->
-              if (query.isEmpty()) {
-                androidx.compose.material3.Text(
-                    "Search", color = Color.Gray, modifier = Modifier.padding(start = 8.dp))
-              }
-              innerTextField()
-            })
-      }}
+        Row {
+          Icon(
+              imageVector = Icons.Default.Search,
+              contentDescription = "Search Icon",
+              tint = Color.Gray)
+          BasicTextField(
+              value = query,
+              onValueChange = onQueryChange,
+              modifier = Modifier.fillMaxWidth(),
+              decorationBox = { innerTextField ->
+                if (query.isEmpty()) {
+                  androidx.compose.material3.Text(
+                      "Search", color = Color.Gray, modifier = Modifier.padding(start = 8.dp))
+                }
+                innerTextField()
+              })
+        }
+      }
 }

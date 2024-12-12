@@ -13,17 +13,15 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TextDialog(message: String) {
-    Surface(
-        modifier = Modifier.padding(16.dp),
-        color = Color(0xFF6C63FF), // Purple card
-        shape = RoundedCornerShape(12.dp)
-    ) {
+  Surface(
+      modifier = Modifier.padding(16.dp),
+      color = Color(0xFF6C63FF), // Purple card
+      shape = RoundedCornerShape(12.dp)) {
         Text(
             text = message,
             modifier = Modifier.padding(16.dp),
             color = Color.White,
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium
-        )
-    }
+            fontWeight = FontWeight.Medium)
+      }
 }
