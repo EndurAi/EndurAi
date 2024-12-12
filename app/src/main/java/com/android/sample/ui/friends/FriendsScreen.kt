@@ -67,7 +67,6 @@ fun FriendsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
                 .testTag("friendsScreen")
         ) {
             TopBar(navigationActions = navigationActions, title = R.string.friends_title)

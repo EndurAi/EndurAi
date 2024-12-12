@@ -30,7 +30,7 @@ fun AddFriendScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Bubbles()
         // Foreground content
-        Column(modifier = Modifier.padding(16.dp).testTag("addFriendScreen")) {
+        Column(modifier = Modifier.fillMaxSize().testTag("addFriendScreen")) {
             TopBar(navigationActions = navigationActions, title = R.string.add_friends_title)
 
             Spacer(modifier = Modifier.height(16.dp))
