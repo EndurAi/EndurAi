@@ -9,12 +9,14 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.datetime.LocalDateTime
 import java.io.IOException
 
 val Context.workoutDataStore: DataStore<Preferences> by preferencesDataStore(name = "workout_cache")
 
 open class WorkoutLocalCache(private val context: Context) {
     private val gson = GsonBuilder()
+        .registerTypeAdapter(java.time.LocalDateTime::class.java, LocalDateTimeAdapter())
         .registerTypeAdapter(Workout::class.java, WorkoutTypeAdapter())
         .create()
     private val workoutKey = stringPreferencesKey("workout_data")

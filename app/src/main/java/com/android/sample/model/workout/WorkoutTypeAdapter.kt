@@ -1,5 +1,6 @@
 package com.android.sample.model.workout
 
+import android.util.Log
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -41,6 +42,8 @@ class WorkoutTypeAdapter : JsonDeserializer<Workout>, JsonSerializer<Workout> {
             ?: throw JsonParseException("Failed to serialize Workout")
 
         jsonObject.addProperty("type", src!!::class.simpleName) // Add the type as a property
+
+        Log.d("WorkoutTypeAdapter", "Serialized JSON: $jsonObject")
         return jsonObject
     }
 }
