@@ -71,13 +71,11 @@ fun FriendsScreen(
             TopBar(navigationActions = navigationActions, title = R.string.friends_title)
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Search bar and Add button remain unchanged
             SearchBarWithAddButton(searchQuery, navigationActions)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             if (filteredFriendsList.isEmpty()) {
-                // Empty State Design with blended background and image shadow
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -93,7 +91,7 @@ fun FriendsScreen(
                             .shadow(12.dp, CircleShape) // Add subtle shadow
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    TextDialog("Oh, you currently don’t have any friends.\nClick on Add to expand your network!")
+                    TextDialog(stringResource(R.string.NoFriends))
                 }
             } else {
                 // Friends List (Unchanged)

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -16,6 +17,8 @@ import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.Bubbles
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.theme.BlueTabLight
+import com.android.sample.ui.theme.BlueTabStrong
 import com.android.sample.ui.theme.DarkBlue
 
 /** Screen for the option to add a friend to the user's friend list. */
@@ -28,6 +31,8 @@ fun AddFriendScreen(
     var selectedTab by remember { mutableStateOf(Tab.NEW_CONNECTIONS) }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        // Background content
+
         Bubbles()
         // Foreground content
         Column(modifier = Modifier.fillMaxSize().testTag("addFriendScreen")) {
@@ -42,7 +47,7 @@ fun AddFriendScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 TabButton(
-                    tab = Tab.NEW_CONNECTIONS, // Pass enum value
+                    tab = Tab.NEW_CONNECTIONS,
                     isSelected = selectedTab == Tab.NEW_CONNECTIONS,
                     onClick = { selectedTab = Tab.NEW_CONNECTIONS },
                     modifier = Modifier
@@ -93,7 +98,7 @@ fun TabButton(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) Color(0xFF1E3A8A) else Color(0xFFB3E5FC) // Dark blue for selected, light blue for unselected
+            containerColor = if (isSelected) BlueTabStrong else BlueTabLight // Dark blue for selected, light blue for unselected
         ),
         shape = RoundedCornerShape(
             topStart = 50.dp,
@@ -111,10 +116,12 @@ fun TabButton(
             .height(40.dp) // Adjust height for better alignment
     ) {
         Text(
-            text = when (tab) {
-                Tab.NEW_CONNECTIONS -> "New Connections"
-                Tab.INVITATIONS -> "Invitations"
-            },
+            text = stringResource(
+                id = when (tab) {
+                    Tab.NEW_CONNECTIONS -> R.string.SocialNewConnections
+                    Tab.INVITATIONS -> R.string.SocialInvitations
+                }
+            ),
             color = if (isSelected) Color.White else Color.Black, // White text for selected, black for unselected
             fontWeight = FontWeight.Bold
         )

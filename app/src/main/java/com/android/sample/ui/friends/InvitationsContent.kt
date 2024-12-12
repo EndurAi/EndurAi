@@ -48,7 +48,7 @@ fun InvitationsContent(modifier: Modifier, userAccountViewModel: UserAccountView
                     stringResource(id = R.string.welcome_message_invitations, it.firstName)
                 } ?: "")
             } else {
-                TextDialog("Oh no! You have no invitations.")
+                TextDialog(stringResource(id = R.string.NoInvitations))
             }
         }
 

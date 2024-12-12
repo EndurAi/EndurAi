@@ -46,6 +46,10 @@ val Line = Color(0x81000000)
 val AchievementButton = Color(0xFFE7F3FE)
 val White = Color(0xFFFFFFFF)
 val Transparent = Color(0x00000000)
+val MediumBlue = Color(0xFFB3E5FC)
+val BlueTabStrong = Color(0xFF1E3A8A)
+val BlueTabLight = Color(0xFFB3E5FC)
+val ProfileBlue = Color(0xFFADD8E6)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))

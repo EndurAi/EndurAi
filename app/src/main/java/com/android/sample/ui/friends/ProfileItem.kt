@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,7 +22,9 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.ui.theme.Green
 import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.ProfileBlue
 
 /** Composable for the Profile cards */
 @Composable
@@ -35,7 +38,7 @@ fun ProfileItem(
             .fillMaxWidth()
             .padding(12.dp)
             .background(
-                color = Color(0xFFADD8E6),
+                color = ProfileBlue,
                 shape = RoundedCornerShape(16.dp)
             )
             .padding(16.dp), // Inner padding for better spacing
@@ -54,7 +57,7 @@ fun ProfileItem(
                     imageVector = Icons.Filled.Person,
                     contentDescription = "Profile Picture",
                     modifier = Modifier.size(32.dp),
-                    tint = Color(0xFF1E3A8A) // Dark blue icon color
+                    tint = DarkBlue
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
@@ -80,7 +83,7 @@ fun ProfileItemWithAcceptReject(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
                 onClick = onAcceptClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)), // Green button
+                colors = ButtonDefaults.buttonColors(containerColor = Green), // Green button
                 shape = RoundedCornerShape(16.dp), // Rounded buttons for consistency
                 modifier = Modifier.height(36.dp)
             ) {
@@ -93,12 +96,12 @@ fun ProfileItemWithAcceptReject(
             }
             Button(
                 onClick = onRejectClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)), // Red button
+                colors = ButtonDefaults.buttonColors(containerColor = Red), // Red button
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.height(36.dp)
             ) {
                 Text(
-                    text = "Reject",
+                    text = stringResource(id = R.string.Reject),
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
@@ -126,13 +129,13 @@ fun ProfileItemWithRequest(
             },
             enabled = !requestSent,
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (requestSent) Color.Gray else Color(0xFF1E3A8A) // Gray for sent, dark blue for active
+                containerColor = if (requestSent) Color.Gray else Color.Blue // Gray for sent, dark blue for active
             ),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.height(36.dp)
         ) {
             Text(
-                text = if (requestSent) "Request Sent" else "Send Request",
+                text = if (requestSent) stringResource(R.string.RequestSent) else stringResource(R.string.SendRequest),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp
@@ -158,12 +161,12 @@ fun FriendItem(
     ) {
         Button(
             onClick = onRemoveClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)), // Red button
+            colors = ButtonDefaults.buttonColors(containerColor = Red), // Red button
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.height(36.dp)
         ) {
             Text(
-                text = "Remove",
+                text = stringResource(id = R.string.Remove),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp

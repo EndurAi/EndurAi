@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.CustomSearchBar
+import kotlin.math.log
 
 /** Composable part of the Add Friend screen */
 @Composable
@@ -32,6 +33,8 @@ fun NewConnectionsContent(
     userAccountViewModel: UserAccountViewModel
 ) {
 
+
+    val logTag = "NewConnectionsContent"
   val searchResults = remember { mutableStateOf<List<UserAccount>>(emptyList()) }
 
   LaunchedEffect(Unit) { userAccountViewModel.fetchSentRequests() }
@@ -42,10 +45,10 @@ fun NewConnectionsContent(
       userAccountViewModel.searchUsers(
           query = searchQuery.value,
           onResult = { results -> searchResults.value = results },
-          onFailure = { exception -> Log.e("NewConnectionsContent", "Search failed", exception) })
+          onFailure = { exception -> Log.e(logTag, "Search failed", exception) })
     } else {
       searchResults.value = sentRequests
-      Log.d("NewConnectionsContent", " Length: ${sentRequests.size}")
+      Log.d(logTag, " Length: ${sentRequests.size}")
     }
   }
 
@@ -63,7 +66,7 @@ fun NewConnectionsContent(
 
       LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(searchResults.value) { profile ->
-          Log.d("NewConnectionsContent", "Profile: ${profile.firstName} ${profile.lastName}")
+          Log.d(logTag, "Profile: ${profile.firstName} ${profile.lastName}")
           ProfileItemWithRequest(
               profile = profile,
               sentRequests,

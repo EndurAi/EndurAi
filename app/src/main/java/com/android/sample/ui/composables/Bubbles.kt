@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.android.sample.ui.theme.MediumBlue
 
 
 // Define constants for dimensions
@@ -32,7 +33,7 @@ fun Bubbles() {
                 .size(LargeCircleSize)
                 .offset(x = LargeCircleOffsetX, y = LargeCircleOffsetY)
                 .background(
-                    color = Color(0xFFB3E5FC).copy(alpha = 0.5f),
+                    color = MediumBlue.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(LargeCircleSize / 2)
                 )
         )
@@ -42,7 +43,7 @@ fun Bubbles() {
                 .size(SmallCircleSize)
                 .offset(x = SmallCircleOffsetX, y = SmallCircleOffsetY)
                 .background(
-                    color = Color(0xFFB3E5FC).copy(alpha = 0.5f),
+                    color = MediumBlue.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(SmallCircleSize / 2)
                 )
         )
