@@ -11,14 +11,12 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.camera.view.video.AudioConfig
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
@@ -170,7 +168,7 @@ class CameraFeedBack {
     if (poseDetectionRequired) {
       var cumulatedOffset by remember { mutableStateOf(Offset(0F, 0F)) }
         if (lastPose.isNotEmpty()) {
-          PoseDetectionJoints.DrawBody(lastPose= lastPose, wrongJoints = displayedJoints,cumulatedOffset= cumulatedOffset,modifier = Modifier
+          PoseDetectionJoints.DrawBody(lastPose= lastPose, wrongJointsLinks = displayedJoints,cumulatedOffset= cumulatedOffset,modifier = Modifier
             .fillMaxSize()
             .matchParentSize()
             .border(5.dp, color = Color.Blue)
