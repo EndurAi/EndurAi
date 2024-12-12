@@ -183,22 +183,6 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
                       }
                   }
           }
-//              if (userHasRecorded && !isRecordingInCamera) {
-//                Button(
-//                    onClick = {
-//                      val mlCoach = MlCoach(cameraViewModel, selectedExercise)
-//                      val feedBackList = mlCoach.getFeedback()
-//                      val stringBuilder = StringBuilder()
-//                      feedBackList.forEach { stringBuilder.append(it.toString()) }
-//                      val feedBack_str = stringBuilder.toString()
-//
-//                      feedback = feedBack_str
-//                      cameraViewModel.finishPoseRecognition()
-//                    }) {
-//                      Text("Generate feedback")
-//                    }
-//                Text(feedback)
-//              }
 
           }
         }
