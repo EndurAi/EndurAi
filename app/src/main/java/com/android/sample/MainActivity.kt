@@ -371,11 +371,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
       composable(Screen.COACH_CAPTURE) { CoachCaptureScreen(navigationActions, cameraViewModel) }
     }
 
-      // Coach Feedback Screen
+    // Coach Feedback Screen
     navigation(startDestination = Screen.COACH_FEEDBACK, route = Route.COACH_FEEDBACK) {
-        composable(Screen.COACH_FEEDBACK) {
-            CoachFeedbackScreen(navigationActions, cameraViewModel)
-        }
+      composable(Screen.COACH_FEEDBACK) { CoachFeedbackScreen(navigationActions, cameraViewModel) }
     }
   }
 }

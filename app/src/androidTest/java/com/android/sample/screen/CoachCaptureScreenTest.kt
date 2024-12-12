@@ -15,52 +15,51 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 
 class CoachCaptureScreenTest {
-    private lateinit var mockCameraViewModel: CameraViewModel
-    private lateinit var navigationActions: NavigationActions
+  private lateinit var mockCameraViewModel: CameraViewModel
+  private lateinit var navigationActions: NavigationActions
 
-    @get:Rule val composeTestRule = createComposeRule()
-    @Before
-    fun setUp() {
-        navigationActions = mock()
-    }
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Test
-    fun displayAllComponentsOnFirstScreen() {
-        composeTestRule.setContent {
-            val cameraViewModel = CameraViewModel(LocalContext.current)
-            CoachCaptureScreen(
-                cameraViewModel = cameraViewModel,
-                navigationActions = navigationActions
-            )
-        }
-        composeTestRule.onNodeWithTag("coachCaptureScreen").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("coachImage").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("animatedText").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("exerciseDropdownCard").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("selectedExerciseText",useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("dropdownIcon",useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("exerciseDropdownCard").assertHasClickAction()
-        composeTestRule.onNodeWithTag("exerciseDropdownCard").performClick()
-        composeTestRule.onNodeWithTag("exerciseDropdownMenu").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("saveButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("saveButton").assertHasClickAction()
-    }
+  @Before
+  fun setUp() {
+    navigationActions = mock()
+  }
 
-    @Test
-    fun displayAllComponentsOnCameraScreen() {
-        composeTestRule.setContent {
-            val cameraViewModel = CameraViewModel(LocalContext.current)
-            CoachCaptureScreen(
-                cameraViewModel = cameraViewModel,
-                navigationActions = navigationActions,
-                isTesting = true
-            )
-        }
-        composeTestRule.onNodeWithTag("saveButton").performClick()
-        composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("infoDialogue").performClick()
-        composeTestRule.onNodeWithTag("infoButton").assertIsDisplayed().assertHasClickAction()
-        composeTestRule.onNodeWithTag("recordButton").assertIsDisplayed().assertHasClickAction()
-        composeTestRule.onNodeWithTag("jointsButton").assertIsDisplayed().assertHasClickAction()
+  @Test
+  fun displayAllComponentsOnFirstScreen() {
+    composeTestRule.setContent {
+      val cameraViewModel = CameraViewModel(LocalContext.current)
+      CoachCaptureScreen(cameraViewModel = cameraViewModel, navigationActions = navigationActions)
     }
+    composeTestRule.onNodeWithTag("coachCaptureScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("coachImage").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("animatedText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("exerciseDropdownCard").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("selectedExerciseText", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag("dropdownIcon", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("exerciseDropdownCard").assertHasClickAction()
+    composeTestRule.onNodeWithTag("exerciseDropdownCard").performClick()
+    composeTestRule.onNodeWithTag("exerciseDropdownMenu").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("saveButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("saveButton").assertHasClickAction()
+  }
+
+  @Test
+  fun displayAllComponentsOnCameraScreen() {
+    composeTestRule.setContent {
+      val cameraViewModel = CameraViewModel(LocalContext.current)
+      CoachCaptureScreen(
+          cameraViewModel = cameraViewModel,
+          navigationActions = navigationActions,
+          isTesting = true)
+    }
+    composeTestRule.onNodeWithTag("saveButton").performClick()
+    composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("infoDialogue").performClick()
+    composeTestRule.onNodeWithTag("infoButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("recordButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("jointsButton").assertIsDisplayed().assertHasClickAction()
+  }
 }

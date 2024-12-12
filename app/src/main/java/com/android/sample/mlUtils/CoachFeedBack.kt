@@ -21,35 +21,36 @@ data class CoachFeedback(
     val feedbackUnit: ExerciseFeedBackUnit,
     val exerciseCriterion: ExerciseFeedBack.Companion.ExerciseCriterion,
 ) {
-    /**
+  /**
    * Converts the `CoachFeedback` object to a string representation.
    *
    * @return A string representation of the `CoachFeedback` object.
    */
   override fun toString(): String {
     val stringBuilder: StringBuilder = StringBuilder()
-    //stringBuilder.append(exerciseCriterion.name).append("\n")
+    // stringBuilder.append(exerciseCriterion.name).append("\n")
     commentSet
         .filter { it.rate >= 0.1F }
         .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
 
-//    stringBuilder.append(
-//        "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
+    //    stringBuilder.append(
+    //        "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
 
     return stringBuilder.toString()
   }
-    fun debugToString(): String {
-        val stringBuilder: StringBuilder = StringBuilder()
-        stringBuilder.append(exerciseCriterion.name).append("\n")
-        commentSet
-            .filter { it.rate >= 0.1F }
-            .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
 
-        stringBuilder.append(
-            "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
+  fun debugToString(): String {
+    val stringBuilder: StringBuilder = StringBuilder()
+    stringBuilder.append(exerciseCriterion.name).append("\n")
+    commentSet
+        .filter { it.rate >= 0.1F }
+        .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
 
-        return stringBuilder.toString()
-    }
+    stringBuilder.append(
+        "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
+
+    return stringBuilder.toString()
+  }
 }
 
 /**
@@ -63,21 +64,23 @@ data class JointFeedback(val comment: String = "", val rate: Float = 0F) {
     return comment
   }
 }
+
 enum class FeedbackRank {
-    S,
-    A,
-    B,
-    C,
-    D,
+  S,
+  A,
+  B,
+  C,
+  D,
   X,
 }
+
 fun rateToRank(rate: Float): FeedbackRank {
-    return when {
-        rate >= 0.9 -> FeedbackRank.S
-        rate >= 0.8 -> FeedbackRank.A
-        rate >= 0.7 -> FeedbackRank.B
-        rate >= 0.6 -> FeedbackRank.C
-        rate > 0.1 -> FeedbackRank.D
-        else -> FeedbackRank.X
-    }
+  return when {
+    rate >= 0.9 -> FeedbackRank.S
+    rate >= 0.8 -> FeedbackRank.A
+    rate >= 0.7 -> FeedbackRank.B
+    rate >= 0.6 -> FeedbackRank.C
+    rate > 0.1 -> FeedbackRank.D
+    else -> FeedbackRank.X
+  }
 }

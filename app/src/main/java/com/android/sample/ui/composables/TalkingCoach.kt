@@ -28,30 +28,29 @@ import com.android.sample.ui.theme.White
 
 @Composable
 fun TalkingCoach(text: String, size: Dp = 150.dp) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Box(
-            modifier = Modifier.width((size.value * 1.5f).dp)
+  Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Box(
+        modifier =
+            Modifier.width((size.value * 1.5f).dp)
                 .background(Black.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
-                .padding(8.dp)
-        ) {
-            AnimatedText(
-                modifier = Modifier.testTag("animatedText"),
-                text = text,
-                style = MaterialTheme.typography.bodyMedium.copy(color = White)
-            )
+                .padding(8.dp)) {
+          AnimatedText(
+              modifier = Modifier.testTag("animatedText"),
+              text = text,
+              style = MaterialTheme.typography.bodyMedium.copy(color = White))
         }
-        Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(8.dp))
 
-        Image(
-            painter = painterResource(id = R.drawable.endurai_coach),
-            contentDescription = "Coach",
-            modifier = Modifier.size(size)
+    Image(
+        painter = painterResource(id = R.drawable.endurai_coach),
+        contentDescription = "Coach",
+        modifier =
+            Modifier.size(size)
                 .clip(CircleShape)
                 .shadow(8.dp, CircleShape)
                 .background(BlueGradient, CircleShape)
-                .testTag("coachImage")
-        )
-    }
+                .testTag("coachImage"))
+  }
 }

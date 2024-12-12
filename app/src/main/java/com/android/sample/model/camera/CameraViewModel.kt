@@ -77,12 +77,12 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val poseLandmarks: StateFlow<ArrayList<List<MyPoseLandmark>>>
     get() = _poseLandMarks.asStateFlow()
   /** A MutableStateFlow that holds the list of detected pose landmarks. */
-val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
+  val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
   /** A StateFlow that exposes the list of detected pose landmarks. */
   val lastPose: StateFlow<List<MyPoseLandmark>>
     get() = _lastPose.asStateFlow()
-  open var feedback : List<CoachFeedback>? = null
 
+  open var feedback: List<CoachFeedback>? = null
 
   val meanWindow = 10
   private val inFrameLikelihoodThreshold = 0.8f
@@ -170,15 +170,16 @@ val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
                 }) {
                   // Convert into simple type
-                  val currentPose = it.map { poseLandmark ->
-                    val timeStamp = Clock.System.now().toEpochMilliseconds()
-                    MyPoseLandmark(
-                      poseLandmark.position3D.x,
-                      poseLandmark.position3D.y,
-                      poseLandmark.position3D.z,
-                      poseLandmark.inFrameLikelihood,
-                      timeStamp = timeStamp)
-                  }
+                  val currentPose =
+                      it.map { poseLandmark ->
+                        val timeStamp = Clock.System.now().toEpochMilliseconds()
+                        MyPoseLandmark(
+                            poseLandmark.position3D.x,
+                            poseLandmark.position3D.y,
+                            poseLandmark.position3D.z,
+                            poseLandmark.inFrameLikelihood,
+                            timeStamp = timeStamp)
+                      }
                   _poseLandMarks.value.add(currentPose)
                   _lastPose.value = currentPose
                 }
@@ -197,8 +198,7 @@ val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
     _bodyRecognitionIsEnabled.value = false
   }
 
-
-  fun getPoseLandMarks() : List<List<MyPoseLandmark>>{
+  fun getPoseLandMarks(): List<List<MyPoseLandmark>> {
     return _poseLandMarks.value
   }
 }

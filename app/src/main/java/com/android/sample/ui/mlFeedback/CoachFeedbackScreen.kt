@@ -63,228 +63,215 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
-    Scaffold(
-        modifier = Modifier.testTag("coachFeedBackScreen"),
-        topBar = {
-            TopBar(
-                title = R.string.coach_feedback_title,
-                navigationActions = navigationActions
-            )
-        },
-        content = {
-            pd ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(pd),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val rawFeedback = cameraViewModel.feedback
-                    val rank = getNote(rawFeedback!!)
-                    val exerciseString = exerciseName(rawFeedback)
-                    val durationOrRepetitionString = durationString(rawFeedback)
-                    val startingFeedback = genericFeedbackFromRank(rank)
+  Scaffold(
+      modifier = Modifier.testTag("coachFeedBackScreen"),
+      topBar = {
+        TopBar(title = R.string.coach_feedback_title, navigationActions = navigationActions)
+      },
+      content = { pd ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(pd),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              val rawFeedback = cameraViewModel.feedback
+              val rank = getNote(rawFeedback!!)
+              val exerciseString = exerciseName(rawFeedback)
+              val durationOrRepetitionString = durationString(rawFeedback)
+              val startingFeedback = genericFeedbackFromRank(rank)
 
-                    // Card with exercise name and duration/repetition
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor =  BlueWorkoutCard),
-                        shape = LeafShape,
-                        modifier = Modifier
-                            .padding(18.dp)
-                            .shadow(8.dp, shape = LeafShape)
-                            .testTag("exerciseCard")
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = exerciseString,
-                                fontFamily = OpenSans,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.testTag("exerciseName")
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = durationOrRepetitionString,
-                                fontFamily = OpenSans,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal,
-                                modifier = Modifier.testTag("exerciseDuration")
-                            )
+              // Card with exercise name and duration/repetition
+              Card(
+                  colors = CardDefaults.cardColors(containerColor = BlueWorkoutCard),
+                  shape = LeafShape,
+                  modifier =
+                      Modifier.padding(18.dp)
+                          .shadow(8.dp, shape = LeafShape)
+                          .testTag("exerciseCard")) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                          Text(
+                              text = exerciseString,
+                              fontFamily = OpenSans,
+                              fontSize = 20.sp,
+                              fontWeight = FontWeight.Bold,
+                              modifier = Modifier.testTag("exerciseName"))
+                          Spacer(modifier = Modifier.height(8.dp))
+                          Text(
+                              text = durationOrRepetitionString,
+                              fontFamily = OpenSans,
+                              fontSize = 16.sp,
+                              fontWeight = FontWeight.Normal,
+                              modifier = Modifier.testTag("exerciseDuration"))
                         }
-                    }
-                    // Animated feedback rank circle
-                    RankCircle(rank)
+                  }
+              // Animated feedback rank circle
+              RankCircle(rank)
 
-                    TalkingCoach(
-                        text = startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() },
-                    )
+              TalkingCoach(
+                  text = startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() },
+              )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    //Done button
-                    SaveButton(
-                        onSaveClick = {
-                            navigationActions.navigateTo(Screen.MAIN)
-                        },
-                        testTag = "doneButton",
-                        text = "Done"
-                    )
-                }
-
-
-        }
-    )
+              Spacer(modifier = Modifier.height(16.dp))
+              // Done button
+              SaveButton(
+                  onSaveClick = { navigationActions.navigateTo(Screen.MAIN) },
+                  testTag = "doneButton",
+                  text = "Done")
+            }
+      })
 }
 
 private fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
-    val averageRate = feedbacks.map { it.successRate }.average()
-    val rank = rateToRank(averageRate.toFloat())
-    return rank
+  val averageRate = feedbacks.map { it.successRate }.average()
+  val rank = rateToRank(averageRate.toFloat())
+  return rank
 }
+
 private fun genericFeedbackFromRank(rank: FeedbackRank): String {
-    return when (rank) {
-        FeedbackRank.S -> "Amazing! Keep it up! Can't say anything wrong about your performance!"
-        FeedbackRank.A -> "Great job! Here are some tips to improve even more :"
-        FeedbackRank.B -> "Good job! But you can surely do better! Here are some tips to improve :"
-        FeedbackRank.C -> "Ok, there is room for improvement! Here are some tips to improve :"
-        FeedbackRank.D -> "You need to improve in order to do the exercise correctly! Here are some tips to improve :"
-        FeedbackRank.X -> "I couldn't see you. Make sure your whole body is in the camera frame."
-    }
+  return when (rank) {
+    FeedbackRank.S -> "Amazing! Keep it up! Can't say anything wrong about your performance!"
+    FeedbackRank.A -> "Great job! Here are some tips to improve even more :"
+    FeedbackRank.B -> "Good job! But you can surely do better! Here are some tips to improve :"
+    FeedbackRank.C -> "Ok, there is room for improvement! Here are some tips to improve :"
+    FeedbackRank.D ->
+        "You need to improve in order to do the exercise correctly! Here are some tips to improve :"
+    FeedbackRank.X -> "I couldn't see you. Make sure your whole body is in the camera frame."
+  }
 }
+
 private fun durationString(feedbacks: List<CoachFeedback>): String {
-    val feedback = feedbacks.first()
-   return "${feedback.feedbackUnit.valuePrefix}: ${feedback.feedbackValue} ${feedback.feedbackUnit.stringRepresentation}"
+  val feedback = feedbacks.first()
+  return "${feedback.feedbackUnit.valuePrefix}: ${feedback.feedbackValue} ${feedback.feedbackUnit.stringRepresentation}"
 }
-private fun exerciseName(feedbacks :List<CoachFeedback>): String {
-    return when (feedbacks.first().exerciseCriterion) {
-        PushUpsUpCrierions -> "Push Ups"
-        JumpingJacksOpenCriterions -> "Jumping Jacks"
-        else -> feedbacks.first().exerciseCriterion.name
-    }
+
+private fun exerciseName(feedbacks: List<CoachFeedback>): String {
+  return when (feedbacks.first().exerciseCriterion) {
+    PushUpsUpCrierions -> "Push Ups"
+    JumpingJacksOpenCriterions -> "Jumping Jacks"
+    else -> feedbacks.first().exerciseCriterion.name
+  }
 }
+
 @Composable
 fun RankCircle(rank: FeedbackRank) {
-    // Couleur principale en fonction du rang
-    val rankColor = getColorForRank(rank)
+  // Couleur principale en fonction du rang
+  val rankColor = getColorForRank(rank)
 
-    // Animation infinie pour l'effet de respiration
-    val infiniteTransition = rememberInfiniteTransition()
-    val animatedRadius = infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = LinearOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse // Effet de contraction après expansion
-        )
-    )
+  // Animation infinie pour l'effet de respiration
+  val infiniteTransition = rememberInfiniteTransition()
+  val animatedRadius =
+      infiniteTransition.animateFloat(
+          initialValue = 0f,
+          targetValue = 1f,
+          animationSpec =
+              infiniteRepeatable(
+                  animation = tween(durationMillis = 2000, easing = LinearOutSlowInEasing),
+                  repeatMode = RepeatMode.Reverse // Effet de contraction après expansion
+                  ))
 
-    // Animation pour les grandes vagues initiales
-    val initialWaveCount = 5 // Nombre de vagues initiales
-    val initialWaveRadius = remember { mutableStateListOf<Float>() }
-    val initialWaveAlpha = remember { mutableStateListOf<Float>() }
+  // Animation pour les grandes vagues initiales
+  val initialWaveCount = 5 // Nombre de vagues initiales
+  val initialWaveRadius = remember { mutableStateListOf<Float>() }
+  val initialWaveAlpha = remember { mutableStateListOf<Float>() }
 
-    // Initialiser les états des vagues
-    if (initialWaveRadius.isEmpty()) {
-        repeat(initialWaveCount) { index ->
-            initialWaveRadius.add(0f)
-            initialWaveAlpha.add(1f)
-        }
+  // Initialiser les états des vagues
+  if (initialWaveRadius.isEmpty()) {
+    repeat(initialWaveCount) { index ->
+      initialWaveRadius.add(0f)
+      initialWaveAlpha.add(1f)
     }
+  }
 
-    // Lancer les animations initiales
-    LaunchedEffect(Unit) {
-        initialWaveRadius.forEachIndexed { index, _ ->
-            launch {
-                animate(
-                    initialValue = 0f,
-                    targetValue = 3.5f, // Les vagues dépassent l'écran
-                    animationSpec = tween(durationMillis = 1500 + index * 300, easing = LinearOutSlowInEasing)
-                ) { value, _ ->
-                    initialWaveRadius[index] = value
-                }
+  // Lancer les animations initiales
+  LaunchedEffect(Unit) {
+    initialWaveRadius.forEachIndexed { index, _ ->
+      launch {
+        animate(
+            initialValue = 0f,
+            targetValue = 3.5f, // Les vagues dépassent l'écran
+            animationSpec =
+                tween(durationMillis = 1500 + index * 300, easing = LinearOutSlowInEasing)) {
+                value,
+                _ ->
+              initialWaveRadius[index] = value
             }
-            launch {
-                animate(
-                    initialValue = 1f,
-                    targetValue = 0f, // Les vagues disparaissent progressivement
-                    animationSpec = tween(durationMillis = 1500 + index * 300, easing = LinearOutSlowInEasing)
-                ) { value, _ ->
-                    initialWaveAlpha[index] = value
-                }
+      }
+      launch {
+        animate(
+            initialValue = 1f,
+            targetValue = 0f, // Les vagues disparaissent progressivement
+            animationSpec =
+                tween(durationMillis = 1500 + index * 300, easing = LinearOutSlowInEasing)) {
+                value,
+                _ ->
+              initialWaveAlpha[index] = value
             }
-        }
+      }
     }
+  }
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(180.dp) // Taille globale
-            .testTag("rankCircle")
-    ) {
+  Box(
+      contentAlignment = Alignment.Center,
+      modifier =
+          Modifier.size(180.dp) // Taille globale
+              .testTag("rankCircle")) {
         // Grandes vagues initiales et effet respirant (en arrière-plan)
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val canvasRadius = size.minDimension / 2
+          val canvasRadius = size.minDimension / 2
 
-            // Grandes vagues initiales
-            initialWaveRadius.forEachIndexed { index, waveRadius ->
-                if (initialWaveAlpha[index] > 0f) { // Afficher uniquement si visible
-                    drawCircle(
-                        color = rankColor.copy(alpha = 0.3f * initialWaveAlpha[index]),
-                        radius = canvasRadius * waveRadius,
-                        style = Stroke(width = 6.dp.toPx()) // Grandes vagues fines
-                    )
-                }
+          // Grandes vagues initiales
+          initialWaveRadius.forEachIndexed { index, waveRadius ->
+            if (initialWaveAlpha[index] > 0f) { // Afficher uniquement si visible
+              drawCircle(
+                  color = rankColor.copy(alpha = 0.3f * initialWaveAlpha[index]),
+                  radius = canvasRadius * waveRadius,
+                  style = Stroke(width = 6.dp.toPx()) // Grandes vagues fines
+                  )
             }
+          }
 
-            // Effet respirant
-            drawCircle(
-                color = rankColor.copy(alpha = 0.3f), // Couleur semi-transparente
-                radius = canvasRadius * animatedRadius.value, // Rayon animé
-                style = Stroke(width = 8.dp.toPx()) // Contour seulement
-            )
+          // Effet respirant
+          drawCircle(
+              color = rankColor.copy(alpha = 0.3f), // Couleur semi-transparente
+              radius = canvasRadius * animatedRadius.value, // Rayon animé
+              style = Stroke(width = 8.dp.toPx()) // Contour seulement
+              )
         }
 
         // Cercle principal (au-dessus des animations)
         Box(
-            modifier = Modifier
-                .size(140.dp) // Taille réduite par rapport aux animations
-                .shadow(
-                    elevation = 12.dp, // Ombre douce
-                    shape = CircleShape,
-                    clip = true
-                )
-                .background(MediumGrey, CircleShape) // Fond totalement opaque
-                .border(
-                    width = 4.dp, // Contour du cercle principal
-                    color = rankColor,
-                    shape = CircleShape
-                )
-        ) {
-            // Texte du rang au centre
-            Text(
-                text = rank.name,
-                color = rankColor, // Couleur du texte selon le rang
-                fontFamily = OpenSans,
-                fontSize = BigTitleFontSize,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Center)
-                    .testTag("rankText")
-            )
-        }
-    }
+            modifier =
+                Modifier.size(140.dp) // Taille réduite par rapport aux animations
+                    .shadow(
+                        elevation = 12.dp, // Ombre douce
+                        shape = CircleShape,
+                        clip = true)
+                    .background(MediumGrey, CircleShape) // Fond totalement opaque
+                    .border(
+                        width = 4.dp, // Contour du cercle principal
+                        color = rankColor,
+                        shape = CircleShape)) {
+              // Texte du rang au centre
+              Text(
+                  text = rank.name,
+                  color = rankColor, // Couleur du texte selon le rang
+                  fontFamily = OpenSans,
+                  fontSize = BigTitleFontSize,
+                  fontWeight = FontWeight.Bold,
+                  modifier = Modifier.align(Alignment.Center).testTag("rankText"))
+            }
+      }
 }
 
 private fun getColorForRank(rank: FeedbackRank): Color {
-    return when (rank) {
-        FeedbackRank.S -> YogaTag
-        FeedbackRank.A -> Green
-        FeedbackRank.B -> RunningTag
-        FeedbackRank.C -> Yellow
-        FeedbackRank.D -> Red
-        FeedbackRank.X -> Black
-    }
+  return when (rank) {
+    FeedbackRank.S -> YogaTag
+    FeedbackRank.A -> Green
+    FeedbackRank.B -> RunningTag
+    FeedbackRank.C -> Yellow
+    FeedbackRank.D -> Red
+    FeedbackRank.X -> Black
+  }
 }
-
