@@ -7,6 +7,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.google.mlkit.vision.pose.PoseLandmark
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.android.sample.R
 import com.android.sample.ui.composables.ImageComposable
 
 class PoseDetectionJoints {
@@ -93,13 +107,34 @@ class PoseDetectionJoints {
       wronglineStroke : Float = 5f,
       modifier: Modifier = Modifier
     ){
-      var toastWasDisplayed  = false
+      var toastWasDisplayed by remember { mutableStateOf(false) }
+
+      val context = LocalContext.current
+      if(toastWasDisplayed.not()){
+        Toast.makeText(context, "Drag to move the skeleton", Toast.LENGTH_LONG).show()
+
+      }
+      var alpha by remember { mutableStateOf(1f) }
+      LaunchedEffect(Unit) {
+        for (i in 100 downTo 0) {
+          alpha = i / 100f
+          kotlinx.coroutines.delay(10)
+        }
+      }
+      Image(
+        painter = painterResource(id = R.drawable.baseline_touch_app_24),
+        contentDescription = "Touch image",
+        modifier = Modifier
+          .fillMaxSize()
+          .wrapContentSize(Alignment.Center)
+          .alpha(alpha)
+      )
 
       Canvas(modifier){
-        if(toastWasDisplayed.not()){
-          Toast.makeText("Drag to move the skeleton")
-
+        if(toastWasDisplayed.not()) {
+          toastWasDisplayed = true
         }
+
         val wrongJoints: Set<Int> = wrongJointsLinks.flatMap { listOf(it.first, it.second, it.third) }.toSet()
         val wrongLines : MutableSet<Pair<Int, Int>> = mutableSetOf()
         wrongJointsLinks.forEach { (a,b,c) ->
