@@ -67,6 +67,7 @@ import com.android.sample.ui.composables.RunningDesignButton
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.BlueWorkoutCard
@@ -130,6 +131,8 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
                             .testTag("coachImage")
                   )
               }
+
+              // Exercise dropdown menu
               Column(
                   modifier = Modifier.fillMaxWidth(),
                   horizontalAlignment = Alignment.CenterHorizontally,
@@ -241,6 +244,8 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
                               } else if (userHasRecorded) {
                                   val feedback = MlCoach(cameraViewModel, selectedExercise).getFeedback()
                                   cameraViewModel.feedback = feedback
+                                  cameraViewModel.finishPoseRecognition()
+                                  navigationActions.navigateTo(Screen.COACH_FEEDBACK)
                               }
                               else {
                                   cameraViewModel.enablePoseRecognition()
