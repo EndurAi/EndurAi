@@ -1,10 +1,19 @@
 package com.android.sample.model.workout
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -16,7 +25,9 @@ import org.mockito.kotlin.eq
 class WorkoutViewModelTest {
 
   private lateinit var repository: WorkoutRepository<BodyWeightWorkout>
+  private lateinit var localCache: WorkoutLocalCache
   private lateinit var workoutViewModel: WorkoutViewModel<BodyWeightWorkout>
+  private val testDispatcher = StandardTestDispatcher()
 
   private val workout1 =
       BodyWeightWorkout(
@@ -36,8 +47,21 @@ class WorkoutViewModelTest {
 
   @Before
   fun setUp() {
+    runTest {
+    Dispatchers.setMain(testDispatcher)
+
     repository = mock(WorkoutRepository::class.java as Class<WorkoutRepository<BodyWeightWorkout>>)
-    workoutViewModel = WorkoutViewModel(repository)
+    localCache = mock(WorkoutLocalCache::class.java)
+    `when`(localCache.getWorkouts()).thenReturn(flowOf(listOf(workout1)))
+
+    workoutViewModel = WorkoutViewModel(repository, localCache)
+
+      }
+  }
+
+  @After
+  fun tearDown() {
+    Dispatchers.resetMain() // Reset the main dispatcher to the original Main dispatcher
   }
 
   /** Verifies that the workouts flow starts empty. */
@@ -51,9 +75,20 @@ class WorkoutViewModelTest {
    * Verifies that calling [getWorkouts] on the view model invokes the corresponding method on the
    * repository.
    */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun getWorkoutsCallsRepository() {
+  fun getWorkoutsCallsRepository() = runTest {
+    // Mock repository to simulate success
+    `when`(repository.getDocuments(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as (List<BodyWeightWorkout>) -> Unit
+      onSuccess(emptyList()) // Simulate an empty repository
+    }
+
+    // Call the method to test
     workoutViewModel.getWorkouts()
+
+    // Verify the interaction
+    advanceUntilIdle() // Ensure all coroutines complete
     verify(repository).getDocuments(any(), any())
   }
 
@@ -99,45 +134,53 @@ class WorkoutViewModelTest {
    * Verifies that calling [getWorkouts] updates the workouts flow with the list of workouts
    * returned by the repository.
    */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun getWorkoutsUpdatesWorkoutsFlow() = runBlocking {
+  fun getWorkoutsUpdatesWorkoutsFlow() = runTest {
+    // Mock repository behavior to return two workouts
     `when`(repository.getDocuments(any(), any())).thenAnswer {
-      val onSuccess = it.arguments[0] as (List<Workout>) -> Unit
-      onSuccess(listOf(workout1, workout2))
+      val onSuccess = it.arguments[0] as (List<BodyWeightWorkout>) -> Unit
+      onSuccess(listOf(workout1, workout2)) // Return workouts
     }
 
+    // Call the method to test
     workoutViewModel.getWorkouts()
+
+    // Wait for flow to update
+    advanceUntilIdle() // Ensure all coroutines complete
+
+    // Verify the flow updates
     val workouts = workoutViewModel.workouts.first()
     assertThat(workouts, `is`(listOf(workout1, workout2)))
   }
 
   /** Verifies that adding a workout refreshes the workouts flow in the view model. */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun addWorkoutRefreshesWorkoutsFlow() = runBlocking {
-    // Simulate initial call to getWorkouts
+  fun addWorkoutRefreshesWorkoutsFlow() = runTest {
+    // Initial cache state
+    `when`(localCache.getWorkouts()).thenReturn(flowOf(listOf(workout1)))
+
+    // Repository returns updated workouts
     `when`(repository.getDocuments(any(), any())).thenAnswer {
-      val onSuccess = it.arguments[0] as (List<Workout>) -> Unit
-      onSuccess(listOf(workout1))
+      val onSuccess = it.arguments[0] as (List<BodyWeightWorkout>) -> Unit
+      onSuccess(listOf(workout1, workout2)) // Updated repository state
     }
 
-    workoutViewModel.getWorkouts()
-    assertThat(workoutViewModel.workouts.first(), `is`(listOf(workout1)))
-
-    // Now, add another workout and check if the workouts flow updates
-    `when`(repository.addDocument(any(), any(), any())).thenAnswer {
+    // Mock addWorkout behavior
+    `when`(repository.addDocument(eq(workout2), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as () -> Unit
       onSuccess() // Simulate success
     }
 
-    workoutViewModel.addWorkout(workout1)
+    // Call the method to add a workout
+    workoutViewModel.addWorkout(workout2)
 
-    // Mock the updated list
-    `when`(repository.getDocuments(any(), any())).thenAnswer {
-      val onSuccess = it.arguments[0] as (List<Workout>) -> Unit
-      onSuccess(listOf(workout1, workout2))
-    }
+    // Wait for flow to update
+    advanceUntilIdle()
 
-    workoutViewModel.getWorkouts()
-    assertThat(workoutViewModel.workouts.first(), `is`(listOf(workout1, workout2)))
+    // Verify flow reflects new state
+    val updatedWorkouts = workoutViewModel.workouts.first()
+    assertThat(updatedWorkouts, `is`(listOf(workout1, workout2)))
   }
 }

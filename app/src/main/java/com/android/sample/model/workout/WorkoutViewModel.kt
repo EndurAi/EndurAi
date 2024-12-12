@@ -97,6 +97,14 @@ open class WorkoutViewModel<out T : Workout>(
     selectedWorkout_.value = workout
   }
 
+    /** Clear all cached workouts. */
+    fun clearCache() {
+        viewModelScope.launch {
+            localCache.clearWorkouts()
+            _workouts.value = emptyList()
+        }
+    }
+
   /**
    * Copies a workout object and returns a new instance with all the same properties except for the
    * ID, which is a newly generated unique identifier.

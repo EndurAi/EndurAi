@@ -13,6 +13,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import java.time.LocalDateTime
 import junit.framework.TestCase.fail
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -38,6 +40,7 @@ class WorkoutRepositoryFirestoreTest {
   @Mock private lateinit var mockCollectionDocumentName: CollectionReference
   @Mock private lateinit var mockUser: FirebaseUser
   @Mock private lateinit var mockAuth: FirebaseAuth
+  @Mock private lateinit var mockLocalCache: WorkoutLocalCache
   private lateinit var firebaseAuthMock: MockedStatic<FirebaseAuth>
 
   private lateinit var workoutRepositoryFirestore1: WorkoutRepositoryFirestore<BodyWeightWorkout>
@@ -78,9 +81,12 @@ class WorkoutRepositoryFirestoreTest {
     `when`(mockAuth.currentUser).thenReturn(mockUser)
     `when`(mockUser.uid).thenReturn("mocked-uid")
 
+    // Mock LocalCache behavior
+    `when`(mockLocalCache.getWorkouts()).thenReturn(flowOf(emptyList()))
+
     // Test with BodyWeightWorkout
     workoutRepositoryFirestore1 =
-        WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
+        WorkoutRepositoryFirestore(mockFirestore,mockLocalCache, BodyWeightWorkout::class.java)
 
     `when`(mockFirestore.collection(collectionPath)).thenReturn(mockCollectionPath)
     `when`(mockCollectionPath.document(any())).thenReturn(mockDocumentToCollectionName)
@@ -122,24 +128,26 @@ class WorkoutRepositoryFirestoreTest {
    */
   @Test
   fun getDocuments_callsCollectionGet() {
+    runTest {
 
-    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
-    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+      val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+      val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
 
-    // Mock behavior for the collection reference to return a QuerySnapshot containing the document
-    `when`(mockCollectionDocumentName.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
-    // Mock behavior for the QuerySnapshot to return a list of DocumentSnapshots
-    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+      // Mock behavior for the collection reference to return a QuerySnapshot containing the document
+      `when`(mockCollectionDocumentName.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+      // Mock behavior for the QuerySnapshot to return a list of DocumentSnapshots
+      `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
 
-    workoutRepositoryFirestore1.getDocuments(
+      workoutRepositoryFirestore1.getDocuments(
         onSuccess = { documents ->
           // Here you can check the documents received
           assert(documents.isNotEmpty()) // Example assertion
         },
         onFailure = { fail("Failure callback should not be called") })
 
-    // Verify that the collection reference's get method was called
-    verify(mockCollectionDocumentName).get()
+      // Verify that the collection reference's get method was called
+      verify(mockCollectionDocumentName).get()
+    }
   }
 
   /**
@@ -185,7 +193,7 @@ class WorkoutRepositoryFirestoreTest {
   @Test
   fun addYogaWorkout_shouldCallFirestoreSet() {
     // Change the repository to YogaWorkout for this test
-    workoutRepositoryFirestore2 = WorkoutRepositoryFirestore(mockFirestore, YogaWorkout::class.java)
+    workoutRepositoryFirestore2 = WorkoutRepositoryFirestore(mockFirestore, mockLocalCache, YogaWorkout::class.java)
 
     `when`(mockDocumentWorkout.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
     `when`(mockDocumentWorkoutID.set(any())).thenReturn(Tasks.forResult(null))
