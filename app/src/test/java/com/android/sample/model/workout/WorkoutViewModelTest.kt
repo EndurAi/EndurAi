@@ -1,8 +1,8 @@
 package com.android.sample.model.workout
 
+import java.time.LocalDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.time.LocalDateTime
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -48,15 +48,15 @@ class WorkoutViewModelTest {
   @Before
   fun setUp() {
     runTest {
-    Dispatchers.setMain(testDispatcher)
+      Dispatchers.setMain(testDispatcher)
 
-    repository = mock(WorkoutRepository::class.java as Class<WorkoutRepository<BodyWeightWorkout>>)
-    localCache = mock(WorkoutLocalCache::class.java)
-    `when`(localCache.getWorkouts()).thenReturn(flowOf(listOf(workout1, workout2)))
+      repository =
+          mock(WorkoutRepository::class.java as Class<WorkoutRepository<BodyWeightWorkout>>)
+      localCache = mock(WorkoutLocalCache::class.java)
+      `when`(localCache.getWorkouts()).thenReturn(flowOf(listOf(workout1, workout2)))
 
-    workoutViewModel = WorkoutViewModel(repository, localCache)
-
-      }
+      workoutViewModel = WorkoutViewModel(repository, localCache)
+    }
   }
 
   @After

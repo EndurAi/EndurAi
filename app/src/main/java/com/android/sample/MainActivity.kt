@@ -97,30 +97,34 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    val workoutLocalCache = WorkoutLocalCache(context)
+  val workoutLocalCache = WorkoutLocalCache(context)
 
-    val userAccountViewModel: UserAccountViewModel =
+  val userAccountViewModel: UserAccountViewModel =
       viewModel(factory = UserAccountViewModel.provideFactory(context))
   val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore,workoutLocalCache, clazz = BodyWeightWorkout::class.java)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = BodyWeightWorkout::class.java)
   val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository, workoutLocalCache)
   val yogaWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, workoutLocalCache, clazz = YogaWorkout::class.java)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = YogaWorkout::class.java)
   val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository, workoutLocalCache)
 
-  val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore,workoutLocalCache, clazz = WarmUp::class.java)
+  val warmUpRepository =
+      WorkoutRepositoryFirestore(Firebase.firestore, workoutLocalCache, clazz = WarmUp::class.java)
   val warmUpViewModel = WarmUpViewModel(warmUpRepository, workoutLocalCache)
   val calendarViewModel = CalendarViewModel()
 
   val cameraViewModel = CameraViewModel(context = context)
   val runningWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore,workoutLocalCache, clazz = RunningWorkout::class.java)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = RunningWorkout::class.java)
   val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository, workoutLocalCache)
   val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
   val statisticsViewModel = StatisticsViewModel(statisticsRepository)

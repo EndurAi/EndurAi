@@ -34,9 +34,14 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -59,7 +64,7 @@ class WorkoutScreenTest {
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var warmUpRepo: WorkoutRepository<WarmUp>
   private lateinit var userAccountViewModel: UserAccountViewModel
-    private var userAccountRepository = mock(UserAccountRepository::class.java)
+  private var userAccountRepository = mock(UserAccountRepository::class.java)
   private val mockVideoRepository = mock(VideoRepository::class.java)
   private val mockVideoRepository2 = mock(VideoRepository::class.java)
   private val mockVideoViewModel = VideoViewModel(mockVideoRepository)
@@ -67,11 +72,15 @@ class WorkoutScreenTest {
   private val statisticsRepository = mock(StatisticsRepositoryFirestore::class.java)
   private val mockStatisticsViewModel = StatisticsViewModel(statisticsRepository)
   private lateinit var mockFirebaseAuth: FirebaseAuth
+  private lateinit var workoutLocalCache: WorkoutLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() = runTest {
+    Dispatchers.setMain(Dispatchers.Unconfined)
+
     val context = ApplicationProvider.getApplicationContext<Context>()
     bodyWeightRepo = mock()
     yogaRepo = mock()
@@ -80,9 +89,9 @@ class WorkoutScreenTest {
     localCache = UserAccountLocalCache(context)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
 
-      // Use a real WorkoutLocalCache with a real Context
-      // This ensures no NullPointerException from null context.
-      val workoutLocalCache = WorkoutLocalCache(context)
+    // Use a real WorkoutLocalCache with a real Context
+    // This ensures no NullPointerException from null context.
+    workoutLocalCache = WorkoutLocalCache(context)
 
     val exerciseList =
         mutableListOf(
@@ -173,6 +182,18 @@ class WorkoutScreenTest {
       val onSuccess = it.getArgument<Function1<List<Video>, Unit>>(0)
       onSuccess(listOf())
     }
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @After
+  fun tearDown() = runBlocking {
+    // Clear all caches to ensure a fresh start for each test
+    bodyWeightViewModel.clearCache()
+    yogaViewModel.clearCache()
+    workoutLocalCache.clearWorkouts()
+
+    // Reset the main dispatcher
+    Dispatchers.resetMain()
   }
 
   @Test

@@ -21,10 +21,10 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.Timestamp
-import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 import java.util.Date
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,8 +44,7 @@ class MainScreenTest {
   private lateinit var accountRepo: UserAccountRepository
   private lateinit var localCache: UserAccountLocalCache
 
-
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
@@ -55,14 +54,12 @@ class MainScreenTest {
       yogaRepo = mock()
       accountRepo = mock()
 
-
       // Get application context for testing
       val context = ApplicationProvider.getApplicationContext<Context>()
 
-
-        // Use a real WorkoutLocalCache with a real Context
-        // This ensures no NullPointerException from null context.
-        val workoutLocalCache = WorkoutLocalCache(context)
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      val workoutLocalCache = WorkoutLocalCache(context)
 
       // Initialize localCache with the context
       localCache = UserAccountLocalCache(context)
@@ -132,6 +129,13 @@ class MainScreenTest {
         MainScreen(navigationActions, bodyWeightViewModel, yogaViewModel, accountViewModel)
       }
     }
+  }
+
+  @After
+  fun tearDown() = runTest {
+    // Reset mocks or any other persistent state
+    bodyWeightViewModel.clearCache()
+    yogaViewModel.clearCache()
   }
 
   @Test

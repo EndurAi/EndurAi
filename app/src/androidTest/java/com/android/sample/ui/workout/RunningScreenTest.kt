@@ -16,7 +16,6 @@ import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.navigation.NavigationActions
-import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -43,7 +42,6 @@ class RunningScreenTest {
     mockRunningWorkoutRepository = mock()
     // Get application context for testing
     val context = ApplicationProvider.getApplicationContext<Context>()
-
 
     // Use a real WorkoutLocalCache with a real Context
     // This ensures no NullPointerException from null context.

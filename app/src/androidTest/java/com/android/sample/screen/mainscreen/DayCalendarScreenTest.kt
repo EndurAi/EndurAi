@@ -17,16 +17,10 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import java.time.LocalDateTime
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.toKotlinLocalDate
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -49,76 +43,70 @@ class DayCalendarScreenTest {
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Before
-  fun setUp() {
-      runTest {
-          bodyWeightRepo = mock()
-          yogaRepo = mock()
+  fun setUp() = runTest {
+    bodyWeightRepo = mock()
+    yogaRepo = mock()
 
-          // Get application context for testing (just like in your working snippet)
-          val context = ApplicationProvider.getApplicationContext<Context>()
+    // Get application context for testing (just like in your working snippet)
+    val context = ApplicationProvider.getApplicationContext<Context>()
 
-          // Use a real WorkoutLocalCache with a real Context
-          // This ensures no NullPointerException from null context.
-          val workoutLocalCache = WorkoutLocalCache(context)
+    // Use a real WorkoutLocalCache with a real Context
+    // This ensures no NullPointerException from null context.
+    val workoutLocalCache = WorkoutLocalCache(context)
 
-          calendarViewModel = CalendarViewModel()
+    calendarViewModel = CalendarViewModel()
 
-          val bodyWeightWorkouts =
-              listOf(
-                  BodyWeightWorkout(
-                      "1",
-                      "Afternoon Push-up Session",
-                      "Hold for 60 seconds",
-                      false,
-                      date = LocalDateTime.now().withHour(0)
-                  ),
-                  BodyWeightWorkout(
-                      "1",
-                      "Afternoon Push-up Session",
-                      "Hold for 60 seconds",
-                      false,
-                      date = LocalDateTime.now().withHour(1)
-                  )
-              )
+    val bodyWeightWorkouts =
+        listOf(
+            BodyWeightWorkout(
+                "1",
+                "Afternoon Push-up Session",
+                "Hold for 60 seconds",
+                false,
+                date = LocalDateTime.now().withHour(0)),
+            BodyWeightWorkout(
+                "1",
+                "Afternoon Push-up Session",
+                "Hold for 60 seconds",
+                false,
+                date = LocalDateTime.now().withHour(1)))
 
-          val workoutDate = bodyWeightWorkouts[0].date.toLocalDate()
+    val workoutDate = bodyWeightWorkouts[0].date.toLocalDate()
 
-          calendarViewModel.updateSelectedDate(workoutDate.toKotlinLocalDate())
+    calendarViewModel.updateSelectedDate(workoutDate.toKotlinLocalDate())
 
-          val yogaWorkouts: List<YogaWorkout> = listOf()
+    val yogaWorkouts: List<YogaWorkout> = listOf()
 
-          `when`(bodyWeightRepo.getDocuments(any(), any())).then {
-              it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
-          }
+    `when`(bodyWeightRepo.getDocuments(any(), any())).then {
+      it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
+    }
 
-          `when`(bodyWeightRepo.deleteDocument(any(), any(), any())).then {
-              it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(emptyList())
-          }
+    `when`(bodyWeightRepo.deleteDocument(any(), any(), any())).then {
+      it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(emptyList())
+    }
 
-          `when`(yogaRepo.getDocuments(any(), any())).then {
-              it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
-          }
+    `when`(yogaRepo.getDocuments(any(), any())).then {
+      it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
+    }
 
-          bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
-          yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
+    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
+    yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
 
-          navigationActions = mock(NavigationActions::class.java)
+    navigationActions = mock(NavigationActions::class.java)
 
-          bodyWeightViewModel.getWorkouts()
+    bodyWeightViewModel.getWorkouts()
 
-          composeTestRule.setContent {
-              DayCalendarScreen(
-                  navigationActions = navigationActions,
-                  bodyworkoutViewModel = bodyWeightViewModel,
-                  yogaworkoutViewModel = yogaViewModel,
-                  calendarViewModel = calendarViewModel
-              )
-          }
-      }
+    composeTestRule.setContent {
+      DayCalendarScreen(
+          navigationActions = navigationActions,
+          bodyworkoutViewModel = bodyWeightViewModel,
+          yogaworkoutViewModel = yogaViewModel,
+          calendarViewModel = calendarViewModel)
+    }
   }
 
   @Test
-  fun navigationGoBack() {
+  fun navigationGoBack() = runTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed().performClick()
     verify(navigationActions).goBack()
   }

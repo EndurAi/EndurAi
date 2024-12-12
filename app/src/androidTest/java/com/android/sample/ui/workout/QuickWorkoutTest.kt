@@ -22,7 +22,6 @@ import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.google.firebase.Timestamp
-import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 import java.util.Date
 import kotlinx.coroutines.test.runTest
@@ -45,8 +44,7 @@ class QuickWorkoutTest {
   private lateinit var accountRepo: UserAccountRepository
   private lateinit var localCache: UserAccountLocalCache
 
-
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
@@ -59,10 +57,9 @@ class QuickWorkoutTest {
       // Initialize localCache with the context
       localCache = UserAccountLocalCache(context)
 
-
-        // Use a real WorkoutLocalCache with a real Context
-        // This ensures no NullPointerException from null context.
-        val workoutLocalCache = WorkoutLocalCache(context)
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      val workoutLocalCache = WorkoutLocalCache(context)
 
       // Mock the repos for workouts
       bodyWeightRepo = mock()

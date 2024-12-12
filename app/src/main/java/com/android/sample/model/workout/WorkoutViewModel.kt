@@ -7,8 +7,8 @@ import kotlinx.coroutines.launch
 
 open class WorkoutViewModel<out T : Workout>(
     private val repository: WorkoutRepository<T>,
-    private val localCache: WorkoutLocalCache) :
-    ViewModel() {
+    private val localCache: WorkoutLocalCache
+) : ViewModel() {
 
   val _workouts = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
   val workouts: StateFlow<List<T>> = _workouts.asStateFlow()
@@ -17,27 +17,31 @@ open class WorkoutViewModel<out T : Workout>(
   open val selectedWorkout: StateFlow<T?> = selectedWorkout_.asStateFlow()
 
   init {
-      loadCachedWorkouts()
+    loadCachedWorkouts()
   }
 
-    private fun loadCachedWorkouts() {
-        viewModelScope.launch {
-            localCache.getWorkouts().collect { cachedWorkouts ->
-                if (cachedWorkouts.isNotEmpty()) {
-                    _workouts.value = cachedWorkouts as List<T>
-                } else {
-                    // Fetch from the repository if the cache is empty
-                    getWorkouts()
-                }
+  private fun loadCachedWorkouts() {
+    viewModelScope.launch {
+      localCache
+          .getWorkouts()
+          .take(1) // Collect only the first emission
+          .collect { cachedWorkouts ->
+            if (cachedWorkouts.isNotEmpty()) {
+              _workouts.value = cachedWorkouts as List<T>
+            } else {
+              repository.init { getWorkouts() } // Fetch from the repository if the cache is empty
             }
-        }
+          }
     }
+  }
 
-    private fun cacheWorkouts(workouts: List<T>) {
-        viewModelScope.launch {
-            localCache.saveWorkouts(workouts)
-        }
+  private fun cacheWorkouts(workouts: List<T>) {
+    viewModelScope.launch {
+      val currentCache = localCache.getWorkouts().firstOrNull() ?: emptyList()
+      val uniqueWorkouts = (currentCache + workouts).distinctBy { it.workoutId }
+      localCache.saveWorkouts(uniqueWorkouts)
     }
+  }
 
   /**
    * Generates a new unique ID.
@@ -50,18 +54,17 @@ open class WorkoutViewModel<out T : Workout>(
 
   /** Gets all Workout documents. */
   fun getWorkouts() {
-      viewModelScope.launch {
-          repository.getDocuments(
-              onSuccess = { fetchedWorkouts ->
-                  _workouts.value = fetchedWorkouts
-                  cacheWorkouts(fetchedWorkouts)
-              },
-              onFailure = {}
-          )
-      }
+    viewModelScope.launch {
+      repository.getDocuments(
+          onSuccess = { fetchedWorkouts ->
+            _workouts.value = fetchedWorkouts
+            cacheWorkouts(fetchedWorkouts)
+          },
+          onFailure = {})
+    }
   }
 
-    /**
+  /**
    * Adds a Workout document.
    *
    * @param workout The Workout document to be added.
@@ -97,13 +100,13 @@ open class WorkoutViewModel<out T : Workout>(
     selectedWorkout_.value = workout
   }
 
-    /** Clear all cached workouts. */
-    fun clearCache() {
-        viewModelScope.launch {
-            localCache.clearWorkouts()
-            _workouts.value = emptyList()
-        }
+  /** Clear all cached workouts. */
+  fun clearCache() {
+    viewModelScope.launch {
+      localCache.clearWorkouts()
+      _workouts.value = emptyList()
     }
+  }
 
   /**
    * Copies a workout object and returns a new instance with all the same properties except for the

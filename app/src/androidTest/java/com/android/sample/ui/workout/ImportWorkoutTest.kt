@@ -22,12 +22,17 @@ import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runTest
 import java.time.LocalDateTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,72 +49,84 @@ class ImportWorkoutTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
+  private lateinit var workoutLocalCache: WorkoutLocalCache
 
-
-    @Before
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Before
   fun setUp() {
-      runTest {
-          bodyWeightRepo = mock()
-          yogaRepo = mock()
+    runTest {
+      Dispatchers.setMain(Dispatchers.Unconfined)
 
-          // Get application context for testing
-          val context = ApplicationProvider.getApplicationContext<Context>()
+      bodyWeightRepo = mock()
+      yogaRepo = mock()
 
+      // Get application context for testing
+      val context = ApplicationProvider.getApplicationContext<Context>()
 
-          // Use a real WorkoutLocalCache with a real Context
-          // This ensures no NullPointerException from null context.
-          val workoutLocalCache = WorkoutLocalCache(context)
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      workoutLocalCache = WorkoutLocalCache(context)
 
-          val bodyWeightWorkouts =
-              mutableListOf(
-                  BodyWeightWorkout(
-                      "1",
-                      "NopainNogain",
-                      "Do 20 push-ups",
-                      false,
-                      date = LocalDateTime.of(2024, 11, 1, 0, 42),
-                      exercises =
+      val bodyWeightWorkouts =
+          mutableListOf(
+              BodyWeightWorkout(
+                  "1",
+                  "NopainNogain",
+                  "Do 20 push-ups",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 42),
+                  exercises =
                       mutableListOf(
                           Exercise("1", ExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(20)),
                           Exercise(
-                              "2", ExerciseType.JUMPING_JACKS, ExerciseDetail.RepetitionBased(10)
-                          )
-                      )
-                  ),
-                  BodyWeightWorkout(
-                      "2",
-                      "NightSes",
-                      "Hold for 60 seconds",
-                      false,
-                      date = LocalDateTime.of(2024, 11, 1, 0, 43)
-                  )
-              )
-          val yogaWorkouts: List<YogaWorkout> = listOf()
+                              "2",
+                              ExerciseType.JUMPING_JACKS,
+                              ExerciseDetail.RepetitionBased(10)))),
+              BodyWeightWorkout(
+                  "2",
+                  "NightSes",
+                  "Hold for 60 seconds",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 43)))
+      val yogaWorkouts: List<YogaWorkout> = listOf()
 
-          `when`(bodyWeightRepo.getDocuments(any(), any())).then {
-              it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
-          }
-
-          `when`(yogaRepo.getDocuments(any(), any())).then {
-              it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
-          }
-
-          `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
-          `when`(bodyWeightRepo.addDocument(any(), any(), any())).then {
-              val workout = it.getArgument<BodyWeightWorkout>(0)
-              bodyWeightWorkouts.add(2, workout)
-          }
-          bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
-          yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
-
-          navigationActions = mock(NavigationActions::class.java)
-          bodyWeightViewModel.getWorkouts()
+      `when`(bodyWeightRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
       }
+
+      `when`(yogaRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
+      }
+
+      `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
+      `when`(bodyWeightRepo.addDocument(any(), any(), any())).then {
+        val workout = it.getArgument<BodyWeightWorkout>(0)
+        bodyWeightWorkouts.add(2, workout)
+      }
+
+      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
+      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
+
+      navigationActions = mock(NavigationActions::class.java)
+    }
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @After
+  fun tearDown() = runBlocking {
+    // Clear all caches to ensure a fresh start for each test
+    bodyWeightViewModel.clearCache()
+    yogaViewModel.clearCache()
+    workoutLocalCache.clearWorkouts()
+
+    // Reset the main dispatcher
+    Dispatchers.resetMain()
   }
 
   // Test the workout selection screen
   @Test
-  fun testWorkoutSelectionScreen() {
+  fun testWorkoutSelectionScreen() = runTest {
+    bodyWeightViewModel.getWorkouts()
     // Set the content of the screen
     composeTestRule.setContent {
       WorkoutSelectionScreen(
@@ -134,7 +151,8 @@ class ImportWorkoutTest {
 
   // Test that you can delete an exercise from the workout
   @Test
-  fun testDeleteWorkout() {
+  fun testDeleteWorkout() = runTest {
+    bodyWeightViewModel.getWorkouts()
     // Set the content of the screen
     bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value[0])
     composeTestRule.setContent {
@@ -160,7 +178,8 @@ class ImportWorkoutTest {
   }
 
   @Test
-  fun testEditExercise() {
+  fun testEditExercise() = runTest {
+    bodyWeightViewModel.getWorkouts()
     bodyWeightViewModel.selectWorkout(bodyWeightViewModel.workouts.value[0])
     composeTestRule.setContent {
       WorkoutCreationScreen(
