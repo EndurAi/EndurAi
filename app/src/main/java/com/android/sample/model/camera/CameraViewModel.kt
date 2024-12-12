@@ -196,4 +196,9 @@ val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
     _poseLandMarks.value = arrayListOf()
     _bodyRecognitionIsEnabled.value = false
   }
+
+
+  fun getPoseLandMarks() : List<List<MyPoseLandmark>>{
+    return _poseLandMarks.value
+  }
 }
