@@ -22,6 +22,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -40,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,22 +52,31 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.FeedbackRank
+import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
+import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
+import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.mlUtils.rateToRank
 import com.android.sample.model.camera.CameraViewModel
+import com.android.sample.ui.composables.SaveButton
+import com.android.sample.ui.composables.TalkingCoach
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.BlueGradient
+import com.android.sample.ui.theme.BlueWorkoutCard
 import com.android.sample.ui.theme.ContrailOne
 import com.android.sample.ui.theme.FontSizes.BigTitleFontSize
 import com.android.sample.ui.theme.Green
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.MediumGrey
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.Red
 import com.android.sample.ui.theme.RunningTag
 import com.android.sample.ui.theme.Yellow
 import com.android.sample.ui.theme.YogaTag
+import com.android.sample.ui.workout.LeafShape
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -87,7 +100,57 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                 ) {
                     val rawFeedback = cameraViewModel.feedback
                     val rank = getNote(rawFeedback!!)
+                    val exerciseString = exerciseName(rawFeedback)
+                    val durationOrRepetitionString = durationString(rawFeedback)
+                    val startingFeedback = genericFeedbackFromRank(rank)
+
+                    // Card with exercise name and duration/repetition
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor =  BlueWorkoutCard),
+                        shape = LeafShape,
+                        modifier = Modifier
+                            .padding(18.dp)
+                            .shadow(8.dp, shape = LeafShape)
+                            .testTag("exerciseCard")
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = exerciseString,
+                                fontFamily = OpenSans,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.testTag("exerciseName")
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = durationOrRepetitionString,
+                                fontFamily = OpenSans,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Normal,
+                                modifier = Modifier.testTag("exerciseDuration")
+                            )
+                        }
+                    }
+                    // Animated feedback rank circle
                     RankCircle(rank)
+
+                    TalkingCoach(
+                        text = startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() },
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    //Done button
+                    SaveButton(
+                        onSaveClick = {
+                            navigationActions.navigateTo(Screen.MAIN)
+                        },
+                        testTag = "doneButton",
+                        text = "Done"
+                    )
                 }
 
 
@@ -95,13 +158,31 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
     )
 }
 
-fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
+private fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
     val averageRate = feedbacks.map { it.successRate }.average()
     val rank = rateToRank(averageRate.toFloat())
     return rank
 }
-
-
+private fun genericFeedbackFromRank(rank: FeedbackRank): String {
+    return when (rank) {
+        FeedbackRank.S -> "Amazing! Keep it up! Can't say anything wrong about your performance!"
+        FeedbackRank.A -> "Great job! Here are some tips to improve even more :"
+        FeedbackRank.B -> "Good job! But you can surely do better! Here are some tips to improve :"
+        FeedbackRank.C -> "Ok, there is room for improvement! Here are some tips to improve :"
+        FeedbackRank.D -> "You need to improve in order to do the exercise correctly! Here are some tips to improve :"
+    }
+}
+private fun durationString(feedbacks: List<CoachFeedback>): String {
+    val feedback = feedbacks.first()
+   return "${feedback.feedbackUnit.valuePrefix}: ${feedback.feedbackValue} ${feedback.feedbackUnit.stringRepresentation}"
+}
+private fun exerciseName(feedbacks :List<CoachFeedback>): String {
+    return when (feedbacks.first().exerciseCriterion) {
+        PushUpsUpCrierions -> "Push Ups"
+        JumpingJacksOpenCriterions -> "Jumping Jacks"
+        else -> feedbacks.first().exerciseCriterion.name
+    }
+}
 @Composable
 fun RankCircle(rank: FeedbackRank) {
     // Couleur principale en fonction du rang
@@ -158,6 +239,7 @@ fun RankCircle(rank: FeedbackRank) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(180.dp) // Taille globale
+            .testTag("rankCircle")
     ) {
         // Grandes vagues initiales et effet respirant (en arrière-plan)
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -191,7 +273,7 @@ fun RankCircle(rank: FeedbackRank) {
                     shape = CircleShape,
                     clip = true
                 )
-                .background(LightBackground, CircleShape) // Fond totalement opaque
+                .background(MediumGrey, CircleShape) // Fond totalement opaque
                 .border(
                     width = 4.dp, // Contour du cercle principal
                     color = rankColor,
@@ -211,7 +293,7 @@ fun RankCircle(rank: FeedbackRank) {
     }
 }
 
-fun getColorForRank(rank: FeedbackRank): Color {
+private fun getColorForRank(rank: FeedbackRank): Color {
     return when (rank) {
         FeedbackRank.S -> YogaTag
         FeedbackRank.A -> Green
@@ -221,17 +303,3 @@ fun getColorForRank(rank: FeedbackRank): Color {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview
-@Composable
-fun RankCirclePreview() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        RankCircle(rank = FeedbackRank.S)
-        Spacer(modifier = Modifier.height(16.dp))
-        RankCircle(rank = FeedbackRank.A)
-    }
-}
