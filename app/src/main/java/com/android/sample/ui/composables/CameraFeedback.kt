@@ -43,6 +43,7 @@ import androidx.lifecycle.lifecycleScope
 import com.android.sample.R
 import com.android.sample.mlUtils.ExerciseFeedBack
 import com.android.sample.mlUtils.MyPoseLandmark
+import com.android.sample.mlUtils.PoseDetectionJoints
 import com.android.sample.mlUtils.exercisesCriterions.AngleCriterionComments
 import com.android.sample.model.camera.CameraViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -158,7 +159,7 @@ class CameraFeedBack {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT)
                 setBackgroundColor(android.graphics.Color.BLACK)
-                scaleType = PreviewView.ScaleType.FILL_START
+                scaleType = PreviewView.ScaleType.FIT_START
               }
               .also { previewView ->
                 previewView.controller = cameraViewModel.cameraController.value
@@ -168,71 +169,19 @@ class CameraFeedBack {
 
     if (poseDetectionRequired) {
       var cumulatedOffset by remember { mutableStateOf(Offset(0F, 0F)) }
-
-      Canvas(
-        modifier = Modifier
-          .fillMaxSize()
-          .matchParentSize()
-          .border(5.dp, color = Color.Blue)
-          .pointerInput(Unit) {
-            detectDragGestures { change, dragAmount ->
-              change.consume()
-              cumulatedOffset += dragAmount
-            }
-          }
-      ){
-        val lineStroke = 5f
-        val roundStroke = 10f
-        val lineColor = Color.Red
-        val roundColor = Color.Yellow
         if (lastPose.isNotEmpty()) {
-
-          displayedJoints.forEach { triple ->
-            //get the 3 points position
-            val a = lastPose[triple.first]
-            val b = lastPose[triple.second]
-            val c = lastPose[triple.third]
-
-            //draw the 3 points
-            val offset = 1f
-            drawCircle(
-              color =roundColor,
-              radius = roundStroke,
-              center = Offset(a.x * offset +cumulatedOffset.x, a.y * offset+cumulatedOffset.y)
-            )
-
-            drawCircle(
-              color =roundColor,
-              radius = roundStroke,
-              center = Offset(b.x * offset+cumulatedOffset.x, b.y * offset+cumulatedOffset.y)
-            )
-
-            drawCircle(
-              color =roundColor,
-              radius = roundStroke,
-              center = Offset(c.x * offset+cumulatedOffset.x, c.y * offset+cumulatedOffset.y)
-            )
-
-            // Draw a red line from a to b
-            drawLine(
-              color = lineColor,
-              start = Offset(a.x * offset+cumulatedOffset.x, a.y * offset+cumulatedOffset.y),
-              end = Offset(b.x * offset+cumulatedOffset.x, b.y * offset+cumulatedOffset.y),
-              strokeWidth = lineStroke
-            )
-
-// Draw a red line from b to c
-            drawLine(
-              color = lineColor,
-              start = Offset(b.x * offset+cumulatedOffset.x, b.y * offset+cumulatedOffset.y),
-              end = Offset(c.x * offset+cumulatedOffset.x, c.y * offset+cumulatedOffset.y),
-              strokeWidth = lineStroke
-            )
-
-
-          }
+          PoseDetectionJoints.DrawBody(lastPose= lastPose, wrongJoints = displayedJoints,cumulatedOffset= cumulatedOffset,modifier = Modifier
+            .fillMaxSize()
+            .matchParentSize()
+            .border(5.dp, color = Color.Blue)
+            .pointerInput(Unit) {
+              detectDragGestures { change, dragAmount ->
+                change.consume()
+                cumulatedOffset += dragAmount
+              }
+            })
         }
-      }
+
     }
   }
 }
