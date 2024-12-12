@@ -53,8 +53,7 @@ fun FriendsScreen(
     }
 
     // Gradient background
-    val gradientColors = listOf(Color(0xFFAAB0B0), Color(0xFFECECEC)) // Light gray to soft white gradient
-
+    val gradientColors = listOf( Color.LightGray, Color.White) // Light gray to soft white gradient
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -147,6 +146,7 @@ fun SearchBarWithAddButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
+            .padding(horizontal = 16.dp)
             .background(
                 Color.White,
                 shape = RoundedCornerShape(topStart = 25.dp, topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 25.dp)

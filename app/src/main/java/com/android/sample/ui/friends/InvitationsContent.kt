@@ -42,9 +42,15 @@ fun InvitationsContent(modifier: Modifier, userAccountViewModel: UserAccountView
   Box(modifier) {
       HorizontalDivider(thickness = 1.dp, color = Color.Gray)
     Column(modifier = Modifier.fillMaxWidth()) {
-        TextDialog(userAccountViewModel.userAccount.value?.let {
-            stringResource(id = R.string.welcome_message_invitations, it.firstName)
-        } ?: "")
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            if (invitations.isNotEmpty()) {
+                TextDialog(userAccountViewModel.userAccount.value?.let {
+                    stringResource(id = R.string.welcome_message_invitations, it.firstName)
+                } ?: "")
+            } else {
+                TextDialog("Oh no! You have no invitations.")
+            }
+        }
 
 
       Spacer(modifier = Modifier.height(16.dp))

@@ -11,6 +11,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,8 +34,12 @@ fun ProfileItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(12.dp)
-            .background(Color(0xFFB3E5FC), shape = RoundedCornerShape(16.dp)) // Light blue background with rounded corners
+            .background(
+                color = Color(0xFFADD8E6),
+                shape = RoundedCornerShape(16.dp)
+            )
             .padding(16.dp), // Inner padding for better spacing
+
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -41,7 +47,7 @@ fun ProfileItem(
             Box(
                 modifier = Modifier
                     .size(56.dp)
-                    .background(Color(0xFFB3E5FC), shape = CircleShape), // Matching light blue circle
+                    .background(Color.White, shape = CircleShape), // Light blue circle
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -55,7 +61,7 @@ fun ProfileItem(
             Text(
                 text = profile.firstName,
                 style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
-                color = Color.Black, // Black text
+                color = Color.Black, // Black text for contrast
                 fontWeight = FontWeight.Bold
             )
         }
@@ -63,6 +69,7 @@ fun ProfileItem(
     }
 }
 
+/** Profile item with Accept and Reject buttons */
 @Composable
 fun ProfileItemWithAcceptReject(
     profile: UserAccount,
@@ -73,9 +80,9 @@ fun ProfileItemWithAcceptReject(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
                 onClick = onAcceptClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)), // Green button color
-                shape = RoundedCornerShape(16.dp), // Rounded button
-                modifier = Modifier.height(36.dp) // Adjust button height
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)), // Green button
+                shape = RoundedCornerShape(16.dp), // Rounded buttons for consistency
+                modifier = Modifier.height(36.dp)
             ) {
                 Text(
                     text = "Accept",
@@ -86,9 +93,9 @@ fun ProfileItemWithAcceptReject(
             }
             Button(
                 onClick = onRejectClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)), // Red button color
-                shape = RoundedCornerShape(16.dp), // Rounded button
-                modifier = Modifier.height(36.dp) // Adjust button height
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)), // Red button
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.height(36.dp)
             ) {
                 Text(
                     text = "Reject",
@@ -101,6 +108,7 @@ fun ProfileItemWithAcceptReject(
     }
 }
 
+/** Profile item with Request Button */
 @Composable
 fun ProfileItemWithRequest(
     profile: UserAccount,
@@ -118,10 +126,10 @@ fun ProfileItemWithRequest(
             },
             enabled = !requestSent,
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (requestSent) Color.Gray else Color(0xFF1E3A8A) // Dark blue for active, gray for sent
+                containerColor = if (requestSent) Color.Gray else Color(0xFF1E3A8A) // Gray for sent, dark blue for active
             ),
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.height(36.dp) // Adjust height for consistency
+            modifier = Modifier.height(36.dp)
         ) {
             Text(
                 text = if (requestSent) "Request Sent" else "Send Request",
@@ -133,7 +141,7 @@ fun ProfileItemWithRequest(
     }
 }
 
-
+/** Friend Item using ProfileItem */
 @Composable
 fun FriendItem(
     friend: UserAccount,
@@ -145,16 +153,14 @@ fun FriendItem(
         profile = friend,
         modifier = Modifier
             .clickable(onClick = onSelectFriend)
-            .background(
-                color = if (isSelected) Color.LightGray else Color(0xFFB3E5FC), // Background changes on selection
-                shape = RoundedCornerShape(16.dp) // Rounded corners for the item
-            )
+
+            .padding(8.dp)
     ) {
         Button(
             onClick = onRemoveClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)), // Red button for remove
-            shape = RoundedCornerShape(16.dp), // Consistent rounded corners
-            modifier = Modifier.height(36.dp) // Uniform button height
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)), // Red button
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.height(36.dp)
         ) {
             Text(
                 text = "Remove",
@@ -165,5 +171,6 @@ fun FriendItem(
         }
     }
 }
+
 
 
