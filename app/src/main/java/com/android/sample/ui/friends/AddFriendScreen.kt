@@ -6,57 +6,30 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.ui.composables.Bubbles
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.DarkBlue
 
 /** Screen for the option to add a friend to the user's friend list. */
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun AddFriendScreen(
     navigationActions: NavigationActions,
     userAccountViewModel: UserAccountViewModel
 ) {
-    var selectedTab by remember { mutableStateOf("New Connections") }
-    val searchQuery = remember { mutableStateOf("") }
+    var selectedTab by remember { mutableStateOf(Tab.NEW_CONNECTIONS) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Add Circles in the Background
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            // Large Circle (semi-transparent)
-            Box(
-                modifier = Modifier
-                    .size(300.dp) // Diameter of the circle
-                    .offset(x = (-50).dp, y = 600.dp) // Position large circle slightly off-screen to the left and near the bottom
-                    .background(
-                        color = Color(0xFFB3E5FC).copy(alpha = 0.5f), // Light blue with transparency
-                        shape = RoundedCornerShape(150.dp)
-                    )
-            )
-
-            // Smaller Circle (semi-transparent)
-            Box(
-                modifier = Modifier
-                    .size(200.dp) // Diameter of the circle
-                    .offset(x = 200.dp, y = 700.dp) // Position smaller circle to the right and overlapping the larger circle
-                    .background(
-                        color = Color(0xFF64B5F6).copy(alpha = 0.6f), // Slightly darker blue with transparency
-                        shape = RoundedCornerShape(100.dp)
-                    )
-            )
-        }
-
-        // Foreground Content
+        Bubbles()
+        // Foreground content
         Column(modifier = Modifier.padding(16.dp).testTag("addFriendScreen")) {
             TopBar(navigationActions = navigationActions, title = R.string.add_friends_title)
 
@@ -66,61 +39,95 @@ fun AddFriendScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("tabButtons"),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.Center
             ) {
                 TabButton(
-                    text = "New Connections",
-                    isSelected = selectedTab == "New Connections",
-                    onClick = { selectedTab = "New Connections" },
-                    modifier = Modifier.testTag("newConnectionsTabButton")
+                    tab = Tab.NEW_CONNECTIONS, // Pass enum value
+                    isSelected = selectedTab == Tab.NEW_CONNECTIONS,
+                    onClick = { selectedTab = Tab.NEW_CONNECTIONS },
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("newConnectionsTabButton")
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 TabButton(
-                    text = "Invitations",
-                    isSelected = selectedTab == "Invitations",
-                    onClick = { selectedTab = "Invitations" },
-                    modifier = Modifier.testTag("invitationsTabButton")
+                    tab = Tab.INVITATIONS, // Pass enum value
+                    isSelected = selectedTab == Tab.INVITATIONS,
+                    onClick = { selectedTab = Tab.INVITATIONS },
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("invitationsTabButton")
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             when (selectedTab) {
-                "New Connections" -> {
+                Tab.NEW_CONNECTIONS -> {
                     NewConnectionsContent(
-                        searchQuery,
+                        searchQuery = remember { mutableStateOf("") },
                         modifier = Modifier.testTag("newConnectionsContent"),
-                        userAccountViewModel
+                        userAccountViewModel = userAccountViewModel
                     )
                 }
-                "Invitations" -> InvitationsContent(
-                    modifier = Modifier.testTag("invitationsContent"),
-                    userAccountViewModel
-                )
+
+                Tab.INVITATIONS -> {
+                    InvitationsContent(
+                        modifier = Modifier.testTag("invitationsContent"),
+                        userAccountViewModel = userAccountViewModel
+                    )
+                }
             }
         }
     }
 }
-
 @Composable
 fun TabButton(
-    text: String,
+    tab: Tab,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-  Button(
-      onClick = onClick,
-      colors =
-          ButtonDefaults.buttonColors(
-              containerColor = if (isSelected) DarkBlue else Color.LightGray),
-      shape = RoundedCornerShape(12.dp),
-      modifier = modifier) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) Color(0xFF1E3A8A) else Color(0xFFB3E5FC) // Dark blue for selected, light blue for unselected
+        ),
+        shape = RoundedCornerShape(
+            topStart = 50.dp,
+            topEnd = 20.dp,
+            bottomStart = 20.dp,
+            bottomEnd = 50.dp
+        ),
+        elevation = ButtonDefaults.elevatedButtonElevation(
+            defaultElevation = 8.dp, // Shadow visible only for the button
+            pressedElevation = 4.dp, // Reduce shadow when button is pressed
+            disabledElevation = 0.dp // No shadow when button is disabled
+        ),
+        modifier = modifier
+            .padding(4.dp) // Add spacing between buttons
+            .height(40.dp) // Adjust height for better alignment
+    ) {
         Text(
-            text,
-            color = if (isSelected) Color.White else Color.Black,
-            fontWeight = FontWeight.Bold)
-      }
+            text = when (tab) {
+                Tab.NEW_CONNECTIONS -> "New Connections"
+                Tab.INVITATIONS -> "Invitations"
+            },
+            color = if (isSelected) Color.White else Color.Black, // White text for selected, black for unselected
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+
+
+
+
+
+
+enum class Tab {
+    NEW_CONNECTIONS,
+    INVITATIONS
 }

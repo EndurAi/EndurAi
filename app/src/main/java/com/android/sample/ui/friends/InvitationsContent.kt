@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.ui.composables.TextDialog
 import com.android.sample.ui.theme.Purple20
 
 /** Composable part of the Add Friend screen */
@@ -37,23 +40,12 @@ fun InvitationsContent(modifier: Modifier, userAccountViewModel: UserAccountView
   val invitations by userAccountViewModel.receivedRequests.collectAsState()
 
   Box(modifier) {
+      HorizontalDivider(thickness = 1.dp, color = Color.Gray)
     Column(modifier = Modifier.fillMaxWidth()) {
-      Box(
-          modifier =
-              Modifier.fillMaxWidth()
-                  .padding(8.dp)
-                  .background(Purple20, shape = RoundedCornerShape(8.dp))
-                  .padding(16.dp),
-          contentAlignment = Alignment.Center) {
-            Text(
-                text =
-                    userAccountViewModel.userAccount.value?.let {
-                      stringResource(id = R.string.welcome_message_invitations, it.firstName)
-                    } ?: "",
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                fontSize = 16.sp)
-          }
+        TextDialog(userAccountViewModel.userAccount.value?.let {
+            stringResource(id = R.string.welcome_message_invitations, it.firstName)
+        } ?: "")
+
 
       Spacer(modifier = Modifier.height(16.dp))
 

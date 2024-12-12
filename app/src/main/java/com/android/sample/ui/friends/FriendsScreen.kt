@@ -26,6 +26,7 @@ import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.CustomSearchBar
+import com.android.sample.ui.composables.TextDialog
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -46,7 +47,7 @@ fun FriendsScreen(
     LaunchedEffect(Unit) { userAccountViewModel.fetchFriends() }
 
     val selectedFriends = remember { mutableStateListOf<String>() }
-    val friendsList = emptyList<UserAccount>()
+    val friendsList by userAccountViewModel.friends.collectAsState()
     val filteredFriendsList = friendsList.filter { friend ->
         friend.firstName.contains(searchQuery.value, ignoreCase = true)
     }
@@ -94,19 +95,7 @@ fun FriendsScreen(
                             .shadow(12.dp, CircleShape) // Add subtle shadow
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Surface(
-                        modifier = Modifier.padding(16.dp),
-                        color = Color(0xFF6C63FF), // Purple card
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = "Oh, you currently don’t have any friends.\nClick on Add to expand your network!",
-                            modifier = Modifier.padding(16.dp),
-                            color = Color.White,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                    TextDialog("Oh, you currently don’t have any friends.\nClick on Add to expand your network!")
                 }
             } else {
                 // Friends List (Unchanged)
