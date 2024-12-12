@@ -121,7 +121,8 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
                       modifier = Modifier.clickable(onClick = { isDropdownExpanded = true })
                           .width(Dimensions.ButtonWidth)
                           .height(Dimensions.ButtonHeight)
-                          .shadow(8.dp),
+                          .shadow(8.dp)
+                          .testTag("exerciseDropdownCard"),
                       colors = CardDefaults.cardColors(containerColor =  BlueWorkoutCard)
                   ){
                       Row(
@@ -136,12 +137,14 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
                               fontSize = MediumTitleFontSize,
                               style = MaterialTheme.typography.bodyMedium.copy(fontFamily = ContrailOne),
                               modifier = Modifier.padding(8.dp)
+                                  .testTag("selectedExerciseText")
 
                           )
                           Image(
                               painter = painterResource(id = R.drawable.arrow_drop_down_24),
                               contentDescription = "Dropdown",
                               modifier = Modifier.size(48.dp).padding(8.dp)
+                                  .testTag("dropdownIcon")
                           )
                       }
                   }
@@ -262,7 +265,8 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
 @Composable
 fun CoachInfoDialogue(onDismissRequest: () -> Unit) {
     BasicAlertDialog(
-        onDismissRequest = onDismissRequest
+        onDismissRequest = onDismissRequest,
+        modifier = Modifier.testTag("infoDialogue"),
     ) {
         Card {
             Column(modifier = Modifier.padding(16.dp)) {
