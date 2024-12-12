@@ -1,5 +1,6 @@
 package com.android.sample.screen
 
+import android.content.Context
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
@@ -7,6 +8,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -46,8 +48,12 @@ class WorkoutCreationScreenTest {
           mockYogaWorkoutRepository = mock()
           mockBodyWeightWorkoutRepository = mock()
 
-          // Mock the WorkoutLocalCache
-          val mockLocalCache = mock<WorkoutLocalCache>()
+          // Get application context for testing (just like in your working snippet)
+          val context = ApplicationProvider.getApplicationContext<Context>()
+
+          // Use a real WorkoutLocalCache with a real Context
+          // This ensures no NullPointerException from null context.
+          val workoutLocalCache = WorkoutLocalCache(context)
 
           bodyWeightWorkouts =
               mutableListOf(
@@ -74,9 +80,6 @@ class WorkoutCreationScreenTest {
                   )
               )
 
-          // Mock local cache behavior
-          `when`(mockLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
-
           `when`(mockBodyWeightWorkoutRepository.getDocuments(any(), any())).then {
               it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
           }
@@ -90,8 +93,8 @@ class WorkoutCreationScreenTest {
           `when`(mockBodyWeightWorkoutRepository.getNewUid()).thenReturn("mocked-bodyweight-uid")
 
           // Mock the ViewModels and NavigationActions
-          mockYogaWorkoutViewModel = WorkoutViewModel(mockYogaWorkoutRepository, mockLocalCache)
-          mockBodyWeightWorkoutViewModel = WorkoutViewModel(mockBodyWeightWorkoutRepository, mockLocalCache)
+          mockYogaWorkoutViewModel = WorkoutViewModel(mockYogaWorkoutRepository, workoutLocalCache)
+          mockBodyWeightWorkoutViewModel = WorkoutViewModel(mockBodyWeightWorkoutRepository, workoutLocalCache)
           mockNavHostController = mock(NavigationActions::class.java)
       }
   }

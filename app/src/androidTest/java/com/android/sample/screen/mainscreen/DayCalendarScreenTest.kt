@@ -1,11 +1,13 @@
 package com.android.sample.screen.mainscreen
 
+import android.content.Context
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutLocalCache
@@ -45,8 +47,12 @@ class DayCalendarScreenTest {
           bodyWeightRepo = mock()
           yogaRepo = mock()
 
-          // Mock the WorkoutLocalCache
-          val mockLocalCache = mock<WorkoutLocalCache>()
+          // Get application context for testing (just like in your working snippet)
+          val context = ApplicationProvider.getApplicationContext<Context>()
+
+          // Use a real WorkoutLocalCache with a real Context
+          // This ensures no NullPointerException from null context.
+          val workoutLocalCache = WorkoutLocalCache(context)
 
           calendarViewModel = CalendarViewModel()
 
@@ -74,9 +80,6 @@ class DayCalendarScreenTest {
 
           val yogaWorkouts: List<YogaWorkout> = listOf()
 
-          // Mock the behavior of local cache
-          `when`(mockLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
-
           `when`(bodyWeightRepo.getDocuments(any(), any())).then {
               it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
           }
@@ -89,8 +92,8 @@ class DayCalendarScreenTest {
               it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
           }
 
-          bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, mockLocalCache)
-          yogaViewModel = WorkoutViewModel(yogaRepo, mockLocalCache)
+          bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
+          yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
 
           navigationActions = mock(NavigationActions::class.java)
 

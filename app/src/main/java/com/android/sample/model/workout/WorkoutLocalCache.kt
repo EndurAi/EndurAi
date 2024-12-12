@@ -16,6 +16,7 @@ val Context.workoutDataStore: DataStore<Preferences> by preferencesDataStore(nam
 
 open class WorkoutLocalCache(private val context: Context) {
     private val gson = GsonBuilder()
+        .registerTypeAdapter(ExerciseDetail::class.java, ExerciseDetailAdapter())
         .registerTypeAdapter(java.time.LocalDateTime::class.java, LocalDateTimeAdapter())
         .registerTypeAdapter(Workout::class.java, WorkoutTypeAdapter())
         .create()
