@@ -172,7 +172,7 @@ class MathsPoseDetection {
         }
 
       }
-      return poseLandmarks.takeLast(elemCounter-1)
+      return poseLandmarks.takeLast(elemCounter)
     }
 
 

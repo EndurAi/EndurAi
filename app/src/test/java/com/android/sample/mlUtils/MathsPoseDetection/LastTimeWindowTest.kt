@@ -37,5 +37,5 @@ class LastTimeWindowTest {
     assertEquals(expectation, actual)
 
   }
-  
+
 }
