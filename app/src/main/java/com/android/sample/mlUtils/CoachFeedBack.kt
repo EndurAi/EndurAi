@@ -30,7 +30,7 @@ data class CoachFeedback(
     val stringBuilder: StringBuilder = StringBuilder()
     stringBuilder.append(exerciseCriterion.name).append("\n")
     commentSet
-        .filter { it.rate >= 0.01F }
+        .filter { it.rate >= 0.1F }
         .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
 
     stringBuilder.append(

@@ -50,6 +50,7 @@ import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.FeedbackRank
 import com.android.sample.mlUtils.rateToRank
 import com.android.sample.model.camera.CameraViewModel
+import com.android.sample.ui.composables.TalkingCoach
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Blue
@@ -87,7 +88,12 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                 ) {
                     val rawFeedback = cameraViewModel.feedback
                     val rank = getNote(rawFeedback!!)
+                    // Animated feedback rank circle
                     RankCircle(rank)
+
+                    TalkingCoach(
+                        text = "Your feedback is: ${rank.name}",
+                    )
                 }
 
 
@@ -100,7 +106,15 @@ fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
     val rank = rateToRank(averageRate.toFloat())
     return rank
 }
-
+fun genericFeedbackFromRank(rank: FeedbackRank): String {
+    return when (rank) {
+        FeedbackRank.S -> "Amazing! Keep it up! Can't say anything wrong about your performance!"
+        FeedbackRank.A -> "Great job! Here are some tips to improve even more :"
+        FeedbackRank.B -> "Good job! But you can surely do better! Here are some tips to improve :"
+        FeedbackRank.C -> "Ok, there is room for improvement! Here are some tips to improve :"
+        FeedbackRank.D -> "You need to improve in order to do the exercise correctly! Here are some tips to improve :"
+    }
+}
 
 @Composable
 fun RankCircle(rank: FeedbackRank) {
