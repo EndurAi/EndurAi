@@ -171,7 +171,7 @@ class CameraFeedBack {
 
       Canvas(
         modifier = Modifier
-          .fillMaxSize( )
+          .fillMaxSize()
           .matchParentSize()
           .border(5.dp, color = Color.Blue)
           .pointerInput(Unit) {
@@ -182,7 +182,7 @@ class CameraFeedBack {
           }
       ){
         val lineStroke = 5f
-        val roundStroke = 5f
+        val roundStroke = 10f
         val lineColor = Color.Red
         val roundColor = Color.Yellow
         if (lastPose.isNotEmpty()) {

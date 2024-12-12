@@ -153,7 +153,7 @@ val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
     finishPoseRecognition()
     _cameraController.value =
         LifecycleCameraController(context).apply {
-          cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+          cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
         }
   }
 
