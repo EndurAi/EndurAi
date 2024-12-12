@@ -1,17 +1,22 @@
 package com.android.sample.ui.mlFeedback
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
@@ -21,7 +26,9 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,22 +43,38 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.android.sample.R
 import com.android.sample.mlUtils.ExerciseFeedBack
 import com.android.sample.mlUtils.MlCoach
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.model.workout.ExerciseType
+import com.android.sample.ui.composables.AnimatedText
 import com.android.sample.ui.composables.CameraFeedBack
 import com.android.sample.ui.composables.RunningDesignButton
 import com.android.sample.ui.composables.SaveButton
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.theme.Black
+import com.android.sample.ui.theme.BlueGradient
+import com.android.sample.ui.theme.BlueWorkoutCard
+import com.android.sample.ui.theme.ContrailOne
 import com.android.sample.ui.theme.DarkGrey
+import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.FontSizes.BigTitleFontSize
+import com.android.sample.ui.theme.FontSizes.MediumTitleFontSize
 import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.White
 
@@ -65,7 +88,6 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
   var selectedExercise by remember { mutableStateOf(ExerciseType.PLANK) }
   var jointPositionRequested by remember { mutableStateOf(false) }
     var showInfoDialogue by remember { mutableStateOf(true) }
-  val context = LocalContext.current
   Scaffold(
       topBar = {
         TopBar(
@@ -79,35 +101,93 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
               modifier = Modifier
                   .fillMaxSize()
                   .padding(pd),
-              horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+              horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.SpaceEvenly) {
-                Button(
-                    onClick = { isDropdownExpanded = true },
-                    modifier = Modifier.testTag("selectExerciseButton")) {
-                      Text("Select Exercise")
-                    }
-                DropdownMenu(
-                    expanded = isDropdownExpanded,
-                    onDismissRequest = { isDropdownExpanded = false },
-                    modifier = Modifier.testTag("exerciseDropdownMenu")) {
-                      ExerciseType.entries
-                          .filter { it.hasMlFeedback }
-                          .forEach { exerciseType ->
-                            Box(
-                                modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                                    .clickable {
-                                        selectedExercise = exerciseType
-                                        isDropdownExpanded = false
-                                    }) {
-                                  Text(text = exerciseType.toString(), fontSize = SubtitleFontSize)
-                                }
-                          }
-                    }
-                SaveButton(onSaveClick = { isExerciseSelected = true }, testTag = "saveButton")
+              // Talking Coach
+              Column(
+                  horizontalAlignment = Alignment.CenterHorizontally,
+              ) {
+                  Box(
+                      modifier = Modifier.width(150.dp)
+                          .background(Black.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
+                          .padding(8.dp)
+                  ) {
+                      AnimatedText(
+                          modifier = Modifier.testTag("animatedText"),
+                            text = "Select an exercise you want to get feedback on",
+                          style = MaterialTheme.typography.bodyMedium.copy(color = White)
+                      )
+                  }
+                  Spacer(modifier = Modifier.height(8.dp))
+
+                  Image(
+                      painter = painterResource(id = R.drawable.endurai_coach),
+                        contentDescription = "Coach",
+                        modifier = Modifier.size(150.dp)
+                            .clip(CircleShape)
+                            .shadow(8.dp, CircleShape)
+                            .background(BlueGradient, CircleShape)
+                            .testTag("coachImage")
+                  )
               }
+              Column(
+                  modifier = Modifier.fillMaxWidth(),
+                  horizontalAlignment = Alignment.CenterHorizontally,
+              ) {
+                  Card(
+                      modifier = Modifier.clickable(onClick = { isDropdownExpanded = true })
+                          .width(Dimensions.ButtonWidth)
+                          .height(Dimensions.ButtonHeight)
+                          .shadow(8.dp),
+                      colors = CardDefaults.cardColors(containerColor =  BlueWorkoutCard)
+                  ){
+                      Row(
+                          modifier = Modifier
+                              .fillMaxWidth()
+                              .padding(8.dp),
+                          horizontalArrangement = Arrangement.SpaceEvenly,
+                          verticalAlignment = Alignment.CenterVertically,
+                          ) {
+                          Text(
+                              text = selectedExercise.toString(),
+                              fontSize = MediumTitleFontSize,
+                              style = MaterialTheme.typography.bodyMedium.copy(fontFamily = ContrailOne),
+                              modifier = Modifier.padding(8.dp)
+
+                          )
+                          Image(
+                              painter = painterResource(id = R.drawable.arrow_drop_down_24),
+                              contentDescription = "Dropdown",
+                              modifier = Modifier.size(48.dp).padding(8.dp)
+                          )
+                      }
+                  }
+              DropdownMenu(
+                  expanded = isDropdownExpanded,
+                  onDismissRequest = { isDropdownExpanded = false },
+                  modifier = Modifier.testTag("exerciseDropdownMenu"),
+                  offset = DpOffset((LocalConfiguration.current.screenWidthDp/2.5).dp,0.dp)
+              ) {
+                  ExerciseType.entries
+                      .filter { it.hasMlFeedback }
+                      .forEach { exerciseType ->
+                          Box(
+                              modifier =
+                              Modifier
+                                  .fillMaxWidth()
+                                  .padding(8.dp)
+                                  .clickable {
+                                      selectedExercise = exerciseType
+                                      isDropdownExpanded = false
+                                  }) {
+                              Text(text = exerciseType.toString(), fontSize = SubtitleFontSize)
+                          }
+                      }
+              }
+          }
+
+                SaveButton(onSaveClick = { isExerciseSelected = true }, testTag = "saveButton")
+            }
         } else {
             if (showInfoDialogue){
                 CoachInfoDialogue { showInfoDialogue = false }
@@ -200,13 +280,13 @@ fun CoachInfoDialogue(onDismissRequest: () -> Unit) {
         Card {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "How to use the ML Coach",
+                    text = "How to use the Coach",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Text("Press record and start your exercise")
-                Text("Your whole body has to be visible in the camera frame.")
-                Text("To ensure proper feedback, please be perpendicular to the camera. For instance if you are doing a plank, you should no be facing the camera.")
+                Text("Press record and start your exercise\n")
+                Text("Your whole body has to be visible in the camera frame.\n")
+                Text("To ensure proper feedback, please be perpendicular to the camera. For instance if you are doing a plank, you should no be facing the camera.\n")
                 Text("Coach will highlight mistakes in real time.")
 
             }
