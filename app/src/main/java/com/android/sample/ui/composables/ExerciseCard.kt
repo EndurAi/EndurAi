@@ -1,5 +1,6 @@
 package com.android.sample.ui.composables
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import com.android.sample.ui.theme.DarkerBlue
 import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.Purple20
+import com.android.sample.ui.theme.Transparent
 import com.android.sample.ui.theme.White
 
 /**
@@ -38,7 +40,8 @@ fun ExerciseCard(
     innerColor: Color = DarkerBlue,
     textToDisplay: String = "",
     modifier: Modifier = Modifier,
-    innerModifier: Modifier = Modifier
+    innerModifier: Modifier = Modifier,
+    summary: Boolean = false
 ) {
   Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
     // Vertical line connecting the cards
@@ -51,7 +54,10 @@ fun ExerciseCard(
 
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = LightBlue2), // Blue color
+        colors =
+            CardDefaults.cardColors(
+                containerColor = if (!summary) LightBlue2 else Transparent), // Blue color
+        border = if (summary) BorderStroke(1.dp, LightBlue2) else null,
         modifier =
             Modifier.fillMaxWidth(0.9f)
                 .testTag("exerciseCard")
@@ -64,7 +70,7 @@ fun ExerciseCard(
                 Text(
                     text = exercise.type.toString(),
                     fontSize = SubtitleFontSize,
-                    color = White,
+                    color = if (!summary) White else LightBlue2,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start)
@@ -96,7 +102,7 @@ fun ExerciseDetailCard(
 ) {
   Card(
       shape = RoundedCornerShape(12.dp),
-      colors = CardDefaults.cardColors(containerColor = cardColor), // Darker blue color
+      colors = CardDefaults.cardColors(containerColor = cardColor),
       modifier =
           Modifier.padding(start = 8.dp).testTag("detailCard").wrapContentSize().clickable {
             onClick()

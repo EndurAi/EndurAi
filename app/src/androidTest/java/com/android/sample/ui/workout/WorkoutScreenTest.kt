@@ -10,6 +10,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.achievements.StatisticsRepositoryFirestore
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.model.userAccount.UserAccountLocalCache
 import com.android.sample.model.userAccount.UserAccountRepository
@@ -60,6 +62,8 @@ class WorkoutScreenTest {
   private val mockVideoRepository2 = mock(VideoRepository::class.java)
   private val mockVideoViewModel = VideoViewModel(mockVideoRepository)
   private val mockVideoViewModel2 = VideoViewModel(mockVideoRepository2)
+  private val statisticsRepository = mock(StatisticsRepositoryFirestore::class.java)
+  private val mockStatisticsViewModel = StatisticsViewModel(statisticsRepository)
   private lateinit var mockFirebaseAuth: FirebaseAuth
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -175,7 +179,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -230,7 +235,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.YOGA,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -282,7 +288,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.YOGA,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ArrowBack
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
@@ -334,7 +341,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // check that permanent composable are still there
     // ArrowBack
@@ -370,6 +378,57 @@ class WorkoutScreenTest {
   }
 
   @Test
+  fun startingTimeBasedExerciseIsDisplayed() {
+    composeTestRule.setContent {
+      WorkoutScreen(
+          navigationActions,
+          bodyweightViewModel = bodyWeightViewModel,
+          yogaViewModel = yogaViewModel,
+          warmUpViewModel = warmUpViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          videoViewModel = mockVideoViewModel,
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
+    }
+    // check that permanent composable are still there
+    // ArrowBack
+    composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed()
+    // Workout Name
+    composeTestRule.onNodeWithTag("WorkoutName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("WorkoutName").assertTextEquals("MyWorkout")
+    // Exercise name
+    composeTestRule.onNodeWithTag("ExerciseName").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("ExerciseName")
+        .assertTextEquals(
+            bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type.toString())
+    // Exercise description
+    composeTestRule.onNodeWithTag("ExerciseDescription").assertIsDisplayed()
+    bodyWeightViewModel.selectedWorkout.value?.exercises?.get(0)?.type?.let {
+      composeTestRule.onNodeWithTag("ExerciseDescription").assertTextEquals(it.getInstruction())
+    }
+    composeTestRule
+        .onNodeWithTag("WorkoutScreenBodyColumn")
+        .performScrollToNode(hasTestTag("StartButton"))
+    // skip the 1st exercise wich is rep. based
+    composeTestRule.onNodeWithTag("SkipButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SkipButton").performClick()
+    // start the 2nd exercise wich is time based
+    composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("StartButton").performClick()
+    // Check that the presentation specific components are hidden
+    // startButton is not displayed
+    composeTestRule.onNodeWithTag("StartButton").assertIsNotDisplayed()
+    // VideoPlayer is not displayed
+    composeTestRule.onNodeWithTag("VideoPlayer").assertIsNotDisplayed()
+
+    // check that the timer is displayed
+    composeTestRule.onNodeWithTag("CountDownTimer").assertIsDisplayed()
+    // check that the play resume button is displayed
+    composeTestRule.onNodeWithTag("CounterPauseResumeButton").assertIsDisplayed()
+  }
+
+  @Test
   fun skipButtonGoesToNextExercise() {
     composeTestRule.setContent {
       WorkoutScreen(
@@ -379,7 +438,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
 
     // Exercise name
@@ -412,7 +472,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
 
     // Exercise name
@@ -446,7 +507,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ex1
     composeTestRule
@@ -482,7 +544,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel2,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
 
     composeTestRule.onNodeWithTag("LoadingIndicator").assertIsDisplayed()
@@ -499,7 +562,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // Check that on launching the composable, the videoViewModel tries to fetch the videos on
     // firestore
@@ -516,7 +580,8 @@ class WorkoutScreenTest {
           warmUpViewModel = warmUpViewModel,
           workoutType = WorkoutType.BODY_WEIGHT,
           videoViewModel = mockVideoViewModel,
-          userAccountViewModel = userAccountViewModel)
+          userAccountViewModel = userAccountViewModel,
+          statisticsViewModel = mockStatisticsViewModel)
     }
     // ex1
     composeTestRule
