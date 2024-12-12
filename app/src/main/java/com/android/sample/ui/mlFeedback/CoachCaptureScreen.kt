@@ -65,6 +65,7 @@ import com.android.sample.ui.composables.AnimatedText
 import com.android.sample.ui.composables.CameraFeedBack
 import com.android.sample.ui.composables.RunningDesignButton
 import com.android.sample.ui.composables.SaveButton
+import com.android.sample.ui.composables.TalkingCoach
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -105,32 +106,10 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.SpaceEvenly) {
               // Talking Coach
-              Column(
-                  horizontalAlignment = Alignment.CenterHorizontally,
-              ) {
-                  Box(
-                      modifier = Modifier.width(150.dp)
-                          .background(Black.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
-                          .padding(8.dp)
-                  ) {
-                      AnimatedText(
-                          modifier = Modifier.testTag("animatedText"),
-                            text = "Select an exercise you want to get feedback on",
-                          style = MaterialTheme.typography.bodyMedium.copy(color = White)
-                      )
-                  }
-                  Spacer(modifier = Modifier.height(8.dp))
 
-                  Image(
-                      painter = painterResource(id = R.drawable.endurai_coach),
-                        contentDescription = "Coach",
-                        modifier = Modifier.size(150.dp)
-                            .clip(CircleShape)
-                            .shadow(8.dp, CircleShape)
-                            .background(BlueGradient, CircleShape)
-                            .testTag("coachImage")
-                  )
-              }
+              TalkingCoach(
+                    text = "Select an exercise you want to get feedback on"
+              )
 
               // Exercise dropdown menu
               Column(
