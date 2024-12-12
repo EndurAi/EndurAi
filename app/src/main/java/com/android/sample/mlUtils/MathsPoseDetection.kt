@@ -150,5 +150,38 @@ class MathsPoseDetection {
       }
       return poseLandmarkList_mean
     }
+
+
+    fun getLastDuration(durationMs : Long, poseLandmarks : List<List<MyPoseLandmark>>): List<List<MyPoseLandmark>>{
+      val listSize = poseLandmarks.size
+      if(poseLandmarks.isEmpty()){
+        return poseLandmarks
+      }
+      var counterTime =0L
+      var lastTimeStamp = poseLandmarks.last()[0].timeStamp
+      var elemCounter = 0
+
+      for (i in listSize - 1 downTo 0) {
+        counterTime += lastTimeStamp - poseLandmarks[i][0].timeStamp
+        lastTimeStamp = poseLandmarks[i][0].timeStamp
+        if (counterTime<= durationMs){
+          elemCounter++
+        }
+        else{
+          break
+        }
+
+      }
+      return poseLandmarks.takeLast(elemCounter)
+    }
+
+
+
+
+
+
+
+
+
   }
 }

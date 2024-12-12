@@ -1,5 +1,6 @@
 package com.android.sample.ui.composables
 
+import MathsPoseDetection
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
@@ -111,17 +112,22 @@ class CameraFeedBack {
       lifecycleOwner.lifecycleScope.launch {
         if(!poseDetectionRequired){return@launch}
         cameraViewModel.lastPose.collect{ pose ->
-          lastPose = pose
-          if (pose.isNotEmpty()) {
-            val preambleAssesmentList = exerciseCriterions?.map { ExerciseFeedBack.assessLandMarks(pose, ExerciseFeedBack.preambleCriterion(it))}
-            val assesmentList = exerciseCriterions?.map { ExerciseFeedBack.assessLandMarks(pose, it)}
+          val poseLandmarks = cameraViewModel.getPoseLandMarks()
+          val DURATION_OF_ANALYSIS = 1500L //duration in ms the sample should represent for the live feedback -> this avoids blinkings
+
+          if (poseLandmarks.isNotEmpty()) {
+            //take the last pose
+            lastPose = pose
+            //mean the collected poses using such that the mean is computed over the duration
+            val avgPose = MathsPoseDetection.window_mean(MathsPoseDetection.getLastDuration(DURATION_OF_ANALYSIS,poseLandmarks))
+            //assess the averaged pose with the best captured criterion
+            val preambleAssesmentList = exerciseCriterions?.map { ExerciseFeedBack.assessLandMarks(avgPose, ExerciseFeedBack.preambleCriterion(it))}
+            val assesmentList = exerciseCriterions?.map { ExerciseFeedBack.assessLandMarks(avgPose, it)}
            val assesment =
              assesmentList?.zip(preambleAssesmentList ?: emptyList())?.filter{(assesement, preamble) -> preamble.first}
                ?.firstOrNull()?.first
-            //take the mos probable
+            //take the interpretation with the best score on it preamble and collect all the wrong joints from the avg pose
             if (assesment!=null) {
-
-
               val temp = assesment.second
                 .filter { it != AngleCriterionComments.SUCCESS }
                 .flatMap { angleCriterionComments -> angleCriterionComments.focusedJoints }
