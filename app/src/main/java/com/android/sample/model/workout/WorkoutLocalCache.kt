@@ -8,15 +8,18 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import java.io.IOException
 
 val Context.workoutDataStore: DataStore<Preferences> by preferencesDataStore(name = "workout_cache")
 
-class WorkoutLocalCache(private val context: Context) {
-    private val gson = Gson()
+open class WorkoutLocalCache(private val context: Context) {
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(Workout::class.java, WorkoutTypeAdapter())
+        .create()
     private val workoutKey = stringPreferencesKey("workout_data")
 
-    // Get cached workouts
+    // Get workouts from cache
     fun getWorkouts(): Flow<List<Workout>> = context.workoutDataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -27,13 +30,15 @@ class WorkoutLocalCache(private val context: Context) {
         }
         .map { preferences ->
             preferences[workoutKey]?.let { json ->
-                gson.fromJson(json, Array<Workout>::class.java)?.toList() ?: emptyList()
+                val workoutListType = object : com.google.gson.reflect.TypeToken<Array<Workout>>() {}.type
+                gson.fromJson<Array<Workout>>(json, workoutListType)?.toList() ?: emptyList()
             } ?: emptyList()
         }
 
     // Save workouts to cache
     suspend fun saveWorkouts(workouts: List<Workout>) {
-        val jsonWorkouts = gson.toJson(workouts)
+        val workoutListType = object : com.google.gson.reflect.TypeToken<List<Workout>>() {}.type
+        val jsonWorkouts = gson.toJson(workouts, workoutListType)
         context.workoutDataStore.edit { preferences ->
             preferences[workoutKey] = jsonWorkouts
         }

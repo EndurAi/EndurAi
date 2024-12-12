@@ -14,6 +14,7 @@ import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
@@ -21,6 +22,7 @@ import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 import java.util.Date
 import kotlinx.coroutines.test.runTest
@@ -42,8 +44,10 @@ class QuickWorkoutTest {
   private lateinit var accountViewModel: UserAccountViewModel
   private lateinit var accountRepo: UserAccountRepository
   private lateinit var localCache: UserAccountLocalCache
+    private lateinit var workoutLocalCache: WorkoutLocalCache
 
-  @get:Rule val composeTestRule = createComposeRule()
+
+    @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
@@ -60,6 +64,7 @@ class QuickWorkoutTest {
       bodyWeightRepo = mock()
       yogaRepo = mock()
       accountRepo = mock()
+        workoutLocalCache = mock()
 
       val account =
           UserAccount(
@@ -98,6 +103,10 @@ class QuickWorkoutTest {
       `when`(bodyWeightRepo.getDocuments(any(), any())).then {
         it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
       }
+
+        // Mock local cache behavior
+        `when`(workoutLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
+
       `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
       `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
 
@@ -106,8 +115,8 @@ class QuickWorkoutTest {
       }
 
       accountViewModel = UserAccountViewModel(accountRepo, localCache)
-      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-      yogaViewModel = WorkoutViewModel(yogaRepo)
+      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
+      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
       // Mock the NavigationActions
       navigationActions = mock(NavigationActions::class.java)
 

@@ -26,6 +26,7 @@ import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.ExerciseType
 import com.android.sample.model.workout.WarmUp
 import com.android.sample.model.workout.WarmUpViewModel
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
@@ -33,6 +34,7 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -57,7 +59,8 @@ class WorkoutScreenTest {
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var warmUpRepo: WorkoutRepository<WarmUp>
   private lateinit var userAccountViewModel: UserAccountViewModel
-  private var userAccountRepository = mock(UserAccountRepository::class.java)
+    private lateinit var workoutLocalCache: WorkoutLocalCache
+    private var userAccountRepository = mock(UserAccountRepository::class.java)
   private val mockVideoRepository = mock(VideoRepository::class.java)
   private val mockVideoRepository2 = mock(VideoRepository::class.java)
   private val mockVideoViewModel = VideoViewModel(mockVideoRepository)
@@ -74,6 +77,7 @@ class WorkoutScreenTest {
     bodyWeightRepo = mock()
     yogaRepo = mock()
     warmUpRepo = mock()
+      workoutLocalCache = mock()
     userAccountRepository = mock(UserAccountRepository::class.java)
     localCache = UserAccountLocalCache(context)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
@@ -127,6 +131,8 @@ class WorkoutScreenTest {
       it.getArgument<(List<WarmUp>) -> Unit>(0)(warmups)
     }
 
+      `when`(workoutLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
+
     val userAccount =
         UserAccount(
             userId = "testUserId",
@@ -136,9 +142,9 @@ class WorkoutScreenTest {
             weightUnit = WeightUnit.KG)
 
     userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
-    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-    yogaViewModel = WorkoutViewModel(yogaRepo)
-    warmUpViewModel = WarmUpViewModel(repository = warmUpRepo)
+    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
+    yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
+    warmUpViewModel = WarmUpViewModel(repository = warmUpRepo, workoutLocalCache)
 
     navigationActions = mock(NavigationActions::class.java)
 

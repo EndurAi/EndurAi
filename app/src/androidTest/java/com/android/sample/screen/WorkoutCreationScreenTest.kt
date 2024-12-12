@@ -11,12 +11,15 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.ExerciseType
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.workout.WorkoutCreationScreen
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
@@ -38,44 +41,59 @@ class WorkoutCreationScreenTest {
 
   @Before
   fun setUp() {
-    // Mock the WorkoutRepositories
-    mockYogaWorkoutRepository = mock()
-    mockBodyWeightWorkoutRepository = mock()
-    bodyWeightWorkouts =
-        mutableListOf(
-            BodyWeightWorkout(
-                "1",
-                "NopainNogain",
-                "Do 20 push-ups",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 42),
-                exercises =
-                    mutableListOf(
-                        Exercise("1", ExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(20)),
-                        Exercise(
-                            "2", ExerciseType.JUMPING_JACKS, ExerciseDetail.RepetitionBased(10)))),
-            BodyWeightWorkout(
-                "2",
-                "NightSes",
-                "Hold for 60 seconds",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 43)))
-    `when`(mockBodyWeightWorkoutRepository.getDocuments(any(), any())).then {
-      it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
-    }
-    `when`(mockBodyWeightWorkoutRepository.addDocument(any(), any(), any())).then {
-      val workout = it.getArgument<BodyWeightWorkout>(0)
-      bodyWeightWorkouts.add(2, workout)
-    }
-    `when`(mockBodyWeightWorkoutRepository.updateDocument(any(), any(), any())).then {}
+      runTest {
+          // Mock the WorkoutRepositories
+          mockYogaWorkoutRepository = mock()
+          mockBodyWeightWorkoutRepository = mock()
 
-    `when`(mockYogaWorkoutRepository.getNewUid()).thenReturn("mocked-yoga-uid")
-    `when`(mockBodyWeightWorkoutRepository.getNewUid()).thenReturn("mocked-bodyweight-uid")
+          // Mock the WorkoutLocalCache
+          val mockLocalCache = mock<WorkoutLocalCache>()
 
-    // Mock the ViewModels and NavigationActions
-    mockYogaWorkoutViewModel = WorkoutViewModel(mockYogaWorkoutRepository)
-    mockBodyWeightWorkoutViewModel = WorkoutViewModel(mockBodyWeightWorkoutRepository)
-    mockNavHostController = mock(NavigationActions::class.java)
+          bodyWeightWorkouts =
+              mutableListOf(
+                  BodyWeightWorkout(
+                      "1",
+                      "NopainNogain",
+                      "Do 20 push-ups",
+                      false,
+                      date = LocalDateTime.of(2024, 11, 1, 0, 42),
+                      exercises =
+                      mutableListOf(
+                          Exercise("1", ExerciseType.PUSH_UPS, ExerciseDetail.RepetitionBased(20)),
+                          Exercise(
+                              "2", ExerciseType.JUMPING_JACKS, ExerciseDetail.RepetitionBased(10)
+                          )
+                      )
+                  ),
+                  BodyWeightWorkout(
+                      "2",
+                      "NightSes",
+                      "Hold for 60 seconds",
+                      false,
+                      date = LocalDateTime.of(2024, 11, 1, 0, 43)
+                  )
+              )
+
+          // Mock local cache behavior
+          `when`(mockLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
+
+          `when`(mockBodyWeightWorkoutRepository.getDocuments(any(), any())).then {
+              it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
+          }
+          `when`(mockBodyWeightWorkoutRepository.addDocument(any(), any(), any())).then {
+              val workout = it.getArgument<BodyWeightWorkout>(0)
+              bodyWeightWorkouts.add(2, workout)
+          }
+          `when`(mockBodyWeightWorkoutRepository.updateDocument(any(), any(), any())).then {}
+
+          `when`(mockYogaWorkoutRepository.getNewUid()).thenReturn("mocked-yoga-uid")
+          `when`(mockBodyWeightWorkoutRepository.getNewUid()).thenReturn("mocked-bodyweight-uid")
+
+          // Mock the ViewModels and NavigationActions
+          mockYogaWorkoutViewModel = WorkoutViewModel(mockYogaWorkoutRepository, mockLocalCache)
+          mockBodyWeightWorkoutViewModel = WorkoutViewModel(mockBodyWeightWorkoutRepository, mockLocalCache)
+          mockNavHostController = mock(NavigationActions::class.java)
+      }
   }
 
   @Test

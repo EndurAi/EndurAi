@@ -9,10 +9,12 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.rule.GrantPermissionRule
 import com.android.sample.model.workout.RunningWorkout
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.navigation.NavigationActions
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,6 +26,7 @@ class RunningScreenTest {
   private lateinit var mockRunningWorkoutViewModel: WorkoutViewModel<RunningWorkout>
   private lateinit var mockNavHostController: NavigationActions
   private lateinit var mockRunningWorkoutRepository: WorkoutRepository<RunningWorkout>
+  private lateinit var mockWorkoutLocalCache: WorkoutLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule
@@ -35,12 +38,16 @@ class RunningScreenTest {
 
   @Before
   fun setUp() {
-    // Mock the WorkoutRepositories
+    // Mock the WorkoutRepositories and LocalCache
     mockRunningWorkoutRepository = mock()
+    mockWorkoutLocalCache = mock()
 
     // Mock the ViewModels and NavigationActions
-    mockRunningWorkoutViewModel = WorkoutViewModel(mockRunningWorkoutRepository)
+    mockRunningWorkoutViewModel = WorkoutViewModel(mockRunningWorkoutRepository, mockWorkoutLocalCache)
     mockNavHostController = mock(NavigationActions::class.java)
+
+    // Mock behavior for the local cache
+    `when`(mockWorkoutLocalCache.getWorkouts()).thenReturn(flowOf(emptyList()))
 
     `when`(mockRunningWorkoutViewModel.getNewUid()).thenReturn("mocked-running-uid")
   }
