@@ -422,7 +422,18 @@ open class UserAccountViewModel(
       }
     }
   }
-
+    fun updateFriendsListAfterRemoval(userId: String) {
+        val updatedList = _friends.value.filterNot { it.userId == userId }
+        _friends.value = updatedList
+    }
+    fun updateSentListAfterRemoval(userId: String) {
+        val sentList  = _sentRequests.value.filterNot { it.userId == userId }
+        _sentRequests.value = sentList
+    }
+    fun updateReceivedListAfterRemoval(userId: String) {
+        val receivedList = _receivedRequests.value.filterNot { it.userId == userId }
+        _receivedRequests.value = receivedList
+    }
   // Factory for creating instances of the ViewModel
   companion object {
     fun provideFactory(context: Context): ViewModelProvider.Factory {

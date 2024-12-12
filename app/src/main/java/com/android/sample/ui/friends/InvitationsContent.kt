@@ -61,11 +61,11 @@ fun InvitationsContent(modifier: Modifier, userAccountViewModel: UserAccountView
               profile = profile,
               onAcceptClick = {
                 userAccountViewModel.acceptFriendRequest(profile.userId)
-                userAccountViewModel.fetchReceivedRequests()
+                userAccountViewModel.updateReceivedListAfterRemoval(profile.userId)
               },
               onRejectClick = {
                 userAccountViewModel.rejectFriendRequest(profile.userId)
-                userAccountViewModel.fetchReceivedRequests()
+                userAccountViewModel.updateReceivedListAfterRemoval(profile.userId)
               })
           Spacer(modifier = Modifier.height(8.dp))
         }

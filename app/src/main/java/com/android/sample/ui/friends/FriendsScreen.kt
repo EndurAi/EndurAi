@@ -111,7 +111,7 @@ fun FriendsScreen(
                             },
                             onRemoveClick = {
                                 userAccountViewModel.removeFriend(friend.userId)
-                                userAccountViewModel.fetchFriends()
+                                userAccountViewModel.updateFriendsListAfterRemoval(friend.userId)
                             },
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -144,6 +144,7 @@ fun SearchBarWithAddButton(
 ) {
     Row(
         modifier = Modifier
+            .testTag("searchBarRow")
             .fillMaxWidth()
             .height(50.dp)
             .padding(horizontal = 16.dp)
@@ -156,6 +157,7 @@ fun SearchBarWithAddButton(
         // Search Field
         Row(
             modifier = Modifier
+                .testTag("searchBar")
                 .weight(1f)
                 .fillMaxHeight()
                 .padding(start = 16.dp),
@@ -190,6 +192,7 @@ fun SearchBarWithAddButton(
         Button(
             onClick = { navigationActions.navigateTo(Screen.ADD_FRIEND) },
             modifier = Modifier
+                .testTag("addFriendButton")
                 .fillMaxHeight() // Ensure it stretches fully vertically
                 .width(90.dp),  // Optional fixed width
             shape = RoundedCornerShape(topStart = 0.dp, topEnd = 10.dp, bottomStart = 0.dp, bottomEnd = 25.dp),
