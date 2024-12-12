@@ -22,6 +22,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.android.sample.R
 import com.android.sample.ui.composables.ImageComposable
+import com.android.sample.ui.theme.DarkBlue
+import com.android.sample.ui.theme.LightBlue
 
 class PoseDetectionJoints {
   companion object {
@@ -97,14 +99,14 @@ class PoseDetectionJoints {
       lastPose : List<MyPoseLandmark>,
       wrongJointsLinks: Set<Triple<Int,Int,Int>>,
       cumulatedOffset : Offset = Offset.Zero,
-      jointColor : Color = Color.Blue,
-      jointStroke: Float = 5f,
-      lineColor : Color = Color.Magenta,
-      lineStroke : Float = 5f,
+      jointColor : Color = DarkBlue,
+      jointStroke: Float = 15f,
+      lineColor : Color = LightBlue,
+      lineStroke : Float =8f,
       wrongJointColor : Color = Color.Yellow,
-      wrongJointStroke: Float = 5f,
+      wrongJointStroke: Float = 15f,
       wronglineColor : Color = Color.Red,
-      wronglineStroke : Float = 5f,
+      wronglineStroke : Float = 8f,
       modifier: Modifier = Modifier
     ){
       var toastWasDisplayed by remember { mutableStateOf(false) }
