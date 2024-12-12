@@ -77,9 +77,10 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
         if (!isExerciseSelected) {
           Column(
               modifier = Modifier
-                  .fillMaxWidth()
+                  .fillMaxSize()
                   .padding(pd),
-              horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
+              horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+              verticalArrangement = Arrangement.SpaceEvenly) {
                 Button(
                     onClick = { isDropdownExpanded = true },
                     modifier = Modifier.testTag("selectExerciseButton")) {
@@ -96,6 +97,7 @@ fun CoachCaptureScreen(navigationActions: NavigationActions, cameraViewModel: Ca
                                 modifier =
                                 Modifier
                                     .fillMaxWidth()
+                                    .padding(8.dp)
                                     .clickable {
                                         selectedExercise = exerciseType
                                         isDropdownExpanded = false

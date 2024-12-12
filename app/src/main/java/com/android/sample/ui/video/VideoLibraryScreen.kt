@@ -91,7 +91,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
 
                           Spacer(modifier = Modifier.height(8.dp))
                           FloatingActionButton(
-                              onClick = { navigationActions.navigateTo(Screen.COACH_FEEDBACK) },
+                              onClick = { navigationActions.navigateTo(Screen.COACH_CAPTURE) },
                               shape = CircleShape,
                               containerColor = Transparent,
                               contentColor = Transparent,
