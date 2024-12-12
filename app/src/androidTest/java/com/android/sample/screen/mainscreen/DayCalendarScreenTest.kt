@@ -17,10 +17,16 @@ import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import java.time.LocalDateTime
 import kotlinx.datetime.toKotlinLocalDate
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +47,7 @@ class DayCalendarScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() {
       runTest {

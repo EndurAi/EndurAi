@@ -1,7 +1,9 @@
 package com.android.sample.ui.mainscreen
 
+import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
@@ -26,7 +28,6 @@ class ViewAllScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
-    private lateinit var workoutLocalCache: WorkoutLocalCache
 
 
     @Before
@@ -34,7 +35,14 @@ class ViewAllScreenTest {
       runTest {
           bodyWeightRepo = mock()
           yogaRepo = mock()
-          workoutLocalCache = mock()
+
+          // Get application context for testing
+          val context = ApplicationProvider.getApplicationContext<Context>()
+
+
+          // Use a real WorkoutLocalCache with a real Context
+          // This ensures no NullPointerException from null context.
+          val workoutLocalCache = WorkoutLocalCache(context)
 
           val bodyWeightWorkouts =
               listOf(
@@ -62,9 +70,6 @@ class ViewAllScreenTest {
           `when`(yogaRepo.getDocuments(any(), any())).then {
               it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
           }
-
-          // Mock local cache behavior
-          `when`(workoutLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
 
           bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
           yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)

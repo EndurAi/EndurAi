@@ -1,5 +1,6 @@
 package com.android.sample.ui.workout
 
+import android.content.Context
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -10,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -42,7 +44,6 @@ class ImportWorkoutTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
-    private lateinit var workoutLocalCache: WorkoutLocalCache
 
 
     @Before
@@ -50,7 +51,14 @@ class ImportWorkoutTest {
       runTest {
           bodyWeightRepo = mock()
           yogaRepo = mock()
-          workoutLocalCache = mock()
+
+          // Get application context for testing
+          val context = ApplicationProvider.getApplicationContext<Context>()
+
+
+          // Use a real WorkoutLocalCache with a real Context
+          // This ensures no NullPointerException from null context.
+          val workoutLocalCache = WorkoutLocalCache(context)
 
           val bodyWeightWorkouts =
               mutableListOf(
@@ -85,9 +93,6 @@ class ImportWorkoutTest {
           `when`(yogaRepo.getDocuments(any(), any())).then {
               it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
           }
-
-          // Mock local cache behavior
-          `when`(workoutLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
 
           `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
           `when`(bodyWeightRepo.addDocument(any(), any(), any())).then {

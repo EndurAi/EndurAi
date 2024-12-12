@@ -44,7 +44,6 @@ class QuickWorkoutTest {
   private lateinit var accountViewModel: UserAccountViewModel
   private lateinit var accountRepo: UserAccountRepository
   private lateinit var localCache: UserAccountLocalCache
-    private lateinit var workoutLocalCache: WorkoutLocalCache
 
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -60,11 +59,15 @@ class QuickWorkoutTest {
       // Initialize localCache with the context
       localCache = UserAccountLocalCache(context)
 
+
+        // Use a real WorkoutLocalCache with a real Context
+        // This ensures no NullPointerException from null context.
+        val workoutLocalCache = WorkoutLocalCache(context)
+
       // Mock the repos for workouts
       bodyWeightRepo = mock()
       yogaRepo = mock()
       accountRepo = mock()
-        workoutLocalCache = mock()
 
       val account =
           UserAccount(
@@ -103,9 +106,6 @@ class QuickWorkoutTest {
       `when`(bodyWeightRepo.getDocuments(any(), any())).then {
         it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
       }
-
-        // Mock local cache behavior
-        `when`(workoutLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
 
       `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
       `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")

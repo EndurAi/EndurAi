@@ -59,7 +59,6 @@ class WorkoutScreenTest {
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var warmUpRepo: WorkoutRepository<WarmUp>
   private lateinit var userAccountViewModel: UserAccountViewModel
-    private lateinit var workoutLocalCache: WorkoutLocalCache
     private var userAccountRepository = mock(UserAccountRepository::class.java)
   private val mockVideoRepository = mock(VideoRepository::class.java)
   private val mockVideoRepository2 = mock(VideoRepository::class.java)
@@ -77,10 +76,13 @@ class WorkoutScreenTest {
     bodyWeightRepo = mock()
     yogaRepo = mock()
     warmUpRepo = mock()
-      workoutLocalCache = mock()
     userAccountRepository = mock(UserAccountRepository::class.java)
     localCache = UserAccountLocalCache(context)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
+
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      val workoutLocalCache = WorkoutLocalCache(context)
 
     val exerciseList =
         mutableListOf(
@@ -130,8 +132,6 @@ class WorkoutScreenTest {
     `when`(warmUpRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<WarmUp>) -> Unit>(0)(warmups)
     }
-
-      `when`(workoutLocalCache.getWorkouts()).thenReturn(flowOf(bodyWeightWorkouts))
 
     val userAccount =
         UserAccount(
