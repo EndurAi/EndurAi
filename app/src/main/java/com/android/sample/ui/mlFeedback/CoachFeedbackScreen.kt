@@ -158,12 +158,12 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
     )
 }
 
-fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
+private fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
     val averageRate = feedbacks.map { it.successRate }.average()
     val rank = rateToRank(averageRate.toFloat())
     return rank
 }
-fun genericFeedbackFromRank(rank: FeedbackRank): String {
+private fun genericFeedbackFromRank(rank: FeedbackRank): String {
     return when (rank) {
         FeedbackRank.S -> "Amazing! Keep it up! Can't say anything wrong about your performance!"
         FeedbackRank.A -> "Great job! Here are some tips to improve even more :"
@@ -172,11 +172,11 @@ fun genericFeedbackFromRank(rank: FeedbackRank): String {
         FeedbackRank.D -> "You need to improve in order to do the exercise correctly! Here are some tips to improve :"
     }
 }
-fun durationString(feedbacks: List<CoachFeedback>): String {
+private fun durationString(feedbacks: List<CoachFeedback>): String {
     val feedback = feedbacks.first()
    return "${feedback.feedbackUnit.valuePrefix}: ${feedback.feedbackValue} ${feedback.feedbackUnit.stringRepresentation}"
 }
-fun exerciseName(feedbacks :List<CoachFeedback>): String {
+private fun exerciseName(feedbacks :List<CoachFeedback>): String {
     return when (feedbacks.first().exerciseCriterion) {
         PushUpsUpCrierions -> "Push Ups"
         JumpingJacksOpenCriterions -> "Jumping Jacks"
@@ -293,7 +293,7 @@ fun RankCircle(rank: FeedbackRank) {
     }
 }
 
-fun getColorForRank(rank: FeedbackRank): Color {
+private fun getColorForRank(rank: FeedbackRank): Color {
     return when (rank) {
         FeedbackRank.S -> YogaTag
         FeedbackRank.A -> Green
@@ -303,17 +303,3 @@ fun getColorForRank(rank: FeedbackRank): Color {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview
-@Composable
-fun RankCirclePreview() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        RankCircle(rank = FeedbackRank.S)
-        Spacer(modifier = Modifier.height(16.dp))
-        RankCircle(rank = FeedbackRank.A)
-    }
-}
