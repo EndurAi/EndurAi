@@ -426,10 +426,6 @@ open class UserAccountViewModel(
         val updatedList = _friends.value.filterNot { it.userId == userId }
         _friends.value = updatedList
     }
-    fun updateSentListAfterRemoval(userId: String) {
-        val sentList  = _sentRequests.value.filterNot { it.userId == userId }
-        _sentRequests.value = sentList
-    }
     fun updateReceivedListAfterRemoval(userId: String) {
         val receivedList = _receivedRequests.value.filterNot { it.userId == userId }
         _receivedRequests.value = receivedList
