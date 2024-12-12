@@ -64,6 +64,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
     Scaffold(
+        modifier = Modifier.testTag("coachFeedBackScreen"),
         topBar = {
             TopBar(
                 title = R.string.coach_feedback_title,
@@ -270,6 +271,7 @@ fun RankCircle(rank: FeedbackRank) {
                 fontSize = BigTitleFontSize,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.Center)
+                    .testTag("rankText")
             )
         }
     }

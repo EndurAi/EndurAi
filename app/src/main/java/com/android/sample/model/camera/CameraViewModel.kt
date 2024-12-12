@@ -81,7 +81,7 @@ val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
   /** A StateFlow that exposes the list of detected pose landmarks. */
   val lastPose: StateFlow<List<MyPoseLandmark>>
     get() = _lastPose.asStateFlow()
-  var feedback : List<CoachFeedback>? = null
+  open var feedback : List<CoachFeedback>? = null
 
 
   val meanWindow = 10
