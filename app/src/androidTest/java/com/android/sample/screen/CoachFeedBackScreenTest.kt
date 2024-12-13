@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performScrollTo
 import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.ExerciseFeedBackUnit
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
@@ -43,17 +44,30 @@ class CoachFeedBackScreenTest {
           cameraViewModel = mockCameraViewModel, navigationActions = navigationActions)
     }
 
-    composeTestRule.onNodeWithTag("coachFeedBackScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("coachImage").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("animatedText").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("rankCircle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("rankText").assertIsDisplayed().assertTextEquals("S")
-    composeTestRule.onNodeWithTag("exerciseCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("exerciseName").assertIsDisplayed().assertTextEquals("Plank")
+    composeTestRule.onNodeWithTag("coachFeedBackScreen").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("coachImage").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("rankCircle").performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("rankText")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("S")
+    composeTestRule.onNodeWithTag("exerciseCard").performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("exerciseName")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("Plank")
     composeTestRule
         .onNodeWithTag("exerciseDuration")
+        .performScrollTo()
         .assertIsDisplayed()
         .assertTextContains("10 s", substring = true)
-    composeTestRule.onNodeWithTag("doneButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("doneButton")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertHasClickAction()
   }
 }
