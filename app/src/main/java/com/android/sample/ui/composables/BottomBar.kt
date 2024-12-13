@@ -211,11 +211,18 @@ fun BottomBar(
                                   contentAlignment = Alignment.Center,
                               ) {
                                 Icon(
-                                    imageVector = when (destination)
-                                    { // This is a workaround for the icon not being able to be imported in navigationActions.kt
-                                        TopLevelDestinations.VIDEO -> { ImageVector.vectorResource(id = R.drawable.baseline_learn_24) }
-                                        else -> { destination.icon }
-                                    },
+                                    imageVector =
+                                        when (destination) { // This is a workaround for the icon
+                                                             // not being able to be imported in
+                                                             // navigationActions.kt
+                                          TopLevelDestinations.VIDEO -> {
+                                            ImageVector.vectorResource(
+                                                id = R.drawable.baseline_learn_24)
+                                          }
+                                          else -> {
+                                            destination.icon
+                                          }
+                                        },
                                     contentDescription = null,
                                     modifier = Modifier.size(30.dp),
                                     tint = if (isSelected) White else NeutralGrey)

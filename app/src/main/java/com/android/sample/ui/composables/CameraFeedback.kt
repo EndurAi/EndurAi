@@ -119,7 +119,7 @@ class CameraFeedBack {
           val poseLandmarks = cameraViewModel.getPoseLandMarks()
           val DURATION_OF_ANALYSIS =
               1000L // duration in ms the sample should represent for the live feedback -> this
-                    // avoids blinkings
+          // avoids blinkings
 
           if (poseLandmarks.isNotEmpty()) {
             // take the last pose
