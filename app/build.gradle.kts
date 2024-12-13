@@ -207,6 +207,10 @@ dependencies {
     // ----------       Robolectric     ------------
     testImplementation(libs.robolectric)
 
+    // ----------       Graphs dependency     ------------
+
+    implementation (libs.ycharts)
+
     // --------- Moshi dependencies ----------
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
