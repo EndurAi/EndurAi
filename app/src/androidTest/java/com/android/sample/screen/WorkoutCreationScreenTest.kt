@@ -89,9 +89,11 @@ class WorkoutCreationScreenTest {
       `when`(mockBodyWeightWorkoutRepository.getNewUid()).thenReturn("mocked-bodyweight-uid")
 
       // Mock the ViewModels and NavigationActions
-      mockYogaWorkoutViewModel = WorkoutViewModel(mockYogaWorkoutRepository, workoutLocalCache)
+      mockYogaWorkoutViewModel =
+          WorkoutViewModel(mockYogaWorkoutRepository, workoutLocalCache, YogaWorkout::class.java)
       mockBodyWeightWorkoutViewModel =
-          WorkoutViewModel(mockBodyWeightWorkoutRepository, workoutLocalCache)
+          WorkoutViewModel(
+              mockBodyWeightWorkoutRepository, workoutLocalCache, BodyWeightWorkout::class.java)
       mockNavHostController = mock(NavigationActions::class.java)
     }
   }

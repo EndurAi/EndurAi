@@ -48,7 +48,9 @@ class RunningScreenTest {
     val workoutLocalCache = WorkoutLocalCache(context)
 
     // Mock the ViewModels and NavigationActions
-    mockRunningWorkoutViewModel = WorkoutViewModel(mockRunningWorkoutRepository, workoutLocalCache)
+    mockRunningWorkoutViewModel =
+        WorkoutViewModel(
+            mockRunningWorkoutRepository, workoutLocalCache, RunningWorkout::class.java)
     mockNavHostController = mock(NavigationActions::class.java)
 
     `when`(mockRunningWorkoutViewModel.getNewUid()).thenReturn("mocked-running-uid")

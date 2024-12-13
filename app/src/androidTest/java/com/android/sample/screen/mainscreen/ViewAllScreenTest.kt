@@ -65,8 +65,9 @@ class ViewAllScreenTest {
         it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
       }
 
-      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
-      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
+      bodyWeightViewModel =
+          WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
 
       navigationActions = mock(NavigationActions::class.java)
 

@@ -104,8 +104,9 @@ class ImportWorkoutTest {
         bodyWeightWorkouts.add(2, workout)
       }
 
-      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
-      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
+      bodyWeightViewModel =
+          WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
 
       navigationActions = mock(NavigationActions::class.java)
     }

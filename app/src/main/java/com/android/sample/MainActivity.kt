@@ -110,11 +110,14 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val bodyweightWorkoutRepository =
       WorkoutRepositoryFirestore(
           Firebase.firestore, workoutLocalCache, clazz = BodyWeightWorkout::class.java)
-  val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository, workoutLocalCache)
+  val bodyweightWorkoutViewModel =
+      WorkoutViewModel(
+          bodyweightWorkoutRepository, workoutLocalCache, BodyWeightWorkout::class.java)
   val yogaWorkoutRepository =
       WorkoutRepositoryFirestore(
           Firebase.firestore, workoutLocalCache, clazz = YogaWorkout::class.java)
-  val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository, workoutLocalCache)
+  val yogaWorkoutViewModel =
+      WorkoutViewModel(yogaWorkoutRepository, workoutLocalCache, YogaWorkout::class.java)
 
   val warmUpRepository =
       WorkoutRepositoryFirestore(Firebase.firestore, workoutLocalCache, clazz = WarmUp::class.java)
@@ -125,7 +128,8 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val runningWorkoutRepository =
       WorkoutRepositoryFirestore(
           Firebase.firestore, workoutLocalCache, clazz = RunningWorkout::class.java)
-  val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository, workoutLocalCache)
+  val runningWorkoutViewModel =
+      WorkoutViewModel(runningWorkoutRepository, workoutLocalCache, RunningWorkout::class.java)
   val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
   val statisticsViewModel = StatisticsViewModel(statisticsRepository)
 

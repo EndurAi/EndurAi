@@ -151,8 +151,9 @@ class WorkoutScreenTest {
             weightUnit = WeightUnit.KG)
 
     userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
-    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
-    yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
+    bodyWeightViewModel =
+        WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+    yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
     warmUpViewModel = WarmUpViewModel(repository = warmUpRepo, workoutLocalCache)
 
     navigationActions = mock(NavigationActions::class.java)

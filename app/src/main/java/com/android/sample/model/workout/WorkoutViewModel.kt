@@ -7,7 +7,8 @@ import kotlinx.coroutines.launch
 
 open class WorkoutViewModel<out T : Workout>(
     private val repository: WorkoutRepository<T>,
-    private val localCache: WorkoutLocalCache
+    private val localCache: WorkoutLocalCache,
+    private val workoutClass: Class<T> // Add a class reference for T
 ) : ViewModel() {
 
   val _workouts = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
@@ -24,7 +25,7 @@ open class WorkoutViewModel<out T : Workout>(
     viewModelScope.launch {
       localCache.getWorkouts().collect { cachedWorkouts ->
         if (cachedWorkouts.isNotEmpty()) {
-          _workouts.value = cachedWorkouts as List<T>
+          _workouts.value = cachedWorkouts.filter { workoutClass.isInstance(it) }.map { it as T }
         } else {
           repository.init { getWorkouts() } // Fetch from the repository if the cache is empty
         }
@@ -54,8 +55,12 @@ open class WorkoutViewModel<out T : Workout>(
     viewModelScope.launch {
       repository.getDocuments(
           onSuccess = { fetchedWorkouts ->
-            _workouts.value = fetchedWorkouts
-            cacheWorkouts(fetchedWorkouts)
+            // Filter the fetched workouts by the workoutClass
+            val filteredWorkouts =
+                fetchedWorkouts.filter { workoutClass.isInstance(it) }.map { it as T }
+
+            _workouts.value = filteredWorkouts
+            cacheWorkouts(filteredWorkouts)
           },
           onFailure = {})
     }

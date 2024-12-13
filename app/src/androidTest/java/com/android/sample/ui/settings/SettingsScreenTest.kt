@@ -55,8 +55,9 @@ class SettingsScreenTest {
     `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
     `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
 
-    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo, workoutLocalCache)
-    yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache)
+    bodyWeightViewModel =
+        WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+    yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
   }
 
   @Test

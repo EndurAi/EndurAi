@@ -55,7 +55,7 @@ class WorkoutViewModelTest {
       localCache = mock(WorkoutLocalCache::class.java)
       `when`(localCache.getWorkouts()).thenReturn(flowOf(listOf(workout1, workout2)))
 
-      workoutViewModel = WorkoutViewModel(repository, localCache)
+      workoutViewModel = WorkoutViewModel(repository, localCache, BodyWeightWorkout::class.java)
     }
   }
 
