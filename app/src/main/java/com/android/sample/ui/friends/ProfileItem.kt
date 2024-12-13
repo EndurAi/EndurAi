@@ -22,6 +22,7 @@ import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.Green
 import com.android.sample.ui.theme.ProfileBlue
+import com.android.sample.ui.theme.profileFontSize
 
 /** Composable for the Profile cards */
 @Composable
@@ -80,7 +81,7 @@ fun ProfileItemWithAcceptReject(
                 text = "Accept",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp)
+                fontSize = profileFontSize)
           }
       Button(
           onClick = onRejectClick,
@@ -91,7 +92,7 @@ fun ProfileItemWithAcceptReject(
                 text = stringResource(id = R.string.Reject),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp)
+                fontSize = profileFontSize)
           }
     }
   }
