@@ -151,40 +151,40 @@ class MathsPoseDetection {
       return poseLandmarkList_mean
     }
 
-/**
- * Retrieves the most recent pose landmarks within a specified duration.
- *
- * This function iterates through the list of pose landmarks in reverse order, summing the time
- * differences between consecutive pose landmarks until the specified duration is reached.
- * It then returns the subset of pose landmarks that fall within this duration.
- *
- * @param durationMs The duration in milliseconds for which to retrieve the pose landmarks.
- * @param poseLandmarks The list of pose landmarks, where each inner list represents a set of
- *   landmarks at a specific timestamp.
- * @return A list of pose landmarks that fall within the specified duration.
- */
-fun getLastDuration(
-    durationMs: Long,
-    poseLandmarks: List<List<MyPoseLandmark>>
-): List<List<MyPoseLandmark>> {
-  val listSize = poseLandmarks.size
-  if (poseLandmarks.isEmpty()) {
-    return poseLandmarks
-  }
-  var counterTime = 0L
-  var lastTimeStamp = poseLandmarks.last()[0].timeStamp
-  var elemCounter = 0
+    /**
+     * Retrieves the most recent pose landmarks within a specified duration.
+     *
+     * This function iterates through the list of pose landmarks in reverse order, summing the time
+     * differences between consecutive pose landmarks until the specified duration is reached. It
+     * then returns the subset of pose landmarks that fall within this duration.
+     *
+     * @param durationMs The duration in milliseconds for which to retrieve the pose landmarks.
+     * @param poseLandmarks The list of pose landmarks, where each inner list represents a set of
+     *   landmarks at a specific timestamp.
+     * @return A list of pose landmarks that fall within the specified duration.
+     */
+    fun getLastDuration(
+        durationMs: Long,
+        poseLandmarks: List<List<MyPoseLandmark>>
+    ): List<List<MyPoseLandmark>> {
+      val listSize = poseLandmarks.size
+      if (poseLandmarks.isEmpty()) {
+        return poseLandmarks
+      }
+      var counterTime = 0L
+      var lastTimeStamp = poseLandmarks.last()[0].timeStamp
+      var elemCounter = 0
 
-  for (i in listSize - 1 downTo 0) {
-    counterTime += lastTimeStamp - poseLandmarks[i][0].timeStamp
-    lastTimeStamp = poseLandmarks[i][0].timeStamp
-    if (counterTime <= durationMs) {
-      elemCounter++
-    } else {
-      break
+      for (i in listSize - 1 downTo 0) {
+        counterTime += lastTimeStamp - poseLandmarks[i][0].timeStamp
+        lastTimeStamp = poseLandmarks[i][0].timeStamp
+        if (counterTime <= durationMs) {
+          elemCounter++
+        } else {
+          break
+        }
+      }
+      return poseLandmarks.takeLast(elemCounter)
     }
-  }
-  return poseLandmarks.takeLast(elemCounter)
-}
   }
 }
