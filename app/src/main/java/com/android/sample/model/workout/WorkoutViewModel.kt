@@ -22,16 +22,13 @@ open class WorkoutViewModel<out T : Workout>(
 
   private fun loadCachedWorkouts() {
     viewModelScope.launch {
-      localCache
-          .getWorkouts()
-          .take(1) // Collect only the first emission
-          .collect { cachedWorkouts ->
-            if (cachedWorkouts.isNotEmpty()) {
-              _workouts.value = cachedWorkouts as List<T>
-            } else {
-              repository.init { getWorkouts() } // Fetch from the repository if the cache is empty
-            }
-          }
+      localCache.getWorkouts().collect { cachedWorkouts ->
+        if (cachedWorkouts.isNotEmpty()) {
+          _workouts.value = cachedWorkouts as List<T>
+        } else {
+          repository.init { getWorkouts() } // Fetch from the repository if the cache is empty
+        }
+      }
     }
   }
 

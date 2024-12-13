@@ -186,7 +186,11 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Settings Screen
     navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
       composable(Screen.SETTINGS) {
-        SettingsScreen(navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel)
+        SettingsScreen(
+            navigationActions,
+            bodyweightWorkoutViewModel,
+            yogaWorkoutViewModel,
+            userAccountViewModel)
       }
     }
 
