@@ -15,8 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.ui.navigation.LIST_OF_TOP_LEVEL_DESTINATIONS
@@ -209,7 +211,11 @@ fun BottomBar(
                                   contentAlignment = Alignment.Center,
                               ) {
                                 Icon(
-                                    imageVector = destination.icon,
+                                    imageVector = when (destination)
+                                    { // This is a workaround for the icon not being able to be imported in navigationActions.kt
+                                        TopLevelDestinations.VIDEO -> { ImageVector.vectorResource(id = R.drawable.baseline_learn_24) }
+                                        else -> { destination.icon }
+                                    },
                                     contentDescription = null,
                                     modifier = Modifier.size(30.dp),
                                     tint = if (isSelected) White else NeutralGrey)
