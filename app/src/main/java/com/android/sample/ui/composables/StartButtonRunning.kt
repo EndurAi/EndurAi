@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.ui.theme.BlueGradient
@@ -23,12 +24,13 @@ fun RunningDesignButton(
     onClick: () -> Unit,
     title: String,
     showIcon: Boolean = false,
-    testTag: String
+    testTag: String,
+    size: Dp = 80.dp
 ) {
 
   Box(
       modifier =
-          Modifier.size(80.dp)
+          Modifier.size(size)
               .shadow(elevation = 10.dp, shape = CircleShape, clip = false)
               .background(brush = BlueGradient, shape = CircleShape)
               .clickable(onClick = onClick)

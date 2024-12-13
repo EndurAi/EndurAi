@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 
@@ -41,6 +42,8 @@ object Route {
   const val BODY_WEIGHT_EDIT = "BodyWeightEdit"
   const val YOGA_EDIT = "YogaEdit"
   const val IMPORTORCREATE_RUNNING = "Import Or Create Running"
+  const val COACH_FEEDBACK = "Coach Feedback"
+  const val COACH_CAPTURE = "Coach Capture"
 }
 
 object Screen {
@@ -78,13 +81,19 @@ object Screen {
   const val BODY_WEIGHT_EDIT = "BodyWeight edit screen"
   const val YOGA_EDIT = "Yoga edit screen"
   const val IMPORTORCREATE_RUNNING = "Import Or Create Running Screen"
+  const val COACH_FEEDBACK = "Coach Feedback Screen"
+  const val COACH_CAPTURE = "Coach Capture Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
   val MAIN = TopLevelDestination(Route.MAIN, Icons.Outlined.Home, textId = "Main")
-  val VIDEO = TopLevelDestination(Route.VIDEO_LIBRARY, Icons.Filled.PlayArrow, textId = "Video")
+  val VIDEO =
+      TopLevelDestination(
+          Route.VIDEO_LIBRARY,
+          Icons.Filled.PlayArrow,
+          textId = "Video") // Can't use image from resource, see workaround in BottomBar.kt
   val ADD = TopLevelDestination(Route.SESSIONSELECTION, Icons.Outlined.Add, textId = "Add")
   val CALENDAR = TopLevelDestination(Route.CALENDAR, Icons.Outlined.DateRange, textId = "Calendar")
   val PROFILE = TopLevelDestination(Route.SETTINGS, Icons.Outlined.Person, textId = "profile")

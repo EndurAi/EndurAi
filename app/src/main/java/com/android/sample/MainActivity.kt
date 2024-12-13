@@ -45,6 +45,8 @@ import com.android.sample.ui.friends.FriendsScreen
 import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
+import com.android.sample.ui.mlFeedback.CoachCaptureScreen
+import com.android.sample.ui.mlFeedback.CoachFeedbackScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -362,6 +364,16 @@ fun MainApp(startDestination: String = Route.AUTH) {
         DayCalendarScreen(
             navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
+    }
+
+    // Coach Capture Screen
+    navigation(startDestination = Screen.COACH_CAPTURE, route = Route.COACH_CAPTURE) {
+      composable(Screen.COACH_CAPTURE) { CoachCaptureScreen(navigationActions, cameraViewModel) }
+    }
+
+    // Coach Feedback Screen
+    navigation(startDestination = Screen.COACH_FEEDBACK, route = Route.COACH_FEEDBACK) {
+      composable(Screen.COACH_FEEDBACK) { CoachFeedbackScreen(navigationActions, cameraViewModel) }
     }
   }
 }

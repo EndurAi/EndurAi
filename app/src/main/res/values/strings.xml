@@ -47,5 +47,6 @@
     <string name="RunningScreenTopBar">Running</string>
     <string name="NoWorkout">No Workout</string>
     <string name="Summary">Summary</string>
+    <string name="coach_feedback_title">Coach Feedback</string>
     <string name="SubmitButton">Submit</string>
 </resources>
