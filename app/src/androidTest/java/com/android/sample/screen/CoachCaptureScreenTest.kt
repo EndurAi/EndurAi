@@ -15,7 +15,6 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 
 class CoachCaptureScreenTest {
-  private lateinit var mockCameraViewModel: CameraViewModel
   private lateinit var navigationActions: NavigationActions
 
   @get:Rule val composeTestRule = createComposeRule()

@@ -28,14 +28,9 @@ data class CoachFeedback(
    */
   override fun toString(): String {
     val stringBuilder: StringBuilder = StringBuilder()
-    // stringBuilder.append(exerciseCriterion.name).append("\n")
     commentSet
         .filter { it.rate >= 0.1F }
         .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
-
-    //    stringBuilder.append(
-    //        "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
-
     return stringBuilder.toString()
   }
 

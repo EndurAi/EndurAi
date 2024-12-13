@@ -43,6 +43,7 @@ import com.android.sample.ui.composables.AnimatedText
 import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.Blue
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.BodyWeightTag
@@ -79,8 +80,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                         Modifier.width(
                                 175.dp) // Set a fixed width for the text box to prevent everything
                             // from moving
-                            .background(
-                                Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                            .background(Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
                             .padding(8.dp)) {
                       AnimatedText(
                           modifier = Modifier.testTag("coachText"),

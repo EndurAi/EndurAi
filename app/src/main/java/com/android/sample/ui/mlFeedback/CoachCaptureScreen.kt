@@ -62,6 +62,15 @@ import com.android.sample.ui.theme.FontSizes.MediumTitleFontSize
 import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.White
 
+/**
+ * A composable function that displays the coach capture screen.
+ *
+ * @param navigationActions A class that contains the actions that can be performed on the
+ *   navigation.
+ * @param cameraViewModel A view model that contains the camera data.
+ * @param isTesting A boolean value that is true if the composable is being tested. Used for testing
+ *   purposes.
+ */
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun CoachCaptureScreen(
@@ -230,6 +239,11 @@ fun CoachCaptureScreen(
       })
 }
 
+/**
+ * A composable function that displays a dialogue with information on how to use the coach.
+ *
+ * @param onDismissRequest A lambda function that is called when the dialogue is dismissed.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoachInfoDialogue(onDismissRequest: () -> Unit) {
@@ -243,7 +257,7 @@ fun CoachInfoDialogue(onDismissRequest: () -> Unit) {
             text = "How to use the Coach",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp))
-        Text("Press record and start your exercise\n")
+        Text("Press record and start your exercise.\n")
         Text("Your whole body has to be visible in the camera frame.\n")
         Text(
             "To ensure proper feedback, please be perpendicular to the camera. For instance if you are doing a plank, you should no be facing the camera.\n")

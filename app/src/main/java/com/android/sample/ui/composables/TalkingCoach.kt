@@ -26,6 +26,12 @@ import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.White
 
+/**
+ * A composable function that displays a talking coach with a text bubble and an image.
+ *
+ * @param text The text to be displayed in the text bubble.
+ * @param size The size of the coach image. Default value is 150.dp.
+ */
 @Composable
 fun TalkingCoach(text: String, size: Dp = 150.dp) {
   Column(

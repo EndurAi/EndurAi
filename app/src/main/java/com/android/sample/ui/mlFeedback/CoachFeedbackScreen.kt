@@ -63,6 +63,12 @@ import com.android.sample.ui.theme.YogaTag
 import com.android.sample.ui.workout.LeafShape
 import kotlinx.coroutines.launch
 
+/**
+ * Composable function that displays the coach feedback screen.
+ *
+ * @param navigationActions The navigation actions to be performed.
+ * @param cameraViewModel The view model for the camera.
+ */
 @Composable
 fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
   Scaffold(
@@ -156,12 +162,17 @@ private fun exerciseName(feedbacks: List<CoachFeedback>): String {
   }
 }
 
+/**
+ * Composable function that displays a circle with a rank inside, with a nice animation
+ *
+ * @param rank The rank to be displayed inside the circle.
+ */
 @Composable
 fun RankCircle(rank: FeedbackRank) {
-  // Couleur principale en fonction du rang
+  // Main color depending on the rank
   val rankColor = getColorForRank(rank)
 
-  // Animation infinie pour l'effet de respiration
+  // Infinite animation for the breathing effect
   val infiniteTransition = rememberInfiniteTransition()
   val animatedRadius =
       infiniteTransition.animateFloat(
@@ -170,15 +181,15 @@ fun RankCircle(rank: FeedbackRank) {
           animationSpec =
               infiniteRepeatable(
                   animation = tween(durationMillis = 2000, easing = LinearOutSlowInEasing),
-                  repeatMode = RepeatMode.Reverse // Effet de contraction après expansion
+                  repeatMode = RepeatMode.Reverse // Contraction effect after expansion
                   ))
 
-  // Animation pour les grandes vagues initiales
-  val initialWaveCount = 5 // Nombre de vagues initiales
+  // Animation for the large initial waves
+  val initialWaveCount = 5 // Number of initial waves
   val initialWaveRadius = remember { mutableStateListOf<Float>() }
   val initialWaveAlpha = remember { mutableStateListOf<Float>() }
 
-  // Initialiser les états des vagues
+  // Initialize wave states
   if (initialWaveRadius.isEmpty()) {
     repeat(initialWaveCount) { index ->
       initialWaveRadius.add(0f)
@@ -186,13 +197,13 @@ fun RankCircle(rank: FeedbackRank) {
     }
   }
 
-  // Lancer les animations initiales
+  // Launch initial animations
   LaunchedEffect(Unit) {
     initialWaveRadius.forEachIndexed { index, _ ->
       launch {
         animate(
             initialValue = 0f,
-            targetValue = 3.5f, // Les vagues dépassent l'écran
+            targetValue = 3.5f, // Waves extend beyond the screen
             animationSpec =
                 tween(durationMillis = 1500 + index * 300, easing = LinearOutSlowInEasing)) {
                 value,
@@ -203,7 +214,7 @@ fun RankCircle(rank: FeedbackRank) {
       launch {
         animate(
             initialValue = 1f,
-            targetValue = 0f, // Les vagues disparaissent progressivement
+            targetValue = 0f, // Waves gradually fade out
             animationSpec =
                 tween(durationMillis = 1500 + index * 300, easing = LinearOutSlowInEasing)) {
                 value,
@@ -217,48 +228,48 @@ fun RankCircle(rank: FeedbackRank) {
   Box(
       contentAlignment = Alignment.Center,
       modifier =
-          Modifier.size(180.dp) // Taille globale
+          Modifier.size(180.dp) // Global size
               .testTag("rankCircle")) {
-        // Grandes vagues initiales et effet respirant (en arrière-plan)
+        // Large initial waves and breathing effect (background)
         Canvas(modifier = Modifier.fillMaxSize()) {
           val canvasRadius = size.minDimension / 2
 
-          // Grandes vagues initiales
+          // Large initial waves
           initialWaveRadius.forEachIndexed { index, waveRadius ->
-            if (initialWaveAlpha[index] > 0f) { // Afficher uniquement si visible
+            if (initialWaveAlpha[index] > 0f) { // Display only if visible
               drawCircle(
                   color = rankColor.copy(alpha = 0.3f * initialWaveAlpha[index]),
                   radius = canvasRadius * waveRadius,
-                  style = Stroke(width = 6.dp.toPx()) // Grandes vagues fines
+                  style = Stroke(width = 6.dp.toPx()) // Thin large waves
                   )
             }
           }
 
-          // Effet respirant
+          // Breathing effect
           drawCircle(
-              color = rankColor.copy(alpha = 0.3f), // Couleur semi-transparente
-              radius = canvasRadius * animatedRadius.value, // Rayon animé
-              style = Stroke(width = 8.dp.toPx()) // Contour seulement
+              color = rankColor.copy(alpha = 0.3f), // Semi-transparent color
+              radius = canvasRadius * animatedRadius.value, // Animated radius
+              style = Stroke(width = 8.dp.toPx()) // Outline only
               )
         }
 
-        // Cercle principal (au-dessus des animations)
+        // Main circle (above animations)
         Box(
             modifier =
-                Modifier.size(140.dp) // Taille réduite par rapport aux animations
+                Modifier.size(140.dp) // Smaller size compared to animations
                     .shadow(
-                        elevation = 12.dp, // Ombre douce
+                        elevation = 12.dp, // Soft shadow
                         shape = CircleShape,
                         clip = true)
-                    .background(MediumGrey, CircleShape) // Fond totalement opaque
+                    .background(MediumGrey, CircleShape) // Fully opaque background
                     .border(
-                        width = 4.dp, // Contour du cercle principal
+                        width = 4.dp, // Outline of the main circle
                         color = rankColor,
                         shape = CircleShape)) {
-              // Texte du rang au centre
+              // Rank text in the center
               Text(
                   text = rank.name,
-                  color = rankColor, // Couleur du texte selon le rang
+                  color = rankColor, // Text color based on the rank
                   fontFamily = OpenSans,
                   fontSize = BigTitleFontSize,
                   fontWeight = FontWeight.Bold,
