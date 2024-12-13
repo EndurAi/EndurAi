@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.android.sample.R
 import com.android.sample.mlUtils.ExerciseFeedBack
 import com.android.sample.mlUtils.MyPoseLandmark
@@ -50,7 +49,6 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
-import kotlinx.coroutines.launch
 
 /** A class that provides composables for displaying and interacting with the camera feed. */
 class CameraFeedBack {
@@ -111,9 +109,9 @@ class CameraFeedBack {
         mutableStateOf(setOf<Triple<Int, Int, Int>>())
       } // joints that need to be displayed
 
-      lifecycleOwner.lifecycleScope.launch {
+      LaunchedEffect(poseDetectionRequired) {
         if (!poseDetectionRequired) {
-          return@launch
+          return@LaunchedEffect
         }
         cameraViewModel.lastPose.collect { pose ->
           val poseLandmarks = cameraViewModel.getPoseLandMarks()
