@@ -18,9 +18,14 @@ import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import java.time.LocalDateTime
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.toKotlinLocalDate
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,12 +43,15 @@ class DayCalendarScreenTest {
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var calendarViewModel: CalendarViewModel
+  private lateinit var workoutLocalCache: WorkoutLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() = runTest {
+    Dispatchers.setMain(Dispatchers.Unconfined)
+
     bodyWeightRepo = mock()
     yogaRepo = mock()
 
@@ -52,12 +60,12 @@ class DayCalendarScreenTest {
 
     // Use a real WorkoutLocalCache with a real Context
     // This ensures no NullPointerException from null context.
-    val workoutLocalCache = WorkoutLocalCache(context)
+    workoutLocalCache = WorkoutLocalCache(context)
 
     calendarViewModel = CalendarViewModel()
 
     val bodyWeightWorkouts =
-        listOf(
+        mutableListOf(
             BodyWeightWorkout(
                 "1",
                 "Afternoon Push-up Session",
@@ -65,17 +73,16 @@ class DayCalendarScreenTest {
                 false,
                 date = LocalDateTime.now().withHour(0)),
             BodyWeightWorkout(
-                "1",
+                "2",
                 "Afternoon Push-up Session",
                 "Hold for 60 seconds",
                 false,
                 date = LocalDateTime.now().withHour(1)))
+    val yogaWorkouts: List<YogaWorkout> = listOf()
 
     val workoutDate = bodyWeightWorkouts[0].date.toLocalDate()
 
     calendarViewModel.updateSelectedDate(workoutDate.toKotlinLocalDate())
-
-    val yogaWorkouts: List<YogaWorkout> = listOf()
 
     `when`(bodyWeightRepo.getDocuments(any(), any())).then {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
@@ -94,7 +101,22 @@ class DayCalendarScreenTest {
     yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
 
     navigationActions = mock(NavigationActions::class.java)
+  }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @After
+  fun tearDown() = runBlocking {
+    // Clear all caches to ensure a fresh start for each test
+    bodyWeightViewModel.clearCache()
+    yogaViewModel.clearCache()
+    workoutLocalCache.clearWorkouts()
+
+    // Reset the main dispatcher
+    Dispatchers.resetMain()
+  }
+
+  @Test
+  fun navigationGoBack() = runTest {
     bodyWeightViewModel.getWorkouts()
 
     composeTestRule.setContent {
@@ -104,22 +126,38 @@ class DayCalendarScreenTest {
           yogaworkoutViewModel = yogaViewModel,
           calendarViewModel = calendarViewModel)
     }
-  }
-
-  @Test
-  fun navigationGoBack() = runTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").assertIsDisplayed().performClick()
     verify(navigationActions).goBack()
   }
 
   @Test
   fun navigationToWorkout() {
+    bodyWeightViewModel.getWorkouts()
+
+    composeTestRule.setContent {
+      DayCalendarScreen(
+          navigationActions = navigationActions,
+          bodyworkoutViewModel = bodyWeightViewModel,
+          yogaworkoutViewModel = yogaViewModel,
+          calendarViewModel = calendarViewModel)
+    }
     composeTestRule.onAllNodesWithTag("WorkoutCard")[0].performClick()
     Mockito.verify(navigationActions).navigateTo(Screen.BODY_WEIGHT_OVERVIEW)
   }
 
   @Test
   fun testEverythingDisplayed() {
+    bodyWeightViewModel.getWorkouts()
+    println("BodyWeightWorkouts: ${bodyWeightViewModel.workouts}")
+    println("YogaWorkouts: $yogaViewModel.workouts")
+
+    composeTestRule.setContent {
+      DayCalendarScreen(
+          navigationActions = navigationActions,
+          bodyworkoutViewModel = bodyWeightViewModel,
+          yogaworkoutViewModel = yogaViewModel,
+          calendarViewModel = calendarViewModel)
+    }
     composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Categories").assertIsDisplayed()
     composeTestRule.onAllNodesWithTag("legendItem").assertCountEquals(3)

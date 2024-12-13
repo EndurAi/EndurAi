@@ -56,8 +56,7 @@ open class WorkoutViewModel<out T : Workout>(
       repository.getDocuments(
           onSuccess = { fetchedWorkouts ->
             // Filter the fetched workouts by the workoutClass
-            val filteredWorkouts =
-                fetchedWorkouts.filter { workoutClass.isInstance(it) }.map { it as T }
+            val filteredWorkouts = fetchedWorkouts.filter { workoutClass.isInstance(it) }.map { it }
 
             _workouts.value = filteredWorkouts
             cacheWorkouts(filteredWorkouts)
