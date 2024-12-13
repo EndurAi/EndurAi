@@ -47,4 +47,5 @@
     <string name="RunningScreenTopBar">Running</string>
     <string name="NoWorkout">No Workout</string>
     <string name="Summary">Summary</string>
+    <string name="achievements">Achievements</string>
 </resources>
