@@ -33,9 +33,6 @@ data class CoachFeedback(
         .filter { it.rate >= 0.1F }
         .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
 
-    //    stringBuilder.append(
-    //        "${feedbackUnit.valuePrefix}: $feedbackValue ${feedbackUnit.stringRepresentation}\n")
-
     return stringBuilder.toString()
   }
 

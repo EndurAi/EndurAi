@@ -71,7 +71,7 @@ class CameraFeedBack {
     public fun CameraScreen(
         cameraViewModel: CameraViewModel,
         modifier: Modifier = Modifier,
-        poseDetectionRequired: Boolean = false, // Not yet used,
+        poseDetectionRequired: Boolean = false,
         exerciseCriterions: List<ExerciseFeedBack.Companion.ExerciseCriterion>? = null,
     ) {
 
@@ -178,7 +178,6 @@ class CameraFeedBack {
                         }
                         .also { previewView ->
                           previewView.controller = cameraViewModel.cameraController.value
-                          // cameraViewModel.cameraController.value.bindToLifecycle(lifecycleOwner)
                         }
                   })
               var cumulatedOffset by remember { mutableStateOf(Offset(0F, 0F)) }
