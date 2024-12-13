@@ -213,8 +213,8 @@ fun BottomBar(
                                 Icon(
                                     imageVector =
                                         when (destination) { // This is a workaround for the icon
-                                                             // not being able to be imported in
-                                                             // navigationActions.kt
+                                          // not being able to be imported in
+                                          // navigationActions.kt
                                           TopLevelDestinations.VIDEO -> {
                                             ImageVector.vectorResource(
                                                 id = R.drawable.baseline_learn_24)

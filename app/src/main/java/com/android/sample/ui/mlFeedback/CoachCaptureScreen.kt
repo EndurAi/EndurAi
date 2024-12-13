@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
@@ -216,8 +215,12 @@ fun CoachCaptureScreen(
                             onClick = { jointPositionRequested = jointPositionRequested.not() },
                             modifier = smallButtonModifier.testTag("jointsButton")) {
                               Icon(
-                                  imageVector = Icons.Default.Share,
-                                  contentDescription = "Joints toggle",
+                                  painter =
+                                      painterResource(
+                                          id =
+                                              R.drawable
+                                                  .data_analytics_interface_symbol_of_connected_circles),
+                                  contentDescription = "Switch camera",
                                   tint = White)
                             }
                       }
