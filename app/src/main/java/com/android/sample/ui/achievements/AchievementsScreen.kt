@@ -25,90 +25,75 @@ import com.android.sample.R
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.ui.composables.CaloriesDisplay
-import com.android.sample.ui.composables.WeekCaloriesLineChart
 import com.android.sample.ui.composables.ToggleButtonAchievements
 import com.android.sample.ui.composables.TopBar
+import com.android.sample.ui.composables.WeekCaloriesLineChart
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.OpenSans
-import java.time.LocalDate
 
 @Composable
 fun AchievementsScreen(
     navigationActions: NavigationActions,
     statisticsViewModel: StatisticsViewModel
 ) {
-    val statistics = Statistics(statisticsViewModel.workoutStatistics)
+  val statistics = Statistics(statisticsViewModel.workoutStatistics)
 
-    var isStatsSelected by remember { mutableStateOf(true) }
+  var isStatsSelected by remember { mutableStateOf(true) }
 
-    @Composable
-    fun StatisticsScreen(padding: PaddingValues) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+  @Composable
+  fun StatisticsScreen(padding: PaddingValues) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(padding),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+          Spacer(Modifier.weight(0.12f))
 
-            Spacer(Modifier.weight(0.12f))
+          Text(
+              text = "Calories of the week",
+              fontSize = 28.sp,
+              fontFamily = OpenSans,
+              fontWeight = FontWeight.SemiBold,
+              color = Black)
 
+          Spacer(Modifier.weight(0.03f))
 
-            Text(
-                text = "Calories of the week",
-                fontSize = 28.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.SemiBold,
-                color = Black
-            )
+          CaloriesDisplay(calories = statistics.getCaloriesOfTheWeek())
 
-            Spacer(Modifier.weight(0.03f))
+          val pointsData: List<Point> =
+              listOf(
+                  Point(0f, 562f),
+                  Point(1f, 1540f),
+                  Point(2f, 850f),
+                  Point(3f, 200f),
+                  Point(4f, 690f))
+          WeekCaloriesLineChart(pointsData)
 
-
-            CaloriesDisplay(calories = statistics.getCaloriesOfTheWeek())
-
-            val pointsData: List<Point> =
-                listOf(Point(0f, 562f), Point(1f, 1540f), Point(2f, 850f), Point(3f, 200f), Point(4f, 690f))
-            WeekCaloriesLineChart(pointsData)
-
-
-
-            Spacer(Modifier.weight(0.85f))
-
+          Spacer(Modifier.weight(0.85f))
         }
+  }
 
-    }
-
-    Scaffold(
-        modifier = Modifier.testTag("achievementsScreen"),
-        topBar = { TopBar(navigationActions, R.string.achievements) }
-    ) { padding ->
-
+  Scaffold(
+      modifier = Modifier.testTag("achievementsScreen"),
+      topBar = { TopBar(navigationActions, R.string.achievements) }) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxHeight(fraction = 0.2f)
-                .fillMaxWidth()
-                .padding(padding),
+            modifier = Modifier.fillMaxHeight(fraction = 0.2f).fillMaxWidth().padding(padding),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              Spacer(Modifier.weight(0.5f))
 
-            Spacer(Modifier.weight(0.5f))
+              ToggleButtonAchievements(
+                  onClick = {
+                    isStatsSelected = !isStatsSelected
+                    println("isStateSelected : " + isStatsSelected)
+                  })
 
-
-            ToggleButtonAchievements(onClick = {
-                isStatsSelected = !isStatsSelected; println("isStateSelected : " + isStatsSelected)
-            })
-
-            Spacer(Modifier.weight(0.5f))
-        }
-
-            when (isStatsSelected) {
-                true ->  StatisticsScreen(padding = padding)
-                false -> InfiniteCalendar(statistics, padding)
+              Spacer(Modifier.weight(0.5f))
             }
-    }
+
+        when (isStatsSelected) {
+          true -> StatisticsScreen(padding = padding)
+          false -> InfiniteCalendar(statistics, padding)
+        }
+      }
 }
-
-

@@ -1,11 +1,11 @@
 package com.android.sample.model.achievements
 
 import com.android.sample.model.workout.WorkoutType
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.TemporalAdjusters
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 
 /**
  * Class to compute some statistics based on a list of the workoutStatistics of the user.
@@ -42,13 +42,12 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
 
     val mondayOfTheWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
+    val statsOfTheWeek =
+        workoutStatisticsFlow.value.filter { stats ->
+          stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
+              stats.date.isBefore(today.plusWeeks(1))
+        }
 
-
-
-    val statsOfTheWeek = workoutStatisticsFlow.value.filter { stats -> stats.date.isAfter(mondayOfTheWeek.minusDays(1)) && stats.date.isBefore(today.plusWeeks(1)) }
-
-    return statsOfTheWeek.sumOf{it.caloriesBurnt}
+    return statsOfTheWeek.sumOf { it.caloriesBurnt }
   }
-
-
 }

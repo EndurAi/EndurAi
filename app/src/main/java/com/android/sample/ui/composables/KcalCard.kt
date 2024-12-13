@@ -1,6 +1,5 @@
 package com.android.sample.ui.composables
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -21,37 +20,30 @@ import com.android.sample.ui.theme.White
 fun CaloriesDisplay(
     calories: Int,
 ) {
-    Surface(
-        modifier = Modifier
-            .width(300.dp)
-            .height(150.dp)
-            .shadow(elevation = 10.dp, shape = RoundedCornerShape(8.dp)),
-        color = White,
-        shape = RoundedCornerShape(8.dp)
-    ) {
+  Surface(
+      modifier =
+          Modifier.width(300.dp)
+              .height(150.dp)
+              .shadow(elevation = 10.dp, shape = RoundedCornerShape(8.dp)),
+      color = White,
+      shape = RoundedCornerShape(8.dp)) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              Text(
+                  text = calories.toString(),
+                  fontSize = 80.sp,
+                  fontFamily = OpenSans,
+                  fontWeight = FontWeight.SemiBold,
+                  color = Black)
 
-            Text(
-                text = calories.toString(),
-                fontSize = 80.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.SemiBold,
-                color = Black
-            )
-
-            Text(
-                text = "Kcal",
-                fontSize = 18.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.SemiBold,
-                color = NeutralGrey
-            )
-        }
-    }
+              Text(
+                  text = "Kcal",
+                  fontSize = 18.sp,
+                  fontFamily = OpenSans,
+                  fontWeight = FontWeight.SemiBold,
+                  color = NeutralGrey)
+            }
+      }
 }
-
