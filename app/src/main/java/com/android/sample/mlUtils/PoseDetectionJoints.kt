@@ -90,6 +90,23 @@ class PoseDetectionJoints {
             Triple(PoseLandmark.RIGHT_HIP, PoseLandmark.LEFT_HIP, PoseLandmark.LEFT_KNEE),
             Triple(PoseLandmark.LEFT_HIP, PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_KNEE))
 
+    /**
+     * Composable function to draw the body skeleton based on the provided pose landmarks.
+     *
+     * @param lastPose A list of `MyPoseLandmark` representing the last detected pose landmarks.
+     * @param wrongJointsLinks A set of `Triple` representing the joints that are incorrectly
+     *   positioned.
+     * @param cumulatedOffset An `Offset` to adjust the position of the skeleton.
+     * @param jointColor The color to use for correctly positioned joints.
+     * @param jointStroke The stroke width to use for correctly positioned joints.
+     * @param lineColor The color to use for correctly positioned lines.
+     * @param lineStroke The stroke width to use for correctly positioned lines.
+     * @param wrongJointColor The color to use for incorrectly positioned joints.
+     * @param wrongJointStroke The stroke width to use for incorrectly positioned joints.
+     * @param wronglineColor The color to use for incorrectly positioned lines.
+     * @param wronglineStroke The stroke width to use for incorrectly positioned lines.
+     * @param modifier The `Modifier` to be applied to the `Canvas`.
+     */
     @Composable
     fun DrawBody(
         lastPose: List<MyPoseLandmark>,
