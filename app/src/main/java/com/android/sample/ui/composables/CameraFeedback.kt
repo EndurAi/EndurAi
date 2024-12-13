@@ -13,11 +13,11 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.camera.view.video.AudioConfig
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
@@ -163,7 +163,7 @@ class CameraFeedBack {
                       contentDescription = "Switch camera")
                 }
           }) { pd: PaddingValues ->
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().padding(pd)) {
               AndroidView(
                   modifier = Modifier.fillMaxSize().matchParentSize(),
                   factory = { context ->
@@ -190,15 +190,12 @@ class CameraFeedBack {
                       wrongJointsLinks = displayedJoints,
                       cumulatedOffset = cumulatedOffset,
                       modifier =
-                          Modifier.fillMaxSize()
-                              .matchParentSize()
-                              .border(5.dp, color = Color.Blue)
-                              .pointerInput(Unit) {
-                                detectDragGestures { change, dragAmount ->
-                                  change.consume()
-                                  cumulatedOffset += dragAmount
-                                }
-                              })
+                          Modifier.fillMaxSize().matchParentSize().pointerInput(Unit) {
+                            detectDragGestures { change, dragAmount ->
+                              change.consume()
+                              cumulatedOffset += dragAmount
+                            }
+                          })
                 }
               }
             }
