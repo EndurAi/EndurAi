@@ -55,6 +55,7 @@ cameraVideo = "1.4.0"
 foundationLayoutAndroid = "1.7.2"
 poseDetectionCommon = "17.0.0"
 datastoreCoreAndroid = "1.1.1"
+ycharts = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -124,6 +125,7 @@ pose-detection-common = { group = "com.google.mlkit", name = "pose-detection-com
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+ycharts = { module = "co.yml:ycharts", version.ref = "ycharts" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
