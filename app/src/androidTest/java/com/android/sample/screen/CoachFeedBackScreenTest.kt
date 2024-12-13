@@ -44,7 +44,7 @@ class CoachFeedBackScreenTest {
           cameraViewModel = mockCameraViewModel, navigationActions = navigationActions)
     }
 
-    composeTestRule.onNodeWithTag("coachFeedBackScreen").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("coachFeedBackScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("coachImage").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("rankCircle").performScrollTo().assertIsDisplayed()
