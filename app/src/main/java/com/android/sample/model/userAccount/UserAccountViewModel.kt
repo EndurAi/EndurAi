@@ -144,7 +144,7 @@ open class UserAccountViewModel(
       repository.sendFriendRequest(
           fromUser = currentUser,
           toUserId = toUserId,
-          onSuccess = {},
+          onSuccess = { getUserAccount(currentUser.userId) },
           onFailure = { exception ->
             Log.e("UserAccountViewModel", "Failed to send friend request", exception)
           })

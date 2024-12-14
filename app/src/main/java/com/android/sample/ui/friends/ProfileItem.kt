@@ -105,7 +105,7 @@ fun ProfileItemWithRequest(
     sentRequests: List<UserAccount>,
     onSendRequestClick: () -> Unit
 ) {
-  val requestSent = remember { sentRequests.any { it.userId == profile.userId } }
+    val requestSent = sentRequests.any { it.userId == profile.userId }
 
   ProfileItem(profile = profile) {
     Button(
