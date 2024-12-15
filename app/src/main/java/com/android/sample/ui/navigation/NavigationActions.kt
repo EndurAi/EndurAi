@@ -83,6 +83,7 @@ object Screen {
   const val IMPORTORCREATE_RUNNING = "Import Or Create Running Screen"
   const val COACH_FEEDBACK = "Coach Feedback Screen"
   const val COACH_CAPTURE = "Coach Capture Screen"
+  const val FRIEND_STATS = "Friend Stats Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
