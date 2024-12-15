@@ -26,6 +26,13 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
     repository.getStatistics(onSuccess = { workoutStatistics_.value = it }, onFailure = {})
   }
 
+    fun getFriendWorkoutStatistics(friendId: String) {
+    repository.getFriendStatistics(
+        friendId = friendId,
+        onSuccess = { workoutStatistics_.value = it },
+        onFailure = {})
+    }
+
   /**
    * Add a new workout statistics document to the repository.
    *

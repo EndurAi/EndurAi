@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.sample.model.video.Video
 import com.android.sample.ui.settings.signOut
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.Firebase
@@ -18,7 +19,6 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +31,9 @@ open class UserAccountViewModel(
     private val localCache: UserAccountLocalCache,
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : ViewModel() {
+
+    private val selectedFriend_ = MutableStateFlow<UserAccount?>(null)
+    open val selectedFriend: StateFlow<UserAccount?> = selectedFriend_.asStateFlow()
 
   private val _userAccount = MutableStateFlow<UserAccount?>(null)
   val userAccount: StateFlow<UserAccount?>
@@ -47,7 +50,6 @@ open class UserAccountViewModel(
   init {
     loadCachedUserAccount()
   }
-
   private fun loadCachedUserAccount() {
     viewModelScope.launch {
       localCache.getUserAccount().collect { cachedAccount ->
@@ -250,12 +252,16 @@ open class UserAccountViewModel(
   val receivedRequests: StateFlow<List<UserAccount>>
     get() = _receivedRequests.asStateFlow()
 
-  private suspend fun getUserAccountAsync(userId: String): UserAccount? {
-    val deferred = CompletableDeferred<UserAccount?>()
-    repository.getUserAccount(
-        userId, onSuccess = { deferred.complete(it) }, onFailure = { deferred.complete(null) })
-    return deferred.await()
-  }
+
+
+    /**
+     * Select a video.
+     *
+     * @param video The video to select.
+     */
+    fun selectFriend(friend: UserAccount) {
+        selectedFriend_.value = friend
+    }
 
   fun fetchFriends() {
     viewModelScope.launch {
