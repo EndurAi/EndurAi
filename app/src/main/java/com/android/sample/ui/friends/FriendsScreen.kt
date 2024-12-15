@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.TextDialog
 import com.android.sample.ui.composables.TopBar
@@ -33,7 +34,8 @@ import com.android.sample.ui.navigation.Screen
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
-    userAccountViewModel: UserAccountViewModel
+    userAccountViewModel: UserAccountViewModel,
+    statisticsViewModel: StatisticsViewModel
 ) {
   val searchQuery = remember { mutableStateOf("") }
 
@@ -85,11 +87,16 @@ fun FriendsScreen(
                     friend = friend,
                     isSelected = selectedFriends.contains(friend.userId),
                     onSelectFriend = {
-                      if (selectedFriends.contains(friend.userId)) {
-                        selectedFriends.remove(friend.userId)
-                      } else {
-                        selectedFriends.add(friend.userId)
-                      }
+//                      if (selectedFriends.contains(friend.userId)) {
+//                        selectedFriends.remove(friend.userId)
+//                      } else {
+//                        selectedFriends.add(friend.userId)
+//                      }
+
+//                        isSelected = false,
+//                        onSelectFriend = {
+                        navigationActions.navigateTo(Screen.FRIEND_STATS)
+//                        },
                     },
                     onRemoveClick = { userAccountViewModel.removeFriend(friend.userId) },
                 )
@@ -101,7 +108,7 @@ fun FriendsScreen(
           if (selectedFriends.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { /* Trigger invite to workout action */},
+                onClick = { navigationActions.navigateTo(Screen.FRIEND_STATS) },
                 modifier =
                     Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("inviteButton"),
                 shape = RoundedCornerShape(8.dp),
