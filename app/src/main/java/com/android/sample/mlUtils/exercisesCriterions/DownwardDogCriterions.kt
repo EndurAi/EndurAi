@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.AngleCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.PoseDetectionJoints
+import com.android.sample.model.workout.ExerciseType
 
 private val legStraight_L =
     AngleCriterion(
@@ -83,7 +84,8 @@ private val bended_hip_R =
 
 val DownwardDogCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        name = "Downward Dog",
+        exerciseName = ExerciseType.DOWNWARD_DOG.toString(),
+        criterionName = ExerciseType.DOWNWARD_DOG.toString(),
         angleCriterionSet =
             setOf(
                 legStraight_L to legStraight_R,

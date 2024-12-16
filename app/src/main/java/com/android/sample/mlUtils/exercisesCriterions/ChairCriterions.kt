@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.AngleCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.PoseDetectionJoints
+import com.android.sample.model.workout.ExerciseType
 
 // CHAIR CRITERIONS
 private val chairCriterion_SHOULDER_R =
@@ -44,7 +45,8 @@ private val chairCriterion_KNEE_R =
 
 val ChairCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        name = "Chair",
+        exerciseName = ExerciseType.PLANK.toString(),
+        criterionName = "Chair",
         angleCriterionSet =
             setOf(
                 chairCriterion_SHOULDER_L to chairCriterion_SHOULDER_R,

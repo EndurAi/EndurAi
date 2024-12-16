@@ -77,12 +77,16 @@ class ExerciseFeedBack {
      * @property angleCriterionSet A set of pairs of `AngleCriterion` objects representing the
      *   criteria for the exercise.
      * @property symmetric A boolean indicating if the exercise is symmetric.
-     * @property name The name of the exercise.
+     * @property criterionName name of the criterion.
+     * @property exerciseName name of the exercise.
+     *@property isCommented whether the coach should return a comment based on result of the criteria
      */
     data class ExerciseCriterion(
-        val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>,
-        val symmetric: Boolean = true,
-        val name: String
+      val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>,
+      val symmetric: Boolean = true,
+      val criterionName: String,
+      val exerciseName: String,
+      val isCommented: Boolean = true
     )
     /**
      * Asses the landmarks to the given angle criterion
@@ -174,7 +178,7 @@ class ExerciseFeedBack {
                     onSuccess = onSuccess,
                     onFailure = onFailure)
           }
-      return ExerciseCriterion(preambleCriterion.toSet(), name = "")
+      return ExerciseCriterion(preambleCriterion.toSet(), criterionName = exerciseCriterion.criterionName, exerciseName = exerciseCriterion.exerciseName)
     }
 
     /**

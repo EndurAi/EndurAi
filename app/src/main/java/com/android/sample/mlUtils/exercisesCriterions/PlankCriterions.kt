@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.AngleCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.PoseDetectionJoints
+import com.android.sample.model.workout.ExerciseType
 
 // SHOULDER HIP KNEE
 private val plankCriterion_backAngle_L =
@@ -65,7 +66,8 @@ private val plankCriterion_LEG_R =
 // PlankExerciseCriterion
 val PlankExerciseCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        name = "Plank",
+        exerciseName = ExerciseType.PLANK.toString(),
+        criterionName = ExerciseType.PLANK.toString(),
         angleCriterionSet =
             setOf(
                 plankCriterion_SHOULDER_L to plankCriterion_SHOULDER_R,
