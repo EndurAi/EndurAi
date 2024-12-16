@@ -34,7 +34,12 @@ class CoachFeedBackScreenTest {
         .thenReturn(
             listOf(
                 CoachFeedback(
-                    emptySet(), 100f, 10, ExerciseFeedBackUnit.SECONDS, PlankExerciseCriterions)))
+                    emptySet(),
+                    100f,
+                    10,
+                    ExerciseFeedBackUnit.SECONDS,
+                    true,
+                    PlankExerciseCriterions)))
   }
 
   @Test
