@@ -2,6 +2,7 @@ package com.android.sample.model.achievements
 
 import androidx.lifecycle.ViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
+import com.android.sample.model.video.Video
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
@@ -10,11 +11,16 @@ import com.android.sample.ui.composables.Calories.computeCalories
 import com.android.sample.ui.workout.ExerciseState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class StatisticsViewModel(private val repository: StatisticsRepository) : ViewModel() {
 
   private val workoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
   val workoutStatistics: StateFlow<List<WorkoutStatistics>> = workoutStatistics_
+
+    private val friendWorkoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
+    open val friendWorkoutStatistics: StateFlow<List<WorkoutStatistics>>
+        get() = friendWorkoutStatistics_.asStateFlow()
 
   init {
     // Initialize by fetching all statistics
@@ -29,7 +35,7 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
     fun getFriendWorkoutStatistics(friendId: String) {
     repository.getFriendStatistics(
         friendId = friendId,
-        onSuccess = { workoutStatistics_.value = it },
+        onSuccess = { friendWorkoutStatistics_.value = it },
         onFailure = {})
     }
 

@@ -255,9 +255,9 @@ open class UserAccountViewModel(
 
 
     /**
-     * Select a video.
+     * Select a friend.
      *
-     * @param video The video to select.
+     * @param friend: The friend to select.
      */
     fun selectFriend(friend: UserAccount) {
         selectedFriend_.value = friend

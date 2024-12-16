@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.stringResource
@@ -36,8 +37,7 @@ fun ProfileItem(
           modifier
               .fillMaxWidth()
               .padding(12.dp)
-              .background(color = ProfileBlue, shape = RoundedCornerShape(16.dp))
-              .padding(16.dp), // Inner padding for better spacing
+              .background(brush = Brush.horizontalGradient(colors = listOf(Color(0xFFBBDEFB), Color(0xFFE3F2FD))), shape = RoundedCornerShape(16.dp))              .padding(16.dp), // Inner padding for better spacing
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically) {

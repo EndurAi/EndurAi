@@ -87,6 +87,7 @@ fun FriendsScreen(
                     friend = friend,
                     isSelected = selectedFriends.contains(friend.userId),
                     onSelectFriend = {
+                        userAccountViewModel.selectFriend(friend)
 //                      if (selectedFriends.contains(friend.userId)) {
 //                        selectedFriends.remove(friend.userId)
 //                      } else {
