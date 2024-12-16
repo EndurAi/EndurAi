@@ -11,22 +11,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.model.achievements.StatisticsViewModel
+import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.Workout
+import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.navigation.NavigationActions
 
 @Composable
 fun AchievementsScreen(
     navigationActions: NavigationActions,
-    statisticsViewModel: StatisticsViewModel
+    statisticsViewModel: StatisticsViewModel,
+    bodyWeightViewModel: WorkoutViewModel<Workout>,
+    yogaViewModel: WorkoutViewModel<Workout>
 ) {
   val workouts = statisticsViewModel.workoutStatistics.collectAsState().value
   val statistics = Statistics(statisticsViewModel.workoutStatistics)
+    val doneYogaWorkouts = bodyWeightViewModel.doneWorkouts.collectAsState().value
+    val doneBodyWeightWorkouts = yogaViewModel.doneWorkouts.collectAsState().value
   Scaffold(
       modifier = Modifier.testTag("achievementsScreen"),
       content = { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
           if (workouts.isNotEmpty()) {
             Text(text = statistics.getTotalWorkouts().toString())
+              Text(text = "Done yoga : " + doneYogaWorkouts.size.toString())
+              Text(text = "Done bodyweight : " + doneBodyWeightWorkouts.size.toString())
           }
         }
       },

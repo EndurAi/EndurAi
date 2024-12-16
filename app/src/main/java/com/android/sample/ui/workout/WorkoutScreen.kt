@@ -276,7 +276,7 @@ fun WorkoutScreenBody(
               exerciseList = exerciseStateList ?: emptyList(),
               userAccountViewModel = userAccountViewModel)
       statisticsViewModel.addWorkoutStatistics(stats)
-      workoutViewModel.deleteWorkoutById(workoutID)
+        workoutViewModel.transferWorkoutToDone(workoutID)
       navigationActions.navigateTo(Screen.MAIN)
     }
   }

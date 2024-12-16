@@ -253,7 +253,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     // Add the workout data to the collection "done"
-                    db.collection(doneDocumentName).document(id).set(document.data!!)
+                    db.collection(doneDocumentName).document(id).set(document)
                         .addOnSuccessListener {
                             // Delete the document from "allworkouts"
                             deleteDocument(id = id, onSuccess = {
@@ -293,7 +293,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     // Add the document to "allworkouts"
-                    db.collection(mainDocumentName).document(id).set(document.data!!)
+                    db.collection(mainDocumentName).document(id).set(document)
                         .addOnSuccessListener {
                             // Delete the document from done
                             db.collection(doneDocumentName).document(id).delete()
