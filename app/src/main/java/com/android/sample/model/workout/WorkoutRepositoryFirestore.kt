@@ -252,8 +252,9 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         db.collection(mainDocumentName).document(id).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
+                    val workoutData = document.data ?: emptyMap()
                     // Add the workout data to the collection "done"
-                    db.collection(doneDocumentName).document(id).set(document)
+                    db.collection(doneDocumentName).document(id).set(workoutData)
                         .addOnSuccessListener {
                             // Delete the document from "allworkouts"
                             deleteDocument(id = id, onSuccess = {
@@ -348,7 +349,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
 
                     for (id in workoutids) {
                         val task =
-                            db.collection(mainDocumentName)
+                            db.collection(doneDocumentName)
                                 .document(id)
                                 .get()
                                 .addOnSuccessListener { document ->

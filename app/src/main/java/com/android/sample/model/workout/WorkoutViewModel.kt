@@ -16,7 +16,8 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
   open val selectedWorkout: StateFlow<T?> = selectedWorkout_
 
   init {
-    repository.init { getWorkouts() }
+    repository.init { getWorkouts()
+    getDoneWorkouts()}
   }
 
   /**
