@@ -229,7 +229,27 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .addOnSuccessListener { onSuccess() }
   }
 
-  /**
+    override fun transferDocumentToDone(
+        id: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun importDocumentFromDone(
+        id: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDoneDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    /**
    * Converts a Firestore `DocumentSnapshot` to an object of type `R`. Serializes the document data
    * using the provided `JsonAdapter`.
    *
