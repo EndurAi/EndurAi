@@ -84,6 +84,7 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
               val exerciseString = exerciseName(rawFeedback)
               val durationOrRepetitionString = durationString(rawFeedback)
               val startingFeedback = genericFeedbackFromRank(rank)
+          val isCommented = rawFeedback.any{it.isCommented}
 
               // Card with exercise name and duration/repetition
               Card(
@@ -114,10 +115,10 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                   }
               // Animated feedback rank circle
               RankCircle(rank)
-          val isCombined =
-              TalkingCoach(
-                  text = startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() },
-              )
+              TalkingCoach( text =
+                  if (isCommented)  startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() }
+                else rawFeedback.first().toString()
+                )
 
               Spacer(modifier = Modifier.height(16.dp))
               // Done button

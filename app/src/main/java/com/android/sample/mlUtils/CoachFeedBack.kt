@@ -34,11 +34,8 @@ data class CoachFeedback(
 
       commentSet
         .filter { it.rate >= 0.1F && it.comment.isNotBlank()}
-        .run {
-          stringBuilder.append("${exerciseCriterion.criterionName}:\n")
-          this
-        }
         .forEachIndexed { index, comment ->
+          if(index == 0 ){stringBuilder.append("${exerciseCriterion.criterionName}:\n")}
           stringBuilder.append("${index+1}) ").append(comment.comment).append("\n")
         }
 

@@ -81,13 +81,13 @@ private val elbowFlat_R =
 val PushUpsDownCriterions: ExerciseCriterion =
     ExerciseCriterion(
         exerciseName = ExerciseType.PUSH_UPS.toString(),
-        criterionName = "Pushup low position",
+        criterionName = "Push-up low position",
         angleCriterionSet =
             setOf(elbowCurved_L to elbowCurved_R, legStraight_L to legStraight_R, back_L to back_R))
 
 val PushUpsUpCrierions: ExerciseCriterion =
     ExerciseCriterion(
         exerciseName = ExerciseType.PUSH_UPS.toString(),
-        criterionName = "Pushup high position",
+        criterionName = "Push-up high position",
         angleCriterionSet =
             setOf(elbowFlat_L to elbowFlat_R, legStraight_L to legStraight_R, back_L to back_R))
