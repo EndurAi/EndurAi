@@ -20,7 +20,7 @@ data class CoachFeedback(
     val successRate: Float,
     val feedbackValue: Int,
     val feedbackUnit: ExerciseFeedBackUnit,
-    val isCommented : Boolean = true,
+    val isCommented: Boolean = true,
     val exerciseCriterion: ExerciseFeedBack.Companion.ExerciseCriterion,
 ) {
   /**
@@ -30,22 +30,26 @@ data class CoachFeedback(
    */
   override fun toString(): String {
     val stringBuilder: StringBuilder = StringBuilder()
-    if(isCommented) {
+    if (isCommented) {
 
       commentSet
-        .filter { it.rate >= 0.1F && it.comment.isNotBlank()}
-        .forEachIndexed { index, comment ->
-          if(index == 0 ){stringBuilder.append("${exerciseCriterion.criterionName}:\n")}
-          stringBuilder.append("${index+1}) ").append(comment.comment).append("\n")
+          .filter { it.rate >= 0.1F && it.comment.isNotBlank() }
+          .forEachIndexed { index, comment ->
+            if (index == 0) {
+              stringBuilder.append("${exerciseCriterion.criterionName}:\n")
+            }
+            stringBuilder.append("${index+1}) ").append(comment.comment).append("\n")
+          }
+    } else {
+      if (feedbackValue > 0) {
+        if (feedbackUnit == ExerciseFeedBackUnit.REPETITION) {
+          stringBuilder.append("You made $feedbackValue ${feedbackUnit.stringRepresentation}")
+        } else {
+          stringBuilder.append("You lasted $feedbackValue ${feedbackUnit.stringRepresentation}")
         }
-
-    }
-    else{
-      if(feedbackValue>0){
-        if (feedbackUnit == ExerciseFeedBackUnit.REPETITION) {stringBuilder.append("You made $feedbackValue ${feedbackUnit.stringRepresentation}")}
-        else{stringBuilder.append("You lasted $feedbackValue ${feedbackUnit.stringRepresentation}")}
+      } else {
+        stringBuilder.append("I haven't noticed you started exercising.")
       }
-      else {stringBuilder.append("I haven't noticed you started exercising.")}
     }
     return stringBuilder.toString()
   }

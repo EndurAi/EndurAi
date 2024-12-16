@@ -112,7 +112,6 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
     val data_preambleActived =
         data.filter { sample -> ExerciseFeedBack.assessLandMarks(sample, preambleCriterions).first }
 
-
     var exerciseDuration = 0L
     if (data_preambleActived.isNotEmpty()) {
       val firstTimeStamp = data_preambleActived.first().first().timeStamp
@@ -150,14 +149,14 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
           commentSet = jointFeedbackSet,
           successRate = successRate,
           feedbackValue = exerciseDuration.toInt(),
-        isCommented = exerciseCriterion.isCommented,
+          isCommented = exerciseCriterion.isCommented,
           feedbackUnit = ExerciseFeedBackUnit.SECONDS,
           exerciseCriterion = exerciseCriterion)
     } else {
       CoachFeedback(
           commentSet = jointFeedbackSet,
           successRate = successRate,
-        isCommented = exerciseCriterion.isCommented,
+          isCommented = exerciseCriterion.isCommented,
           feedbackValue = numberOfRepetition,
           feedbackUnit = ExerciseFeedBackUnit.REPETITION,
           exerciseCriterion = exerciseCriterion)
