@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +57,7 @@ fun FriendStatisticsScreen(
 
     Column(
         modifier = Modifier
+            .testTag("friendStatisticsScreen")
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
@@ -72,7 +74,7 @@ fun FriendStatisticsScreen(
         )
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().testTag("friendStatisticsList"),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(statisticsList) { workout ->
@@ -90,9 +92,11 @@ fun WorkoutCard(workout: WorkoutStatistics) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .testTag("workoutCard")
     ) {
         Column(
             modifier = Modifier
+                .testTag("workoutCardContent")
                 .fillMaxWidth()
                 .background(
                     Brush.horizontalGradient(
@@ -105,7 +109,8 @@ fun WorkoutCard(workout: WorkoutStatistics) {
                 Text(
                     text = "Workout Type: ${workout.type}",
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.testTag("workoutType")
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
@@ -117,23 +122,26 @@ fun WorkoutCard(workout: WorkoutStatistics) {
                         }
                     ),
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp).testTag("workoutTypeImage")
                 )
             }
             Text(
                 text = "Date: ${workout.date.toLocalDate()}",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = Color.Gray,
+                modifier = Modifier.testTag("workoutDate")
             )
             Text(
                 text = "Duration: ${workout.duration} min",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = Color.Gray,
+                modifier = Modifier.testTag("workoutDuration")
             )
             Text(
                 text = "Calories Burnt: ${workout.caloriesBurnt} kcal",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = Color.Gray,
+                modifier = Modifier.testTag("workoutCaloriesBurnt")
             )
         }
     }

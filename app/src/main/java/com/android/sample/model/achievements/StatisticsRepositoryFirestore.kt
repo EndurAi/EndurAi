@@ -86,6 +86,7 @@ open class StatisticsRepositoryFirestore(private val db: FirebaseFirestore) : St
           }
         }
   }
+
     override fun getFriendStatistics(
         friendId: String,
         onSuccess: (List<WorkoutStatistics>) -> Unit,
