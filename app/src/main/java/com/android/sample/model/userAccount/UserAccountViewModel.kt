@@ -127,6 +127,7 @@ open class UserAccountViewModel(
   }
 
   fun removeFriend(friendId: String) {
+    updateFriendsListAfterRemoval(friendId)
     userAccount.value?.let { currentUser ->
       repository.removeFriend(
           userAccount = currentUser,
@@ -151,6 +152,7 @@ open class UserAccountViewModel(
   }
 
   fun acceptFriendRequest(friendId: String) {
+    updateReceivedListAfterRemoval(friendId)
     userAccount.value?.let { currentUser ->
       repository.acceptFriendRequest(
           userAccount = currentUser,
@@ -163,6 +165,7 @@ open class UserAccountViewModel(
   }
 
   fun rejectFriendRequest(friendId: String) {
+    updateReceivedListAfterRemoval(friendId)
     userAccount.value?.let { currentUser ->
       repository.rejectFriendRequest(
           userAccount = currentUser,
@@ -254,21 +257,6 @@ open class UserAccountViewModel(
     return deferred.await()
   }
 
-  //  fun fetchFriends() {
-  //    viewModelScope.launch {
-  //      userAccount.value?.let { currentUser ->
-  //        val friendsList =
-  //            currentUser.friends
-  //                .map { friendId -> async { getUserAccountAsync(friendId) } }
-  //                .awaitAll()
-  //                .filterNotNull()
-  //
-  //        _friends.value = friendsList
-  //        Log.d("UserAccountViewModel", "Fetched friends list: $friendsList")
-  //      }
-  //    }
-  //  }
-
   fun fetchFriends() {
     viewModelScope.launch {
       FirebaseAuth.getInstance().currentUser?.let { currentUser ->
@@ -316,38 +304,6 @@ open class UserAccountViewModel(
       }
     }
   }
-
-  //
-  //    fun fetchSentRequests() {
-  //    viewModelScope.launch {
-  //      userAccount.value?.let { currentUser ->
-  //        _sentRequests.value = emptyList()
-  //        val sentRequestsList =
-  //            currentUser.sentRequests
-  //                .map { requestId -> async { getUserAccountAsync(requestId) } }
-  //                .awaitAll()
-  //                .filterNotNull()
-  //        _sentRequests.value = sentRequestsList
-  //        Log.d("UserAccountViewModel", "Fetched sent requests list: $sentRequestsList")
-  //        Log.d("UserAccountViewModel", "Fetched sent requests list length:
-  // ${sentRequestsList.size}")
-  //      }
-  //    }
-  //  }
-  //
-  //  fun fetchReceivedRequests() {
-  //    viewModelScope.launch {
-  //      userAccount.value?.let { currentUser ->
-  //        val receivedRequestsList =
-  //            currentUser.receivedRequests
-  //                .map { requestId -> async { getUserAccountAsync(requestId) } }
-  //                .awaitAll()
-  //                .filterNotNull()
-  //        _receivedRequests.value = receivedRequestsList
-  //        Log.d("UserAccountViewModel", "Fetched received requests list: $receivedRequestsList")
-  //      }
-  //    }
-  //  }
 
   fun deleteAccount(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val user = firebaseAuth?.currentUser ?: FirebaseAuth.getInstance().currentUser
@@ -423,6 +379,15 @@ open class UserAccountViewModel(
     }
   }
 
+  fun updateFriendsListAfterRemoval(userId: String) {
+    val updatedList = _friends.value.filterNot { it.userId == userId }
+    _friends.value = updatedList
+  }
+
+  fun updateReceivedListAfterRemoval(userId: String) {
+    val receivedList = _receivedRequests.value.filterNot { it.userId == userId }
+    _receivedRequests.value = receivedList
+  }
   // Factory for creating instances of the ViewModel
   companion object {
     fun provideFactory(context: Context): ViewModelProvider.Factory {

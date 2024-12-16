@@ -12,13 +12,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.ui.theme.DarkBlue
-import com.android.sample.ui.theme.LightGrey
+import com.android.sample.ui.theme.Green
+import com.android.sample.ui.theme.ProfileBlue
+import com.android.sample.ui.theme.profileFontSize
 
 /** Composable for the Profile cards */
 @Composable
@@ -32,23 +36,69 @@ fun ProfileItem(
           modifier
               .fillMaxWidth()
               .padding(12.dp)
-              .background(LightGrey, shape = MaterialTheme.shapes.medium),
+              .background(color = ProfileBlue, shape = RoundedCornerShape(16.dp))
+              .padding(16.dp), // Inner padding for better spacing
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-          Icon(
-              imageVector = Icons.Filled.Person,
-              contentDescription = "Profile Picture",
+          Box(
               modifier =
-                  Modifier.size(48.dp).background(Color.Gray, shape = CircleShape).padding(8.dp),
-              tint = Color.White)
-          Spacer(modifier = Modifier.width(12.dp))
-          Text(profile.firstName, style = MaterialTheme.typography.bodyLarge, fontSize = 18.sp)
+                  Modifier.size(56.dp)
+                      .background(Color.White, shape = CircleShape), // Light blue circle
+              contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier.size(32.dp),
+                    tint = DarkBlue)
+              }
+          Spacer(modifier = Modifier.width(16.dp))
+          Text(
+              text = profile.firstName,
+              style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
+              color = Color.Black, // Black text for contrast
+              fontWeight = FontWeight.Bold)
         }
         content()
       }
 }
 
+/** Profile item with Accept and Reject buttons */
+@Composable
+fun ProfileItemWithAcceptReject(
+    profile: UserAccount,
+    onAcceptClick: () -> Unit,
+    onRejectClick: () -> Unit
+) {
+  ProfileItem(profile = profile) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      Button(
+          onClick = onAcceptClick,
+          colors = ButtonDefaults.buttonColors(containerColor = Green), // Green button
+          shape = RoundedCornerShape(16.dp), // Rounded buttons for consistency
+          modifier = Modifier.height(36.dp)) {
+            Text(
+                text = "Accept",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = profileFontSize)
+          }
+      Button(
+          onClick = onRejectClick,
+          colors = ButtonDefaults.buttonColors(containerColor = Red), // Red button
+          shape = RoundedCornerShape(16.dp),
+          modifier = Modifier.height(36.dp)) {
+            Text(
+                text = stringResource(id = R.string.Reject),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = profileFontSize)
+          }
+    }
+  }
+}
+
+/** Profile item with Request Button */
 @Composable
 fun ProfileItemWithRequest(
     profile: UserAccount,
@@ -66,38 +116,25 @@ fun ProfileItemWithRequest(
         },
         enabled = !requestSent,
         colors =
-            ButtonDefaults.buttonColors(containerColor = if (requestSent) Color.Gray else DarkBlue),
-        shape = RoundedCornerShape(8.dp)) {
-          Text(if (requestSent) "Request Sent" else "Send Request", color = Color.White)
+            ButtonDefaults.buttonColors(
+                containerColor =
+                    if (requestSent) Color.Gray
+                    else Color.Blue // Gray for sent, dark blue for active
+                ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.height(36.dp)) {
+          Text(
+              text =
+                  if (requestSent) stringResource(R.string.RequestSent)
+                  else stringResource(R.string.SendRequest),
+              color = Color.White,
+              fontWeight = FontWeight.Bold,
+              fontSize = 14.sp)
         }
   }
 }
 
-@Composable
-fun ProfileItemWithAcceptReject(
-    profile: UserAccount,
-    onAcceptClick: () -> Unit,
-    onRejectClick: () -> Unit
-) {
-  ProfileItem(profile = profile) {
-    Row {
-      Button(
-          onClick = onAcceptClick,
-          colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
-          shape = CircleShape,
-          modifier = Modifier.padding(end = 4.dp)) {
-            Text(stringResource(R.string.accept_invite), color = Color.White)
-          }
-      Button(
-          onClick = onRejectClick,
-          colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-          shape = CircleShape) {
-            Text(stringResource(R.string.reject_invite), color = Color.White)
-          }
-    }
-  }
-}
-
+/** Friend Item using ProfileItem */
 @Composable
 fun FriendItem(
     friend: UserAccount,
@@ -106,15 +143,17 @@ fun FriendItem(
     onRemoveClick: () -> Unit
 ) {
   ProfileItem(
-      profile = friend,
-      modifier =
-          Modifier.clickable(onClick = onSelectFriend)
-              .background(if (isSelected) Color.LightGray else Color.Transparent)) {
+      profile = friend, modifier = Modifier.clickable(onClick = onSelectFriend).padding(8.dp)) {
         Button(
             onClick = onRemoveClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-            shape = CircleShape) {
-              Text(stringResource(R.string.remove_friend), color = Color.White)
+            colors = ButtonDefaults.buttonColors(containerColor = Red), // Red button
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.height(36.dp)) {
+              Text(
+                  text = stringResource(id = R.string.Remove),
+                  color = Color.White,
+                  fontWeight = FontWeight.Bold,
+                  fontSize = 14.sp)
             }
       }
 }

@@ -47,5 +47,16 @@
     <string name="RunningScreenTopBar">Running</string>
     <string name="NoWorkout">No Workout</string>
     <string name="Summary">Summary</string>
+    <string name="coach_feedback_title">Coach Feedback</string>
     <string name="SubmitButton">Submit</string>
+    <string name="SocialNewConnections">New Connections</string>
+    <string name="SocialInvitations">Invitations</string>
+    <string name="NoFriends">Oh, you currently don’t have any friends.\nClick on Add to expand your network!</string>
+    <string name="NoInvitations">Oh no! You have no invitations.</string>
+    <string name="Accept">Accept</string>
+    <string name="Reject">Reject</string>
+    <string name="Remove">Remove</string>
+    <string name="SendRequest">Send Request</string>
+    <string name="RequestSent">Request sent</string>
+
 </resources>

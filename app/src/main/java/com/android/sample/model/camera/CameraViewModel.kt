@@ -12,6 +12,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.MyPoseLandmark
 import com.android.sample.ui.mlFeedback.PoseDetectionAnalyser
 import java.io.File
@@ -63,7 +64,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   val _cameraController =
       MutableStateFlow<LifecycleCameraController>(
           LifecycleCameraController(context).apply {
-            cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
           })
 
   /** A StateFlow that exposes the LifecycleCameraController. */
@@ -75,6 +76,13 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
   /** A StateFlow that exposes the list of detected pose landmarks. */
   val poseLandmarks: StateFlow<ArrayList<List<MyPoseLandmark>>>
     get() = _poseLandMarks.asStateFlow()
+  /** A MutableStateFlow that holds the list of detected pose landmarks. */
+  val _lastPose = MutableStateFlow<List<MyPoseLandmark>>(arrayListOf())
+  /** A StateFlow that exposes the list of detected pose landmarks. */
+  val lastPose: StateFlow<List<MyPoseLandmark>>
+    get() = _lastPose.asStateFlow()
+
+  open var feedback: List<CoachFeedback>? = null
 
   val meanWindow = 10
   private val inFrameLikelihoodThreshold = 0.8f
@@ -145,7 +153,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     finishPoseRecognition()
     _cameraController.value =
         LifecycleCameraController(context).apply {
-          cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+          cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
         }
   }
 
@@ -162,7 +170,7 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                   poseLandmark.inFrameLikelihood >= inFrameLikelihoodThreshold
                 }) {
                   // Convert into simple type
-                  _poseLandMarks.value.add(
+                  val currentPose =
                       it.map { poseLandmark ->
                         val timeStamp = Clock.System.now().toEpochMilliseconds()
                         MyPoseLandmark(
@@ -171,7 +179,9 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
                             poseLandmark.position3D.z,
                             poseLandmark.inFrameLikelihood,
                             timeStamp = timeStamp)
-                      })
+                      }
+                  _poseLandMarks.value.add(currentPose)
+                  _lastPose.value = currentPose
                 }
               }))
       _bodyRecognitionIsEnabled.value = true
@@ -186,5 +196,9 @@ open class CameraViewModel(private val context: Context) : ViewModel() {
     _cameraController.value.clearImageAnalysisAnalyzer()
     _poseLandMarks.value = arrayListOf()
     _bodyRecognitionIsEnabled.value = false
+  }
+
+  fun getPoseLandMarks(): List<List<MyPoseLandmark>> {
+    return _poseLandMarks.value
   }
 }
