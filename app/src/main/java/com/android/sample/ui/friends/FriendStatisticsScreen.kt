@@ -2,6 +2,7 @@ package com.android.sample.ui.friends
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,25 +51,8 @@ fun FriendStatisticsScreen(
         statisticsViewModel.getFriendWorkoutStatistics(friendId)
     }
 
-//    LazyColumn(
-//        modifier = Modifier.fillMaxSize(),
-//        verticalArrangement = Arrangement.spacedBy(16.dp)
-//    ) {
-//        if (statisticsList.isEmpty()) {
-//            item {
-//                Text(text = "No statistics available for this friend.")
-//            }
-//        } else {
-//            items(statisticsList) { workout ->
-//                Log.d("WorkoutCard", "Rendering workout: $workout")
-//                WorkoutCard(workout)
-//            }
-//        }
-//    }
-//}
     val friendName = userAccountViewModel.selectedFriend.value?.firstName ?: "Unknown"
 
-    // Example placeholder data for workouts
 
     Column(
         modifier = Modifier
@@ -104,7 +89,7 @@ fun WorkoutCard(workout: WorkoutStatistics) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+            .padding(8.dp)
     ) {
         Column(
             modifier = Modifier
@@ -116,11 +101,25 @@ fun WorkoutCard(workout: WorkoutStatistics) {
                 )
                 .padding(16.dp)
         ) {
-            Text(
-                text = "Workout Type: ${workout.type}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Workout Type: ${workout.type}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Image(
+                    painter = painterResource(
+                        id = when (workout.type) {
+                            WorkoutType.BODY_WEIGHT -> R.drawable.dumbell_inner_shadow
+                            WorkoutType.YOGA -> R.drawable.yoga_innershadow
+                            else -> R.drawable.running_innershadow
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
             Text(
                 text = "Date: ${workout.date.toLocalDate()}",
                 fontSize = 14.sp,
