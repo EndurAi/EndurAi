@@ -34,7 +34,7 @@ class SettingsScreenTest {
 
     // Get application context for testing
     val context = ApplicationProvider.getApplicationContext<Context>()
-    
+
     val preferencesLocalCache = PreferencesLocalCache(context)
     mockPreferencesRepository = mock(PreferencesRepository::class.java)
 
