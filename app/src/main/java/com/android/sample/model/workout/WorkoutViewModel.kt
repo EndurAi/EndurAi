@@ -18,7 +18,7 @@ open class WorkoutViewModel<out T : Workout>(
   open val selectedWorkout: StateFlow<T?> = selectedWorkout_.asStateFlow()
 
   init {
-      repository.init { getWorkouts() }
+    repository.init { getWorkouts() }
   }
 
   private fun cacheWorkouts(workouts: List<T>) {
