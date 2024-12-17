@@ -21,19 +21,31 @@ class PreferencesLocalCache(private val context: Context) {
     private val gson = Gson()
     private val preferencesKey = stringPreferencesKey("preferences_data")
 
+    /**
+     * Retrieves the user preferences from local cache.
+     *
+     * @return A [Flow] of [Preferences] object.
+     */
     fun getPreferences(): Flow<com.android.sample.model.preferences.Preferences?> =
         context.preferencesDataStore.data
             .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
+                when (exception) {
+                    is IOException -> {
+                        Log.e("PreferencesLocalCache", "Error reading cache, using default preferences.", exception)
+                        emit(emptyPreferences())
+                    }
+                    else -> throw exception
                 }
             }
             .map { preferences ->
                 preferences[preferencesKey]?.let { json ->
-                    gson.fromJson(json, com.android.sample.model.preferences.Preferences::class.java)
-                }
+                    try {
+                        gson.fromJson(json, com.android.sample.model.preferences.Preferences::class.java) ?: PreferencesViewModel.defaultPreferences
+                    } catch (e: Exception) {
+                        Log.e("PreferencesLocalCache", "Error deserializing preferences, using default.", e)
+                        PreferencesViewModel.defaultPreferences
+                    }
+                } ?: PreferencesViewModel.defaultPreferences
             }
 
     /**
@@ -42,8 +54,13 @@ class PreferencesLocalCache(private val context: Context) {
      * @param preferences The [Preferences] object to be saved.
      */
     suspend fun savePreferences(preferences: com.android.sample.model.preferences.Preferences) {
-        context.preferencesDataStore.edit { prefs ->
-            prefs[preferencesKey] = gson.toJson(preferences)
+        try {
+            context.preferencesDataStore.edit { prefs ->
+                prefs[preferencesKey] = gson.toJson(preferences)
+            }
+            Log.d("PreferencesLocalCache", "Successfully saved preferences to cache.")
+        } catch (e: Exception) {
+            Log.e("PreferencesLocalCache", "Error saving preferences to cache.", e)
         }
     }
 
@@ -51,6 +68,11 @@ class PreferencesLocalCache(private val context: Context) {
      * Clears the preferences cache.
      */
     suspend fun clearPreferences() {
-        context.preferencesDataStore.edit { it.clear() }
+        try {
+            context.preferencesDataStore.edit { it.clear() }
+            Log.d("PreferencesLocalCache", "Cleared preferences cache.")
+        } catch (e: Exception) {
+            Log.e("PreferencesLocalCache", "Error clearing preferences cache.", e)
+        }
     }
 }
