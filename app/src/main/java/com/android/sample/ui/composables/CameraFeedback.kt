@@ -2,16 +2,10 @@ package com.android.sample.ui.composables
 
 import MathsPoseDetection
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recording
-import androidx.camera.video.VideoRecordEvent
-import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-import androidx.camera.view.video.AudioConfig
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -30,13 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.android.sample.R
 import com.android.sample.mlUtils.ExerciseFeedBack
@@ -48,7 +40,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import java.io.File
 
 /** A class that provides composables for displaying and interacting with the camera feed. */
 class CameraFeedBack {
@@ -208,43 +199,5 @@ class CameraFeedBack {
       }
     }
 
-    /**
-     * Starts or stops recording a video.
-     *
-     * @param cameraController The LifecycleCameraController used to control the camera.
-     * @param context The application context.
-     */
-    fun recordVideo(cameraController: LifecycleCameraController, context: Context) {
-
-      val outputFile = File(context.filesDir.path + "/record.mp4")
-
-      if (recording != null) {
-        recording?.stop()
-        Toast.makeText(context, "Recording stopped", Toast.LENGTH_SHORT).show()
-        recording = null
-        return
-      }
-
-      recording =
-          cameraController.startRecording(
-              FileOutputOptions.Builder(outputFile).build(),
-              AudioConfig.AUDIO_DISABLED,
-              ContextCompat.getMainExecutor(context)) { event ->
-                when (event) {
-                  is VideoRecordEvent.Finalize -> {
-                    if (event.hasError()) {
-                      recording?.close()
-                      recording = null
-                      Toast.makeText(
-                              context, "An error happened while recording.", Toast.LENGTH_SHORT)
-                          .show()
-                    } else {
-                      Toast.makeText(context, "Video is recorded successfully.", Toast.LENGTH_SHORT)
-                          .show()
-                    }
-                  }
-                }
-              }
-    }
   }
 }
