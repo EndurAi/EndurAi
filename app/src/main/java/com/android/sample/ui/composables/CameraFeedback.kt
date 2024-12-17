@@ -148,8 +148,7 @@ class CameraFeedBack {
                       .flatMap { angleCriterionComments -> angleCriterionComments.focusedJoints }
                       .toSet()
               displayedJoints = temp
-            }
-            else{
+            } else {
               displayedJoints = mutableSetOf()
             }
           }

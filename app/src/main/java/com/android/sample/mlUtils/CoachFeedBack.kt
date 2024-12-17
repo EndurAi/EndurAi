@@ -54,11 +54,9 @@ data class CoachFeedback(
     return stringBuilder.toString()
   }
 
-
   companion object {
     const val minRate: Float = 0.05f
   }
-
 
   fun debugToString(): String {
 
@@ -98,7 +96,7 @@ enum class FeedbackRank {
 
 fun rateToRank(rate: Float): FeedbackRank {
   return when {
-    rate >= 1f-CoachFeedback.minRate -> FeedbackRank.S
+    rate >= 1f - CoachFeedback.minRate -> FeedbackRank.S
     rate >= 0.8 -> FeedbackRank.A
     rate >= 0.7 -> FeedbackRank.B
     rate >= 0.6 -> FeedbackRank.C
