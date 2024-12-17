@@ -67,12 +67,12 @@ open class WorkoutRepositoryFirestore<T : Workout>(
       return uid ?: throw IllegalStateException("The user is not registered")
     }
 
-  private val documentToCollectionName: String = "workout"
+  private val documentToCollectionName: String = "workoutTest4"
 
   private val documentName: String = getDocumentName()
 
-  private val mainDocumentName = "allworkouts"
-    private val doneDocumentName = "doneWorkoutsTest1"
+  private val mainDocumentName = "allworkoutsTest4"
+    private val doneDocumentName = "doneWorkoutsTest4"
 
   /**
    * Generates a new unique ID for a workout document in the Firestore.
@@ -289,12 +289,14 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
+
         // Get the document from done
         db.collection(doneDocumentName).document(id).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     // Add the document to "allworkouts"
-                    db.collection(mainDocumentName).document(id).set(document)
+                    val workoutData = document.data ?: emptyMap()
+                    db.collection(mainDocumentName).document(id).set(workoutData)
                         .addOnSuccessListener {
                             // Delete the document from done
                             db.collection(doneDocumentName).document(id).delete()
@@ -304,7 +306,14 @@ open class WorkoutRepositoryFirestore<T : Workout>(
 
                                     val dataMapWorkoutID: Map<String, Any> =
                                         (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
-
+                                    // Delete the workout id from the done list of the user
+                                    db.collection(collectionPath)
+                                        .document(doneDocumentName)
+                                        .collection(documentName)
+                                        .document(id)
+                                        .delete()
+                                        .addOnSuccessListener { onSuccess() }
+                                        .addOnFailureListener { onFailure(it) }
                                     // Add the id to the user workout list
                                     db.collection(collectionPath)
                                         .document(documentToCollectionName)
