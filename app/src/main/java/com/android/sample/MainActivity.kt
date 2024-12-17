@@ -99,11 +99,12 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-    val context = LocalContext.current
-    val preferencesLocalCache = PreferencesLocalCache(context)
+  val context = LocalContext.current
+  val preferencesLocalCache = PreferencesLocalCache(context)
   val userAccountViewModel: UserAccountViewModel =
       viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
-  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore, preferencesLocalCache)
+  val preferenceRepository =
+      PreferencesRepositoryFirestore(Firebase.firestore, preferencesLocalCache)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository, preferencesLocalCache)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
@@ -181,7 +182,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Settings Screen
     navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
-      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.SETTINGS) { SettingsScreen(navigationActions, preferencesViewModel) }
     }
 
     // Session Selection Screen

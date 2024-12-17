@@ -6,6 +6,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.preferences.PreferencesLocalCache
+import com.android.sample.model.preferences.PreferencesRepository
+import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import kotlinx.coroutines.test.runTest
@@ -19,6 +22,8 @@ import org.mockito.Mockito.verify
 
 class SettingsScreenTest {
   private lateinit var userAccountViewModel: UserAccountViewModel
+  private lateinit var mockPreferencesRepository: PreferencesRepository
+  private lateinit var preferencesViewModel: PreferencesViewModel
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockContext: Context
 
@@ -26,6 +31,15 @@ class SettingsScreenTest {
 
   @Before
   fun setUp() {
+
+    // Get application context for testing
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    
+    val preferencesLocalCache = PreferencesLocalCache(context)
+    mockPreferencesRepository = mock(PreferencesRepository::class.java)
+
+    preferencesViewModel = PreferencesViewModel(mockPreferencesRepository, preferencesLocalCache)
+
     navigationActions = mock(NavigationActions::class.java)
     userAccountViewModel = mock(UserAccountViewModel::class.java)
     mockContext = mock(Context::class.java)
@@ -34,7 +48,9 @@ class SettingsScreenTest {
   @Test
   fun displayAllComponents() {
     // Set up the SettingsScreen for testing
-    composeTestRule.setContent { SettingsScreen(navigationActions, userAccountViewModel) }
+    composeTestRule.setContent {
+      SettingsScreen(navigationActions, preferencesViewModel, userAccountViewModel)
+    }
 
     // Verify all essential components are displayed
     composeTestRule.onNodeWithTag("settingsScreen").assertIsDisplayed()
@@ -48,7 +64,7 @@ class SettingsScreenTest {
   fun buttonLogoutNavigatesToAuthScreen() {
     reset(navigationActions)
 
-    composeTestRule.setContent { SettingsScreen(navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions, preferencesViewModel) }
 
     // Perform click on the logout button
     composeTestRule.onNodeWithTag("logoutButton").performClick()
@@ -62,7 +78,9 @@ class SettingsScreenTest {
     val context = ApplicationProvider.getApplicationContext<Context>()
 
     // Set up the SettingsScreen for testing
-    composeTestRule.setContent { SettingsScreen(navigationActions, userAccountViewModel) }
+    composeTestRule.setContent {
+      SettingsScreen(navigationActions, preferencesViewModel, userAccountViewModel)
+    }
 
     // Perform click on the delete account button
     composeTestRule.onNodeWithTag("deleteAccountButton").performClick()

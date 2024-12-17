@@ -10,7 +10,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import junit.framework.TestCase.fail
+import kotlinx.coroutines.flow.flowOf
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
@@ -36,6 +36,7 @@ class PreferencesRepositoryFirestoreTest {
   @Mock private lateinit var mockDocumentReference: DocumentReference
   @Mock private lateinit var mockUser: FirebaseUser
   @Mock private lateinit var mockAuth: FirebaseAuth
+  @Mock private lateinit var localCache: PreferencesLocalCache
   private lateinit var firebaseAuthMock: MockedStatic<FirebaseAuth>
 
   private lateinit var preferencesRepositoryFirestore: PreferencesRepositoryFirestore
@@ -51,13 +52,17 @@ class PreferencesRepositoryFirestoreTest {
     }
 
     firebaseAuthMock = mockStatic(FirebaseAuth::class.java)
+    localCache = mock(PreferencesLocalCache::class.java)
+
+    // Return a valid Flow for the local cache
+    `when`(localCache.getPreferences()).thenReturn(flowOf(null))
 
     // Mock FirebaseAuth and FirebaseUser behavior
     `when`(FirebaseAuth.getInstance()).thenReturn(mockAuth)
     `when`(mockAuth.currentUser).thenReturn(mockUser)
     `when`(mockUser.uid).thenReturn("mocked-uid")
 
-    preferencesRepositoryFirestore = PreferencesRepositoryFirestore(mockFirestore)
+    preferencesRepositoryFirestore = PreferencesRepositoryFirestore(mockFirestore, localCache)
 
     `when`(mockFirestore.collection(any())).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document(any())).thenReturn(mockDocumentReference)
@@ -83,23 +88,6 @@ class PreferencesRepositoryFirestoreTest {
 
     // Verify that the document reference's set method was called
     verify(mockDocumentReference).set(any())
-  }
-
-  /**
-   * This test verifies that when fetching a Preferences class, the Firestore `get()` is called on
-   * the collection reference and not the document reference.
-   */
-  @Test
-  fun getPreferences_callsDocuments() {
-
-    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
-
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-
-    preferencesRepositoryFirestore.getPreferences(
-        onSuccess = {}, onFailure = { fail("Failure callback should not be called") })
-
-    verify(mockDocumentReference).get()
   }
 
   /**

@@ -1,7 +1,12 @@
 package com.android.sample.model.preferences
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -15,15 +20,22 @@ import org.mockito.kotlin.eq
 class PreferencesViewModelTest {
 
   private lateinit var repository: PreferencesRepository
+  private lateinit var localCache: PreferencesLocalCache
+
   private lateinit var preferencesViewModel: PreferencesViewModel
 
   val defaultPreferences = Preferences(unitsSystem = UnitsSystem.METRIC, weight = WeightUnit.KG)
   val updatedPreferences = Preferences(unitsSystem = UnitsSystem.IMPERIAL, weight = WeightUnit.LBS)
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() {
+    Dispatchers.setMain(StandardTestDispatcher())
+    localCache = mock(PreferencesLocalCache::class.java)
+    // Return a valid Flow for the local cache
+    `when`(localCache.getPreferences()).thenReturn(flowOf(null))
     repository = mock(PreferencesRepository::class.java)
-    preferencesViewModel = PreferencesViewModel(repository)
+    preferencesViewModel = PreferencesViewModel(repository, localCache)
   }
 
   @Test
