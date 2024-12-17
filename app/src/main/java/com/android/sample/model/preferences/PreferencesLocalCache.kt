@@ -1,6 +1,7 @@
 package com.android.sample.model.preferences
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -23,10 +24,12 @@ class PreferencesLocalCache(private val context: Context) {
     fun getPreferences(): Flow<Preferences?> =
         context.preferencesDataStore.data
             .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
+                when (exception) {
+                    is IOException -> {
+                        Log.e("PreferencesLocalCache", "Error reading cache, using default preferences.", exception)
+                        emit(emptyPreferences())
+                    }
+                    else -> throw exception
                 }
             }
             .map { preferences ->
@@ -35,10 +38,25 @@ class PreferencesLocalCache(private val context: Context) {
                 }
             }
 
+    /**
+     * Saves the user preferences to local cache.
+     *
+     * @param preferences The [Preferences] object to be saved.
+     */
     suspend fun savePreferences(preferences: Preferences) {
-        context.preferencesDataStore.edit { prefs -> prefs[preferencesKey] = gson.toJson(preferences) }
+        try {
+            context.preferencesDataStore.edit { prefs ->
+                prefs[preferencesKey] = gson.toJson(preferences)
+            }
+            Log.d("PreferencesLocalCache", "Successfully saved preferences to cache.")
+        } catch (e: Exception) {
+            Log.e("PreferencesLocalCache", "Error saving preferences to cache.", e)
+        }
     }
 
+    /**
+     * Clears the preferences cache.
+     */
     suspend fun clearPreferences() {
         context.preferencesDataStore.edit { it.clear() }
     }
