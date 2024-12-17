@@ -21,20 +21,18 @@ class PreferencesLocalCache(private val context: Context) {
     private val gson = Gson()
     private val preferencesKey = stringPreferencesKey("preferences_data")
 
-    fun getPreferences(): Flow<Preferences?> =
+    fun getPreferences(): Flow<com.android.sample.model.preferences.Preferences?> =
         context.preferencesDataStore.data
             .catch { exception ->
-                when (exception) {
-                    is IOException -> {
-                        Log.e("PreferencesLocalCache", "Error reading cache, using default preferences.", exception)
-                        emit(emptyPreferences())
-                    }
-                    else -> throw exception
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
                 }
             }
             .map { preferences ->
                 preferences[preferencesKey]?.let { json ->
-                    gson.fromJson(json, Preferences::class.java)
+                    gson.fromJson(json, com.android.sample.model.preferences.Preferences::class.java)
                 }
             }
 
@@ -43,14 +41,9 @@ class PreferencesLocalCache(private val context: Context) {
      *
      * @param preferences The [Preferences] object to be saved.
      */
-    suspend fun savePreferences(preferences: Preferences) {
-        try {
-            context.preferencesDataStore.edit { prefs ->
-                prefs[preferencesKey] = gson.toJson(preferences)
-            }
-            Log.d("PreferencesLocalCache", "Successfully saved preferences to cache.")
-        } catch (e: Exception) {
-            Log.e("PreferencesLocalCache", "Error saving preferences to cache.", e)
+    suspend fun savePreferences(preferences: com.android.sample.model.preferences.Preferences) {
+        context.preferencesDataStore.edit { prefs ->
+            prefs[preferencesKey] = gson.toJson(preferences)
         }
     }
 

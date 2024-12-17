@@ -22,6 +22,7 @@ import com.android.sample.model.achievements.StatisticsRepositoryFirestore
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.camera.CameraViewModel
+import com.android.sample.model.preferences.PreferencesLocalCache
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
@@ -97,10 +98,13 @@ class MainActivity : ComponentActivity() {
 fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+
+    val context = LocalContext.current
+    val preferencesLocalCache = PreferencesLocalCache(context)
   val userAccountViewModel: UserAccountViewModel =
       viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
-  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
-  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore, preferencesLocalCache)
+  val preferencesViewModel = PreferencesViewModel(preferenceRepository, preferencesLocalCache)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
