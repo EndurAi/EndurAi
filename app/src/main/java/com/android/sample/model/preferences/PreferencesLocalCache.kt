@@ -38,14 +38,22 @@ class PreferencesLocalCache(private val context: Context) {
                 }
             }
             .map { preferences ->
-                preferences[preferencesKey]?.let { json ->
+                val json = preferences[preferencesKey]
+                if (json != null) {
                     try {
-                        gson.fromJson(json, com.android.sample.model.preferences.Preferences::class.java) ?: PreferencesViewModel.defaultPreferences
+                        val result = gson.fromJson(json, com.android.sample.model.preferences.Preferences::class.java)
+                        Log.d("PreferencesLocalCache", "Successfully loaded preferences: $json")
+                        result ?: PreferencesViewModel.defaultPreferences.also {
+                            Log.w("PreferencesLocalCache", "Deserialized preferences is null, using default.")
+                        }
                     } catch (e: Exception) {
-                        Log.e("PreferencesLocalCache", "Error deserializing preferences, using default.", e)
+                        Log.e("PreferencesLocalCache", "Error deserializing preferences: $json", e)
                         PreferencesViewModel.defaultPreferences
                     }
-                } ?: PreferencesViewModel.defaultPreferences
+                } else {
+                    Log.d("PreferencesLocalCache", "No preferences found in cache, using default.")
+                    PreferencesViewModel.defaultPreferences
+                }
             }
 
     /**
