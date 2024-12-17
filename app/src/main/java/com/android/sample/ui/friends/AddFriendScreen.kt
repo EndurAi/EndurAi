@@ -11,8 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
-import com.android.sample.model.achievements.Statistics
-import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.Bubbles
 import com.android.sample.ui.composables.TopBar

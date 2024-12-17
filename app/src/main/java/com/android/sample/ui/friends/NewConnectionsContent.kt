@@ -46,8 +46,8 @@ fun NewConnectionsContent(
           onResult = { results -> searchResults.value = results },
           onFailure = { exception -> Log.e(logTag, "Search failed", exception) })
     } else {
-        searchResults.value = emptyList()
-        Log.d(logTag, "Search query is blank")
+      searchResults.value = emptyList()
+      Log.d(logTag, "Search query is blank")
     }
   }
 
@@ -68,8 +68,9 @@ fun NewConnectionsContent(
           ProfileItemWithRequest(
               profile = profile,
               sentRequests,
-//              onSendRequestClick = { userAccountViewModel.sendFriendRequest(profile.userId) })
-              onSendRequestClick = rememberUpdatedState { userAccountViewModel.sendFriendRequest(profile.userId) }.value)
+              onSendRequestClick =
+                  rememberUpdatedState { userAccountViewModel.sendFriendRequest(profile.userId) }
+                      .value)
           Spacer(modifier = Modifier.height(8.dp))
         }
       }

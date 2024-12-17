@@ -133,12 +133,13 @@ class StatisticsRepositoryFirestoreTest {
     // Mock behavior for the QuerySnapshot to return a list of DocumentSnapshots
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
 
-    statisticsRepositoryFirestore.getFriendStatistics("",
-      onSuccess = { documents ->
-        // Here you can check the documents received
-        assert(documents.isNotEmpty())
-      },
-      onFailure = { fail("Failure callback should not be called") })
+    statisticsRepositoryFirestore.getFriendStatistics(
+        "",
+        onSuccess = { documents ->
+          // Here you can check the documents received
+          assert(documents.isNotEmpty())
+        },
+        onFailure = { fail("Failure callback should not be called") })
 
     // Verify that the collection reference's get method was called
     verify(mockSubCollectionReference).get()

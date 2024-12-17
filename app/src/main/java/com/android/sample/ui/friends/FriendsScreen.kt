@@ -28,6 +28,7 @@ import com.android.sample.ui.composables.TextDialog
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.AddPurple
 
 /** Screen to view the list of Friends */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,17 +88,8 @@ fun FriendsScreen(
                     friend = friend,
                     isSelected = selectedFriends.contains(friend.userId),
                     onSelectFriend = {
-                        userAccountViewModel.selectFriend(friend)
-//                      if (selectedFriends.contains(friend.userId)) {
-//                        selectedFriends.remove(friend.userId)
-//                      } else {
-//                        selectedFriends.add(friend.userId)
-//                      }
-
-//                        isSelected = false,
-//                        onSelectFriend = {
-                        navigationActions.navigateTo(Screen.FRIEND_STATS)
-//                        },
+                      userAccountViewModel.selectFriend(friend)
+                      navigationActions.navigateTo(Screen.FRIEND_STATS)
                     },
                     onRemoveClick = { userAccountViewModel.removeFriend(friend.userId) },
                 )
@@ -114,8 +106,7 @@ fun FriendsScreen(
                     Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("inviteButton"),
                 shape = RoundedCornerShape(8.dp),
                 colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6C63FF)) // Purple background
+                    ButtonDefaults.buttonColors(containerColor = AddPurple) // Purple background
                 ) {
                   Text(
                       text = stringResource(R.string.invite_to_workout),
@@ -186,7 +177,7 @@ fun SearchBarWithAddButton(
                 RoundedCornerShape(
                     topStart = 0.dp, topEnd = 10.dp, bottomStart = 0.dp, bottomEnd = 25.dp),
             contentPadding = PaddingValues(0.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C63FF)) // Purple color
+            colors = ButtonDefaults.buttonColors(containerColor = AddPurple) // Purple color
             ) {
               Icon(
                   imageVector = Icons.Default.Add,

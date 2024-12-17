@@ -34,11 +34,10 @@ class FriendsScreenTest {
 
   @Mock private lateinit var userAccountRepository: UserAccountRepository
 
+  private lateinit var statisticsRepository: StatisticsRepositoryFirestore
+  private lateinit var statisticsViewModel: StatisticsViewModel
 
-    private lateinit var statisticsRepository: StatisticsRepositoryFirestore
-    private lateinit var statisticsViewModel: StatisticsViewModel
-
-    private lateinit var userAccountViewModel: UserAccountViewModel
+  private lateinit var userAccountViewModel: UserAccountViewModel
   private lateinit var localCache: UserAccountLocalCache
   private val userAccount =
       UserAccount(
@@ -63,9 +62,7 @@ class FriendsScreenTest {
     userAccountRepository = FakeUserAccountRepository()
     navigationActions = mock(NavigationActions::class.java)
 
-
-
-  statisticsRepository = mock(StatisticsRepositoryFirestore::class.java)
+    statisticsRepository = mock(StatisticsRepositoryFirestore::class.java)
     userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
     statisticsViewModel = StatisticsViewModel(statisticsRepository)
 
@@ -77,7 +74,8 @@ class FriendsScreenTest {
 
     // Set the content of the test to the FriendsScreen
     composeTestRule.setContent {
-      FriendsScreen(navigationActions = navigationActions, userAccountViewModel,statisticsViewModel)
+      FriendsScreen(
+          navigationActions = navigationActions, userAccountViewModel, statisticsViewModel)
     }
   }
 

@@ -58,5 +58,5 @@
     <string name="Remove">Remove</string>
     <string name="SendRequest">Send Request</string>
     <string name="RequestSent">Request sent</string>
-    <string name="FriendsStatsTitle">Workout Statistics</string>
+    <string name="FriendsStatsTitle">%1$s\'s Workout Statistics</string>
 </resources>

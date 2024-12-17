@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.android.sample.model.video.Video
 import com.android.sample.ui.settings.signOut
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.Firebase
@@ -32,8 +31,8 @@ open class UserAccountViewModel(
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : ViewModel() {
 
-    private val selectedFriend_ = MutableStateFlow<UserAccount?>(null)
-    open val selectedFriend: StateFlow<UserAccount?> = selectedFriend_.asStateFlow()
+  private val selectedFriend_ = MutableStateFlow<UserAccount?>(null)
+  open val selectedFriend: StateFlow<UserAccount?> = selectedFriend_.asStateFlow()
 
   private val _userAccount = MutableStateFlow<UserAccount?>(null)
   val userAccount: StateFlow<UserAccount?>
@@ -50,6 +49,7 @@ open class UserAccountViewModel(
   init {
     loadCachedUserAccount()
   }
+
   private fun loadCachedUserAccount() {
     viewModelScope.launch {
       localCache.getUserAccount().collect { cachedAccount ->
@@ -252,16 +252,14 @@ open class UserAccountViewModel(
   val receivedRequests: StateFlow<List<UserAccount>>
     get() = _receivedRequests.asStateFlow()
 
-
-
-    /**
-     * Select a friend.
-     *
-     * @param friend: The friend to select.
-     */
-    fun selectFriend(friend: UserAccount) {
-        selectedFriend_.value = friend
-    }
+  /**
+   * Select a friend.
+   *
+   * @param friend: The friend to select.
+   */
+  fun selectFriend(friend: UserAccount) {
+    selectedFriend_.value = friend
+  }
 
   fun fetchFriends() {
     viewModelScope.launch {

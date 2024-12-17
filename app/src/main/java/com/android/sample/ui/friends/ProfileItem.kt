@@ -22,7 +22,6 @@ import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
 import com.android.sample.ui.theme.DarkBlue
 import com.android.sample.ui.theme.Green
-import com.android.sample.ui.theme.ProfileBlue
 import com.android.sample.ui.theme.profileFontSize
 
 /** Composable for the Profile cards */
@@ -37,7 +36,12 @@ fun ProfileItem(
           modifier
               .fillMaxWidth()
               .padding(12.dp)
-              .background(brush = Brush.horizontalGradient(colors = listOf(Color(0xFFBBDEFB), Color(0xFFE3F2FD))), shape = RoundedCornerShape(16.dp))              .padding(16.dp), // Inner padding for better spacing
+              .background(
+                  brush =
+                      Brush.horizontalGradient(
+                          colors = listOf(Color(0xFFBBDEFB), Color(0xFFE3F2FD))),
+                  shape = RoundedCornerShape(16.dp))
+              .padding(16.dp), // Inner padding for better spacing
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -105,7 +109,7 @@ fun ProfileItemWithRequest(
     sentRequests: List<UserAccount>,
     onSendRequestClick: () -> Unit
 ) {
-    val requestSent = sentRequests.any { it.userId == profile.userId }
+  val requestSent = sentRequests.any { it.userId == profile.userId }
 
   ProfileItem(profile = profile) {
     Button(

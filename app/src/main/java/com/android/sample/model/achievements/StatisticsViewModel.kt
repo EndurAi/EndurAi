@@ -2,7 +2,6 @@ package com.android.sample.model.achievements
 
 import androidx.lifecycle.ViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
-import com.android.sample.model.video.Video
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
@@ -18,9 +17,9 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
   private val workoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
   val workoutStatistics: StateFlow<List<WorkoutStatistics>> = workoutStatistics_
 
-    private val friendWorkoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
-    open val friendWorkoutStatistics: StateFlow<List<WorkoutStatistics>>
-        get() = friendWorkoutStatistics_.asStateFlow()
+  private val friendWorkoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
+  open val friendWorkoutStatistics: StateFlow<List<WorkoutStatistics>>
+    get() = friendWorkoutStatistics_.asStateFlow()
 
   init {
     // Initialize by fetching all statistics
@@ -32,12 +31,10 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
     repository.getStatistics(onSuccess = { workoutStatistics_.value = it }, onFailure = {})
   }
 
-    fun getFriendWorkoutStatistics(friendId: String) {
+  fun getFriendWorkoutStatistics(friendId: String) {
     repository.getFriendStatistics(
-        friendId = friendId,
-        onSuccess = { friendWorkoutStatistics_.value = it },
-        onFailure = {})
-    }
+        friendId = friendId, onSuccess = { friendWorkoutStatistics_.value = it }, onFailure = {})
+  }
 
   /**
    * Add a new workout statistics document to the repository.
