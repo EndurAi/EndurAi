@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,8 +60,8 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                   onClick = {
                     when (workoutType) {
                       WorkoutType.BODY_WEIGHT ->
-                          navigationActions.navigateTo(Screen.CHOOSE_BODYWEIGHT)
-                      WorkoutType.YOGA -> navigationActions.navigateTo(Screen.CHOOSE_YOGA)
+                          navigationActions.navigateTo(Screen.IMPORT_SCREEN_BODYWEIGHT)
+                      WorkoutType.YOGA -> navigationActions.navigateTo(Screen.IMPORT_SCREEN_YOGA)
                       WorkoutType.RUNNING -> TODO()
                       WorkoutType.WARMUP -> TODO()
                     }
@@ -80,7 +81,7 @@ fun ImportOrCreateScreen(navigationActions: NavigationActions, workoutType: Work
                                     brush = BlueGradient, shape = RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center) {
                           Text(
-                              text = "Choose from existing",
+                              text = stringResource(id = R.string.ImportFromDone),
                               color = White,
                               fontSize = FontSizes.SubtitleFontSize,
                               fontWeight = FontWeight.Bold)

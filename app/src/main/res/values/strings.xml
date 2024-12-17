@@ -58,5 +58,8 @@
     <string name="Remove">Remove</string>
     <string name="SendRequest">Send Request</string>
     <string name="RequestSent">Request sent</string>
+    <string name="Import">Import</string>
+    <string name="ImportFromDone">Import from done</string>
+
 
 </resources>
