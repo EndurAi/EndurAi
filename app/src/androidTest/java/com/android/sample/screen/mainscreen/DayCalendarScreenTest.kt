@@ -148,8 +148,6 @@ class DayCalendarScreenTest {
   @Test
   fun testEverythingDisplayed() {
     bodyWeightViewModel.getWorkouts()
-    println("BodyWeightWorkouts: ${bodyWeightViewModel.workouts}")
-    println("YogaWorkouts: $yogaViewModel.workouts")
 
     composeTestRule.setContent {
       DayCalendarScreen(

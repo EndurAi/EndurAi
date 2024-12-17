@@ -118,35 +118,6 @@ class WorkoutRepositoryFirestoreTest {
     verify(mockDocumentWorkoutID).set(any())
   }
 
-  //  /**
-  //   * This test verifies that when fetching documents, the Firestore `get()` is called on the
-  //   * collection reference and not the document reference.
-  //   */
-  //  @Test
-  //  fun getDocuments_callsCollectionGet() {
-  //    runTest {
-  //
-  //      val mockQuerySnapshot = mock(QuerySnapshot::class.java)
-  //      val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
-  //
-  //      // Mock behavior for the collection reference to return a QuerySnapshot containing the
-  // document
-  //      `when`(mockCollectionDocumentName.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
-  //      // Mock behavior for the QuerySnapshot to return a list of DocumentSnapshots
-  //      `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
-  //
-  //      workoutRepositoryFirestore1.getDocuments(
-  //        onSuccess = { documents ->
-  //          // Here you can check the documents received
-  //          assert(documents.isNotEmpty()) // Example assertion
-  //        },
-  //        onFailure = { fail("Failure callback should not be called") })
-  //
-  //      // Verify that the collection reference's get method was called
-  //      verify(mockCollectionDocumentName).get()
-  //    }
-  //  }
-
   /**
    * This check verifies that the correct Firestore method is called when deleting a workout. Does
    * NOT CHECK that the correct data is deleted.

@@ -118,6 +118,8 @@ fun SettingsScreen(
           userAccountViewModel.deleteAccount(
               context,
               onSuccess = {
+                bodyweightViewModel.clearCache()
+                yogaViewModel.clearCache()
                 Toast.makeText(context, R.string.SuccesfulDeleteMessage, Toast.LENGTH_SHORT).show()
                 navigationActions.navigateTo("Auth Screen")
               },

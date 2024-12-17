@@ -13,6 +13,8 @@ import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -31,6 +33,7 @@ class SettingsScreenTest {
   private lateinit var yogaViewModel: WorkoutViewModel<YogaWorkout>
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
   private lateinit var yogaRepo: WorkoutRepository<YogaWorkout>
+  private lateinit var workoutLocalCache: WorkoutLocalCache
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -46,7 +49,7 @@ class SettingsScreenTest {
 
     // Use a real WorkoutLocalCache with a real Context
     // This ensures no NullPointerException from null context.
-    val workoutLocalCache = WorkoutLocalCache(context)
+    workoutLocalCache = WorkoutLocalCache(context)
 
     // Mock the repos for workouts
     bodyWeightRepo = mock()
@@ -76,7 +79,7 @@ class SettingsScreenTest {
   }
 
   @Test
-  fun buttonLogoutNavigatesToAuthScreen() {
+  fun buttonLogoutNavigatesToAuthScreen() = runTest {
     reset(navigationActions)
 
     composeTestRule.setContent {
@@ -88,11 +91,15 @@ class SettingsScreenTest {
 
     // Verify navigation to the authentication screen
     verify(navigationActions).navigateTo("Auth Screen")
+
+    // Verify cache is empty
+    val cachedWorkouts = workoutLocalCache.getWorkouts().first()
+    assert(cachedWorkouts.isEmpty())
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun deleteAccountButtonCallsDeleteFunction() = runTest {
-    val context = ApplicationProvider.getApplicationContext<Context>()
 
     // Set up the SettingsScreen for testing
     composeTestRule.setContent {
@@ -102,7 +109,11 @@ class SettingsScreenTest {
     // Perform click on the delete account button
     composeTestRule.onNodeWithTag("deleteAccountButton").performClick()
 
-    // TODO: Find a way to verify the deleteAccount function is called without having an unfinished
+    composeTestRule.onNodeWithTag("confirmDeleteButton").assertExists().performClick()
+
+    // Verify cache is empty
+    val cachedWorkouts = workoutLocalCache.getWorkouts().first()
+    assert(cachedWorkouts.isEmpty())
   }
 
   @After

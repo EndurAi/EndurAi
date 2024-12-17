@@ -1,6 +1,7 @@
 package com.android.sample.model.workout
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
@@ -45,26 +46,52 @@ open class WorkoutLocalCache(private val context: Context) {
   fun getWorkouts(): Flow<List<Workout>> =
       context.workoutDataStore.data
           .catch { exception ->
-            if (exception is IOException) {
-              emit(emptyPreferences())
-            } else {
-              throw exception
+            when (exception) {
+              is IOException -> {
+                Log.e("WorkoutLocalCache", "Error reading cache, returning empty list.", exception)
+                emit(emptyPreferences())
+              }
+              else -> throw exception
             }
           }
           .map { preferences ->
-            preferences[workoutKey]?.let { json ->
-              workoutListAdapter.fromJson(json) ?: emptyList()
-            } ?: emptyList()
+            val json = preferences[workoutKey]
+            if (json != null) {
+              try {
+                val workouts = workoutListAdapter.fromJson(json)
+                if (workouts != null) {
+                  Log.d(
+                      "WorkoutLocalCache",
+                      "Successfully loaded ${workouts.size} workouts from cache.")
+                  workouts
+                } else {
+                  Log.w("WorkoutLocalCache", "Decoded workouts list is null, returning empty list.")
+                  emptyList()
+                }
+              } catch (e: Exception) {
+                Log.e("WorkoutLocalCache", "Error deserializing workouts: $json", e)
+                emptyList()
+              }
+            } else {
+              Log.d("WorkoutLocalCache", "No workouts found in cache.")
+              emptyList()
+            }
           }
 
   // Save workouts to cache using Moshi
   suspend fun saveWorkouts(workouts: List<Workout>) {
-    val jsonWorkouts = workoutListAdapter.toJson(workouts)
-    context.workoutDataStore.edit { preferences -> preferences[workoutKey] = jsonWorkouts }
+    try {
+      val jsonWorkouts = workoutListAdapter.toJson(workouts)
+      context.workoutDataStore.edit { preferences -> preferences[workoutKey] = jsonWorkouts }
+      Log.d("WorkoutLocalCache", "Saved ${workouts.size} workouts to cache.")
+    } catch (e: Exception) {
+      Log.e("WorkoutLocalCache", "Error saving workouts to cache.", e)
+    }
   }
 
   // Clear cached workouts
   suspend fun clearWorkouts() {
     context.workoutDataStore.edit { it.remove(workoutKey) }
+    Log.d("WorkoutLocalCache", "Cleared all cached workouts.")
   }
 }

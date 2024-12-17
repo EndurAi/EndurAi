@@ -18,19 +18,7 @@ open class WorkoutViewModel<out T : Workout>(
   open val selectedWorkout: StateFlow<T?> = selectedWorkout_.asStateFlow()
 
   init {
-    loadCachedWorkouts()
-  }
-
-  private fun loadCachedWorkouts() {
-    viewModelScope.launch {
-      localCache.getWorkouts().collect { cachedWorkouts ->
-        if (cachedWorkouts.isNotEmpty()) {
-          _workouts.value = cachedWorkouts.filter { workoutClass.isInstance(it) }.map { it as T }
-        } else {
-          repository.init { getWorkouts() } // Fetch from the repository if the cache is empty
-        }
-      }
-    }
+      repository.init { getWorkouts() }
   }
 
   private fun cacheWorkouts(workouts: List<T>) {
@@ -56,7 +44,7 @@ open class WorkoutViewModel<out T : Workout>(
       repository.getDocuments(
           onSuccess = { fetchedWorkouts ->
             // Filter the fetched workouts by the workoutClass
-            val filteredWorkouts = fetchedWorkouts.filter { workoutClass.isInstance(it) }.map { it }
+            val filteredWorkouts = fetchedWorkouts.filter { workoutClass.isInstance(it) }
 
             _workouts.value = filteredWorkouts
             cacheWorkouts(filteredWorkouts)
