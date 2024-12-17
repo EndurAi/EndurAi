@@ -54,11 +54,18 @@ data class CoachFeedback(
     return stringBuilder.toString()
   }
 
+
+  companion object {
+    const val minRate: Float = 0.05f
+  }
+
+
   fun debugToString(): String {
+
     val stringBuilder: StringBuilder = StringBuilder()
     stringBuilder.append(exerciseCriterion.criterionName).append("\n")
     commentSet
-        .filter { it.rate >= 0.1F }
+        .filter { it.rate >= minRate }
         .forEach { comment -> stringBuilder.append(comment.comment).append("\n") }
 
     stringBuilder.append(
@@ -91,7 +98,7 @@ enum class FeedbackRank {
 
 fun rateToRank(rate: Float): FeedbackRank {
   return when {
-    rate >= 0.9 -> FeedbackRank.S
+    rate >= 1f-CoachFeedback.minRate -> FeedbackRank.S
     rate >= 0.8 -> FeedbackRank.A
     rate >= 0.7 -> FeedbackRank.B
     rate >= 0.6 -> FeedbackRank.C

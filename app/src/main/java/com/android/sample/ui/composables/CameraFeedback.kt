@@ -149,6 +149,9 @@ class CameraFeedBack {
                       .toSet()
               displayedJoints = temp
             }
+            else{
+              displayedJoints = mutableSetOf()
+            }
           }
         }
       }

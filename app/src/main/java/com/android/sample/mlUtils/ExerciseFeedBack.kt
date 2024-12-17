@@ -164,18 +164,19 @@ class ExerciseFeedBack {
         onSuccess: () -> Unit = {},
         onFailure: () -> Unit = {}
     ): ExerciseCriterion {
+      val mult = 2f
       val preambleCriterion =
           exerciseCriterion.angleCriterionSet.map { (angleCriterionL, angleCriterionR) ->
             AngleCriterion(
                 joints = angleCriterionL.joints,
                 targetAngle = angleCriterionL.targetAngle,
-                delta = angleCriterionL.delta * 1.5,
+                delta = angleCriterionL.delta * mult,
                 onSuccess = onSuccess,
                 onFailure = onFailure) to
                 AngleCriterion(
                     joints = angleCriterionR.joints,
                     targetAngle = angleCriterionR.targetAngle,
-                    delta = angleCriterionR.delta * 1.5,
+                    delta = angleCriterionR.delta * mult,
                     onSuccess = onSuccess,
                     onFailure = onFailure)
           }

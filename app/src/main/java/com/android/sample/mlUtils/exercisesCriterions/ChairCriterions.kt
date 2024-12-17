@@ -28,7 +28,7 @@ private val chairCriterion_SHOULDER_L =
 private val chairCriterion_KNEE_L =
     AngleCriterion(
         joints = PoseDetectionJoints.LEFT_HIP_KNEE_ANKLE,
-        targetAngle = 90.0,
+        targetAngle = 85.0,
         delta = 10.0,
         failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_RIGHT,
         onSuccess = { Log.d("MLFeedback", "L KNEE is good") },
@@ -37,7 +37,7 @@ private val chairCriterion_KNEE_L =
 private val chairCriterion_KNEE_R =
     AngleCriterion(
         joints = PoseDetectionJoints.RIGHT_HIP_KNEE_ANKLE,
-        targetAngle = 90.0,
+        targetAngle = 85.0,
         delta = 10.0,
         failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_RIGHT,
         onSuccess = { Log.d("MLFeedback", "R KNEE is good") },

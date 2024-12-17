@@ -30,7 +30,7 @@ private val plankCriterion_SHOULDER_L =
     AngleCriterion(
         joints = PoseDetectionJoints.LEFT_ELBOW_SHOULDER_HIP,
         targetAngle = 90.0,
-        failCorrectionComment = AngleCriterionComments.LEFT_WRIST_ELBOW_SHOULDER_NOT_RIGHT,
+        failCorrectionComment = AngleCriterionComments.BOTH_ELBOW_SHOULDER_HIP_NOT_RIGHT,
         delta = 15.0,
         onSuccess = { Log.d("MLFeedback", "HIP SHOULDER ELBOW is good L") },
         onFailure = { Log.d("MLFeedback", "HIP SHOULDER ELBOW pas cool L") })
@@ -39,7 +39,7 @@ private val plankCriterion_SHOULDER_R =
     AngleCriterion(
         joints = PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_HIP,
         targetAngle = 90.0,
-        failCorrectionComment = AngleCriterionComments.RIGHT_WRIST_ELBOW_SHOULDER_NOT_RIGHT,
+        failCorrectionComment = AngleCriterionComments.BOTH_ELBOW_SHOULDER_HIP_NOT_RIGHT,
         delta = 15.0,
         onSuccess = { Log.d("MLFeedback", "HIP SHOULDER ELBOW is good R") },
         onFailure = { Log.d("MLFeedback", "HIP SHOULDER ELBOW pas cool R") })
@@ -49,8 +49,8 @@ private val plankCriterion_LEG_L =
     AngleCriterion(
         joints = PoseDetectionJoints.LEFT_HIP_KNEE_ANKLE,
         targetAngle = 170.0,
-        failCorrectionComment = AngleCriterionComments.LEFT_HIP_KNEE_ANKLE_NOT_FLAT,
-        delta = 15.0,
+        failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
+        delta = 10.0,
         onSuccess = { Log.d("MLFeedback", "HIP KNEE ANKLE is good L") },
         onFailure = { Log.d("MLFeedback", "HIP KNEE ANKLE pas cool L") })
 // HIP KNEE ANKLE
@@ -58,8 +58,8 @@ private val plankCriterion_LEG_R =
     AngleCriterion(
         joints = PoseDetectionJoints.RIGHT_HIP_KNEE_ANKLE,
         targetAngle = 170.0,
-        failCorrectionComment = AngleCriterionComments.RIGHT_HIP_KNEE_ANKLE_NOT_FLAT,
-        delta = 15.0,
+        failCorrectionComment = AngleCriterionComments.BOTH_HIP_KNEE_ANKLE_NOT_FLAT,
+        delta = 10.0,
         onSuccess = { Log.d("MLFeedback", "HIP KNEE ANKLE is good R") },
         onFailure = { Log.d("MLFeedback", "HIP KNEE ANKLE pas cool R") })
 
