@@ -198,6 +198,5 @@ class CameraFeedBack {
         onDispose { cameraViewModel.cameraController.value.unbind() }
       }
     }
-
   }
 }
