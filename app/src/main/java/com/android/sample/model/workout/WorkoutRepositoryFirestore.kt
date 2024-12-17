@@ -72,7 +72,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
   private val documentName: String = getDocumentName()
 
   private val mainDocumentName = "allworkouts"
-    private val doneDocumentName = "doneWorkouts"
+    private val doneDocumentName = "doneWorkoutsTest1"
 
   /**
    * Generates a new unique ID for a workout document in the Firestore.
@@ -331,7 +331,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
      * @param onFailure A callback function that is invoked in case of an error during the retrieval.
      */
     override fun getDoneDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
-        // we first get document'ids from user document
+        // we first get document'ids from user done documents
         db.collection(collectionPath)
             .document(doneDocumentName)
             .collection(documentName)
