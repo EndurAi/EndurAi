@@ -38,8 +38,6 @@ class PreferencesScreenTest {
     // Get application context for testing
     val context = ApplicationProvider.getApplicationContext<Context>()
 
-    // Use a real WorkoutLocalCache with a real Context
-    // This ensures no NullPointerException from null context.
     val preferencesLocalCache = PreferencesLocalCache(context)
 
     // Mock the ViewModel and Preferences

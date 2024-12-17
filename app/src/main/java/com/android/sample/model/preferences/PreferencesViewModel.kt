@@ -43,7 +43,7 @@ class PreferencesViewModel(
   fun clearCacheOnLogout() {
     viewModelScope.launch {
       localCache.clearPreferences()
-      preferences_.value = null // Reset the userAccount in ViewModel
+      preferences_.value = null // Reset the preferences in ViewModel
     }
   }
 }
