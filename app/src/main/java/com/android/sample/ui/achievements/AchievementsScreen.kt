@@ -32,7 +32,9 @@ fun AchievementsScreen(
   Scaffold(
       modifier = Modifier.testTag("achievementsScreen"),
       content = { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
           if (workouts.isNotEmpty()) {
             Text(text = statistics.getTotalWorkouts().toString())
               Text(text = "Done yoga : " + doneYogaWorkouts.size.toString())

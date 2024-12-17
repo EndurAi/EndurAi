@@ -194,7 +194,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
             ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
           }
             composable(Screen.IMPORT_SCREEN_BODYWEIGHT) {
-                ImportScreen(navigationActions, viewModel = bodyweightWorkoutViewModel)
+                ImportScreen(navigationActions, workoutViewModel = bodyweightWorkoutViewModel, workoutType = WorkoutType.BODY_WEIGHT)
             }
         }
 
@@ -204,7 +204,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
         ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.YOGA)
       }
         composable(Screen.IMPORT_SCREEN_YOGA) {
-            ImportScreen(navigationActions, viewModel = yogaWorkoutViewModel)
+            ImportScreen(navigationActions, workoutViewModel = yogaWorkoutViewModel, workoutType = WorkoutType.YOGA)
         }
     }
 

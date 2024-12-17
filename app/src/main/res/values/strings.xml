@@ -60,6 +60,7 @@
     <string name="RequestSent">Request sent</string>
     <string name="Import">Import</string>
     <string name="ImportFromDone">Import from done</string>
+    <string name="ImportSuccessful">Workout imported successfully</string>
 
 
 </resources>
