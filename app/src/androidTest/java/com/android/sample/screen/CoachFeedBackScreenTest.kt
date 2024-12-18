@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.ExerciseFeedBackUnit
@@ -54,7 +55,7 @@ class CoachFeedBackScreenTest {
     composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("rankCircle").performScrollTo().assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("rankText")
+        .onNodeWithTag("rankText", useUnmergedTree = true)
         .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals("S")
@@ -74,5 +75,13 @@ class CoachFeedBackScreenTest {
         .performScrollTo()
         .assertIsDisplayed()
         .assertHasClickAction()
+    // Test the info dialogue
+    composeTestRule
+        .onNodeWithTag("rankButton")
+        .performScrollTo()
+        .assertHasClickAction()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
   }
 }

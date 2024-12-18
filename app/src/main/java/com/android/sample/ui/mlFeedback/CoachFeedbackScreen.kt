@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,20 +22,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,12 +78,17 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
+  var showInfoDialogue by remember { mutableStateOf(false) }
   Scaffold(
       modifier = Modifier.testTag("coachFeedBackScreen"),
       topBar = {
         TopBar(title = R.string.coach_feedback_title, navigationActions = navigationActions)
       },
       content = { pd ->
+        if (showInfoDialogue) {
+          NoteInfoDialogue(
+              onDismiss = { showInfoDialogue = false }, modifier = Modifier.testTag("infoDialogue"))
+        }
         Column(
             modifier = Modifier.fillMaxSize().padding(pd).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
@@ -114,7 +128,8 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                         }
                   }
               // Animated feedback rank circle
-              RankCircle(rank)
+              RankCircle(rank, onClick = { showInfoDialogue = true })
+
               TalkingCoach(
                   text =
                       if (isCommented)
@@ -129,6 +144,27 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                   text = "Done")
             }
       })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NoteInfoDialogue(onDismiss: () -> Unit, modifier: Modifier) {
+  BasicAlertDialog(
+      onDismissRequest = onDismiss,
+      modifier = modifier,
+  ) {
+    Card {
+      Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Note Information",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 8.dp))
+        Text(
+            text = stringResource(R.string.note_info),
+        )
+      }
+    }
+  }
 }
 
 private fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
@@ -164,7 +200,7 @@ private fun exerciseName(feedbacks: List<CoachFeedback>): String {
  * @param rank The rank to be displayed inside the circle.
  */
 @Composable
-fun RankCircle(rank: FeedbackRank) {
+fun RankCircle(rank: FeedbackRank, onClick: () -> Unit) {
   // Main color depending on the rank
   val rankColor = getColorForRank(rank)
 
@@ -261,7 +297,9 @@ fun RankCircle(rank: FeedbackRank) {
                     .border(
                         width = 4.dp, // Outline of the main circle
                         color = rankColor,
-                        shape = CircleShape)) {
+                        shape = CircleShape)
+                    .clickable { onClick() }
+                    .testTag("rankButton")) {
               // Rank text in the center
               Text(
                   text = rank.name,
