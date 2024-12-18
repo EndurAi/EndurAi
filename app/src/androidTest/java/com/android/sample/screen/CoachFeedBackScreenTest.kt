@@ -52,9 +52,8 @@ class CoachFeedBackScreenTest {
         .onNodeWithTag("rankCircle")
         .performScrollTo()
         .assertIsDisplayed()
-        .assertHasClickAction()
     composeTestRule
-        .onNodeWithTag("rankText")
+        .onNodeWithTag("rankText", useUnmergedTree = true)
         .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals("S")

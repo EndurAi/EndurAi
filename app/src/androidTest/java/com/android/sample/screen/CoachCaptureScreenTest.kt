@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class CoachCaptureScreenTest {
   private lateinit var navigationActions: NavigationActions
@@ -24,11 +25,11 @@ class CoachCaptureScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
-  @Composable
   @Before
   fun setUp() {
     navigationActions = mock()
-    firstTime = remember { mutableStateOf(true) }
+      firstTime = mock()
+      `when`(firstTime.value).thenReturn(true)
   }
 
   @Test
