@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,7 +78,8 @@ import com.android.sample.ui.workout.getExerciseIcon
 fun CoachCaptureScreen(
     navigationActions: NavigationActions,
     cameraViewModel: CameraViewModel,
-    isTesting: Boolean = false
+    isTesting: Boolean = false,
+    firstTime: MutableState<Boolean>
 ) {
   var isExerciseSelected by remember { mutableStateOf(false) }
   var isDropdownExpanded by remember { mutableStateOf(false) }
@@ -85,7 +87,7 @@ fun CoachCaptureScreen(
   var userHasRecorded by remember { mutableStateOf(false) }
   var selectedExercise by remember { mutableStateOf(ExerciseType.PLANK) }
   var jointPositionRequested by remember { mutableStateOf(false) }
-  var showInfoDialogue by remember { mutableStateOf(true) }
+  var showInfoDialogue by remember { mutableStateOf(firstTime.value) }
   Scaffold(
       modifier = Modifier.testTag("coachCaptureScreen"),
       topBar = {
@@ -184,6 +186,7 @@ fun CoachCaptureScreen(
               }
         } else {
           if (showInfoDialogue) {
+            firstTime.value = false
             CoachInfoDialogue { showInfoDialogue = false }
           }
 
