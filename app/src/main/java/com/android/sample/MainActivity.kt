@@ -58,7 +58,6 @@ import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
 import com.android.sample.ui.workout.ImportScreen
 import com.android.sample.ui.workout.RunningSelectionScreen
-import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.android.sample.ui.workout.WorkoutOverviewScreen
 import com.android.sample.ui.workout.WorkoutScreen
@@ -185,11 +184,6 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Settings Screen
     navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
-    }
-
-    // Session Selection Screen
-    navigation(startDestination = Screen.SESSIONSELECTION, route = Route.SESSIONSELECTION) {
-      composable(Screen.SESSIONSELECTION) { SessionSelectionScreen(navigationActions) }
     }
 
     // Import or Create Screen for body weight workout
