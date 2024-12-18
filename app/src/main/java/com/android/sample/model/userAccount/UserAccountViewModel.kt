@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 open class UserAccountViewModel(
     private val repository: UserAccountRepository,
@@ -32,7 +31,7 @@ open class UserAccountViewModel(
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : ViewModel() {
 
-    private val logTag = "UserAccountViewModel"
+  private val logTag = "UserAccountViewModel"
   private val selectedFriend_ = MutableStateFlow<UserAccount?>(null)
   open val selectedFriend: StateFlow<UserAccount?> = selectedFriend_.asStateFlow()
   private val _userAccount = MutableStateFlow<UserAccount?>(null)
@@ -136,9 +135,7 @@ open class UserAccountViewModel(
           userAccount = currentUser,
           friendId = friendId,
           onSuccess = { getUserAccount(currentUser.userId) },
-          onFailure = { exception ->
-            Log.e(logTag, "Failed to remove friend", exception)
-          })
+          onFailure = { exception -> Log.e(logTag, "Failed to remove friend", exception) })
     }
   }
 
@@ -148,9 +145,7 @@ open class UserAccountViewModel(
           fromUser = currentUser,
           toUserId = toUserId,
           onSuccess = { getUserAccount(currentUser.userId) },
-          onFailure = { exception ->
-            Log.e(logTag, "Failed to send friend request", exception)
-          })
+          onFailure = { exception -> Log.e(logTag, "Failed to send friend request", exception) })
     }
   }
 
@@ -161,9 +156,7 @@ open class UserAccountViewModel(
           userAccount = currentUser,
           friendId = friendId,
           onSuccess = { getUserAccount(currentUser.userId) },
-          onFailure = { exception ->
-            Log.e(logTag, "Failed to accept friend request", exception)
-          })
+          onFailure = { exception -> Log.e(logTag, "Failed to accept friend request", exception) })
     }
   }
 
@@ -174,9 +167,7 @@ open class UserAccountViewModel(
           userAccount = currentUser,
           friendId = friendId,
           onSuccess = { getUserAccount(currentUser.userId) },
-          onFailure = { exception ->
-            Log.e(logTag, "Failed to reject friend request", exception)
-          })
+          onFailure = { exception -> Log.e(logTag, "Failed to reject friend request", exception) })
     }
   }
 
@@ -271,9 +262,7 @@ open class UserAccountViewModel(
               _friends.value = friendsList
               Log.d(logTag, "Friends list: $friendsList")
             },
-            onFailure = { exception ->
-              Log.e(logTag, "Error fetching friends: $exception")
-            })
+            onFailure = { exception -> Log.e(logTag, "Error fetching friends: $exception") })
       }
     }
   }
@@ -287,9 +276,7 @@ open class UserAccountViewModel(
               _sentRequests.value = sentRequestsList
               Log.d(logTag, "Sent requests list: $sentRequestsList")
             },
-            onFailure = { exception ->
-              Log.e(logTag, "Error fetching sent requests: $exception")
-            })
+            onFailure = { exception -> Log.e(logTag, "Error fetching sent requests: $exception") })
       }
     }
   }

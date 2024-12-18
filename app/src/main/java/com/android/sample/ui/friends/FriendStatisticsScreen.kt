@@ -81,7 +81,6 @@ fun FriendStatisticsScreen(
  *
  * @param workout Workout statistics to be displayed.
  */
-
 @Composable
 fun WorkoutCard(workout: WorkoutStatistics) {
   Card(
