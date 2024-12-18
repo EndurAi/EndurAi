@@ -50,8 +50,6 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.FeedbackRank
-import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
-import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.mlUtils.rateToRank
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.ui.composables.SaveButton
