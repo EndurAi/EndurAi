@@ -22,14 +22,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -64,14 +60,12 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueWorkoutCard
-import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.FontSizes.BigTitleFontSize
 import com.android.sample.ui.theme.Green
 import com.android.sample.ui.theme.MediumGrey
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.Red
 import com.android.sample.ui.theme.RunningTag
-import com.android.sample.ui.theme.White
 import com.android.sample.ui.theme.Yellow
 import com.android.sample.ui.theme.YogaTag
 import com.android.sample.ui.workout.LeafShape
@@ -85,19 +79,17 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
-    var showInfoDialogue by remember { mutableStateOf(false) }
+  var showInfoDialogue by remember { mutableStateOf(false) }
   Scaffold(
       modifier = Modifier.testTag("coachFeedBackScreen"),
       topBar = {
         TopBar(title = R.string.coach_feedback_title, navigationActions = navigationActions)
       },
       content = { pd ->
-
-          if (showInfoDialogue) {
-              NoteInfoDialogue(
-                  onDismiss = { showInfoDialogue = false },
-                  modifier = Modifier.testTag("infoDialogue"))
-          }
+        if (showInfoDialogue) {
+          NoteInfoDialogue(
+              onDismiss = { showInfoDialogue = false }, modifier = Modifier.testTag("infoDialogue"))
+        }
         Column(
             modifier = Modifier.fillMaxSize().padding(pd).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
@@ -136,7 +128,7 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                         }
                   }
               // Animated feedback rank circle
-              RankCircle(rank, onClick = {showInfoDialogue = true})
+              RankCircle(rank, onClick = { showInfoDialogue = true })
 
               TalkingCoach(
                   text = startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() },
@@ -155,21 +147,28 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteInfoDialogue(onDismiss: () -> Unit, modifier: Modifier) {
-    BasicAlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier,
-    ) {
-        Card {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Note Information",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text("The grades are in the following order: \n" + "S\n"+ "A\n"+ "B\n"+ "C\n"+ "D\n"+"S being the best and meaning you're doing it perfectly\n"+"With D however, you should consider learning to do the exercise properly in order to train efficiently and not get injured")
-            }
-        }
+  BasicAlertDialog(
+      onDismissRequest = onDismiss,
+      modifier = modifier,
+  ) {
+    Card {
+      Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Note Information",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 8.dp))
+        Text(
+            "The grades are in the following order: \n" +
+                "S\n" +
+                "A\n" +
+                "B\n" +
+                "C\n" +
+                "D\n" +
+                "S being the best and meaning you're doing it perfectly\n" +
+                "With D however, you should consider learning to do the exercise properly in order to train efficiently and not get injured")
+      }
     }
+  }
 }
 
 private fun getNote(feedbacks: List<CoachFeedback>): FeedbackRank {
@@ -209,7 +208,7 @@ private fun exerciseName(feedbacks: List<CoachFeedback>): String {
  * @param rank The rank to be displayed inside the circle.
  */
 @Composable
-fun RankCircle(rank: FeedbackRank, onClick: ()-> Unit) {
+fun RankCircle(rank: FeedbackRank, onClick: () -> Unit) {
   // Main color depending on the rank
   val rankColor = getColorForRank(rank)
 

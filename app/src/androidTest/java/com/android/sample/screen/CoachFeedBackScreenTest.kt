@@ -48,7 +48,11 @@ class CoachFeedBackScreenTest {
     composeTestRule.onNodeWithTag("coachFeedBackScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("coachImage").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag("rankCircle").performScrollTo().assertIsDisplayed().assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag("rankCircle")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertHasClickAction()
     composeTestRule
         .onNodeWithTag("rankText")
         .performScrollTo()
@@ -70,12 +74,13 @@ class CoachFeedBackScreenTest {
         .performScrollTo()
         .assertIsDisplayed()
         .assertHasClickAction()
-      //Test the info dialogue
-      composeTestRule.onNodeWithTag("rankButton")
-          .performScrollTo()
-          .assertHasClickAction()
-          .assertIsDisplayed()
-          .performClick()
-      composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
+    // Test the info dialogue
+    composeTestRule
+        .onNodeWithTag("rankButton")
+        .performScrollTo()
+        .assertHasClickAction()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
   }
 }

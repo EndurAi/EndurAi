@@ -163,7 +163,7 @@ fun CoachCaptureScreen(
               }
         } else {
           if (showInfoDialogue) {
-              firstTime.value = false
+            firstTime.value = false
             CoachInfoDialogue { showInfoDialogue = false }
           }
 

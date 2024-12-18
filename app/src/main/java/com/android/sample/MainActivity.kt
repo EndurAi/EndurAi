@@ -124,7 +124,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
   val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
   val statisticsViewModel = StatisticsViewModel(statisticsRepository)
-    val firstTimeInMlCoach = remember { mutableStateOf(true) }
+  val firstTimeInMlCoach = remember { mutableStateOf(true) }
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -373,7 +373,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Coach Capture Screen
     navigation(startDestination = Screen.COACH_CAPTURE, route = Route.COACH_CAPTURE) {
-      composable(Screen.COACH_CAPTURE) { CoachCaptureScreen(navigationActions, cameraViewModel, firstTime = firstTimeInMlCoach) }
+      composable(Screen.COACH_CAPTURE) {
+        CoachCaptureScreen(navigationActions, cameraViewModel, firstTime = firstTimeInMlCoach)
+      }
     }
 
     // Coach Feedback Screen
