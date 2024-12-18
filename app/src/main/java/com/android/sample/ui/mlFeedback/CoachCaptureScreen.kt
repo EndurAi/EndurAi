@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,10 +38,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.mlUtils.ExerciseFeedBack
@@ -58,9 +57,11 @@ import com.android.sample.ui.theme.BlueWorkoutCard
 import com.android.sample.ui.theme.ContrailOne
 import com.android.sample.ui.theme.DarkGrey
 import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.Dimensions.iconSize
 import com.android.sample.ui.theme.FontSizes.MediumTitleFontSize
 import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.White
+import com.android.sample.ui.workout.getExerciseIcon
 
 /**
  * A composable function that displays the coach capture screen.
@@ -130,34 +131,56 @@ fun CoachCaptureScreen(
                               modifier = Modifier.padding(8.dp).testTag("selectedExerciseText"))
 
                           Image(
-                              painter = painterResource(id = R.drawable.arrow_drop_down_24),
+                              painter = painterResource(id = R.drawable.baseline_arrow_drop_up_24),
                               contentDescription = "Dropdown",
                               modifier = Modifier.size(48.dp).padding(8.dp).testTag("dropdownIcon"))
                         }
-                      }
-                  DropdownMenu(
-                      expanded = isDropdownExpanded,
-                      onDismissRequest = { isDropdownExpanded = false },
-                      modifier = Modifier.testTag("exerciseDropdownMenu"),
-                      offset =
-                          DpOffset((LocalConfiguration.current.screenWidthDp / 2.5).dp, 0.dp)) {
-                        ExerciseType.entries
-                            .filter { it.hasMlFeedback }
-                            .forEach { exerciseType ->
-                              Box(
-                                  modifier =
-                                      Modifier.fillMaxWidth().padding(8.dp).clickable {
-                                        selectedExercise = exerciseType
-                                        isDropdownExpanded = false
-                                      }) {
-                                    Text(
-                                        text = exerciseType.toString(), fontSize = SubtitleFontSize)
+
+                        DropdownMenu(
+                            modifier = Modifier.testTag("exerciseDropdownMenu"),
+                            expanded = isDropdownExpanded,
+                            onDismissRequest = { isDropdownExpanded = false }) {
+                              ExerciseType.entries
+                                  .filter { it.hasMlFeedback }
+                                  .forEach { exerciseType ->
+                                    Box(
+                                        modifier =
+                                            Modifier.fillMaxWidth()
+                                                .clickable {
+                                                  selectedExercise = exerciseType
+                                                  isDropdownExpanded = false
+                                                }
+                                                .padding(8.dp)
+                                                .testTag("exerciseType${exerciseType.name}")) {
+                                          Row(
+                                              verticalAlignment = Alignment.CenterVertically,
+                                              modifier = Modifier.padding(horizontal = 8.dp)) {
+                                                Icon(
+                                                    painter =
+                                                        painterResource(
+                                                            id =
+                                                                getExerciseIcon(exerciseType.name)),
+                                                    contentDescription =
+                                                        "${exerciseType.name} Icon",
+                                                    modifier = Modifier.size(iconSize))
+                                                Spacer(
+                                                    modifier =
+                                                        Modifier.width(
+                                                            8.dp)) // Space between icon and text
+                                                Text(
+                                                    text = exerciseType.toString(),
+                                                    fontSize = SubtitleFontSize)
+                                              }
+                                        }
                                   }
                             }
                       }
                 }
 
-                SaveButton(onSaveClick = { isExerciseSelected = true }, testTag = "saveButton")
+                SaveButton(
+                    onSaveClick = { isExerciseSelected = true },
+                    text = "Train",
+                    testTag = "saveButton")
               }
         } else {
           if (showInfoDialogue) {
