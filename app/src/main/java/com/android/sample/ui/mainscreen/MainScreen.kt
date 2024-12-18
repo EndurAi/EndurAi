@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
@@ -140,7 +141,7 @@ fun ProfileSection(
                           colors = listOf(DarkBlueTopBar1, DarkBlueTopBar2), // brush of colors
                           start = Offset(0f, 0f),
                           end = Offset(Float.POSITIVE_INFINITY, 0f)))
-              .padding(vertical = 25.dp)) {
+              .padding(vertical = 5.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()) {
@@ -150,7 +151,7 @@ fun ProfileSection(
                   contentScale = ContentScale.Crop,
                   modifier =
                       Modifier.size(54.dp).clip(CircleShape).testTag("ProfilePicture").shadow(4.dp))
-              Spacer(modifier = Modifier.width(20.dp))
+              Spacer(modifier = Modifier.width(10.dp))
               Text(
                   text =
                       if (expanded.value) {
@@ -160,9 +161,11 @@ fun ProfileSection(
                       },
                   style =
                       MaterialTheme.typography.titleSmall.copy(
-                          fontSize = 24.sp, fontFamily = OpenSans, fontWeight = FontWeight.Bold),
+                          fontSize = 20.sp, fontFamily = OpenSans, fontWeight = FontWeight.Bold),
                   color = Color.White,
-                  modifier = Modifier.testTag("WelcomeText"))
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
+                  modifier = Modifier.testTag("WelcomeText").fillMaxWidth(0.9f))
               Spacer(modifier = Modifier.weight(1f))
               Image(
                   painter = painterResource(id = R.drawable.group),

@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.AngleCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.PoseDetectionJoints
+import com.android.sample.model.workout.ExerciseType
 
 private val legStraight_L =
     AngleCriterion(
@@ -79,12 +80,14 @@ private val elbowFlat_R =
 
 val PushUpsDownCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        name = "Pushup low position",
+        exerciseName = ExerciseType.PUSH_UPS.toString(),
+        criterionName = "Push-up low position",
         angleCriterionSet =
             setOf(elbowCurved_L to elbowCurved_R, legStraight_L to legStraight_R, back_L to back_R))
 
 val PushUpsUpCrierions: ExerciseCriterion =
     ExerciseCriterion(
-        name = "Pushup high position",
+        exerciseName = ExerciseType.PUSH_UPS.toString(),
+        criterionName = "Push-up high position",
         angleCriterionSet =
             setOf(elbowFlat_L to elbowFlat_R, legStraight_L to legStraight_R, back_L to back_R))
