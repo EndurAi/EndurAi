@@ -158,7 +158,9 @@ fun NoteInfoDialogue(onDismiss: () -> Unit, modifier: Modifier) {
             text = "Note Information",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp))
-        Text(text = stringResource(R.string.note_info),)
+        Text(
+            text = stringResource(R.string.note_info),
+        )
       }
     }
   }
