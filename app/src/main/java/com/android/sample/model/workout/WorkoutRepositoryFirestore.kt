@@ -67,12 +67,12 @@ open class WorkoutRepositoryFirestore<T : Workout>(
       return uid ?: throw IllegalStateException("The user is not registered")
     }
 
-  private val documentToCollectionName: String = "workoutTest4"
+  private val documentToCollectionName: String = "Workouts"
 
   private val documentName: String = getDocumentName()
 
-  private val mainDocumentName = "allworkoutsTest4"
-    private val doneDocumentName = "doneWorkoutsTest4"
+  private val mainDocumentName = "AllWorkouts"
+    private val doneDocumentName = "DoneWorkouts"
 
   /**
    * Generates a new unique ID for a workout document in the Firestore.
