@@ -1,5 +1,9 @@
 package com.android.sample.screen
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -16,19 +20,26 @@ import org.mockito.Mockito.mock
 
 class CoachCaptureScreenTest {
   private lateinit var navigationActions: NavigationActions
+  private lateinit var firstTime: MutableState<Boolean>
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @Composable
   @Before
   fun setUp() {
     navigationActions = mock()
+    firstTime = remember { mutableStateOf(true) }
   }
 
   @Test
   fun displayAllComponentsOnFirstScreen() {
     composeTestRule.setContent {
       val cameraViewModel = CameraViewModel(LocalContext.current)
-      CoachCaptureScreen(cameraViewModel = cameraViewModel, navigationActions = navigationActions)
+      CoachCaptureScreen(
+          cameraViewModel = cameraViewModel,
+          navigationActions = navigationActions,
+          isTesting = true,
+          firstTime = firstTime)
     }
     composeTestRule.onNodeWithTag("coachCaptureScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("coachImage").assertIsDisplayed()
@@ -52,7 +63,8 @@ class CoachCaptureScreenTest {
       CoachCaptureScreen(
           cameraViewModel = cameraViewModel,
           navigationActions = navigationActions,
-          isTesting = true)
+          isTesting = true,
+          firstTime = firstTime)
     }
     composeTestRule.onNodeWithTag("saveButton").performClick()
     composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
