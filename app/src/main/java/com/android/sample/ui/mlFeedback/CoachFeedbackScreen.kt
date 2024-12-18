@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -157,15 +158,7 @@ fun NoteInfoDialogue(onDismiss: () -> Unit, modifier: Modifier) {
             text = "Note Information",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp))
-        Text(
-            "The grades are in the following order: \n" +
-                "S\n" +
-                "A\n" +
-                "B\n" +
-                "C\n" +
-                "D\n" +
-                "S being the best and meaning you're doing it perfectly\n" +
-                "With D however, you should consider learning to do the exercise properly in order to train efficiently and not get injured")
+        Text(text = stringResource(R.string.note_info),)
       }
     }
   }

@@ -58,5 +58,5 @@
     <string name="Remove">Remove</string>
     <string name="SendRequest">Send Request</string>
     <string name="RequestSent">Request sent</string>
-
+    <string name="note_info">The grades are in the following order: S\nA\nB\nC\nD\nS being the best and meaning you\'re doing it perfectly\nWith D however, you should consider learning to do the exercise properly in order to train efficiently and not get injured</string>
 </resources>
