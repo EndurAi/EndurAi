@@ -8,6 +8,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.achievements.StatisticsRepositoryFirestore
@@ -529,7 +530,7 @@ class WorkoutScreenTest {
     composeTestRule.onNodeWithTag("StartButton").performClick()
     composeTestRule.onNodeWithTag("FinishButton").performClick()
     // Skip the summary
-    composeTestRule.onNodeWithTag("FinishButton").performClick()
+    composeTestRule.onNodeWithTag("FinishButton").performScrollTo().performClick()
 
     verify(navigationActions).navigateTo(Screen.MAIN)
   }
