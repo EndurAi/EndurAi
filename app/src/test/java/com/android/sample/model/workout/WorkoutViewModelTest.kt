@@ -140,4 +140,82 @@ class WorkoutViewModelTest {
     workoutViewModel.getWorkouts()
     assertThat(workoutViewModel.workouts.first(), `is`(listOf(workout1, workout2)))
   }
+
+  /**
+   * Verifies that calling [transferWorkoutToDone] on the view model invokes the corresponding
+   * method on the repository with the correct parameters and updates the flows.
+   */
+  @Test
+  fun transferWorkoutToDoneUpdatesFlows() = runBlocking {
+    // Mock the repository methods
+    `when`(repository.transferDocumentToDone(eq(workout2.workoutId), any(), any())).thenAnswer {
+      val onSuccess = {
+        workoutViewModel.getWorkouts()
+        workoutViewModel.getDoneWorkouts() }
+      onSuccess() // Simulate success
+    }
+    `when`(repository.getDocuments(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as (List<Workout>) -> Unit
+      onSuccess(emptyList()) // No workouts remaining
+    }
+    `when`(repository.getDoneDocuments(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as (List<Workout>) -> Unit
+      onSuccess(listOf(workout1, workout2)) // Both workouts in "done"
+    }
+
+    // Call the method
+    workoutViewModel.transferWorkoutToDone(workout2.workoutId)
+
+    // Collect the flows to verify updates
+    val workouts = workoutViewModel.workouts.first()
+    val doneWorkouts = workoutViewModel.doneWorkouts.first()
+
+    // Verify the assertions
+    assertThat(workouts, `is`(emptyList()))
+    assertThat(doneWorkouts, `is`(listOf(workout1, workout2)))
+
+    // Verify repository interactions
+    verify(repository).transferDocumentToDone(eq(workout2.workoutId), any(), any())
+  }
+
+  /**
+   * Verifies that calling [importWorkoutFromDone] on the view model invokes the corresponding
+   * method on the repository with the correct parameters and updates the flows.
+   */
+  @Test
+  fun importWorkoutFromDoneUpdatesFlows() = runBlocking {
+    // Mock the repository methods
+    `when`(repository.importDocumentFromDone(eq(workout1.workoutId), any(), any())).thenAnswer {
+      val onSuccess = {
+        workoutViewModel.getWorkouts() // Refresh workouts flow
+        workoutViewModel.getDoneWorkouts() // Refresh doneWorkouts flow 
+      }
+      onSuccess() // Simulate success
+    }
+
+    `when`(repository.getDocuments(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as (List<Workout>) -> Unit
+      onSuccess(listOf(workout1, workout2)) // Updated workouts list
+    }
+
+    `when`(repository.getDoneDocuments(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as (List<Workout>) -> Unit
+      onSuccess(emptyList()) // No workouts left in "done"
+    }
+
+    // Call the method
+    workoutViewModel.importWorkoutFromDone(workout1.workoutId)
+
+    // Collect the flows to verify updates
+    val workouts = workoutViewModel.workouts.first() // Collect current workouts
+    val doneWorkouts = workoutViewModel.doneWorkouts.first() // Collect current doneWorkouts
+
+    // Verify the assertions
+    assertThat(workouts, `is`(listOf(workout1, workout2)))
+    assertThat(doneWorkouts, `is`(emptyList()))
+
+    // Verify repository interactions
+    verify(repository).importDocumentFromDone(eq(workout1.workoutId), any(), any())
+  }
+
 }

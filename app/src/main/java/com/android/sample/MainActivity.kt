@@ -165,9 +165,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
       composable(Screen.ACHIEVEMENTS) {
         AchievementsScreen(
             navigationActions,
-            statisticsViewModel,
-            bodyweightWorkoutViewModel,
-            yogaWorkoutViewModel)
+            statisticsViewModel)
       }
     }
 

@@ -21,29 +21,17 @@ import com.android.sample.ui.navigation.NavigationActions
 fun AchievementsScreen(
     navigationActions: NavigationActions,
     statisticsViewModel: StatisticsViewModel,
-    bodyWeightViewModel: WorkoutViewModel<Workout>,
-    yogaViewModel: WorkoutViewModel<Workout>
 ) {
   val workouts = statisticsViewModel.workoutStatistics.collectAsState().value
   val statistics = Statistics(statisticsViewModel.workoutStatistics)
-  val doneYogaWorkouts = yogaViewModel.doneWorkouts.collectAsState().value
-  val doneBodyWeightWorkouts = bodyWeightViewModel.doneWorkouts.collectAsState().value
   Scaffold(
       modifier = Modifier.testTag("achievementsScreen"),
       content = { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
           if (workouts.isNotEmpty()) {
             Text(text = statistics.getTotalWorkouts().toString())
-            Text(text = "Done yoga : " + doneYogaWorkouts.size.toString())
-            Text(text = "Done bodyweight : " + doneBodyWeightWorkouts.size.toString())
-          }
-          Button(
-              onClick = {
-                bodyWeightViewModel.importWorkoutFromDone(doneBodyWeightWorkouts[0].workoutId)
-              }) {}
-          Button(
-              onClick = { yogaViewModel.importWorkoutFromDone(doneYogaWorkouts[0].workoutId) }) {}
-        }
+            }
+         }
       },
       bottomBar = { BottomBar(navigationActions) })
 }

@@ -170,7 +170,7 @@ class EndToEndTest {
     importOrCreateScreenIsWellDisplayed()
 
     // we go to the import screen
-    composeTestRule.onNodeWithText("Choose from existing").performClick()
+    composeTestRule.onNodeWithText("Import ").performClick()
 
     workoutSelectionScreenIsWellDisplayed()
 
