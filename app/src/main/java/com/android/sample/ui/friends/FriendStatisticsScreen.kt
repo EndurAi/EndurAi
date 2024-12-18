@@ -34,6 +34,13 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.WorkoutCardLight
 import com.android.sample.ui.theme.WorkoutCardStrong
 
+/**
+ * Composable function to display the friend statistics screen.
+ *
+ * @param navigationActions Navigation actions to be performed.
+ * @param userAccountViewModel User account view model to fetch the friend details.
+ * @param statisticsViewModel Statistics view model to fetch the friend workout statistics.
+ */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun FriendStatisticsScreen(
@@ -69,6 +76,11 @@ fun FriendStatisticsScreen(
             }
       }
 }
+/**
+ * Composable function to display the workout card.
+ *
+ * @param workout Workout statistics to be displayed.
+ */
 
 @Composable
 fun WorkoutCard(workout: WorkoutStatistics) {
