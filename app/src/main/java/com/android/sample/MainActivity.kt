@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
@@ -120,6 +124,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
   val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
   val statisticsViewModel = StatisticsViewModel(statisticsRepository)
+    val firstTimeInMlCoach = remember { mutableStateOf(true) }
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -368,7 +373,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Coach Capture Screen
     navigation(startDestination = Screen.COACH_CAPTURE, route = Route.COACH_CAPTURE) {
-      composable(Screen.COACH_CAPTURE) { CoachCaptureScreen(navigationActions, cameraViewModel) }
+      composable(Screen.COACH_CAPTURE) { CoachCaptureScreen(navigationActions, cameraViewModel, firstTime = firstTimeInMlCoach) }
     }
 
     // Coach Feedback Screen
