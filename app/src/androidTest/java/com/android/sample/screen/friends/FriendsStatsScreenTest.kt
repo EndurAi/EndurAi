@@ -1,13 +1,13 @@
 package com.android.sample.screen.friends
 
 import android.content.Context
-import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.achievements.StatisticsRepositoryFirestore
 import com.android.sample.model.achievements.StatisticsViewModel
+import com.android.sample.model.achievements.WorkoutStatistics
 import com.android.sample.model.userAccount.Gender
 import com.android.sample.model.userAccount.HeightUnit
 import com.android.sample.model.userAccount.UserAccount
@@ -15,18 +15,22 @@ import com.android.sample.model.userAccount.UserAccountLocalCache
 import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
+import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.authentication.FakeUserAccountRepository
-import com.android.sample.ui.friends.FriendsScreen
+import com.android.sample.ui.friends.FriendStatisticsScreen
 import com.android.sample.ui.navigation.NavigationActions
+import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.whenever
 
-class FriendsScreenTest {
-
+class FriendsStatsScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   // Mock navigation actions
@@ -63,6 +67,22 @@ class FriendsScreenTest {
     navigationActions = mock(NavigationActions::class.java)
 
     statisticsRepository = mock(StatisticsRepositoryFirestore::class.java)
+
+    val fakeStatisticsList =
+        listOf(
+            WorkoutStatistics(
+                id = "testWorkoutId1",
+                date = LocalDateTime.now(),
+                duration = 1000,
+                caloriesBurnt = 1000,
+                type = WorkoutType.RUNNING),
+        )
+    whenever(statisticsRepository.getFriendStatistics(any(), any(), any())).doAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<WorkoutStatistics>) -> Unit>(1)
+      onSuccess(fakeStatisticsList)
+      null
+    }
+
     userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
     statisticsViewModel = StatisticsViewModel(statisticsRepository)
 
@@ -74,16 +94,22 @@ class FriendsScreenTest {
 
     // Set the content of the test to the FriendsScreen
     composeTestRule.setContent {
-      FriendsScreen(
+      FriendStatisticsScreen(
           navigationActions = navigationActions, userAccountViewModel, statisticsViewModel)
     }
   }
 
   @Test
   fun friendsScreenDisplaysCorrectly() {
-    composeTestRule.onNodeWithTag("friendsScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBarRow").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("addFriendButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("friendStatisticsScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ScreenTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("friendStatisticsList").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("workoutCard").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("workoutCardContent").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("workoutType").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("workoutTypeImage").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("workoutDate").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("workoutCaloriesBurnt").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("workoutDuration").assertIsDisplayed()
   }
 }
