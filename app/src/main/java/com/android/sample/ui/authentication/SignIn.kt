@@ -41,6 +41,7 @@ import com.android.sample.ui.animations.DumbbellAnimation
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
+import com.android.sample.ui.theme.ContrailOne
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -94,7 +95,7 @@ fun SignInScreen(
           ) {
             // App Logo Image
             Image(
-                painter = painterResource(id = com.android.sample.R.drawable.logo),
+                painter = painterResource(id = com.android.sample.R.drawable.endurailogo),
                 contentDescription = "App Logo",
                 modifier = Modifier.size(250.dp))
 
@@ -106,8 +107,7 @@ fun SignInScreen(
                 text = "Welcome",
                 style =
                     MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 57.sp, lineHeight = 64.sp),
-                fontWeight = FontWeight.Bold,
+                        fontSize = 50.sp, lineHeight = 64.sp, fontFamily = ContrailOne),
                 // center the text
 
                 textAlign = TextAlign.Center)
@@ -180,6 +180,7 @@ fun GoogleSignInButton(onSignInClick: () -> Unit) {
       modifier =
           Modifier.padding(8.dp)
               .height(48.dp) // Adjust height as needed
+              .fillMaxWidth(0.6f)
               .testTag("loginButton")) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
