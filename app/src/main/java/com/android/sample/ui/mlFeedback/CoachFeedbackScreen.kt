@@ -41,8 +41,6 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.FeedbackRank
-import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
-import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
 import com.android.sample.mlUtils.rateToRank
 import com.android.sample.model.camera.CameraViewModel
 import com.android.sample.ui.composables.SaveButton
@@ -86,6 +84,7 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
               val exerciseString = exerciseName(rawFeedback)
               val durationOrRepetitionString = durationString(rawFeedback)
               val startingFeedback = genericFeedbackFromRank(rank)
+              val isCommented = rawFeedback.any { it.isCommented }
 
               // Card with exercise name and duration/repetition
               Card(
@@ -116,10 +115,11 @@ fun CoachFeedbackScreen(navigationActions: NavigationActions, cameraViewModel: C
                   }
               // Animated feedback rank circle
               RankCircle(rank)
-
               TalkingCoach(
-                  text = startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() },
-              )
+                  text =
+                      if (isCommented)
+                          startingFeedback + "\n" + rawFeedback.joinToString("\n") { it.toString() }
+                      else rawFeedback.first().toString())
 
               Spacer(modifier = Modifier.height(16.dp))
               // Done button
@@ -155,11 +155,7 @@ private fun durationString(feedbacks: List<CoachFeedback>): String {
 }
 
 private fun exerciseName(feedbacks: List<CoachFeedback>): String {
-  return when (feedbacks.first().exerciseCriterion) {
-    PushUpsUpCrierions -> "Push Ups"
-    JumpingJacksOpenCriterions -> "Jumping Jacks"
-    else -> feedbacks.first().exerciseCriterion.name
-  }
+  return feedbacks.first().exerciseCriterion.exerciseName
 }
 
 /**

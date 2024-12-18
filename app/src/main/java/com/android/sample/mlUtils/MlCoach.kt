@@ -149,12 +149,14 @@ class MlCoach(val cameraViewModel: CameraViewModel, private val exerciseType: Ex
           commentSet = jointFeedbackSet,
           successRate = successRate,
           feedbackValue = exerciseDuration.toInt(),
+          isCommented = exerciseCriterion.isCommented,
           feedbackUnit = ExerciseFeedBackUnit.SECONDS,
           exerciseCriterion = exerciseCriterion)
     } else {
       CoachFeedback(
           commentSet = jointFeedbackSet,
           successRate = successRate,
+          isCommented = exerciseCriterion.isCommented,
           feedbackValue = numberOfRepetition,
           feedbackUnit = ExerciseFeedBackUnit.REPETITION,
           exerciseCriterion = exerciseCriterion)
