@@ -34,6 +34,7 @@ gms = "4.4.2"
 mockk = "1.13.5"
 moshi = "1.14.0"
 coil = "2.4.0"
+vico = "2.0.0-beta.3"
 
 # Firebase
 firebaseAuth = "23.0.0"
@@ -126,6 +127,22 @@ androidx-datastore-core-android = { group = "androidx.datastore", name = "datast
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 ycharts = { module = "co.yml:ycharts", version.ref = "ycharts" }
+
+# For Jetpack Compose.
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+
+# For Material 2 theming in Jetpack Compose.
+vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", version.ref = "vico" }
+
+# For Material 3 theming in Jetpack Compose.
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+
+# Houses the core logic. This is included in all other modules, so add it explicitly only
+# in the unlikely event that you don’t need anything else.
+vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = "vico" }
+
+# For the view system.
+vico-views = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
