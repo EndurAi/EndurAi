@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.R
+import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.BottomBar
 import com.android.sample.ui.composables.TopBar
@@ -47,6 +48,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun SettingsScreen(
     navigationActions: NavigationActions,
+    preferencesViewModel: PreferencesViewModel,
     userAccountViewModel: UserAccountViewModel =
         viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
 ) {
@@ -93,6 +95,8 @@ fun SettingsScreen(
                     RedButton(
                         onClick = {
                           userAccountViewModel.clearCacheOnLogout() // Clear local cache on logout
+                          preferencesViewModel
+                              .clearCacheOnLogout() // Clear cached preferences on logout
                           signOut(context)
                           navigationActions.navigateTo("Auth Screen")
                           Toast.makeText(context, R.string.LogoutMessage, Toast.LENGTH_SHORT).show()
@@ -119,6 +123,7 @@ fun SettingsScreen(
                         context, "Failed to delete account: ${error.message}", Toast.LENGTH_LONG)
                     .show()
               })
+          preferencesViewModel.clearCacheOnLogout()
           showDeleteConfirmation = false
         },
         onDismiss = { showDeleteConfirmation = false })
