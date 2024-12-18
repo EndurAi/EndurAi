@@ -38,10 +38,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.mlUtils.ExerciseFeedBack
@@ -138,63 +136,51 @@ fun CoachCaptureScreen(
                               modifier = Modifier.size(48.dp).padding(8.dp).testTag("dropdownIcon"))
                         }
 
-
-
-                    DropdownMenu(
-                      modifier = Modifier.testTag("exerciseDropdownMenu"),
-                      expanded = isDropdownExpanded, onDismissRequest = { isDropdownExpanded = false }) {
-                      ExerciseType.entries
-                        .filter { it.hasMlFeedback }
-                        .forEach { exerciseType ->
-                          Box(
-                            modifier =
-                            Modifier.fillMaxWidth()
-                              .clickable {
-                                selectedExercise = exerciseType
-                                isDropdownExpanded = false
-                              }
-                              .padding(8.dp)
-                              .testTag("exerciseType${exerciseType.name}")) {
-                            Row(
-                              verticalAlignment = Alignment.CenterVertically,
-                              modifier = Modifier.padding(horizontal = 8.dp)) {
-                              Icon(
-                                painter =
-                                painterResource(id = getExerciseIcon(exerciseType.name)),
-                                contentDescription = "${exerciseType.name} Icon",
-                                modifier = Modifier.size(iconSize))
-                              Spacer(
-                                modifier =
-                                Modifier.width(8.dp)) // Space between icon and text
-                              Text(text = exerciseType.toString(), fontSize = SubtitleFontSize)
+                        DropdownMenu(
+                            modifier = Modifier.testTag("exerciseDropdownMenu"),
+                            expanded = isDropdownExpanded,
+                            onDismissRequest = { isDropdownExpanded = false }) {
+                              ExerciseType.entries
+                                  .filter { it.hasMlFeedback }
+                                  .forEach { exerciseType ->
+                                    Box(
+                                        modifier =
+                                            Modifier.fillMaxWidth()
+                                                .clickable {
+                                                  selectedExercise = exerciseType
+                                                  isDropdownExpanded = false
+                                                }
+                                                .padding(8.dp)
+                                                .testTag("exerciseType${exerciseType.name}")) {
+                                          Row(
+                                              verticalAlignment = Alignment.CenterVertically,
+                                              modifier = Modifier.padding(horizontal = 8.dp)) {
+                                                Icon(
+                                                    painter =
+                                                        painterResource(
+                                                            id =
+                                                                getExerciseIcon(exerciseType.name)),
+                                                    contentDescription =
+                                                        "${exerciseType.name} Icon",
+                                                    modifier = Modifier.size(iconSize))
+                                                Spacer(
+                                                    modifier =
+                                                        Modifier.width(
+                                                            8.dp)) // Space between icon and text
+                                                Text(
+                                                    text = exerciseType.toString(),
+                                                    fontSize = SubtitleFontSize)
+                                              }
+                                        }
+                                  }
                             }
-                          }
-                        }
-                    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                       }
-
-
                 }
 
-                SaveButton(onSaveClick = { isExerciseSelected = true }, text = "Train", testTag = "saveButton")
+                SaveButton(
+                    onSaveClick = { isExerciseSelected = true },
+                    text = "Train",
+                    testTag = "saveButton")
               }
         } else {
           if (showInfoDialogue) {

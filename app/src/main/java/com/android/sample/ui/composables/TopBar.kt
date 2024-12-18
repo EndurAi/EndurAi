@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -47,14 +46,14 @@ fun TopBar(
           Modifier.fillMaxWidth()
               .wrapContentHeight()
               .background(brush = BlueGradient)
-            .padding(vertical = 5.dp)) {
+              .padding(vertical = 5.dp)) {
         TopAppBar(
             title = {
               Row() {
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
                     text = stringResource(id = title),
-                    fontSize =20.sp,
+                    fontSize = 20.sp,
                     fontFamily = OpenSans,
                     fontWeight = FontWeight.SemiBold,
                     color = White,

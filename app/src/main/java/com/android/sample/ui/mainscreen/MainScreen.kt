@@ -152,20 +152,20 @@ fun ProfileSection(
                   modifier =
                       Modifier.size(54.dp).clip(CircleShape).testTag("ProfilePicture").shadow(4.dp))
               Spacer(modifier = Modifier.width(10.dp))
-          Text(
-            text = if (expanded.value) {
-              stringResource(id = R.string.WorkoutsTitle, account?.firstName ?: "")
-            } else {
-              stringResource(id = R.string.welcome_message, account?.firstName ?: "")
-            },
-            style = MaterialTheme.typography.titleSmall.copy(
-              fontSize = 20.sp, fontFamily = OpenSans, fontWeight = FontWeight.Bold
-            ),
-            color = Color.White,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.testTag("WelcomeText").fillMaxWidth(0.9f)
-          )
+              Text(
+                  text =
+                      if (expanded.value) {
+                        stringResource(id = R.string.WorkoutsTitle, account?.firstName ?: "")
+                      } else {
+                        stringResource(id = R.string.welcome_message, account?.firstName ?: "")
+                      },
+                  style =
+                      MaterialTheme.typography.titleSmall.copy(
+                          fontSize = 20.sp, fontFamily = OpenSans, fontWeight = FontWeight.Bold),
+                  color = Color.White,
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
+                  modifier = Modifier.testTag("WelcomeText").fillMaxWidth(0.9f))
               Spacer(modifier = Modifier.weight(1f))
               Image(
                   painter = painterResource(id = R.drawable.group),
