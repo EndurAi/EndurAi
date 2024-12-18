@@ -45,7 +45,7 @@ private val chairCriterion_KNEE_R =
 
 val ChairCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        exerciseName = ExerciseType.PLANK.toString(),
+        exerciseName = ExerciseType.CHAIR.toString(),
         criterionName = "Chair",
         angleCriterionSet =
             setOf(
