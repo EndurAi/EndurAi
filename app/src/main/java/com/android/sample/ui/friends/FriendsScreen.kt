@@ -22,18 +22,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.ui.composables.TextDialog
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.AddPurple
 
 /** Screen to view the list of Friends */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
-    userAccountViewModel: UserAccountViewModel
+    userAccountViewModel: UserAccountViewModel,
+    statisticsViewModel: StatisticsViewModel
 ) {
   val searchQuery = remember { mutableStateOf("") }
 
@@ -85,11 +88,8 @@ fun FriendsScreen(
                     friend = friend,
                     isSelected = selectedFriends.contains(friend.userId),
                     onSelectFriend = {
-                      if (selectedFriends.contains(friend.userId)) {
-                        selectedFriends.remove(friend.userId)
-                      } else {
-                        selectedFriends.add(friend.userId)
-                      }
+                      userAccountViewModel.selectFriend(friend)
+                      navigationActions.navigateTo(Screen.FRIEND_STATS)
                     },
                     onRemoveClick = { userAccountViewModel.removeFriend(friend.userId) },
                 )
@@ -101,13 +101,12 @@ fun FriendsScreen(
           if (selectedFriends.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { /* Trigger invite to workout action */},
+                onClick = { navigationActions.navigateTo(Screen.FRIEND_STATS) },
                 modifier =
                     Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("inviteButton"),
                 shape = RoundedCornerShape(8.dp),
                 colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6C63FF)) // Purple background
+                    ButtonDefaults.buttonColors(containerColor = AddPurple) // Purple background
                 ) {
                   Text(
                       text = stringResource(R.string.invite_to_workout),
@@ -178,7 +177,7 @@ fun SearchBarWithAddButton(
                 RoundedCornerShape(
                     topStart = 0.dp, topEnd = 10.dp, bottomStart = 0.dp, bottomEnd = 25.dp),
             contentPadding = PaddingValues(0.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C63FF)) // Purple color
+            colors = ButtonDefaults.buttonColors(containerColor = AddPurple) // Purple color
             ) {
               Icon(
                   imageVector = Icons.Default.Add,

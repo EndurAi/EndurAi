@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -45,8 +46,8 @@ fun NewConnectionsContent(
           onResult = { results -> searchResults.value = results },
           onFailure = { exception -> Log.e(logTag, "Search failed", exception) })
     } else {
-      searchResults.value = sentRequests
-      Log.d(logTag, " Length: ${sentRequests.size}")
+      searchResults.value = emptyList()
+      Log.d(logTag, "Search query is blank")
     }
   }
 
@@ -67,7 +68,9 @@ fun NewConnectionsContent(
           ProfileItemWithRequest(
               profile = profile,
               sentRequests,
-              onSendRequestClick = { userAccountViewModel.sendFriendRequest(profile.userId) })
+              onSendRequestClick =
+                  rememberUpdatedState { userAccountViewModel.sendFriendRequest(profile.userId) }
+                      .value)
           Spacer(modifier = Modifier.height(8.dp))
         }
       }

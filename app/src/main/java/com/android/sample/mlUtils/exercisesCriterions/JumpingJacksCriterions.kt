@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.AngleCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.PoseDetectionJoints
+import com.android.sample.model.workout.ExerciseType
 
 // Arms flat
 private val armFlat_L =
@@ -32,6 +33,7 @@ private val armLow_L =
         targetAngle = 90.0,
         delta = 15.0,
         combination = true,
+        LR_FailComment = AngleCriterionComments.NONE,
         onSuccess = { Log.d("MLFeedback", "L arm low is good") },
         onFailure = { Log.d("MLFeedback", "L arm low pas cool") })
 
@@ -41,6 +43,7 @@ private val armLow_R =
         targetAngle = 90.0,
         failCorrectionComment = AngleCriterionComments.NONE,
         combination = true,
+        LR_FailComment = AngleCriterionComments.NONE,
         delta = 20.0,
         onSuccess = { Log.d("MLFeedback", "R arm Low is good") },
         onFailure = { Log.d("MLFeedback", "R arm low pas cool") })
@@ -52,6 +55,7 @@ private val armUp_L =
         failCorrectionComment = AngleCriterionComments.NONE,
         targetAngle = 160.0,
         delta = 15.0,
+        LR_FailComment = AngleCriterionComments.NONE,
         combination = true,
         onSuccess = { Log.d("MLFeedback", "L arm up is good") },
         onFailure = { Log.d("MLFeedback", "L arm up pas cool") })
@@ -61,6 +65,7 @@ private val armUp_R =
         joints = PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_HIP,
         failCorrectionComment = AngleCriterionComments.NONE,
         targetAngle = 160.0,
+        LR_FailComment = AngleCriterionComments.NONE,
         combination = true,
         delta = 15.0,
         onSuccess = { Log.d("MLFeedback", "R arm Up is good") },
@@ -71,6 +76,7 @@ private val legFlat_L =
     AngleCriterion(
         joints = PoseDetectionJoints.LEFT_HIP_KNEE_ANKLE,
         failCorrectionComment = AngleCriterionComments.NONE,
+        LR_FailComment = AngleCriterionComments.NONE,
         targetAngle = 165.0,
         combination = true,
         delta = 15.0,
@@ -81,6 +87,7 @@ private val legFlat_R =
     AngleCriterion(
         joints = PoseDetectionJoints.RIGHT_HIP_KNEE_ANKLE,
         failCorrectionComment = AngleCriterionComments.NONE,
+        LR_FailComment = AngleCriterionComments.NONE,
         targetAngle = 165.0,
         delta = 15.0,
         combination = true,
@@ -130,13 +137,17 @@ private val legOpen_R =
 
 val JumpingJacksOpenCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        name = "", // empty as the exercise is not commented by the ml coach
+        isCommented = false,
+        criterionName = "Jumping-jacks open position",
+        exerciseName = ExerciseType.JUMPING_JACKS.toString(),
         angleCriterionSet =
             setOf(legOpen_L to legOpen_R, legFlat_L to legFlat_R, armUp_L to armUp_R))
 
 val JumpingJacksClosedCriterions: ExerciseCriterion =
     ExerciseCriterion(
-        name = "", // empty as the exercise is not commented by the ml coach
+        criterionName = "Jumping-jacks closed position",
+        exerciseName = ExerciseType.JUMPING_JACKS.toString(),
+        isCommented = false,
         angleCriterionSet =
             setOf(
                 legClosed_L to legClosed_R,

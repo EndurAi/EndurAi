@@ -85,6 +85,7 @@ object Screen {
   const val COACH_CAPTURE = "Coach Capture Screen"
   const val IMPORT_SCREEN_BODYWEIGHT = "Import BodyWeight Screen"
   const val IMPORT_SCREEN_YOGA = "Import Yoga Screen"
+  const val FRIEND_STATS = "Friend Stats Screen"
 }
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)

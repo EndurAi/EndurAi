@@ -84,7 +84,7 @@ fun VideoLibraryScreen(navigationActions: NavigationActions, videoViewModel: Vid
                             .padding(8.dp)) {
                       AnimatedText(
                           modifier = Modifier.testTag("coachText"),
-                          text = "Hey, want to have some feedback on your work ?",
+                          text = "Hey, want to have some feedback on your work ? Click on me!",
                           style = MaterialTheme.typography.bodySmall.copy(color = White))
                     }
 
