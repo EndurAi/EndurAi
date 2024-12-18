@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
@@ -206,9 +205,9 @@ fun WorkoutSummaryScreen(
         fontWeight = FontWeight.Bold,
     )
   }
-    Spacer(modifier = Modifier.fillMaxHeight(0.5f))
-    SaveSwitch(saveOption = saveOption, onSaveSwitch = onSaveSwitch)
-    Spacer(Modifier.size(15.dp))
+  Spacer(modifier = Modifier.fillMaxHeight(0.5f))
+  SaveSwitch(saveOption = saveOption, onSaveSwitch = onSaveSwitch)
+  Spacer(Modifier.size(15.dp))
 
   NextButton(
       text = "Finish",
@@ -220,56 +219,53 @@ fun WorkoutSummaryScreen(
               .background(brush = BlueGradient, shape = LeafShape)
               .testTag("FinishButton"),
       arrow = false)
-    Spacer(Modifier.size(15.dp))
+  Spacer(Modifier.size(15.dp))
 }
 
 @Composable
-fun SaveSwitch(saveOption: Boolean, onSaveSwitch: (Boolean) -> Unit){
-    Card(
+fun SaveSwitch(saveOption: Boolean, onSaveSwitch: (Boolean) -> Unit) {
+  Card(
+      modifier =
+          Modifier.padding(horizontal = 16.dp, vertical = 8.dp) // Adjust padding as needed
+              .shadow(elevation = 3.dp, shape = RoundedCornerShape(25.dp)) // Add shadow
+              .clip(RoundedCornerShape(25.dp)), // Ensure rounded corners
+      colors = CardDefaults.cardColors(containerColor = White), // Set card background color
+      elevation = CardDefaults.elevatedCardElevation(8.dp), // Add elevation
+  ) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier =
-        Modifier.padding(
-            horizontal = 16.dp, vertical = 8.dp) // Adjust padding as needed
-            .shadow(
-                elevation = 3.dp, shape = RoundedCornerShape(25.dp)) // Add shadow
-            .clip(RoundedCornerShape(25.dp)), // Ensure rounded corners
-        colors =
-        CardDefaults.cardColors(
-            containerColor = White), // Set card background color
-        elevation = CardDefaults.elevatedCardElevation(8.dp), // Add elevation
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
             Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
                 .background(White) // Add background color
                 .padding(8.dp)) {
-            Image(
-                painter = painterResource(id = R.drawable.save),
-                contentDescription = "Save Icon",
-                colorFilter = ColorFilter.tint(
-                    color = Black,
-                ))
+          Image(
+              painter = painterResource(id = R.drawable.save),
+              contentDescription = "Save Icon",
+              colorFilter =
+                  ColorFilter.tint(
+                      color = Black,
+                  ))
 
-            Text(
-                text = stringResource(id = R.string.SaveWorkout),
-                fontSize = SubtitleFontSize,
-                fontWeight = FontWeight.Bold,
-                fontFamily = OpenSans,
-                color = TitleBlue,
-                modifier = Modifier.padding(horizontal = 10.dp))
+          Text(
+              text = stringResource(id = R.string.SaveWorkout),
+              fontSize = SubtitleFontSize,
+              fontWeight = FontWeight.Bold,
+              fontFamily = OpenSans,
+              color = TitleBlue,
+              modifier = Modifier.padding(horizontal = 10.dp))
 
-            Switch(
-                checked = saveOption,
-                onCheckedChange = { onSaveSwitch(it) },
-                colors = SwitchDefaults.colors(checkedTrackColor = LightBlue2),
-                modifier = Modifier.testTag("saveSwitch"))
+          Switch(
+              checked = saveOption,
+              onCheckedChange = { onSaveSwitch(it) },
+              colors = SwitchDefaults.colors(checkedTrackColor = LightBlue2),
+              modifier = Modifier.testTag("saveSwitch"))
         }
-    }
+  }
 }
 /**
- * A map of MET (Metabolic Equivalent of Task) values for each type of exercise. These values
- * define the number of calories burned per kilogram of body weight per hour of exercise (kcal /
- * hour * kg).
+ * A map of MET (Metabolic Equivalent of Task) values for each type of exercise. These values define
+ * the number of calories burned per kilogram of body weight per hour of exercise (kcal / hour *
+ * kg).
  */
 private val metValues: Map<ExerciseType, Double> =
     mapOf(

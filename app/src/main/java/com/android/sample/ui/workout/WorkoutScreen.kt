@@ -131,7 +131,7 @@ fun WorkoutScreenBody(
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
-    var saveOption by remember { mutableStateOf(false) }
+  var saveOption by remember { mutableStateOf(false) }
   val context = LocalContext.current
   val exerciseState =
       exerciseStateList?.get(exerciseIndex)
@@ -277,11 +277,11 @@ fun WorkoutScreenBody(
               exerciseList = exerciseStateList ?: emptyList(),
               userAccountViewModel = userAccountViewModel)
       statisticsViewModel.addWorkoutStatistics(stats)
-        if (saveOption) {
-            workoutViewModel.transferWorkoutToDone(workoutID)
-        }else{
-            workoutViewModel.deleteWorkoutById(workoutID)
-        }
+      if (saveOption) {
+        workoutViewModel.transferWorkoutToDone(workoutID)
+      } else {
+        workoutViewModel.deleteWorkoutById(workoutID)
+      }
       navigationActions.navigateTo(Screen.MAIN)
     }
   }
@@ -330,7 +330,7 @@ fun WorkoutScreenBody(
                     onfinishButtonClicked = { nextExercise() },
                     userAccountViewModel = userAccountViewModel,
                     saveOption = saveOption,
-                    onSaveSwitch = {saveOption = it} )
+                    onSaveSwitch = { saveOption = it })
               } else {
                 // Column for displaying exercise information
                 Column(

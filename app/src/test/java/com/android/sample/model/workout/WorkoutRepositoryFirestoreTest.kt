@@ -95,7 +95,7 @@ class WorkoutRepositoryFirestoreTest {
     `when`(mockUser.uid).thenReturn("mocked-uid")
 
     workoutRepositoryFirestore1 =
-      WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
+        WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
 
     `when`(mockFirestore.collection(collectionPath)).thenReturn(mockCollectionPath)
 
@@ -110,12 +110,16 @@ class WorkoutRepositoryFirestoreTest {
     // Mock done workouts path
     `when`(mockFirestore.collection(doneDocumentName)).thenReturn(mockDoneDocumentName)
     `when`(mockDoneDocumentName.document(any())).thenReturn(mockDocumentDoneWorkout)
-    `when`(mockCollectionPath.document(doneDocumentName)).thenReturn(mockDoneDocumentToCollectionName)
-    `when`(mockDoneDocumentToCollectionName.collection(any())).thenReturn(mockCollectionDoneDocumentName)
+
+    `when`(mockCollectionPath.document(doneDocumentName))
+        .thenReturn(mockDoneDocumentToCollectionName)
+    `when`(mockDoneDocumentToCollectionName.collection(any()))
+        .thenReturn(mockCollectionDoneDocumentName)
     `when`(mockCollectionDoneDocumentName.document(any())).thenReturn(mockDocumentDoneWorkoutID)
 
     // Mock workouts path
-    `when`(mockCollectionPath.document(documentToCollectionName)).thenReturn(mockDocumentToCollectionName)
+    `when`(mockCollectionPath.document(documentToCollectionName))
+        .thenReturn(mockDocumentToCollectionName)
     `when`(mockDocumentToCollectionName.collection(any())).thenReturn(mockCollectionDocumentName)
     `when`(mockCollectionDocumentName.document(any())).thenReturn(mockDocumentWorkoutID)
   }
@@ -229,34 +233,34 @@ class WorkoutRepositoryFirestoreTest {
   }
 
   /**
-   * Test that `transferDocumentToDone` set the values in the correct document
-   * and delete from the old one
+   * Test that `transferDocumentToDone` set the values in the correct document and delete from the
+   * old one
    */
   @Test
   fun transferDocumentToDone_shouldTransferAndDelete() {
     val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
-    `when`(mockDocumentSnapshot.exists()).thenReturn(true) // Simule l'existence du document
-    `when`(mockDocumentSnapshot.data).thenReturn(mapOf("key" to "value")) // Données simulées
+    `when`(mockDocumentSnapshot.exists()).thenReturn(true) // Simulate the existence of the document
+    `when`(mockDocumentSnapshot.data).thenReturn(mapOf("key" to "value")) // Simulated data
     `when`(mockDocumentWorkout.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
 
-    `when`(mockDocumentDoneWorkout.set(any())).thenReturn(Tasks.forResult(null)) // Simule le succès
+    `when`(mockDocumentDoneWorkout.set(any()))
+        .thenReturn(Tasks.forResult(null)) // Simulate success for done workout transfer
     `when`(mockDocumentDoneWorkoutID.set(any())).thenReturn(Tasks.forResult(null))
-    `when`(mockDocumentWorkout.delete()).thenReturn(Tasks.forResult(null)) // Simule le succès
+    `when`(mockDocumentWorkout.delete())
+        .thenReturn(Tasks.forResult(null)) // Simulate success for deletion of the previous workout
     `when`(mockDocumentWorkoutID.delete()).thenReturn(Tasks.forResult(null))
 
     workoutRepositoryFirestore1.transferDocumentToDone(
-      id = "workout-1",
-      onSuccess = {},
-      onFailure = { fail("Transfer should not fail") }
-    )
+        id = "workout-1", onSuccess = {}, onFailure = { fail("Transfer should not fail") })
 
     shadowOf(Looper.getMainLooper()).idle()
 
     verify(mockMainDocumentName, times(2)).document("workout-1")
-    verify(mockDocumentDoneWorkout).set(any()) // Ajouté à done
-    verify(mockDocumentWorkout).delete() // Supprimé de la collection précédente
-    verify(mockDocumentWorkoutID).delete() // Supprimé de la liste d'ID de l'utilisateur précédent
-    verify(mockDocumentDoneWorkoutID).set(any()) // Ajouté à la liste d'ID utilisateur
+    verify(mockDocumentDoneWorkout).set(any()) // Verifiy added to the done documents
+    verify(mockDocumentWorkout).delete() // Verify workout deleted from previous location
+    verify(mockDocumentWorkoutID).delete() // Verify workout ID deleted from previous location
+    verify(mockDocumentDoneWorkoutID)
+        .set(any()) // Verify ID added to the list of done workouts of the user
   }
 
   @Test
@@ -281,18 +285,43 @@ class WorkoutRepositoryFirestoreTest {
 
     // Call the method to test
     workoutRepositoryFirestore1.importDocumentFromDone(
-      id = id,
-      onSuccess = {},
-      onFailure = { fail("Import should not fail") }
-    )
+        id = id, onSuccess = {}, onFailure = { fail("Import should not fail") })
 
     shadowOf(Looper.getMainLooper()).idle()
 
     // Verify interactions with mock references
-    verify(mockDoneDocumentName, times(2)).document("workout-1") // Ensure retrieval of the workout document
-    verify(mockDocumentDoneWorkout).delete()  // Ensure the workout is added back to the main collection
-    verify(mockDocumentDoneWorkoutID).delete()  // Ensure the workout id is added back to the main collection
-    verify(mockDocumentWorkout).set(any()) // Ensure the workout is removed from the previous collection
-    verify(mockDocumentWorkoutID).set(any())  // Verify the deletion of workout IDs
+    verify(mockDoneDocumentName, times(2))
+        .document("workout-1") // Ensure retrieval of the workout document
+    verify(mockDocumentDoneWorkout)
+        .delete() // Ensure the workout is added back to the main collection
+    verify(mockDocumentDoneWorkoutID)
+        .delete() // Ensure the workout id is added back to the main collection
+    verify(mockDocumentWorkout)
+        .set(any()) // Ensure the workout is removed from the previous collection
+    verify(mockDocumentWorkoutID).set(any()) // Verify the deletion of workout IDs
+  }
+
+  /** This test verifies that when fetching done documents, the Firestore `get()` is called. */
+  @Test
+  fun getDoneDocuments_callsCollectionGet() {
+    // Mock QuerySnapshot
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot1 = mock(DocumentSnapshot::class.java)
+    val mockDocumentSnapshot2 = mock(DocumentSnapshot::class.java)
+
+    // Mock responses
+    `when`(mockDocumentSnapshot1.exists()).thenReturn(true)
+    `when`(mockDocumentSnapshot2.exists()).thenReturn(true)
+
+    `when`(mockQuerySnapshot.documents)
+        .thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
+    `when`(mockCollectionDoneDocumentName.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    workoutRepositoryFirestore1.getDoneDocuments(
+        onSuccess = { documents -> assert(documents.isNotEmpty()) },
+        onFailure = { fail("Failure callback should not be called") })
+
+    // Verify that the collection reference's get method was called
+    verify(mockCollectionDoneDocumentName).get()
   }
 }

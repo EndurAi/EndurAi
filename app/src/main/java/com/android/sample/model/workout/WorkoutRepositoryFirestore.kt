@@ -72,7 +72,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
   private val documentName: String = getDocumentName()
 
   private val mainDocumentName = "AllWorkouts"
-    private val doneDocumentName = "DoneWorkouts"
+  private val doneDocumentName = "DoneWorkouts"
 
   /**
    * Generates a new unique ID for a workout document in the Firestore.
@@ -230,162 +230,176 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .addOnSuccessListener { onSuccess() }
   }
 
-    /**
-     * Transfer a finished workout to a done collection
-     *
-     * @param id The id of the workout to transfer.
-     * @param onSuccess A callback function that is invoked upon successful deletion.
-     * @param onFailure A callback function that is invoked in case of an error during the deletion.
-     */
-    override fun transferDocumentToDone(
-        id: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val workoutById = WorkoutID(workoutid = id)
-        val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
+  /**
+   * Transfer a finished workout to a done collection
+   *
+   * @param id The id of the workout to transfer.
+   * @param onSuccess A callback function that is invoked upon successful deletion.
+   * @param onFailure A callback function that is invoked in case of an error during the deletion.
+   */
+  override fun transferDocumentToDone(
+      id: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val workoutById = WorkoutID(workoutid = id)
+    val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
 
-        val dataMapWorkoutID: Map<String, Any> =
-            (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
+    val dataMapWorkoutID: Map<String, Any> =
+        (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
 
-        // Get document from all workout
-        db.collection(mainDocumentName).document(id).get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val workoutData = document.data ?: emptyMap()
-                    // Add the workout data to the collection "done"
-                    db.collection(doneDocumentName).document(id).set(workoutData)
-                        .addOnSuccessListener {
-                            // Delete the document from "allworkouts"
-                            deleteDocument(id = id, onSuccess = {
-                                //Add the workout id in the done list of the user
-                                db.collection(collectionPath)
-                                    .document(doneDocumentName)
-                                    .collection(documentName)
-                                    .document(id)
-                                    .set(dataMapWorkoutID)
-                                    .addOnSuccessListener { onSuccess() }
-                                    .addOnFailureListener { onFailure(it) }
-                            }, onFailure = onFailure)
-                        }
-                        .addOnFailureListener { onFailure(it) }
-                } else {
-                    onFailure(Exception("Document with ID $id does not exist in allworkouts"))
+    // Get document from all workout
+    db.collection(mainDocumentName)
+        .document(id)
+        .get()
+        .addOnSuccessListener { document ->
+          if (document.exists()) {
+            val workoutData = document.data ?: emptyMap()
+            // Add the workout data to the collection "done"
+            db.collection(doneDocumentName)
+                .document(id)
+                .set(workoutData)
+                .addOnSuccessListener {
+                  // Delete the document from "allworkouts"
+                  deleteDocument(
+                      id = id,
+                      onSuccess = {
+                        // Add the workout id in the done list of the user
+                        db.collection(collectionPath)
+                            .document(doneDocumentName)
+                            .collection(documentName)
+                            .document(id)
+                            .set(dataMapWorkoutID)
+                            .addOnSuccessListener { onSuccess() }
+                            .addOnFailureListener { onFailure(it) }
+                      },
+                      onFailure = onFailure)
                 }
-            }
-            .addOnFailureListener { onFailure(it) }
+                .addOnFailureListener { onFailure(it) }
+          } else {
+            onFailure(Exception("Document with ID $id does not exist in allworkouts"))
+          }
+        }
+        .addOnFailureListener { onFailure(it) }
+  }
 
-    }
+  /**
+   * Import a done workout to the current collection.
+   *
+   * @param id The id of the workout to transfer.
+   * @param onSuccess A callback function that is invoked upon successful deletion.
+   * @param onFailure A callback function that is invoked in case of an error during the deletion.
+   */
+  override fun importDocumentFromDone(
+      id: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
 
-    /**
-     * Import a done workout to the current collection.
-     *
-     * @param id The id of the workout to transfer.
-     * @param onSuccess A callback function that is invoked upon successful deletion.
-     * @param onFailure A callback function that is invoked in case of an error during the deletion.
-     */
-    override fun importDocumentFromDone(
-        id: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
+    // Get the document from done
+    db.collection(doneDocumentName)
+        .document(id)
+        .get()
+        .addOnSuccessListener { document ->
+          if (document.exists()) {
+            // Add the document to "allworkouts"
+            val workoutData = document.data ?: emptyMap()
+            db.collection(mainDocumentName)
+                .document(id)
+                .set(workoutData)
+                .addOnSuccessListener {
+                  // Delete the document from done
+                  db.collection(doneDocumentName)
+                      .document(id)
+                      .delete()
+                      .addOnSuccessListener {
+                        val workoutById = WorkoutID(workoutid = id)
+                        val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
 
-        // Get the document from done
-        db.collection(doneDocumentName).document(id).get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    // Add the document to "allworkouts"
-                    val workoutData = document.data ?: emptyMap()
-                    db.collection(mainDocumentName).document(id).set(workoutData)
-                        .addOnSuccessListener {
-                            // Delete the document from done
-                            db.collection(doneDocumentName).document(id).delete()
-                                .addOnSuccessListener {
-                                    val workoutById = WorkoutID(workoutid = id)
-                                    val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
-
-                                    val dataMapWorkoutID: Map<String, Any> =
-                                        (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
-                                    // Delete the workout id from the done list of the user
-                                    db.collection(collectionPath)
-                                        .document(doneDocumentName)
-                                        .collection(documentName)
-                                        .document(id)
-                                        .delete()
-                                        .addOnSuccessListener { onSuccess() }
-                                        .addOnFailureListener { onFailure(it) }
-                                    // Add the id to the user workout list
-                                    db.collection(collectionPath)
-                                        .document(documentToCollectionName)
-                                        .collection(documentName)
-                                        .document(id)
-                                        .set(dataMapWorkoutID)
-                                        .addOnFailureListener { e -> onFailure(e) }
-                                }
-                                .addOnFailureListener { onFailure(it) }
-                        }
-                        .addOnFailureListener { onFailure(it) }
-                } else {
-                    onFailure(Exception("Document with ID $id does not exist in done"))
+                        val dataMapWorkoutID: Map<String, Any> =
+                            (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId)
+                                as Map<String, Any>?)!!
+                        // Delete the workout id from the done list of the user
+                        db.collection(collectionPath)
+                            .document(doneDocumentName)
+                            .collection(documentName)
+                            .document(id)
+                            .delete()
+                            .addOnSuccessListener { onSuccess() }
+                            .addOnFailureListener { onFailure(it) }
+                        // Add the id to the user workout list
+                        db.collection(collectionPath)
+                            .document(documentToCollectionName)
+                            .collection(documentName)
+                            .document(id)
+                            .set(dataMapWorkoutID)
+                            .addOnFailureListener { e -> onFailure(e) }
+                      }
+                      .addOnFailureListener { onFailure(it) }
                 }
-            }
-            .addOnFailureListener { onFailure(it) }
-    }
+                .addOnFailureListener { onFailure(it) }
+          } else {
+            onFailure(Exception("Document with ID $id does not exist in done"))
+          }
+        }
+        .addOnFailureListener { onFailure(it) }
+  }
 
-    /**
-     * Retrieves done documents from the Firestore.
-     *
-     * @param onSuccess A callback function that is invoked with the workout data upon successful
-     *   retrieval.
-     * @param onFailure A callback function that is invoked in case of an error during the retrieval.
-     */
-    override fun getDoneDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
-        // we first get document'ids from user done documents
-        db.collection(collectionPath)
-            .document(doneDocumentName)
-            .collection(documentName)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val workoutids =
-                        task.result?.mapNotNull { document ->
-                            documentSnapshotToObject(document, adapterWorkoutID) { it?.workoutid } as? String
-                        } ?: emptyList()
-                    val workouts = mutableListOf<T>()
-                    val tasks = mutableListOf<Task<DocumentSnapshot>>()
+  /**
+   * Retrieves done documents from the Firestore.
+   *
+   * @param onSuccess A callback function that is invoked with the workout data upon successful
+   *   retrieval.
+   * @param onFailure A callback function that is invoked in case of an error during the retrieval.
+   */
+  override fun getDoneDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
+    // we first get document'ids from user done documents
+    db.collection(collectionPath)
+        .document(doneDocumentName)
+        .collection(documentName)
+        .get()
+        .addOnCompleteListener { task ->
+          if (task.isSuccessful) {
+            val workoutids =
+                task.result?.mapNotNull { document ->
+                  documentSnapshotToObject(document, adapterWorkoutID) { it?.workoutid } as? String
+                } ?: emptyList()
+            val workouts = mutableListOf<T>()
+            val tasks = mutableListOf<Task<DocumentSnapshot>>()
 
-                    // for each id we get the content of the workout in "doneWorkouts" document
+            // for each id we get the content of the workout in "doneWorkouts" document
 
-                    for (id in workoutids) {
-                        val task =
-                            db.collection(doneDocumentName)
-                                .document(id)
-                                .get()
-                                .addOnSuccessListener { document ->
-                                    val workout = documentSnapshotToObject(document, adapter) as T
-                                    workout.let { workouts.add(workout) }
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.e("WorkoutRepositoryFirestore", "Error getting done workout document", e)
-                                    onFailure(e)
-                                }
-                        tasks.add(task)
-                    }
-
-                    // Wait for all tasks to complete and give all the done workouts to "onSuccess"
-                    Tasks.whenAllComplete(tasks)
-                        .addOnSuccessListener { onSuccess(workouts) }
-                        .addOnFailureListener { e -> onFailure(e) }
-                } else {
-                    task.exception?.let { e ->
-                        Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
+            for (id in workoutids) {
+              val task =
+                  db.collection(doneDocumentName)
+                      .document(id)
+                      .get()
+                      .addOnSuccessListener { document ->
+                        val workout = documentSnapshotToObject(document, adapter) as T
+                        workout.let { workouts.add(workout) }
+                      }
+                      .addOnFailureListener { e ->
+                        Log.e(
+                            "WorkoutRepositoryFirestore", "Error getting done workout document", e)
                         onFailure(e)
-                    }
-                }
+                      }
+              tasks.add(task)
             }
-    }
 
-    /**
+            // Wait for all tasks to complete and give all the done workouts to "onSuccess"
+            Tasks.whenAllComplete(tasks)
+                .addOnSuccessListener { onSuccess(workouts) }
+                .addOnFailureListener { e -> onFailure(e) }
+          } else {
+            task.exception?.let { e ->
+              Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
+              onFailure(e)
+            }
+          }
+        }
+  }
+
+  /**
    * Converts a Firestore `DocumentSnapshot` to an object of type `R`. Serializes the document data
    * using the provided `JsonAdapter`.
    *

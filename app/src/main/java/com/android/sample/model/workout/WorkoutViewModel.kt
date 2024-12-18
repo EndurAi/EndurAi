@@ -9,15 +9,17 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
   val workouts_ = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
   val workouts: StateFlow<List<T>> = workouts_
 
-    val doneWorkouts_ = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
-    val doneWorkouts: StateFlow<List<T>> = doneWorkouts_
+  val doneWorkouts_ = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
+  val doneWorkouts: StateFlow<List<T>> = doneWorkouts_
 
   private val selectedWorkout_ = MutableStateFlow<T?>(null)
   open val selectedWorkout: StateFlow<T?> = selectedWorkout_
 
   init {
-    repository.init { getWorkouts()
-    getDoneWorkouts()}
+    repository.init {
+      getWorkouts()
+      getDoneWorkouts()
+    }
   }
 
   /**
@@ -33,10 +35,10 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
   fun getWorkouts() {
     repository.getDocuments(onSuccess = { workouts_.value = it }, onFailure = {})
   }
-    /** Gets all Workout documents. */
-    fun getDoneWorkouts(){
-        repository.getDoneDocuments(onSuccess = { doneWorkouts_.value = it }, onFailure = {})
-    }
+  /** Gets all Workout documents. */
+  fun getDoneWorkouts() {
+    repository.getDoneDocuments(onSuccess = { doneWorkouts_.value = it }, onFailure = {})
+  }
 
   /**
    * Adds a Workout document.
@@ -47,19 +49,25 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
     repository.addDocument(obj = workout, onSuccess = { getWorkouts() }, onFailure = {})
   }
 
-    fun transferWorkoutToDone(id: String){
-        repository.transferDocumentToDone(id = id, onSuccess = {
-            getWorkouts()
-            getDoneWorkouts()
-        }, onFailure = {})
-    }
+  fun transferWorkoutToDone(id: String) {
+    repository.transferDocumentToDone(
+        id = id,
+        onSuccess = {
+          getWorkouts()
+          getDoneWorkouts()
+        },
+        onFailure = {})
+  }
 
-    fun importWorkoutFromDone(id: String){
-        repository.importDocumentFromDone(id = id, onSuccess = {
-            getWorkouts()
-            getDoneWorkouts()
-        }, onFailure = {})
-    }
+  fun importWorkoutFromDone(id: String) {
+    repository.importDocumentFromDone(
+        id = id,
+        onSuccess = {
+          getWorkouts()
+          getDoneWorkouts()
+        },
+        onFailure = {})
+  }
   /**
    * Updates a Workout document.
    *

@@ -163,7 +163,13 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Achievements Screen
     navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
-      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions, statisticsViewModel, bodyweightWorkoutViewModel, yogaWorkoutViewModel) }
+      composable(Screen.ACHIEVEMENTS) {
+        AchievementsScreen(
+            navigationActions,
+            statisticsViewModel,
+            bodyweightWorkoutViewModel,
+            yogaWorkoutViewModel)
+      }
     }
 
     // Preferences Screen
@@ -193,9 +199,12 @@ fun MainApp(startDestination: String = Route.AUTH) {
           composable(Screen.IMPORTORCREATE_BODY_WEIGHT) {
             ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
           }
-            composable(Screen.IMPORT_SCREEN_BODYWEIGHT) {
-                ImportScreen(navigationActions, workoutViewModel = bodyweightWorkoutViewModel, workoutType = WorkoutType.BODY_WEIGHT)
-            }
+          composable(Screen.IMPORT_SCREEN_BODYWEIGHT) {
+            ImportScreen(
+                navigationActions,
+                workoutViewModel = bodyweightWorkoutViewModel,
+                workoutType = WorkoutType.BODY_WEIGHT)
+          }
         }
 
     // Import or Create Screen for yoga workout
@@ -203,9 +212,12 @@ fun MainApp(startDestination: String = Route.AUTH) {
       composable(Screen.IMPORTORCREATE_YOGA) {
         ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.YOGA)
       }
-        composable(Screen.IMPORT_SCREEN_YOGA) {
-            ImportScreen(navigationActions, workoutViewModel = yogaWorkoutViewModel, workoutType = WorkoutType.YOGA)
-        }
+      composable(Screen.IMPORT_SCREEN_YOGA) {
+        ImportScreen(
+            navigationActions,
+            workoutViewModel = yogaWorkoutViewModel,
+            workoutType = WorkoutType.YOGA)
+      }
     }
 
     // Import or Create Screen for running workout
