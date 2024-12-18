@@ -24,10 +24,12 @@ import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitsSystem
 import com.android.sample.model.preferences.WeightUnit
 import com.android.sample.ui.composables.TopBar
+import com.android.sample.ui.composables.WavyBackground
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.FontSizes.ButtonFontSize
 import com.android.sample.ui.theme.FontSizes.TitleFontSize
+import com.android.sample.ui.theme.LightBlue
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.Shape.buttonShape
 import com.android.sample.ui.theme.Shape.smallButtonShape
@@ -42,7 +44,7 @@ fun PreferencesScreen(
     preferencesViewModel: PreferencesViewModel
 ) {
   val context = LocalContext.current
-
+  val waveHeight = 500.dp
   val preferences =
       requireNotNull(preferencesViewModel.preferences.collectAsState().value) {
         "Preferences should not be null."
@@ -52,21 +54,34 @@ fun PreferencesScreen(
   var weightUnit by remember { mutableStateOf(preferences.weight) }
 
   Scaffold(topBar = { TopBar(navigationActions, R.string.Preferences) }) { paddingValues ->
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-      PreferencesContent(
-          modifier = Modifier.padding(paddingValues),
-          distanceSystem = unitsSystem,
-          onDistanceChange = { unitsSystem = it },
-          weightUnit = weightUnit,
-          onWeightChange = { weightUnit = it })
-      Spacer(modifier = Modifier.fillMaxHeight(0.7f))
-      SubmitButton(
-          onClick = {
-            val newPreferences = Preferences(unitsSystem, weightUnit)
-            preferencesViewModel.updatePreferences(newPreferences)
-            Toast.makeText(context, "Changes successful", Toast.LENGTH_SHORT).show()
-            navigationActions.goBack()
-          })
+    Box(modifier = Modifier.fillMaxSize()) {
+      Column(
+          horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
+            PreferencesContent(
+                modifier = Modifier.padding(paddingValues),
+                distanceSystem = unitsSystem,
+                onDistanceChange = { unitsSystem = it },
+                weightUnit = weightUnit,
+                onWeightChange = { weightUnit = it })
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Wavy Background Section
+            Box(modifier = Modifier.fillMaxWidth().height(waveHeight)) {
+              WavyBackground(color = LightBlue) // Light Blue Wavy Background
+              Column(
+                  modifier = Modifier.fillMaxSize(),
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement = Arrangement.Center) {
+                    SubmitButton(
+                        onClick = {
+                          val newPreferences = Preferences(unitsSystem, weightUnit)
+                          preferencesViewModel.updatePreferences(newPreferences)
+                          Toast.makeText(context, "Changes successful", Toast.LENGTH_SHORT).show()
+                          navigationActions.goBack()
+                        })
+                  }
+            }
+          }
     }
   }
 }

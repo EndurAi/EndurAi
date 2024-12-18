@@ -50,6 +50,7 @@ class PreferencesScreenTest {
     composeTestRule.onNodeWithTag("unitsSystemMenuText").assertTextEquals("System of units")
     composeTestRule.onNodeWithTag("weightUnitMenu").assertIsDisplayed()
     composeTestRule.onNodeWithTag("weightUnitMenuText").assertTextEquals("Weight unit")
+    composeTestRule.onNodeWithTag("wavyBackground").assertIsDisplayed()
   }
 
   @Test
