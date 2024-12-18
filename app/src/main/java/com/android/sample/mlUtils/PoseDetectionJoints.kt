@@ -113,11 +113,11 @@ class PoseDetectionJoints {
         wrongJointsLinks: Set<Triple<Int, Int, Int>>,
         cumulatedOffset: Offset = Offset.Zero,
         jointColor: Color = DarkBlue,
-        jointStroke: Float = 15f,
+        jointStroke: Float = 10f,
         lineColor: Color = LightBlue,
         lineStroke: Float = 8f,
         wrongJointColor: Color = Color.Yellow,
-        wrongJointStroke: Float = 15f,
+        wrongJointStroke: Float = 10f,
         wronglineColor: Color = Color.Red,
         wronglineStroke: Float = 8f,
         modifier: Modifier = Modifier

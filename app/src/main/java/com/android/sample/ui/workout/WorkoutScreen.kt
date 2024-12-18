@@ -631,7 +631,7 @@ fun VideoPlayer(url: String, context: Context) {
       factory = {
         PlayerView(context).apply {
           player = exoPlayer
-          useController = true
+          useController = false
           resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
           layoutParams =
               ViewGroup.LayoutParams(

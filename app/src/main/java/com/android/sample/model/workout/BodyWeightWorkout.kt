@@ -61,20 +61,13 @@ class BodyWeightWorkout(
                 mutableListOf(
                     Exercise(
                         id = "BODY_WEIGHT_1",
-                        type = ExerciseType.PUSH_UPS,
-                        detail = ExerciseType.PUSH_UPS.detail),
-                    Exercise(
-                        id = "BODY_WEIGHT_2",
-                        type = ExerciseType.SQUATS,
-                        detail = ExerciseType.SQUATS.detail),
-                    Exercise(
-                        id = "BODY_WEIGHT_3",
                         type = ExerciseType.PLANK,
                         detail = ExerciseType.PLANK.detail),
                     Exercise(
-                        id = "BODY_WEIGHT_4",
-                        type = ExerciseType.CHAIR,
-                        detail = ExerciseType.CHAIR.detail)),
+                        id = "BODY_WEIGHT_2",
+                        type = ExerciseType.PUSH_UPS,
+                        detail = ExerciseType.PUSH_UPS.detail),
+),
             date = LocalDateTime.now())
   }
 }

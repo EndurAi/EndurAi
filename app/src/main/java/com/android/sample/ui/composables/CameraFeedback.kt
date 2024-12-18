@@ -2,6 +2,7 @@ package com.android.sample.ui.composables
 
 import MathsPoseDetection
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.camera.video.Recording
@@ -156,9 +157,13 @@ class CameraFeedBack {
                       contentDescription = "Switch camera")
                 }
           }) { pd: PaddingValues ->
-            Box(modifier = Modifier.fillMaxSize().padding(pd)) {
+            Box(modifier = Modifier
+              .fillMaxSize()
+              .padding(pd)) {
               AndroidView(
-                  modifier = Modifier.fillMaxSize().matchParentSize(),
+                  modifier = Modifier
+                    .fillMaxSize()
+                    .matchParentSize(),
                   factory = { context ->
                     PreviewView(context)
                         .apply {
@@ -173,7 +178,10 @@ class CameraFeedBack {
                           previewView.controller = cameraViewModel.cameraController.value
                         }
                   })
-              var cumulatedOffset by remember { mutableStateOf(Offset(0F, 0F)) }
+              val xOffset = (context.resources.displayMetrics.widthPixels.toFloat() * 51.2f)/1080f
+              val yOffset = (context.resources.displayMetrics.heightPixels.toFloat() * 61.3f)/2219f
+              var cumulatedOffset by remember { mutableStateOf(Offset(90.7f, 14.2f)) }
+              //Log.d("OFFSET", "$cumulatedOffset")
               if (poseDetectionRequired) {
 
                 if (lastPose.isNotEmpty()) {
@@ -182,12 +190,15 @@ class CameraFeedBack {
                       wrongJointsLinks = displayedJoints,
                       cumulatedOffset = cumulatedOffset,
                       modifier =
-                          Modifier.fillMaxSize().matchParentSize().pointerInput(Unit) {
-                            detectDragGestures { change, dragAmount ->
-                              change.consume()
-                              cumulatedOffset += dragAmount
-                            }
-                          })
+                      Modifier
+                        .fillMaxSize()
+                        .matchParentSize()
+                        .pointerInput(Unit) {
+                          detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            cumulatedOffset += dragAmount
+                          }
+                        })
                 }
               }
             }
