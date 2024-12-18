@@ -21,9 +21,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -81,9 +85,11 @@ import com.android.sample.ui.theme.LightBlue2
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.Purple60
+import com.android.sample.ui.theme.RedGradient
 import com.android.sample.ui.theme.TitleBlue
 import com.android.sample.ui.theme.Transparent
 import com.android.sample.ui.theme.White
+import com.android.sample.ui.theme.greenGradient
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -303,6 +309,40 @@ fun WorkoutCreationScreen(
                         },
                         "saveButton")
                   }
+                item {
+                    Spacer(modifier = Modifier.height(Dimensions.ExtraLargePadding))
+                    // Delete button
+                    if (editing) {
+                      Button(
+                          onClick = {
+                            selectedWorkout?.let { workoutViewModel.deleteWorkoutById(it.workoutId) }
+                            Toast.makeText(context, "Workout successfully deleted", Toast.LENGTH_SHORT)
+                                .show()
+                            navigationActions.navigateTo(Screen.MAIN)
+                          },
+                          colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            shape = LeafShape,
+                          modifier = Modifier
+                              .width(Dimensions.ButtonWidth)
+                              .height(Dimensions.ButtonHeight)
+                              .padding(Dimensions.LargePadding)
+                              .background(brush = RedGradient , shape = LeafShape)
+                              .testTag("deleteButton")) {
+                                  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                      Row(verticalAlignment = Alignment.CenterVertically) {
+                                          Icon(imageVector = Icons.Default.Delete, contentDescription = "Trash", tint = White)
+                                          Spacer(modifier = Modifier.width(8.dp))
+                                          Text(
+                                              text = "Delete",
+                                              color = White,
+                                              fontWeight = FontWeight.Bold,
+                                              fontSize = SubtitleFontSize,
+                                          )
+                                      }
+                                  }
+                          }
+                    }
+                }
                 }
           }
         }
