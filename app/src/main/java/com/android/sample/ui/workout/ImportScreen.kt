@@ -87,7 +87,7 @@ fun ImportScreen(
                           fontSize = FontSizes.MediumBigTitleFontSize),
                   fontFamily = OpenSans,
                   color = TitleBlue,
-                  modifier = Modifier.height(50.dp).testTag("ExerciseName"))
+                  modifier = Modifier.height(50.dp).testTag("ExerciseTypeTitle"))
               Divider(
                   color = Line,
                   thickness = 0.5.dp,
@@ -157,7 +157,7 @@ fun DoneWorkoutCard(
                     style =
                         MaterialTheme.typography.titleSmall.copy(
                             fontSize = 19.sp, fontFamily = ContrailOne),
-                    modifier = Modifier.padding(horizontal = 10.dp).testTag("DoneCardTitle"))
+                    modifier = Modifier.padding(horizontal = 10.dp))
               }
               Image(
                   painter =
@@ -168,8 +168,7 @@ fun DoneWorkoutCard(
                                 else -> R.drawable.yoga_innershadow
                               }),
                   contentDescription = "Workout Icon",
-                  modifier =
-                      Modifier.size(70.dp).padding(horizontal = 15.dp).testTag("DoneCardImage"))
+                  modifier = Modifier.size(70.dp).padding(horizontal = 15.dp))
             }
       }
 }

@@ -151,7 +151,8 @@ class WorkoutViewModelTest {
     `when`(repository.transferDocumentToDone(eq(workout2.workoutId), any(), any())).thenAnswer {
       val onSuccess = {
         workoutViewModel.getWorkouts()
-        workoutViewModel.getDoneWorkouts() }
+        workoutViewModel.getDoneWorkouts()
+      }
       onSuccess() // Simulate success
     }
     `when`(repository.getDocuments(any(), any())).thenAnswer {
@@ -188,7 +189,7 @@ class WorkoutViewModelTest {
     `when`(repository.importDocumentFromDone(eq(workout1.workoutId), any(), any())).thenAnswer {
       val onSuccess = {
         workoutViewModel.getWorkouts() // Refresh workouts flow
-        workoutViewModel.getDoneWorkouts() // Refresh doneWorkouts flow 
+        workoutViewModel.getDoneWorkouts() // Refresh doneWorkouts flow
       }
       onSuccess() // Simulate success
     }
@@ -217,5 +218,4 @@ class WorkoutViewModelTest {
     // Verify repository interactions
     verify(repository).importDocumentFromDone(eq(workout1.workoutId), any(), any())
   }
-
 }
