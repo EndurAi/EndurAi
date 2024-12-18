@@ -48,10 +48,7 @@ class CoachFeedBackScreenTest {
     composeTestRule.onNodeWithTag("coachFeedBackScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("coachImage").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag("rankCircle")
-        .performScrollTo()
-        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag("rankCircle").performScrollTo().assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("rankText", useUnmergedTree = true)
         .performScrollTo()

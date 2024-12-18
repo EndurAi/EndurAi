@@ -1,9 +1,6 @@
 package com.android.sample.screen
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -28,8 +25,8 @@ class CoachCaptureScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock()
-      firstTime = mock()
-      `when`(firstTime.value).thenReturn(true)
+    firstTime = mock()
+    `when`(firstTime.value).thenReturn(true)
   }
 
   @Test
