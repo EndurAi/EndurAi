@@ -45,6 +45,7 @@ import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.friends.AddFriendScreen
+import com.android.sample.ui.friends.FriendStatisticsScreen
 import com.android.sample.ui.friends.FriendsScreen
 import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
@@ -154,8 +155,13 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Friends Screen
 
     navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
-      composable(Screen.FRIENDS) { FriendsScreen(navigationActions, userAccountViewModel) }
+      composable(Screen.FRIENDS) {
+        FriendsScreen(navigationActions, userAccountViewModel, statisticsViewModel)
+      }
       composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions, userAccountViewModel) }
+      composable(Screen.FRIEND_STATS) {
+        FriendStatisticsScreen(navigationActions, userAccountViewModel, statisticsViewModel)
+      }
     }
 
     // Video Screen

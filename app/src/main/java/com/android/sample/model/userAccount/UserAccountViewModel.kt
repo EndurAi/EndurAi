@@ -18,7 +18,6 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +31,9 @@ open class UserAccountViewModel(
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : ViewModel() {
 
+  private val logTag = "UserAccountViewModel"
+  private val selectedFriend_ = MutableStateFlow<UserAccount?>(null)
+  open val selectedFriend: StateFlow<UserAccount?> = selectedFriend_.asStateFlow()
   private val _userAccount = MutableStateFlow<UserAccount?>(null)
   val userAccount: StateFlow<UserAccount?>
     get() = _userAccount.asStateFlow()
@@ -75,11 +77,11 @@ open class UserAccountViewModel(
               userId = userId,
               onSuccess = { userAccount -> _userAccount.value = userAccount },
               onFailure = { exception ->
-                Log.e("UserAccountViewModel", "Failed to fetch user account", exception)
+                Log.e(logTag, "Failed to fetch user account", exception)
                 _userAccount.value = null
               })
         } catch (e: Exception) {
-          Log.e("UserAccountViewModel", "Unexpected error fetching user account", e)
+          Log.e(logTag, "Unexpected error fetching user account", e)
           _userAccount.value = null
         }
       }
@@ -133,9 +135,7 @@ open class UserAccountViewModel(
           userAccount = currentUser,
           friendId = friendId,
           onSuccess = { getUserAccount(currentUser.userId) },
-          onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to remove friend", exception)
-          })
+          onFailure = { exception -> Log.e(logTag, "Failed to remove friend", exception) })
     }
   }
 
@@ -144,10 +144,8 @@ open class UserAccountViewModel(
       repository.sendFriendRequest(
           fromUser = currentUser,
           toUserId = toUserId,
-          onSuccess = {},
-          onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to send friend request", exception)
-          })
+          onSuccess = { getUserAccount(currentUser.userId) },
+          onFailure = { exception -> Log.e(logTag, "Failed to send friend request", exception) })
     }
   }
 
@@ -158,9 +156,7 @@ open class UserAccountViewModel(
           userAccount = currentUser,
           friendId = friendId,
           onSuccess = { getUserAccount(currentUser.userId) },
-          onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to accept friend request", exception)
-          })
+          onFailure = { exception -> Log.e(logTag, "Failed to accept friend request", exception) })
     }
   }
 
@@ -171,9 +167,7 @@ open class UserAccountViewModel(
           userAccount = currentUser,
           friendId = friendId,
           onSuccess = { getUserAccount(currentUser.userId) },
-          onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to reject friend request", exception)
-          })
+          onFailure = { exception -> Log.e(logTag, "Failed to reject friend request", exception) })
     }
   }
 
@@ -185,7 +179,7 @@ open class UserAccountViewModel(
           friendId,
           onSuccess = { friends.add(it) },
           onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to get the list of friends", exception)
+            Log.e(logTag, "Failed to get the list of friends", exception)
           })
     }
     return friends
@@ -205,7 +199,7 @@ open class UserAccountViewModel(
         query = query,
         onSuccess = { userList -> onResult(userList) },
         onFailure = { exception ->
-          Log.e("UserAccountViewModel", "Failed to search users", exception)
+          Log.e(logTag, "Failed to search users", exception)
           onFailure(exception)
         })
   }
@@ -217,7 +211,7 @@ open class UserAccountViewModel(
           requestId,
           onSuccess = { sentRequests.add(it) },
           onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+            Log.e(logTag, "Failed to get the list of sent requests", exception)
           })
     }
     return sentRequests
@@ -230,7 +224,7 @@ open class UserAccountViewModel(
           requestId,
           onSuccess = { receivedRequests.add(it) },
           onFailure = { exception ->
-            Log.e("UserAccountViewModel", "Failed to get the list of sent requests", exception)
+            Log.e(logTag, "Failed to get the list of sent requests", exception)
           })
     }
     return receivedRequests
@@ -250,11 +244,13 @@ open class UserAccountViewModel(
   val receivedRequests: StateFlow<List<UserAccount>>
     get() = _receivedRequests.asStateFlow()
 
-  private suspend fun getUserAccountAsync(userId: String): UserAccount? {
-    val deferred = CompletableDeferred<UserAccount?>()
-    repository.getUserAccount(
-        userId, onSuccess = { deferred.complete(it) }, onFailure = { deferred.complete(null) })
-    return deferred.await()
+  /**
+   * Select a friend.
+   *
+   * @param friend: The friend to select.
+   */
+  fun selectFriend(friend: UserAccount) {
+    selectedFriend_.value = friend
   }
 
   fun fetchFriends() {
@@ -264,11 +260,9 @@ open class UserAccountViewModel(
             currentUser.uid,
             onSuccess = { friendsList ->
               _friends.value = friendsList
-              Log.d("UserAccountViewModel", "Friends list: $friendsList")
+              Log.d(logTag, "Friends list: $friendsList")
             },
-            onFailure = { exception ->
-              Log.e("UserAccountViewModel", "Error fetching friends: $exception")
-            })
+            onFailure = { exception -> Log.e(logTag, "Error fetching friends: $exception") })
       }
     }
   }
@@ -280,11 +274,9 @@ open class UserAccountViewModel(
             currentUser.uid,
             onSuccess = { sentRequestsList ->
               _sentRequests.value = sentRequestsList
-              Log.d("UserAccountViewModel", "Sent requests list: $sentRequestsList")
+              Log.d(logTag, "Sent requests list: $sentRequestsList")
             },
-            onFailure = { exception ->
-              Log.e("UserAccountViewModel", "Error fetching sent requests: $exception")
-            })
+            onFailure = { exception -> Log.e(logTag, "Error fetching sent requests: $exception") })
       }
     }
   }
@@ -296,10 +288,10 @@ open class UserAccountViewModel(
             currentUser.uid,
             onSuccess = { receivedRequestsList ->
               _receivedRequests.value = receivedRequestsList
-              Log.d("UserAccountViewModel", "Received requests list: $receivedRequestsList")
+              Log.d(logTag, "Received requests list: $receivedRequestsList")
             },
             onFailure = { exception ->
-              Log.e("UserAccountViewModel", "Error fetching received requests: $exception")
+              Log.e(logTag, "Error fetching received requests: $exception")
             })
       }
     }
