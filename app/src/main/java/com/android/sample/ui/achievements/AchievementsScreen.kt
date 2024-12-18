@@ -25,9 +25,9 @@ import com.android.sample.R
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.ui.composables.CaloriesDisplay
+import com.android.sample.ui.composables.Charts
 import com.android.sample.ui.composables.ToggleButtonAchievements
 import com.android.sample.ui.composables.TopBar
-import com.android.sample.ui.composables.WeekCaloriesLineChart
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.OpenSans
@@ -67,7 +67,7 @@ fun AchievementsScreen(
                   Point(2f, 850f),
                   Point(3f, 200f),
                   Point(4f, 690f))
-          WeekCaloriesLineChart(pointsData)
+          Charts()
 
           Spacer(Modifier.weight(0.85f))
         }

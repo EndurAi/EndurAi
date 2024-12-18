@@ -57,6 +57,7 @@ foundationLayoutAndroid = "1.7.2"
 poseDetectionCommon = "17.0.0"
 datastoreCoreAndroid = "1.1.1"
 ycharts = "2.1.0"
+uiViewbinding = "1.7.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -143,6 +144,7 @@ vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = 
 
 # For the view system.
 vico-views = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
+androidx-ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding", version.ref = "uiViewbinding" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

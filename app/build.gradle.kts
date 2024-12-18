@@ -165,6 +165,7 @@ dependencies {
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.pose.detection.common)
     implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.ui.viewbinding)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
@@ -216,6 +217,8 @@ dependencies {
     implementation(libs.vico.compose.m3)
     implementation(libs.vico.core)
     implementation(libs.vico.views)
+
+    implementation ("io.github.ehsannarmani:compose-charts:0.1.0")
 
     // --------- Moshi dependencies ----------
     implementation(libs.moshi)
