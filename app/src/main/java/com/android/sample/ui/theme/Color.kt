@@ -74,3 +74,7 @@ val greenGradient =
     Brush.horizontalGradient(
         colors = listOf(Color(0xFF367F4E), Color(0xFF09CE9B)) // Green gradient colors
         )
+val RedGradient =
+    Brush.horizontalGradient(
+        colors = listOf(Color(0xFFFF0000), Color(0xFFFFA07A)) // Red gradient colors
+        )
