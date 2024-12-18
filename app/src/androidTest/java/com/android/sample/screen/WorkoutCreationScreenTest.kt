@@ -295,4 +295,25 @@ class WorkoutCreationScreenTest {
     // Check that the updateWorkout function is called
     verify(mockBodyWeightWorkoutRepository).updateDocument(any(), any(), any())
   }
+
+    @Test
+    fun testDeleteWorkoutCallsDeleteWorkout() {
+        // Set the content of the screen
+        mockBodyWeightWorkoutViewModel.selectWorkout(bodyWeightWorkouts[0])
+        composeTestRule.setContent {
+            WorkoutCreationScreen(
+                navigationActions = mockNavHostController,
+                workoutViewModel = mockBodyWeightWorkoutViewModel,
+                workoutType = WorkoutType.BODY_WEIGHT,
+                isImported = true,
+                editing = true)
+        }
+
+        composeTestRule.onNodeWithTag("deleteButton")
+            .assertIsDisplayed()
+            .assertHasClickAction()
+            .performClick()
+        // Check that the deleteDocument function is called
+        verify(mockBodyWeightWorkoutRepository).deleteDocument(any(),any(),any())
+    }
 }
