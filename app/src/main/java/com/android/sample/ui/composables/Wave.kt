@@ -15,19 +15,20 @@ import androidx.compose.ui.platform.testTag
  */
 @Composable
 fun WavyBackground(color: Color) {
-    Canvas(modifier = Modifier.fillMaxSize().testTag("wavyBackground")) {
-        val width = size.width
-        val height = size.height
+  Canvas(modifier = Modifier.fillMaxSize().testTag("wavyBackground")) {
+    val width = size.width
+    val height = size.height
 
-        val path = Path().apply {
-            moveTo(0f, height * 0.3f)
-            quadraticBezierTo(width * 0.25f, height * 0.4f, width * 0.5f, height * 0.3f)
-            quadraticBezierTo(width * 0.75f, height * 0.2f, width, height * 0.3f)
-            lineTo(width, height)
-            lineTo(0f, height)
-            close()
+    val path =
+        Path().apply {
+          moveTo(0f, height * 0.3f)
+          quadraticBezierTo(width * 0.25f, height * 0.4f, width * 0.5f, height * 0.3f)
+          quadraticBezierTo(width * 0.75f, height * 0.2f, width, height * 0.3f)
+          lineTo(width, height)
+          lineTo(0f, height)
+          close()
         }
 
-        drawPath(path = path, color = color)
-    }
+    drawPath(path = path, color = color)
+  }
 }

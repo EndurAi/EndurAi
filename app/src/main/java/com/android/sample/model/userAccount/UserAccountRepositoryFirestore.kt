@@ -248,8 +248,12 @@ class UserAccountRepositoryFirestore(
         .whereLessThan(searchedField, query + "\uf8ff") // Firebase query for prefix matching
         .get()
         .addOnSuccessListener { result ->
-          val users = result.documents.mapNotNull { it.toObject(UserAccount::class.java) }
-              .filter { it.userId != Firebase.auth.currentUser?.uid } // Do not search the current user
+          val users =
+              result.documents
+                  .mapNotNull { it.toObject(UserAccount::class.java) }
+                  .filter {
+                    it.userId != Firebase.auth.currentUser?.uid
+                  } // Do not search the current user
           Log.d(logTag, "Found users: $users")
           onSuccess(users)
         }
