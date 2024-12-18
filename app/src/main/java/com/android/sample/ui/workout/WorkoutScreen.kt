@@ -131,6 +131,7 @@ fun WorkoutScreenBody(
 ) {
   // State variables for managing the UI and workout flow
   var exerciseIndex by remember { mutableIntStateOf(0) }
+    var saveOption by remember { mutableStateOf(false) }
   val context = LocalContext.current
   val exerciseState =
       exerciseStateList?.get(exerciseIndex)
@@ -276,13 +277,18 @@ fun WorkoutScreenBody(
               exerciseList = exerciseStateList ?: emptyList(),
               userAccountViewModel = userAccountViewModel)
       statisticsViewModel.addWorkoutStatistics(stats)
-        workoutViewModel.transferWorkoutToDone(workoutID)
+        if (saveOption) {
+            workoutViewModel.transferWorkoutToDone(workoutID)
+        }else{
+            workoutViewModel.deleteWorkoutById(workoutID)
+        }
       navigationActions.navigateTo(Screen.MAIN)
     }
   }
 
   // Scaffold for basic material design layout
   Scaffold(
+      modifier = Modifier.fillMaxHeight(1f),
       topBar = {
         if (!summaryScreenIsDisplayed) {
           CenterAlignedTopAppBar(
@@ -313,6 +319,7 @@ fun WorkoutScreenBody(
                 Modifier.fillMaxSize()
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
+                    .fillMaxHeight()
                     .testTag("WorkoutScreenBodyColumn"),
             horizontalAlignment = Alignment.CenterHorizontally) {
               if (summaryScreenIsDisplayed) {
@@ -321,7 +328,9 @@ fun WorkoutScreenBody(
                     hasWarmUp = hasWarmUp,
                     exerciseStateList.filter { it.exercise.type.workoutType != WorkoutType.WARMUP },
                     onfinishButtonClicked = { nextExercise() },
-                    userAccountViewModel = userAccountViewModel)
+                    userAccountViewModel = userAccountViewModel,
+                    saveOption = saveOption,
+                    onSaveSwitch = {saveOption = it} )
               } else {
                 // Column for displaying exercise information
                 Column(
