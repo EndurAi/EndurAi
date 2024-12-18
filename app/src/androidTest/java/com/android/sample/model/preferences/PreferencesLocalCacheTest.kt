@@ -41,15 +41,4 @@ class PreferencesLocalCacheTest {
     val cachedPreferences = localCache.getPreferences().first()
     assertThat(cachedPreferences, `is`(nullValue()))
   }
-
-  @Test
-  fun getPreferences_returns_null_when_no_data_cached() = runTest {
-    // Ensure no data is cached
-    localCache.clearPreferences()
-
-    val cachedPreferences = localCache.getPreferences().first()
-
-    // Verify that null is returned when no data is cached
-    assertThat(cachedPreferences, `is`(nullValue()))
-  }
 }
