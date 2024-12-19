@@ -66,8 +66,10 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                             .width(100.dp)
                             .clip(RoundedCornerShape(25.dp))
                             .clickable {
+                                if(!selected){
+                                    onClick()
+                                }
                               selected = true
-                              onClick()
                             },
                     contentAlignment = Alignment.Center) {
                       Text(
@@ -85,8 +87,10 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                             .width(100.dp)
                             .clip(RoundedCornerShape(25.dp))
                             .clickable {
+                                if(selected){
+                                    onClick()
+                                }
                               selected = false
-                              onClick()
                             },
                     contentAlignment = Alignment.Center) {
                       Text(
