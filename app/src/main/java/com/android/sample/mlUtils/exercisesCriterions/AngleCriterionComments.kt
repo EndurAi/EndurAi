@@ -100,14 +100,14 @@ enum class AngleCriterionComments(
               PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_OPPSHOULDER,
           )),
   RIGHT_ELBOW_SHOULDER_HIP_NOT_RIGHT(
-      "Keep your right arm straight parallel to the ground.",
+      "Keep your elbows under your shoulders.",
       focusedJoints =
           listOf(
               PoseDetectionJoints.LEFT_ELBOW_SHOULDER_HIP,
               PoseDetectionJoints.RIGHT_ELBOW_SHOULDER_HIP,
           )),
   BOTH_ELBOW_SHOULDER_HIP_NOT_RIGHT(
-      "Keep your arms straight parallel to the ground.",
+      "Keep your elbows under your shoulders.",
       focusedJoints =
           listOf(
               PoseDetectionJoints.LEFT_ELBOW_SHOULDER_HIP,

@@ -64,10 +64,17 @@ val MediumBlue = Color(0xFFB3E5FC)
 val BlueTabStrong = Color(0xFF1E3A8A)
 val BlueTabLight = Color(0xFFB3E5FC)
 val ProfileBlue = Color(0xFFADD8E6)
+val AddPurple = Color(0xFF6C63FF)
+val WorkoutCardLight = Color(0xFFE3F2FD)
+val WorkoutCardStrong = Color(0xFFBBDEFB)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
 val greenGradient =
     Brush.horizontalGradient(
         colors = listOf(Color(0xFF367F4E), Color(0xFF09CE9B)) // Green gradient colors
+        )
+val RedGradient =
+    Brush.horizontalGradient(
+        colors = listOf(Color(0xFFFF0000), Color(0xFFFFA07A)) // Red gradient colors
         )
