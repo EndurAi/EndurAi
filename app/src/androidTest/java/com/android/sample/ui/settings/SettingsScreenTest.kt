@@ -57,10 +57,6 @@ class SettingsScreenTest {
     userAccountViewModel = mock(UserAccountViewModel::class.java)
     mockContext = mock(Context::class.java)
 
-    // Mock the workout view models
-    // Get application context for testing
-    val context = ApplicationProvider.getApplicationContext<Context>()
-
     // Use a real WorkoutLocalCache with a real Context
     // This ensures no NullPointerException from null context.
     workoutLocalCache = WorkoutLocalCache(context)
@@ -81,10 +77,12 @@ class SettingsScreenTest {
   fun displayAllComponents() {
     // Set up the SettingsScreen for testing
     composeTestRule.setContent {
-      SettingsScreen(navigationActions, preferencesViewModel, userAccountViewModel)
-    }
-    composeTestRule.setContent {
-      SettingsScreen(navigationActions, bodyWeightViewModel, yogaViewModel, userAccountViewModel)
+      SettingsScreen(
+          navigationActions,
+          preferencesViewModel,
+          bodyWeightViewModel,
+          yogaViewModel,
+          userAccountViewModel)
     }
 
     // Verify all essential components are displayed
@@ -100,7 +98,7 @@ class SettingsScreenTest {
     reset(navigationActions)
 
     composeTestRule.setContent {
-      SettingsScreen(navigationActions,preferencesViewModel, bodyWeightViewModel, yogaViewModel)
+      SettingsScreen(navigationActions, preferencesViewModel, bodyWeightViewModel, yogaViewModel)
     }
     // Perform click on the logout button
     composeTestRule.onNodeWithTag("logoutButton").performClick()
@@ -119,10 +117,12 @@ class SettingsScreenTest {
 
     // Set up the SettingsScreen for testing
     composeTestRule.setContent {
-      SettingsScreen(navigationActions, preferencesViewModel, userAccountViewModel)
-    }
-    composeTestRule.setContent {
-      SettingsScreen(navigationActions, bodyWeightViewModel, yogaViewModel, userAccountViewModel)
+      SettingsScreen(
+          navigationActions,
+          preferencesViewModel,
+          bodyWeightViewModel,
+          yogaViewModel,
+          userAccountViewModel)
     }
 
     // Perform click on the delete account button

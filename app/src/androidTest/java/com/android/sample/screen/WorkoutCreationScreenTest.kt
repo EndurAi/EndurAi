@@ -8,8 +8,8 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.test.core.app.ApplicationProvider
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail

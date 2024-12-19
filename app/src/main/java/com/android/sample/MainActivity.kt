@@ -107,8 +107,6 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val context = LocalContext.current
   val preferencesLocalCache = PreferencesLocalCache(context)
 
-  val context = LocalContext.current
-
   val workoutLocalCache = WorkoutLocalCache(context)
 
   val userAccountViewModel: UserAccountViewModel =
@@ -116,9 +114,6 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val preferenceRepository =
       PreferencesRepositoryFirestore(Firebase.firestore, preferencesLocalCache)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository, preferencesLocalCache)
-      viewModel(factory = UserAccountViewModel.provideFactory(context))
-  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
-  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
