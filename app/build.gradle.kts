@@ -209,16 +209,7 @@ dependencies {
     testImplementation(libs.robolectric)
 
     // ----------       Graphs dependency     ------------
-
-    implementation (libs.ycharts)
-
-    implementation(libs.vico.compose)
-    implementation(libs.vico.compose.m2)
-    implementation(libs.vico.compose.m3)
-    implementation(libs.vico.core)
-    implementation(libs.vico.views)
-
-    implementation ("io.github.ehsannarmani:compose-charts:0.1.0")
+    implementation (libs.compose.charts)
 
     // --------- Moshi dependencies ----------
     implementation(libs.moshi)
@@ -229,7 +220,6 @@ dependencies {
 
     // --------- Coil dependencies ----------
     implementation(libs.coil.compose)
-//    implementation(libs.coil.core)
 
     val camerax_version = "1.3.0-alpha07"
     //// CAMERA STUFF ////
