@@ -63,6 +63,7 @@ import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoLibraryScreen
 import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
+import com.android.sample.ui.workout.ImportScreen
 import com.android.sample.ui.workout.RunningSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.android.sample.ui.workout.WorkoutOverviewScreen
@@ -221,12 +222,24 @@ fun MainApp(startDestination: String = Route.AUTH) {
           composable(Screen.IMPORTORCREATE_BODY_WEIGHT) {
             ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
           }
+          composable(Screen.IMPORT_SCREEN_BODYWEIGHT) {
+            ImportScreen(
+                navigationActions,
+                workoutViewModel = bodyweightWorkoutViewModel,
+                workoutType = WorkoutType.BODY_WEIGHT)
+          }
         }
 
     // Import or Create Screen for yoga workout
     navigation(startDestination = Screen.IMPORTORCREATE_YOGA, route = Route.IMPORTORCREATE_YOGA) {
       composable(Screen.IMPORTORCREATE_YOGA) {
         ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.YOGA)
+      }
+      composable(Screen.IMPORT_SCREEN_YOGA) {
+        ImportScreen(
+            navigationActions,
+            workoutViewModel = yogaWorkoutViewModel,
+            workoutType = WorkoutType.YOGA)
       }
     }
 

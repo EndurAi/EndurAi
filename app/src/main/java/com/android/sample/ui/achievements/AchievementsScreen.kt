@@ -17,7 +17,7 @@ import com.android.sample.ui.navigation.NavigationActions
 @Composable
 fun AchievementsScreen(
     navigationActions: NavigationActions,
-    statisticsViewModel: StatisticsViewModel
+    statisticsViewModel: StatisticsViewModel,
 ) {
   val workouts = statisticsViewModel.workoutStatistics.collectAsState().value
   val statistics = Statistics(statisticsViewModel.workoutStatistics)

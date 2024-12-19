@@ -170,7 +170,7 @@ class EndToEndTest {
     importOrCreateScreenIsWellDisplayed()
 
     // we go to the import screen
-    composeTestRule.onNodeWithText("Choose from existing").performClick()
+    composeTestRule.onNodeWithText("Import from done").performClick()
 
     workoutSelectionScreenIsWellDisplayed()
 
@@ -243,9 +243,7 @@ class EndToEndTest {
   private fun workoutSelectionScreenIsWellDisplayed() {
     val testName = "workoutSelectionScreenIsWellDisplayed"
 
-    nodeControl("WorkoutSelectionScreen", testName)
-
-    nodeControl("emptyWorkoutPrompt", testName)
+    nodeControl("ImportScreen", testName)
 
     nodeControl("TopBar", testName)
   }

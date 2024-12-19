@@ -14,11 +14,17 @@ open class WorkoutViewModel<out T : Workout>(
   val _workouts = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
   val workouts: StateFlow<List<T>> = _workouts.asStateFlow()
 
+  val doneWorkouts_ = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
+  val doneWorkouts: StateFlow<List<T>> = doneWorkouts_
+
   private val selectedWorkout_ = MutableStateFlow<T?>(null)
   open val selectedWorkout: StateFlow<T?> = selectedWorkout_.asStateFlow()
 
   init {
-    repository.init { getWorkouts() }
+    repository.init {
+      getWorkouts()
+      getDoneWorkouts()
+    }
   }
 
   private fun cacheWorkouts(workouts: List<T>) {
@@ -52,6 +58,10 @@ open class WorkoutViewModel<out T : Workout>(
           onFailure = {})
     }
   }
+  /** Gets all Workout documents. */
+  fun getDoneWorkouts() {
+    repository.getDoneDocuments(onSuccess = { doneWorkouts_.value = it }, onFailure = {})
+  }
 
   /**
    * Adds a Workout document.
@@ -62,6 +72,25 @@ open class WorkoutViewModel<out T : Workout>(
     repository.addDocument(obj = workout, onSuccess = { getWorkouts() }, onFailure = {})
   }
 
+  fun transferWorkoutToDone(id: String) {
+    repository.transferDocumentToDone(
+        id = id,
+        onSuccess = {
+          getWorkouts()
+          getDoneWorkouts()
+        },
+        onFailure = {})
+  }
+
+  fun importWorkoutFromDone(id: String) {
+    repository.importDocumentFromDone(
+        id = id,
+        onSuccess = {
+          getWorkouts()
+          getDoneWorkouts()
+        },
+        onFailure = {})
+  }
   /**
    * Updates a Workout document.
    *

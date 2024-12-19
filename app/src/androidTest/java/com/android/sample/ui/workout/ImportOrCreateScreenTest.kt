@@ -67,9 +67,9 @@ class ImportOrCreateScreenTest {
           navigationActions = navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
     }
     // Perform click on the "Import" button
-    composeTestRule.onNodeWithText("Choose from existing").performClick()
+    composeTestRule.onNodeWithText("Import from done").performClick()
     // Verify that the navigation action is called
-    verify(navigationActions).navigateTo(Screen.CHOOSE_BODYWEIGHT)
+    verify(navigationActions).navigateTo(Screen.IMPORT_SCREEN_BODYWEIGHT)
   }
 
   @Test
@@ -96,9 +96,9 @@ class ImportOrCreateScreenTest {
       ImportOrCreateScreen(navigationActions = navigationActions, workoutType = WorkoutType.YOGA)
     }
     // Perform click on the "Import" button
-    composeTestRule.onNodeWithText("Choose from existing").performClick()
+    composeTestRule.onNodeWithText("Import from done").performClick()
     // Verify that the navigation action is called
-    verify(navigationActions).navigateTo(Screen.CHOOSE_YOGA)
+    verify(navigationActions).navigateTo(Screen.IMPORT_SCREEN_YOGA)
   }
 
   @Test
