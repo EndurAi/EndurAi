@@ -40,7 +40,7 @@ authentication to track their progress.
 3. Sensor use: We use the camera for workout analysis as well as GPS for running
 plans.
 4. Offline mode: Without internet connectivity, users are still able to perform
-cached workouts. He can also still use the ML feature.
+cached workouts. They can also still use the ML feature.
 
 # Figma 
 We have a Figma project for the app design and navigation as well as the architecture diagram. Here is the [link](https://www.figma.com/design/rZgylXKE9PmQgKigHpzMtr/Sport-Companion?node-id=0-1&m=dev&t=RZbHJEZFt2Uhlm2P-1) to the project.
