@@ -301,4 +301,54 @@ class WorkoutRepositoryFirestoreTest {
     // Verify that the collection reference's get method was called
     verify(mockCollectionDoneDocumentName).get()
   }
+
+  @Test
+  fun getDoneDocuments_shouldRetrieveAllDoneWorkouts() {
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot1 = mock(DocumentSnapshot::class.java)
+    val mockDocumentSnapshot2 = mock(DocumentSnapshot::class.java)
+
+    val workoutId1 = "workout-1"
+    val workoutId2 = "workout-2"
+    `when`(mockDocumentSnapshot1.exists()).thenReturn(true)
+    `when`(mockDocumentSnapshot1.toObject(WorkoutID::class.java))
+        .thenReturn(WorkoutID(workoutid = workoutId1))
+    `when`(mockDocumentSnapshot2.exists()).thenReturn(true)
+    `when`(mockDocumentSnapshot2.toObject(WorkoutID::class.java))
+        .thenReturn(WorkoutID(workoutid = workoutId2))
+
+    `when`(mockQuerySnapshot.documents)
+        .thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
+    `when`(mockCollectionDoneDocumentName.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    val mockWorkoutSnapshot1 = mock(DocumentSnapshot::class.java)
+    val mockWorkoutSnapshot2 = mock(DocumentSnapshot::class.java)
+    `when`(mockWorkoutSnapshot1.exists()).thenReturn(true)
+    `when`(mockWorkoutSnapshot2.exists()).thenReturn(true)
+
+    `when`(mockWorkoutSnapshot1.data).thenReturn(mapOf("key" to "value"))
+    `when`(mockWorkoutSnapshot2.data).thenReturn(mapOf("key" to "value"))
+
+    `when`(mockMainDocumentName.document(workoutId1).get())
+        .thenReturn(Tasks.forResult(mockWorkoutSnapshot1))
+    `when`(mockMainDocumentName.document(workoutId2).get())
+        .thenReturn(Tasks.forResult(mockWorkoutSnapshot2))
+
+    `when`(mockWorkoutSnapshot1.toObject(BodyWeightWorkout::class.java))
+        .thenReturn(bodyWeightWorkout)
+    `when`(mockWorkoutSnapshot2.toObject(YogaWorkout::class.java)).thenReturn(yogaWorkout)
+
+    workoutRepositoryFirestore1.getDoneDocuments(
+        onSuccess = { workouts ->
+          // Verify the returned list of workouts
+          assert(workouts.size == 2)
+          assert(workouts.any { it.workoutId == workoutId1 })
+          assert(workouts.any { it.workoutId == workoutId2 })
+        },
+        onFailure = { fail("Failure callback should not be called") })
+
+    verify(mockCollectionDoneDocumentName).get()
+    verify(mockMainDocumentName).document(workoutId1)
+    verify(mockMainDocumentName).document(workoutId2)
+  }
 }
