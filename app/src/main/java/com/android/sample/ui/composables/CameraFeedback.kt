@@ -104,7 +104,7 @@ class CameraFeedBack {
         if (!poseDetectionRequired) {
           return@LaunchedEffect
         }
-        cameraViewModel.lastPose.collect { _ ->
+        cameraViewModel.lastPose.collect { pose ->
           val poseLandmarks = cameraViewModel.getPoseLandMarks()
           val DURATION_OF_ANALYSIS =
               2000L // duration in ms the sample should represent for the live feedback -> this
