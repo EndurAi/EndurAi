@@ -326,7 +326,6 @@ class WorkoutRepositoryFirestoreTest {
     `when`(mockWorkoutSnapshot1.exists()).thenReturn(true)
     `when`(mockWorkoutSnapshot2.exists()).thenReturn(true)
 
-
     `when`(mockWorkoutSnapshot1.data).thenReturn(mapOf("key" to "value"))
     `when`(mockWorkoutSnapshot2.data).thenReturn(mapOf("key" to "value"))
 
