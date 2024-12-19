@@ -48,4 +48,16 @@
     <string name="NoWorkout">No Workout</string>
     <string name="Summary">Summary</string>
     <string name="achievements">Achievements</string>
+    <string name="stats">Stats</string>
+    <string name="history">History</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="son">Son</string>
+    <string name="typeRepartition">Type exercise repartition</string>
+    <string name="weeklyCalories">Calories of the week</string>
+    <string name="caloriesLabel">calories (kcal)</string>
 </resources>

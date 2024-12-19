@@ -15,6 +15,8 @@ import kotlinx.datetime.DayOfWeek
  */
 class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatistics>>) {
 
+  private val convertionFactor = 0.621371
+
   val today = LocalDateTime.now()
 
   /** Get the total number of workouts. */
@@ -86,7 +88,7 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
   }
 
   /** Get the distance of the week per day  */
-  fun getDistanceOfTheWeekPerDay(): List<Double> {
+  fun getDistanceOfTheWeekPerDay(isInMile : Boolean): List<Double> {
 
 
     val mondayOfTheWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
@@ -100,7 +102,8 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
       }
     statsOfTheWeek.forEach { stats -> distancePerDay[stats.date.dayOfWeek.value - 1] += stats.distance }
 
-    return distancePerDay
+
+    return if(isInMile) distancePerDay.map { d -> d * convertionFactor } else distancePerDay
   }
 
 

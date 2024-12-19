@@ -1,5 +1,6 @@
 package com.android.sample.ui.achievements
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,12 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.model.achievements.StatisticsViewModel
+import com.android.sample.model.preferences.PreferencesViewModel
+import com.android.sample.model.preferences.UnitsSystem
 import com.android.sample.ui.composables.CaloriesDisplay
 import com.android.sample.ui.composables.Charts
 import com.android.sample.ui.composables.PieChartWorkoutType
@@ -38,9 +43,11 @@ import com.android.sample.ui.theme.OpenSans
 @Composable
 fun AchievementsScreen(
     navigationActions: NavigationActions,
-    statisticsViewModel: StatisticsViewModel
+    statisticsViewModel: StatisticsViewModel,
+    preferencesViewModel: PreferencesViewModel
 ) {
   val statistics = Statistics(statisticsViewModel.workoutStatistics)
+    val preferences = preferencesViewModel.preferences.collectAsState().value
 
   var isStatsSelected by remember { mutableStateOf(true) }
 
@@ -53,7 +60,7 @@ fun AchievementsScreen(
           Spacer(Modifier.weight(0.50f))
 
           Text(
-              text = "Calories of the week",
+              text = stringResource(R.string.weeklyCalories),
               fontSize = 28.sp,
               fontFamily = OpenSans,
               fontWeight = FontWeight.SemiBold,
@@ -70,7 +77,7 @@ fun AchievementsScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
-                Charts(data = statistics.getCaloriesOfTheWeekToList(), labelTitle = "calories (kcal)")
+                Charts(data = statistics.getCaloriesOfTheWeekToList(), labelTitle = stringResource(R.string.caloriesLabel))
 
                 Spacer(Modifier.height(4.dp))
 
@@ -79,7 +86,13 @@ fun AchievementsScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
-                Charts(data = statistics.getDistanceOfTheWeekPerDay(), labelTitle = "distance (km)")
+                Charts(data = statistics.getDistanceOfTheWeekPerDay(isInMile = (preferences?.unitsSystem
+                    ?: UnitsSystem.METRIC) == UnitsSystem.IMPERIAL
+                ), labelTitle = "distance " + if((preferences?.unitsSystem
+                        ?: UnitsSystem.METRIC) == UnitsSystem.IMPERIAL
+                ){
+                    "(mile)"
+                } else "(km)")
 
                 Spacer(Modifier.height(2.dp))
 
@@ -93,7 +106,7 @@ fun AchievementsScreen(
 
 
             Text(
-                text = "Type exercise repartition",
+                text = stringResource(R.string.typeRepartition),
                 fontSize = 28.sp,
                 fontFamily = OpenSans,
                 fontWeight = FontWeight.SemiBold,

@@ -13,9 +13,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.White
@@ -73,7 +75,7 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                             },
                     contentAlignment = Alignment.Center) {
                       Text(
-                          text = "Stats",
+                          text = stringResource(R.string.stats),
                           fontSize = 18.sp,
                           fontFamily = OpenSans,
                           fontWeight = FontWeight.SemiBold,
@@ -94,7 +96,7 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                             },
                     contentAlignment = Alignment.Center) {
                       Text(
-                          text = "History",
+                          text = stringResource(R.string.history),
                           fontSize = 18.sp,
                           fontFamily = OpenSans,
                           fontWeight = FontWeight.SemiBold,

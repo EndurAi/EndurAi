@@ -15,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueGradient
@@ -112,7 +114,7 @@ fun MonthView(yearMonth: YearMonth, statistics: Statistics) {
 
     // Weekdays row
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-      listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
+      listOf(stringResource(R.string.mon, stringResource(R.string.tue), stringResource(R.string.wed), stringResource(R.string.thu), stringResource(R.string.fri), stringResource(R.string.sat), stringResource(R.string.son))).forEach {
         Text(
             text = it,
             fontSize = 16.sp,
