@@ -16,6 +16,7 @@ object Dimensions {
 object FontSizes {
   val BigTitleFontSize = 45.sp
   val TitleFontSize = 20.sp
+  val MediumBigTitleFontSize = 30.sp
   val MediumTitleFontSize = 18.sp
   val SubtitleFontSize = 16.sp
   val ButtonFontSize = 14.sp

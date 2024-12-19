@@ -56,4 +56,31 @@ interface WorkoutRepository<T : Workout> {
    * @param onFailure A callback function that is invoked in case of an error during the deletion.
    */
   fun deleteDocument(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Transfer a finished workout to a done collection
+   *
+   * @param id The id of the workout to transfer.
+   * @param onSuccess A callback function that is invoked upon successful deletion.
+   * @param onFailure A callback function that is invoked in case of an error during the deletion.
+   */
+  fun transferDocumentToDone(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Import a done workout to the current collection.
+   *
+   * @param id The id of the workout to transfer.
+   * @param onSuccess A callback function that is invoked upon successful deletion.
+   * @param onFailure A callback function that is invoked in case of an error during the deletion.
+   */
+  fun importDocumentFromDone(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Retrieves done documents from the Firestore.
+   *
+   * @param onSuccess A callback function that is invoked with the workout data upon successful
+   *   retrieval.
+   * @param onFailure A callback function that is invoked in case of an error during the retrieval.
+   */
+  fun getDoneDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit)
 }
