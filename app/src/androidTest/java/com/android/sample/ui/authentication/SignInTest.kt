@@ -8,6 +8,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.userAccount.Gender
 import com.android.sample.model.userAccount.HeightUnit
@@ -22,6 +25,7 @@ import com.google.firebase.Timestamp
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import java.util.Date
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +45,7 @@ class SignInTest : TestCase() {
 
   @Before
   fun setUp() {
+    Intents.init()
     runTest {
       // Mock the NavigationActions
       navigationActions = mock(NavigationActions::class.java)
@@ -75,6 +80,11 @@ class SignInTest : TestCase() {
     }
   }
 
+  @After
+  fun tearDown() {
+    Intents.release()
+  }
+
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {
     composeTestRule.onNodeWithTag("loginTitle").assertIsDisplayed()
@@ -89,6 +99,6 @@ class SignInTest : TestCase() {
     composeTestRule.onNodeWithTag("loginButton").performClick()
 
     // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-    // intended(toPackage("com.google.android.gms"))
+    intended(toPackage("com.google.android.gms"))
   }
 }
