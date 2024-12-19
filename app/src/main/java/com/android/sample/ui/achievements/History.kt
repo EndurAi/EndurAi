@@ -148,7 +148,7 @@ fun MonthView(yearMonth: YearMonth, statistics: Statistics) {
     calendarGrid.chunked(7).forEach { week ->
       Spacer(modifier = Modifier.height(8.dp))
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-        week.forEach { day -> DayView(day, yearMonth, statisticsDates = statistics.getDates()) }
+        week.forEach { day -> DayView(day, yearMonth, statisticsDates = statistics.getDates().map { d -> d.toLocalDate() }) }
       }
     }
   }

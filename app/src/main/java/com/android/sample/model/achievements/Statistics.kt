@@ -19,25 +19,25 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
 
   val today = LocalDateTime.now()
 
-  /** Get the total number of workouts. */
-  fun getTotalWorkouts(): Int {
-    return workoutStatisticsFlow.value.size
-  }
+    /** Get the total number of workouts. */
+    fun getTotalWorkouts(): Int {
+        return workoutStatisticsFlow.value.size
+    }
 
-  /** Get a list of all workout dates. */
-  fun getDates(): List<LocalDate> {
-    return workoutStatisticsFlow.value.map { it.date.toLocalDate() }
-  }
+    /** Get a list of all workout dates. */
+    fun getDates(): List<LocalDateTime> {
+        return workoutStatisticsFlow.value.map { it.date }
+    }
 
-  /** Get the total calories burnt across all workouts. */
-  fun getTotalCalories(): Int {
-    return workoutStatisticsFlow.value.sumOf { it.caloriesBurnt }
-  }
+    /** Get the total calories burnt across all workouts. */
+    fun getTotalCalories(): Int {
+        return workoutStatisticsFlow.value.sumOf { it.caloriesBurnt }
+    }
 
-  /** Get workouts grouped by type (e.g., BODY_WEIGHT, YOGA, etc.). */
-  fun getWorkoutsByType(): Map<WorkoutType, List<WorkoutStatistics>> {
-    return workoutStatisticsFlow.value.groupBy { it.type }
-  }
+    /** Get workouts grouped by type (e.g., BODY_WEIGHT, YOGA, etc.). */
+    fun getWorkoutsByType(): Map<WorkoutType, List<WorkoutStatistics>> {
+        return workoutStatisticsFlow.value.groupBy { it.type }
+    }
 
   /** Get total workouts calories of the week */
   fun getCaloriesOfTheWeek(): Int {
