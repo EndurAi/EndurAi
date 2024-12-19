@@ -10,6 +10,8 @@ import com.android.sample.mlUtils.exercisesCriterions.JumpingJacksOpenCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsDownCriterions
 import com.android.sample.mlUtils.exercisesCriterions.PushUpsUpCrierions
+import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_LEFT_Criterions
+import com.android.sample.mlUtils.exercisesCriterions.Warrior_2_RIGHT_Criterions
 import com.android.sample.model.workout.ExerciseType
 import kotlin.math.abs
 
@@ -75,12 +77,17 @@ class ExerciseFeedBack {
      * @property angleCriterionSet A set of pairs of `AngleCriterion` objects representing the
      *   criteria for the exercise.
      * @property symmetric A boolean indicating if the exercise is symmetric.
-     * @property name The name of the exercise.
+     * @property criterionName name of the criterion.
+     * @property exerciseName name of the exercise.
+     * @property isCommented whether the coach should return a comment based on result of the
+     *   criteria
      */
     data class ExerciseCriterion(
         val angleCriterionSet: Set<Pair<AngleCriterion, AngleCriterion>>,
         val symmetric: Boolean = true,
-        val name: String
+        val criterionName: String,
+        val exerciseName: String,
+        val isCommented: Boolean = true
     )
     /**
      * Asses the landmarks to the given angle criterion
@@ -154,25 +161,29 @@ class ExerciseFeedBack {
      */
     fun preambleCriterion(
         exerciseCriterion: ExerciseCriterion,
-        onSuccess: () -> Unit,
-        onFailure: () -> Unit
+        onSuccess: () -> Unit = {},
+        onFailure: () -> Unit = {}
     ): ExerciseCriterion {
+      val mult = 2f
       val preambleCriterion =
           exerciseCriterion.angleCriterionSet.map { (angleCriterionL, angleCriterionR) ->
             AngleCriterion(
                 joints = angleCriterionL.joints,
                 targetAngle = angleCriterionL.targetAngle,
-                delta = angleCriterionL.delta * 1.5,
+                delta = angleCriterionL.delta * mult,
                 onSuccess = onSuccess,
                 onFailure = onFailure) to
                 AngleCriterion(
                     joints = angleCriterionR.joints,
                     targetAngle = angleCriterionR.targetAngle,
-                    delta = angleCriterionR.delta * 1.5,
+                    delta = angleCriterionR.delta * mult,
                     onSuccess = onSuccess,
                     onFailure = onFailure)
           }
-      return ExerciseCriterion(preambleCriterion.toSet(), name = "")
+      return ExerciseCriterion(
+          preambleCriterion.toSet(),
+          criterionName = exerciseCriterion.criterionName,
+          exerciseName = exerciseCriterion.exerciseName)
     }
 
     /**
@@ -186,7 +197,7 @@ class ExerciseFeedBack {
           when (exerciseType) {
             ExerciseType.DOWNWARD_DOG -> listOf(DownwardDogCriterions)
             ExerciseType.TREE_POSE -> TODO()
-            ExerciseType.WARRIOR_II -> TODO()
+            ExerciseType.WARRIOR_II -> listOf(Warrior_2_RIGHT_Criterions, Warrior_2_LEFT_Criterions)
             ExerciseType.PUSH_UPS -> listOf(PushUpsUpCrierions, PushUpsDownCriterions)
             ExerciseType.SQUATS -> TODO()
             ExerciseType.PLANK -> listOf(PlankExerciseCriterions)

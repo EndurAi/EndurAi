@@ -29,7 +29,7 @@ import com.android.sample.ui.theme.greenGradient
 import com.android.sample.ui.workout.LeafShape
 
 @Composable
-fun SaveButton(onSaveClick: () -> Unit, testTag: String) {
+fun SaveButton(onSaveClick: () -> Unit, testTag: String, text: String = "Save") {
 
   Button(
       onClick = onSaveClick,
@@ -44,10 +44,10 @@ fun SaveButton(onSaveClick: () -> Unit, testTag: String) {
       contentPadding = PaddingValues()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
           Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = Icons.Default.Check, contentDescription = "Save", tint = Color.White)
+            Icon(imageVector = Icons.Default.Check, contentDescription = text, tint = Color.White)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Save",
+                text = text,
                 color = White,
                 fontWeight = FontWeight.Bold,
                 fontSize = SubtitleFontSize,

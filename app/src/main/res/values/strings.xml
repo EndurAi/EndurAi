@@ -10,7 +10,7 @@
     <string name="TitleTabYoga">Yoga</string>
     <string name="TitleTabRunning">Running</string>
     <string name="TitleTabWarmup">Warm-up</string>
-    <string name="setting_title">Settings</string>
+    <string name="setting_title">My Profile</string>
     <string name="calendar_title">Calendar</string>
     <string name="addButton">+</string>
     <string name="runningTitle">Running</string>
@@ -64,4 +64,22 @@
     <string name="mileWithParentheses">(mile)</string>
     <string name="kmWithParentheses">(km)</string>
     <string name="Kcal">Kcal</string>
+    <string name="coach_feedback_title">Coach Feedback</string>
+    <string name="SubmitButton">Submit</string>
+    <string name="SocialNewConnections">New Connections</string>
+    <string name="SocialInvitations">Invitations</string>
+    <string name="NoFriends">Oh, you currently don’t have any friends.\nClick on Add to expand your network!</string>
+    <string name="NoInvitations">Oh no! You have no invitations.</string>
+    <string name="Accept">Accept</string>
+    <string name="Reject">Reject</string>
+    <string name="Remove">Remove</string>
+    <string name="SendRequest">Send Request</string>
+    <string name="RequestSent">Request sent</string>
+    <string name="Import">Import</string>
+    <string name="ImportFromDone">Import from done</string>
+    <string name="ImportSuccessful">Workout imported successfully</string>
+    <string name="SaveWorkout">Save workout</string>
+    <string name="NoDoneWorkout">You have no done workouts yet</string>
+    <string name="FriendsStatsTitle">Workout Statistics</string>
+    <string name="note_info">The grades are in the following order: S\nA\nB\nC\nD\nS being the best and meaning you\'re doing it perfectly\nWith D however, you should consider learning to do the exercise properly in order to train efficiently and not get injured</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,8 +47,11 @@ import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.ExerciseType
+import com.android.sample.model.workout.WorkoutMetValues
+import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.Green
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.LightBlue2
@@ -75,7 +83,9 @@ fun WorkoutSummaryScreen(
     hasWarmUp: Boolean,
     exerciseList: List<ExerciseState>,
     onfinishButtonClicked: () -> Unit,
-    userAccountViewModel: UserAccountViewModel
+    userAccountViewModel: UserAccountViewModel,
+    saveOption: Boolean,
+    onSaveSwitch: (Boolean) -> Unit
 ) {
   val userAccount by userAccountViewModel.userAccount.collectAsState()
   Column(
@@ -83,7 +93,8 @@ fun WorkoutSummaryScreen(
       verticalArrangement = Arrangement.Top,
       modifier =
           Modifier.testTag("WorkoutSummaryScreen")
-              .padding(top = 20.dp)
+              .fillMaxHeight()
+              .padding(vertical = 20.dp)
               .background(LightBackground)) {
         Text(
             text = workoutName,
@@ -195,6 +206,8 @@ fun WorkoutSummaryScreen(
         fontWeight = FontWeight.Bold,
     )
   }
+  Spacer(modifier = Modifier.fillMaxHeight(0.5f))
+  SaveSwitch(saveOption = saveOption, onSaveSwitch = onSaveSwitch)
   Spacer(Modifier.size(15.dp))
 
   NextButton(
@@ -207,6 +220,54 @@ fun WorkoutSummaryScreen(
               .background(brush = BlueGradient, shape = LeafShape)
               .testTag("FinishButton"),
       arrow = false)
+  Spacer(Modifier.size(15.dp))
+}
+
+/**
+ * Switch for the user to choose whether or not to save the workout in done documents
+ *
+ * @param saveOption the state of the switch
+ * @param onSaveSwitch the function to call when the user click on the switch
+ */
+@Composable
+fun SaveSwitch(saveOption: Boolean, onSaveSwitch: (Boolean) -> Unit) {
+  Card(
+      modifier =
+          Modifier.padding(horizontal = 16.dp, vertical = 8.dp) // Adjust padding as needed
+              .shadow(elevation = 3.dp, shape = RoundedCornerShape(25.dp)) // Add shadow
+              .clip(RoundedCornerShape(25.dp)), // Ensure rounded corners
+      colors = CardDefaults.cardColors(containerColor = White), // Set card background color
+      elevation = CardDefaults.elevatedCardElevation(8.dp), // Add elevation
+  ) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            Modifier.clip(RoundedCornerShape(25.dp)) // Add rounded corners
+                .background(White) // Add background color
+                .padding(8.dp)) {
+          Image(
+              painter = painterResource(id = R.drawable.save),
+              contentDescription = "Save Icon",
+              colorFilter =
+                  ColorFilter.tint(
+                      color = Black,
+                  ))
+
+          Text(
+              text = stringResource(id = R.string.SaveWorkout),
+              fontSize = SubtitleFontSize,
+              fontWeight = FontWeight.Bold,
+              fontFamily = OpenSans,
+              color = TitleBlue,
+              modifier = Modifier.padding(horizontal = 10.dp))
+
+          Switch(
+              checked = saveOption,
+              onCheckedChange = { onSaveSwitch(it) },
+              colors = SwitchDefaults.colors(checkedTrackColor = LightBlue2),
+              modifier = Modifier.testTag("saveSwitch"))
+        }
+  }
 }
 
 /**
@@ -277,7 +338,7 @@ object Calories {
       weight: Float,
       hour: Double
   ): Double {
-    return hour * weight * metValues.getOrDefault(exerciseType, 0.0)
+    return hour * weight * WorkoutMetValues.getMetValue(exerciseType)
   }
 
   /**
@@ -304,24 +365,6 @@ object Calories {
           else -> 0.0
         }
 
-    return factor * metValues.getOrDefault(exerciseType, 0.0)
+    return factor * WorkoutMetValues.getMetValue(exerciseType)
   }
-
-  /**
-   * A map of MET (Metabolic Equivalent of Task) values for each type of exercise. These values
-   * define the number of calories burned per kilogram of body weight per hour of exercise (kcal /
-   * hour * kg).
-   */
-  private val metValues: Map<ExerciseType, Double> =
-      mapOf(
-          ExerciseType.PUSH_UPS to 4.0,
-          ExerciseType.SQUATS to 5.0,
-          ExerciseType.PLANK to 5.0,
-          ExerciseType.CHAIR to 4.5,
-
-          // Yoga exercises
-          ExerciseType.DOWNWARD_DOG to 2.5,
-          ExerciseType.TREE_POSE to 2.0,
-          ExerciseType.UPWARD_FACING_DOG to 3.5,
-          ExerciseType.WARRIOR_II to 2.8)
 }

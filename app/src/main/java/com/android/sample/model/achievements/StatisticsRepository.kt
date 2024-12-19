@@ -20,7 +20,19 @@ interface StatisticsRepository {
    * @param onFailure A lambda function that is called with an [Exception] if the operation fails.
    */
   fun getStatistics(onSuccess: (List<WorkoutStatistics>) -> Unit, onFailure: (Exception) -> Unit)
-
+  /**
+   * Retrieves the friend's stastistics.
+   *
+   * @param friendId The ID of the friend whose statistics are to be retrieved.
+   * @param onSuccess A lambda function that is called with the retrieved [List<WorkoutStatistics>]
+   *   object when the operation is successful.
+   * @param onFailure A lambda function that is called with an [Exception] if the operation fails.
+   */
+  fun getFriendStatistics(
+      friendId: String,
+      onSuccess: (List<WorkoutStatistics>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
   /**
    * Updates the user's statistics in the persistent storage.
    *

@@ -2,16 +2,30 @@ package com.android.sample.model.workout
 
 data class Exercise(val id: String, val type: ExerciseType, val detail: ExerciseDetail) {}
 
-enum class ExerciseType(val workoutType: WorkoutType, val detail: ExerciseDetail) {
-  DOWNWARD_DOG(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
+enum class ExerciseType(
+    val workoutType: WorkoutType,
+    val detail: ExerciseDetail,
+    val hasMlFeedback: Boolean = false
+) {
+  DOWNWARD_DOG(
+      WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3), hasMlFeedback = true),
   TREE_POSE(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
   UPWARD_FACING_DOG(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(60, sets = 2)),
-  WARRIOR_II(WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3)),
-  PUSH_UPS(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.RepetitionBased(10)),
+  WARRIOR_II(
+      WorkoutType.YOGA, detail = ExerciseDetail.TimeBased(30, sets = 3), hasMlFeedback = true),
+  PUSH_UPS(
+      WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.RepetitionBased(10), hasMlFeedback = true),
   SQUATS(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.RepetitionBased(15)),
-  PLANK(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.TimeBased(60, sets = 1)),
-  CHAIR(WorkoutType.BODY_WEIGHT, detail = ExerciseDetail.TimeBased(60, sets = 1)),
-  JUMPING_JACKS(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(20)),
+  PLANK(
+      WorkoutType.BODY_WEIGHT,
+      detail = ExerciseDetail.TimeBased(60, sets = 1),
+      hasMlFeedback = true),
+  CHAIR(
+      WorkoutType.BODY_WEIGHT,
+      detail = ExerciseDetail.TimeBased(60, sets = 1),
+      hasMlFeedback = true),
+  JUMPING_JACKS(
+      WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(20), hasMlFeedback = true),
   LEG_SWINGS(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(15)),
   ARM_CIRCLES(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(20)),
   ARM_WRIST_CIRCLES(WorkoutType.WARMUP, detail = ExerciseDetail.RepetitionBased(20));

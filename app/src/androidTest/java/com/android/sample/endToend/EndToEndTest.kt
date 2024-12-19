@@ -87,7 +87,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     // settingScreenIsWellDisplayed()
     // go back to the main screen
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    composeTestRule.onNodeWithTag("Main").performClick()
     // mainScreenIsWellDisplayed()
   }
 
@@ -130,7 +130,7 @@ class EndToEndTest {
     // go back to main
     // composeTestRule.onNodeWithText("Save Changes").performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+    composeTestRule.onNodeWithTag("Main").performClick()
 
     // go to videos library screen
     composeTestRule.onNodeWithTag("Video").performClick()
@@ -170,7 +170,7 @@ class EndToEndTest {
     importOrCreateScreenIsWellDisplayed()
 
     // we go to the import screen
-    composeTestRule.onNodeWithText("Choose from existing").performClick()
+    composeTestRule.onNodeWithText("Import from done").performClick()
 
     workoutSelectionScreenIsWellDisplayed()
 
@@ -243,9 +243,7 @@ class EndToEndTest {
   private fun workoutSelectionScreenIsWellDisplayed() {
     val testName = "workoutSelectionScreenIsWellDisplayed"
 
-    nodeControl("WorkoutSelectionScreen", testName)
-
-    nodeControl("emptyWorkoutPrompt", testName)
+    nodeControl("ImportScreen", testName)
 
     nodeControl("TopBar", testName)
   }
@@ -366,7 +364,7 @@ class EndToEndTest {
 
     nodeControl("userDataButton", testName)
 
-    nodeControl("ArrowBackButton", testName)
+    nodeControl("TopBar", testName)
   }
 
   private fun mainScreenIsWellDisplayed() {
@@ -405,7 +403,7 @@ class EndToEndTest {
   private fun preferencesScreenIsWellDisplayed() {
     val testName = "preferencesScreenIsWellDisplayed"
 
-    nodeControl("preferencesTopBar", testName)
+    nodeControl("TopBar", testName)
 
     nodeControl("ArrowBackButton", testName)
 
@@ -445,8 +443,8 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("weightUnitLBS").performClick()
 
     // Verify that the selections were updated
-    composeTestRule.onNodeWithTag("unitsSystemButton").assertTextEquals("IMPERIAL")
-    composeTestRule.onNodeWithTag("weightUnitButton").assertTextEquals("LBS")
+    composeTestRule.onNodeWithTag("unitsSystemText").assertTextEquals("IMPERIAL")
+    composeTestRule.onNodeWithTag("weightUnitText").assertTextEquals("LBS")
   }
 
   private fun selectionWorkoutIsWellDisplayed() {

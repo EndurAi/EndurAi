@@ -2,11 +2,16 @@ package com.android.sample.model.preferences
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-open class PreferencesViewModel(private val repository: PreferencesRepository) : ViewModel() {
+open class PreferencesViewModel(
+    private val repository: PreferencesRepository,
+    private val localCache: PreferencesLocalCache
+) : ViewModel() {
 
   companion object {
     val defaultPreferences = Preferences(unitsSystem = UnitsSystem.METRIC, weight = WeightUnit.KG)
@@ -32,5 +37,13 @@ open class PreferencesViewModel(private val repository: PreferencesRepository) :
 
   fun deletePreferences() {
     repository.deletePreferences(onSuccess = { getPreferences() }, onFailure = {})
+  }
+
+  // Clears the local cache on logout
+  fun clearCacheOnLogout() {
+    viewModelScope.launch {
+      localCache.clearPreferences()
+      preferences_.value = null // Reset the preferences in ViewModel
+    }
   }
 }

@@ -1,16 +1,19 @@
 package com.android.sample.ui.workout
 
 import android.Manifest
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.rule.GrantPermissionRule
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.RunningWorkout
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.googlemap.RunningScreen
@@ -40,11 +43,19 @@ class RunningScreenTest {
 
   @Before
   fun setUp() {
-    // Mock the WorkoutRepositories
+    // Mock the WorkoutRepositories and LocalCache
     mockRunningWorkoutRepository = mock()
+    // Get application context for testing
+    val context = ApplicationProvider.getApplicationContext<Context>()
+
+    // Use a real WorkoutLocalCache with a real Context
+    // This ensures no NullPointerException from null context.
+    val workoutLocalCache = WorkoutLocalCache(context)
 
     // Mock the ViewModels and NavigationActions
-    mockRunningWorkoutViewModel = WorkoutViewModel(mockRunningWorkoutRepository)
+    mockRunningWorkoutViewModel =
+        WorkoutViewModel(
+            mockRunningWorkoutRepository, workoutLocalCache, RunningWorkout::class.java)
     mockNavHostController = mock(NavigationActions::class.java)
 
     mockStatisticsViewModel = mock()

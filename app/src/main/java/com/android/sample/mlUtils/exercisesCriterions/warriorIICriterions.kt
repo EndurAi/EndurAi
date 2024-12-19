@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.AngleCriterion
 import com.android.sample.mlUtils.ExerciseFeedBack.Companion.ExerciseCriterion
 import com.android.sample.mlUtils.PoseDetectionJoints
+import com.android.sample.model.workout.ExerciseType
 
 // ArmLeft flat
 private val armLeftFlat =
@@ -11,6 +12,7 @@ private val armLeftFlat =
         joints = PoseDetectionJoints.LEFT_WRIST_ELBOW_SHOULDER,
         targetAngle = 180.0,
         failCorrectionComment = AngleCriterionComments.LEFT_WRIST_ELBOW_SHOULDER_NOT_FLAT,
+        LR_FailComment = AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT,
         delta = 20.0,
         combination = true,
         onSuccess = { Log.d("MLFeedback", "ArmLeft flat is good L") },
@@ -22,6 +24,7 @@ private val armRightFlat =
         joints = PoseDetectionJoints.RIGHT_WRIST_ELBOW_SHOULDER,
         targetAngle = 180.0,
         failCorrectionComment = AngleCriterionComments.LEFT_WRIST_ELBOW_SHOULDER_NOT_FLAT,
+        LR_FailComment = AngleCriterionComments.BOTH_WRIST_ELBOW_SHOULDER_NOT_FLAT,
         delta = 20.0,
         combination = true,
         onSuccess = { Log.d("MLFeedback", "ArmRight flat is good R") },
@@ -86,7 +89,8 @@ private val flatLeg_right =
 val Warrior_2_LEFT_Criterions: ExerciseCriterion =
     ExerciseCriterion(
         symmetric = false,
-        name = "Warrior 2 pose on the left",
+        exerciseName = ExerciseType.WARRIOR_II.toString(),
+        criterionName = "Warrior II on the left",
         angleCriterionSet =
             setOf(
                 armLeftFlat to armRightFlat,
@@ -96,7 +100,8 @@ val Warrior_2_LEFT_Criterions: ExerciseCriterion =
 val Warrior_2_RIGHT_Criterions: ExerciseCriterion =
     ExerciseCriterion(
         symmetric = false,
-        name = "Warrior 2 pose on the right",
+        exerciseName = ExerciseType.WARRIOR_II.toString(),
+        criterionName = "Warrior II on the right",
         angleCriterionSet =
             setOf(
                 armLeftFlat to armRightFlat,

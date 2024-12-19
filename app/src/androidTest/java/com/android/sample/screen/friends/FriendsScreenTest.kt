@@ -6,6 +6,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.achievements.StatisticsRepositoryFirestore
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.userAccount.Gender
 import com.android.sample.model.userAccount.HeightUnit
 import com.android.sample.model.userAccount.UserAccount
@@ -32,6 +34,9 @@ class FriendsScreenTest {
 
   @Mock private lateinit var userAccountRepository: UserAccountRepository
 
+  private lateinit var statisticsRepository: StatisticsRepositoryFirestore
+  private lateinit var statisticsViewModel: StatisticsViewModel
+
   private lateinit var userAccountViewModel: UserAccountViewModel
   private lateinit var localCache: UserAccountLocalCache
   private val userAccount =
@@ -57,7 +62,9 @@ class FriendsScreenTest {
     userAccountRepository = FakeUserAccountRepository()
     navigationActions = mock(NavigationActions::class.java)
 
+    statisticsRepository = mock(StatisticsRepositoryFirestore::class.java)
     userAccountViewModel = UserAccountViewModel(userAccountRepository, localCache)
+    statisticsViewModel = StatisticsViewModel(statisticsRepository)
 
     // Initialize the fake repository with a user account for the tests
     (userAccountRepository as FakeUserAccountRepository).setUserAccount(userAccount)
@@ -67,7 +74,8 @@ class FriendsScreenTest {
 
     // Set the content of the test to the FriendsScreen
     composeTestRule.setContent {
-      FriendsScreen(navigationActions = navigationActions, userAccountViewModel)
+      FriendsScreen(
+          navigationActions = navigationActions, userAccountViewModel, statisticsViewModel)
     }
   }
 

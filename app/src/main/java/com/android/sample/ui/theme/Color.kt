@@ -56,6 +56,17 @@ val LegendYoga = Color(0xFFCAE5FD)
 val LegendRunning = Color(0xFF7FC3FF)
 val BlueLocation = Color(0xFFA0BBEA)
 val RunningGrey = Color(0xFF424242)
+val RedStroke = Color(0xFFF26C4F)
+val LightRed = Color(0xFFFEF6F4)
+val VeryLightBlue = Color(0xFFE8EFFF)
+val Grey = Color(0xFFBBBBBB)
+val MediumBlue = Color(0xFFB3E5FC)
+val BlueTabStrong = Color(0xFF1E3A8A)
+val BlueTabLight = Color(0xFFB3E5FC)
+val ProfileBlue = Color(0xFFADD8E6)
+val AddPurple = Color(0xFF6C63FF)
+val WorkoutCardLight = Color(0xFFE3F2FD)
+val WorkoutCardStrong = Color(0xFFBBDEFB)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
@@ -63,4 +74,8 @@ val VerticalBlueGradient = Brush.verticalGradient(colors = listOf(TitleBlue, Leg
 val greenGradient =
     Brush.horizontalGradient(
         colors = listOf(Color(0xFF367F4E), Color(0xFF09CE9B)) // Green gradient colors
+        )
+val RedGradient =
+    Brush.horizontalGradient(
+        colors = listOf(Color(0xFFFF0000), Color(0xFFFFA07A)) // Red gradient colors
         )

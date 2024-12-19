@@ -87,6 +87,32 @@ open class StatisticsRepositoryFirestore(private val db: FirebaseFirestore) : St
         }
   }
 
+  override fun getFriendStatistics(
+      friendId: String,
+      onSuccess: (List<WorkoutStatistics>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(collectionName)
+        .document(friendId)
+        .collection(subCollectionName)
+        .get()
+        .addOnCompleteListener { task ->
+          if (task.isSuccessful) {
+            val stats =
+                task.result?.mapNotNull { document ->
+                  val json = moshi.adapter(Map::class.java).toJson(document.data)
+                  adapter.fromJson(json)
+                } ?: emptyList()
+
+            onSuccess(stats)
+          } else {
+            task.exception?.let { e ->
+              Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
+              onFailure(e)
+            }
+          }
+        }
+  }
   /**
    * Adds a workout statistics to the current repository list.
    *

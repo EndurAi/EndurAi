@@ -29,8 +29,10 @@ import com.android.sample.R
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.achievements.WorkoutStatistics
+import com.android.sample.model.preferences.Preferences
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitsSystem
+import com.android.sample.model.preferences.WeightUnit
 import com.android.sample.ui.composables.CaloriesDisplay
 import com.android.sample.ui.composables.Charts
 import com.android.sample.ui.composables.PieChartWorkoutType
@@ -49,9 +51,11 @@ fun AchievementsScreen(
     preferencesViewModel: PreferencesViewModel
 ) {
   val workoutStatistics = statisticsViewModel.workoutStatistics
+    val preferencesState = preferencesViewModel.preferences
+    val basicPreferences = Preferences(UnitsSystem.METRIC, WeightUnit.KG)
   val emptyListFlow: StateFlow<List<WorkoutStatistics>> = MutableStateFlow(emptyList())
   val statistics = Statistics(if (workoutStatistics != null) workoutStatistics else emptyListFlow)
-  val preferences = preferencesViewModel.preferences.collectAsState().value
+  val preferences = if(preferencesState != null) preferencesState.collectAsState().value else basicPreferences
 
   var isStatsSelected by remember { mutableStateOf(true) }
 

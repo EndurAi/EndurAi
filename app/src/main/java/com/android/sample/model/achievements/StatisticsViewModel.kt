@@ -13,12 +13,17 @@ import com.android.sample.ui.workout.ExerciseState
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 open class StatisticsViewModel(private val repository: StatisticsRepository) : ViewModel() {
 
   private val workoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
   val workoutStatistics: StateFlow<List<WorkoutStatistics>>
     get() = workoutStatistics_
+
+  private val friendWorkoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
+  open val friendWorkoutStatistics: StateFlow<List<WorkoutStatistics>>
+    get() = friendWorkoutStatistics_.asStateFlow()
 
   init {
     // Initialize by fetching all statistics
@@ -28,6 +33,11 @@ open class StatisticsViewModel(private val repository: StatisticsRepository) : V
   /** Fetch all workout statistics from the repository. */
   fun getWorkoutStatistics() {
     repository.getStatistics(onSuccess = { workoutStatistics_.value = it }, onFailure = {})
+  }
+
+  fun getFriendWorkoutStatistics(friendId: String) {
+    repository.getFriendStatistics(
+        friendId = friendId, onSuccess = { friendWorkoutStatistics_.value = it }, onFailure = {})
   }
 
   /**
