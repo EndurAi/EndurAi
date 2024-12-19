@@ -107,12 +107,13 @@ class CameraFeedBack {
         cameraViewModel.lastPose.collect { pose ->
           val poseLandmarks = cameraViewModel.getPoseLandMarks()
           val DURATION_OF_ANALYSIS =
-              1000L // duration in ms the sample should represent for the live feedback -> this
-          // avoids blinkings
+              2000L // duration in ms the sample should represent for the live feedback -> this
+                    // avoids blinkings of the drawn skeleton
 
           if (poseLandmarks.isNotEmpty()) {
-            // take the last pose
-            lastPose = pose
+            // take the last pose by averaging the last 3 poses -> this avoids noise in the
+            // placement of the joints
+            lastPose = MathsPoseDetection.window_mean(posesList = poseLandmarks.takeLast(3))
             // mean the collected poses using such that the mean is computed over the duration
             val avgPose =
                 MathsPoseDetection.window_mean(
