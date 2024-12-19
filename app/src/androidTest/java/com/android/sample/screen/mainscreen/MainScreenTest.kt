@@ -12,6 +12,7 @@ import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
@@ -23,6 +24,7 @@ import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 import java.util.Date
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,6 +56,10 @@ class MainScreenTest {
 
       // Get application context for testing
       val context = ApplicationProvider.getApplicationContext<Context>()
+
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      val workoutLocalCache = WorkoutLocalCache(context)
 
       // Initialize localCache with the context
       localCache = UserAccountLocalCache(context)
@@ -105,12 +111,14 @@ class MainScreenTest {
       `when`(yogaRepo.getDocuments(any(), any())).then {
         it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
       }
+
       `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked_uid_123")
       `when`(yogaRepo.getNewUid()).thenReturn("mocked_uid_456")
 
       accountViewModel = UserAccountViewModel(accountRepo, localCache)
-      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-      yogaViewModel = WorkoutViewModel(yogaRepo)
+      bodyWeightViewModel =
+          WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
       // Mock the NavigationActions
       navigationActions = mock(NavigationActions::class.java)
 
@@ -122,6 +130,13 @@ class MainScreenTest {
         MainScreen(navigationActions, bodyWeightViewModel, yogaViewModel, accountViewModel)
       }
     }
+  }
+
+  @After
+  fun tearDown() = runTest {
+    // Reset mocks or any other persistent state
+    bodyWeightViewModel.clearCache()
+    yogaViewModel.clearCache()
   }
 
   @Test

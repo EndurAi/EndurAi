@@ -1,19 +1,32 @@
 package com.android.sample.model.workout
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepository<T>) :
-    ViewModel() {
+open class WorkoutViewModel<out T : Workout>(
+    private val repository: WorkoutRepository<T>,
+    private val localCache: WorkoutLocalCache,
+    private val workoutClass: Class<T> // Add a class reference for T
+) : ViewModel() {
 
-  val workouts_ = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
-  val workouts: StateFlow<List<T>> = workouts_
+  val _workouts = MutableStateFlow<List<@UnsafeVariance T>>(emptyList())
+  val workouts: StateFlow<List<T>> = _workouts.asStateFlow()
 
   private val selectedWorkout_ = MutableStateFlow<T?>(null)
-  open val selectedWorkout: StateFlow<T?> = selectedWorkout_
+  open val selectedWorkout: StateFlow<T?> = selectedWorkout_.asStateFlow()
 
   init {
     repository.init { getWorkouts() }
+  }
+
+  private fun cacheWorkouts(workouts: List<T>) {
+    viewModelScope.launch {
+      val currentCache = localCache.getWorkouts().firstOrNull() ?: emptyList()
+      val uniqueWorkouts = (currentCache + workouts).distinctBy { it.workoutId }
+      localCache.saveWorkouts(uniqueWorkouts)
+    }
   }
 
   /**
@@ -27,7 +40,17 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
 
   /** Gets all Workout documents. */
   fun getWorkouts() {
-    repository.getDocuments(onSuccess = { workouts_.value = it }, onFailure = {})
+    viewModelScope.launch {
+      repository.getDocuments(
+          onSuccess = { fetchedWorkouts ->
+            // Filter the fetched workouts by the workoutClass
+            val filteredWorkouts = fetchedWorkouts.filter { workoutClass.isInstance(it) }
+
+            _workouts.value = filteredWorkouts
+            cacheWorkouts(filteredWorkouts)
+          },
+          onFailure = {})
+    }
   }
 
   /**
@@ -64,6 +87,14 @@ open class WorkoutViewModel<out T : Workout>(private val repository: WorkoutRepo
    */
   fun selectWorkout(workout: @UnsafeVariance T) {
     selectedWorkout_.value = workout
+  }
+
+  /** Clear all cached workouts. */
+  fun clearCache() {
+    viewModelScope.launch {
+      localCache.clearWorkouts()
+      _workouts.value = emptyList()
+    }
   }
 
   /**

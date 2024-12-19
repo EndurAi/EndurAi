@@ -28,7 +28,7 @@ interface WorkoutRepository<T : Workout> {
    *   retrieval.
    * @param onFailure A callback function that is invoked in case of an error during the retrieval.
    */
-  fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Add a workout document in Firestore.

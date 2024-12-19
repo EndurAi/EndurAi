@@ -14,6 +14,7 @@ import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Workout
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
@@ -55,6 +56,10 @@ class QuickWorkoutTest {
 
       // Initialize localCache with the context
       localCache = UserAccountLocalCache(context)
+
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      val workoutLocalCache = WorkoutLocalCache(context)
 
       // Mock the repos for workouts
       bodyWeightRepo = mock()
@@ -98,6 +103,7 @@ class QuickWorkoutTest {
       `when`(bodyWeightRepo.getDocuments(any(), any())).then {
         it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
       }
+
       `when`(bodyWeightRepo.getNewUid()).thenReturn("mocked-bodyweight-uid")
       `when`(yogaRepo.getNewUid()).thenReturn("mocked-yoga-uid")
 
@@ -106,8 +112,9 @@ class QuickWorkoutTest {
       }
 
       accountViewModel = UserAccountViewModel(accountRepo, localCache)
-      bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-      yogaViewModel = WorkoutViewModel(yogaRepo)
+      bodyWeightViewModel =
+          WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
       // Mock the NavigationActions
       navigationActions = mock(NavigationActions::class.java)
 
