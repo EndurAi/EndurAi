@@ -88,11 +88,11 @@ fun AchievementsScreen(
 
                 Charts(data = statistics.getDistanceOfTheWeekPerDay(isInMile = (preferences?.unitsSystem
                     ?: UnitsSystem.METRIC) == UnitsSystem.IMPERIAL
-                ), labelTitle = "distance " + if((preferences?.unitsSystem
+                ), labelTitle = stringResource(R.string.distanceWithoutUnit) + if((preferences?.unitsSystem
                         ?: UnitsSystem.METRIC) == UnitsSystem.IMPERIAL
                 ){
-                    "(mile)"
-                } else "(km)")
+                    stringResource(R.string.mileWithParentheses)
+                } else stringResource(R.string.kmWithParentheses))
 
                 Spacer(Modifier.height(2.dp))
 

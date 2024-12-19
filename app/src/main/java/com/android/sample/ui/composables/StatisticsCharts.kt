@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
+import com.android.sample.R
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.ui.theme.LegendBodyweight
 import com.android.sample.ui.theme.LegendRunning
@@ -51,7 +53,14 @@ fun Charts(data : List<Double>, labelTitle : String ) {
             enabled = true,
     textStyle = MaterialTheme.typography.labelSmall,
     padding = 1.dp,
-    labels = listOf("M","T","W","T","F","S","S"),
+    labels = listOf(
+        stringResource(R.string.mon).first().toString(),
+        stringResource(R.string.tue).first().toString(),
+        stringResource(R.string.wed).first().toString(),
+        stringResource(R.string.thu).first().toString(),
+        stringResource(R.string.fri).first().toString(),
+        stringResource(R.string.sat).first().toString(),
+        stringResource(R.string.son).first().toString()),
             rotation = LabelProperties.Rotation(degree = 0f),
     )
         , gridProperties = GridProperties(enabled = false),
@@ -67,13 +76,13 @@ fun Charts(data : List<Double>, labelTitle : String ) {
 fun PieChartWorkoutType(
     frequency: Map<WorkoutType, Double>
 ) {
-    var data = listOf(
+    val data = listOf(
         frequency.get(WorkoutType.BODY_WEIGHT)
-            ?.let { Pie(label = "BodyWeight",data = it, color = LegendBodyweight, selectedColor = LegendBodyweight) },
+            ?.let { Pie(label = stringResource(R.string.TitleTabBody),data = it, color = LegendBodyweight, selectedColor = LegendBodyweight) },
         frequency.get(WorkoutType.YOGA)
-            ?.let { Pie(label = "Yoga",data = it, color = LegendYoga, selectedColor = LegendYoga) },
+            ?.let { Pie(label = stringResource(R.string.TitleTabYoga),data = it, color = LegendYoga, selectedColor = LegendYoga) },
         frequency.get(WorkoutType.RUNNING)?.let {
-            Pie(label = "Running",data = it, color = LegendRunning,
+            Pie(label = stringResource(R.string.TitleTabRunning),data = it, color = LegendRunning,
                 selectedColor = LegendRunning)
         },
     )
@@ -87,7 +96,7 @@ fun PieChartWorkoutType(
         data = data as List<Pie>,
         onPieClick = {},
         selectedScale = 1.2f,
-        scaleAnimEnterSpec = spring<Float>(
+        scaleAnimEnterSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
         ),

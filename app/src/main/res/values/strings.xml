@@ -60,4 +60,8 @@
     <string name="typeRepartition">Type exercise repartition</string>
     <string name="weeklyCalories">Calories of the week</string>
     <string name="caloriesLabel">calories (kcal)</string>
+    <string name="distanceWithoutUnit">"distance "</string>
+    <string name="mileWithParentheses">(mile)</string>
+    <string name="kmWithParentheses">(km)</string>
+    <string name="Kcal">Kcal</string>
 </resources>

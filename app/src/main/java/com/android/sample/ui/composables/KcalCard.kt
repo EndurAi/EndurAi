@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.R
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.NeutralGrey
 import com.android.sample.ui.theme.OpenSans
@@ -39,7 +41,7 @@ fun CaloriesDisplay(
                   color = Black)
 
               Text(
-                  text = "Kcal",
+                  text = stringResource(R.string.Kcal),
                   fontSize = 18.sp,
                   fontFamily = OpenSans,
                   fontWeight = FontWeight.SemiBold,
