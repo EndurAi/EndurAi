@@ -62,7 +62,7 @@
     <string name="ImportFromDone">Import from done</string>
     <string name="ImportSuccessful">Workout imported successfully</string>
     <string name="SaveWorkout">Save workout</string>
-
+    <string name="NoDoneWorkout">You have no done workouts yet</string>
     <string name="FriendsStatsTitle">Workout Statistics</string>
     <string name="note_info">The grades are in the following order: S\nA\nB\nC\nD\nS being the best and meaning you\'re doing it perfectly\nWith D however, you should consider learning to do the exercise properly in order to train efficiently and not get injured</string>
 </resources>

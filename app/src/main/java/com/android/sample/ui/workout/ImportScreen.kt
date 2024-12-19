@@ -44,6 +44,7 @@ import com.android.sample.ui.theme.BlueWorkoutCard
 import com.android.sample.ui.theme.ContrailOne
 import com.android.sample.ui.theme.Dimensions
 import com.android.sample.ui.theme.FontSizes
+import com.android.sample.ui.theme.FontSizes.SubtitleFontSize
 import com.android.sample.ui.theme.LightBackground
 import com.android.sample.ui.theme.Line
 import com.android.sample.ui.theme.OpenSans
@@ -110,6 +111,12 @@ fun ImportScreen(
 fun WorkoutList(navigationActions: NavigationActions, workoutViewModel: WorkoutViewModel<Workout>) {
   val doneWorkouts = workoutViewModel.doneWorkouts.collectAsState().value
 
+  if (doneWorkouts.isEmpty()) {
+    Text(
+        text = stringResource(id = R.string.NoDoneWorkout),
+        fontSize = SubtitleFontSize,
+        fontFamily = OpenSans)
+  } else {}
   LazyColumn(
       modifier = Modifier.padding(vertical = 20.dp).testTag("DoneWorkoutList").fillMaxHeight()) {
         items(doneWorkouts) { workoutItem ->
