@@ -313,6 +313,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
                   deleteDocument(
                       id = id,
                       onSuccess = {
+                          CoroutineScope(Dispatchers.IO).launch {localCache.clearWorkouts()}
                         // Add the workout id in the done list of the user
                         db.collection(collectionPath)
                             .document(doneDocumentName)
@@ -368,6 +369,17 @@ open class WorkoutRepositoryFirestore<T : Workout>(
                         val dataMapWorkoutID: Map<String, Any> =
                             (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId)
                                 as Map<String, Any>?)!!
+                          CoroutineScope(Dispatchers.IO).launch {localCache.clearWorkouts()}
+                          // Add the id to the user workout list
+                          db.collection(collectionPath)
+                              .document(documentToCollectionName)
+                              .collection(documentName)
+                              .document(id)
+                              .set(dataMapWorkoutID)
+                              .addOnFailureListener { e ->
+                                  Log.e(doneTag, "Error while adding the workout id to the user list")
+                                  onFailure(e)
+                              }
                         // Delete the workout id from the done list of the user
                         db.collection(collectionPath)
                             .document(doneDocumentName)
@@ -376,16 +388,6 @@ open class WorkoutRepositoryFirestore<T : Workout>(
                             .delete()
                             .addOnSuccessListener { onSuccess() }
                             .addOnFailureListener { onFailure(it) }
-                        // Add the id to the user workout list
-                        db.collection(collectionPath)
-                            .document(documentToCollectionName)
-                            .collection(documentName)
-                            .document(id)
-                            .set(dataMapWorkoutID)
-                            .addOnFailureListener { e ->
-                              Log.e(doneTag, "Error while adding the workout id to the user list")
-                              onFailure(e)
-                            }
                       }
                       .addOnFailureListener {
                         Log.e(doneTag, "Error while deleting the id from the user done list ids")

@@ -1,12 +1,15 @@
 package com.android.sample.ui.workout
 
+import android.content.Context
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
@@ -21,6 +24,7 @@ import org.mockito.kotlin.verify
 
 class ImportScreenTest {
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
+    private lateinit var workoutLocalCache: WorkoutLocalCache
   private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -50,7 +54,12 @@ class ImportScreenTest {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(mockDoneWorkouts)
     }
 
-    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
+      val context = ApplicationProvider.getApplicationContext<Context>()
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      workoutLocalCache = WorkoutLocalCache(context)
+      bodyWeightViewModel =
+          WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
 
     // Launch the composable
     composeTestRule.setContent {
