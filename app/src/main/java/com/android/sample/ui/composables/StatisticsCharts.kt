@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.android.sample.R
 import com.android.sample.model.workout.WorkoutType
@@ -33,7 +34,8 @@ fun Charts(data : List<Double>, labelTitle : String ) {
     LineChart(
         modifier = Modifier
             .height(150.dp)
-            .width(200.dp),
+            .width(200.dp)
+            .testTag("Chart"),
         data = listOf(
             Line(
                 label = labelTitle,
@@ -92,7 +94,7 @@ fun PieChartWorkoutType(
     Spacer(Modifier.height(10.dp))
 
     PieChart(
-        modifier = Modifier.size(200.dp),
+        modifier = Modifier.size(200.dp).testTag("PieChart"),
         data = data as List<Pie>,
         onPieClick = {},
         selectedScale = 1.2f,

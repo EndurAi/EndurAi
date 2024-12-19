@@ -14,10 +14,11 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class StatisticsViewModel(private val repository: StatisticsRepository) : ViewModel() {
+open class StatisticsViewModel(private val repository: StatisticsRepository) : ViewModel() {
 
   private val workoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
-  val workoutStatistics: StateFlow<List<WorkoutStatistics>> = workoutStatistics_
+    val workoutStatistics: StateFlow<List<WorkoutStatistics>>
+        get() = workoutStatistics_
 
   init {
     // Initialize by fetching all statistics

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class PreferencesViewModel(private val repository: PreferencesRepository) : ViewModel() {
+open class PreferencesViewModel(private val repository: PreferencesRepository) : ViewModel() {
 
   companion object {
     val defaultPreferences = Preferences(unitsSystem = UnitsSystem.METRIC, weight = WeightUnit.KG)

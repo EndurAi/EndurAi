@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.model.achievements.StatisticsViewModel
+import com.android.sample.model.achievements.WorkoutStatistics
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitsSystem
 import com.android.sample.ui.composables.CaloriesDisplay
@@ -38,6 +39,8 @@ import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.OpenSans
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun AchievementsScreen(
@@ -45,7 +48,9 @@ fun AchievementsScreen(
     statisticsViewModel: StatisticsViewModel,
     preferencesViewModel: PreferencesViewModel
 ) {
-  val statistics = Statistics(statisticsViewModel.workoutStatistics)
+    val workoutStatistics = statisticsViewModel.workoutStatistics
+    val emptyListFlow: StateFlow<List<WorkoutStatistics>> = MutableStateFlow(emptyList())
+  val statistics = Statistics(if(workoutStatistics != null) workoutStatistics else emptyListFlow )
     val preferences = preferencesViewModel.preferences.collectAsState().value
 
   var isStatsSelected by remember { mutableStateOf(true) }
@@ -53,7 +58,7 @@ fun AchievementsScreen(
   @Composable
   fun StatisticsScreen(padding: PaddingValues) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().testTag("StatsScreen"),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
           Spacer(Modifier.weight(0.50f))
@@ -127,7 +132,7 @@ fun AchievementsScreen(
   }
 
   Scaffold(
-      modifier = Modifier.testTag("achievementsScreen"),
+      modifier = Modifier.testTag("AchievementsScreen"),
       topBar = { TopBar(navigationActions, R.string.achievements) }) { padding ->
         Column(
             modifier = Modifier.fillMaxHeight(fraction = 0.2f).fillMaxWidth().padding(padding),
