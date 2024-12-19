@@ -18,23 +18,9 @@ import androidx.test.rule.GrantPermissionRule
 import com.android.sample.MainActivity
 import com.android.sample.mlUtils.CoachFeedback
 import com.android.sample.mlUtils.ExerciseFeedBackUnit
-import com.android.sample.mlUtils.MyPoseLandmark
 import com.android.sample.mlUtils.exercisesCriterions.PlankExerciseCriterions
 import com.android.sample.model.camera.CameraViewModel
-import com.android.sample.ui.mlFeedback.CoachFeedbackScreen
-import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.google.mlkit.vision.pose.PoseLandmark.LEFT_ANKLE
-import com.google.mlkit.vision.pose.PoseLandmark.LEFT_ELBOW
-import com.google.mlkit.vision.pose.PoseLandmark.LEFT_HIP
-import com.google.mlkit.vision.pose.PoseLandmark.LEFT_KNEE
-import com.google.mlkit.vision.pose.PoseLandmark.LEFT_SHOULDER
-import com.google.mlkit.vision.pose.PoseLandmark.RIGHT_ANKLE
-import com.google.mlkit.vision.pose.PoseLandmark.RIGHT_ELBOW
-import com.google.mlkit.vision.pose.PoseLandmark.RIGHT_HIP
-import com.google.mlkit.vision.pose.PoseLandmark.RIGHT_KNEE
-import com.google.mlkit.vision.pose.PoseLandmark.RIGHT_SHOULDER
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,96 +28,93 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 class MLEndToEndTest {
-    private lateinit var mockCameraViewModel: CameraViewModel
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  private lateinit var mockCameraViewModel: CameraViewModel
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val grantPermissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.POST_NOTIFICATIONS
-        ,Manifest.permission.CAMERA)
-    @Before
-    fun setUp() {
-        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
-        intent.putExtra("START_DESTINATION", Route.MAIN)
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-        mockCameraViewModel = mock()
-        `when`(mockCameraViewModel.feedback)
-            .thenReturn(
-                listOf(
-                    CoachFeedback(
-                        emptySet(),
-                        100f,
-                        10,
-                        ExerciseFeedBackUnit.SECONDS,
-                        true,
-                        PlankExerciseCriterions
-                    )
-                ))
-    }
-    /**
-     * This test is an end-to-end test that tests the ML flow of the app.
-     */
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun mlEndToEndTest() {
-        //Starting from the main screen, go to the learnings screen
-        composeTestRule.onNodeWithTag("Video").assertIsDisplayed().performClick()
-        //We need to wait for the video to load and animation to end
-        composeTestRule.waitUntilExactlyOneExists(
-            matcher = hasTestTag("coachText"),
-            timeoutMillis = 5000
-        )
-        //Check if the coach text and button are displayed
-        composeTestRule.onNodeWithTag("coachText").assertIsDisplayed()
-        //Go to the ML screen
-        composeTestRule.onNodeWithTag("coachButton").assertIsDisplayed().performClick()
-        //Plank is selected by default, so we can just press the start button
-        composeTestRule.onNodeWithTag("saveButton").assertIsDisplayed().performClick()
-        //Press the record button twice to simulate a good plank
-        composeTestRule.onNodeWithTag("recordButton").assertIsDisplayed().performClick().performClick().performClick()
+  @get:Rule
+  val grantPermissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(
+          Manifest.permission.ACCESS_COARSE_LOCATION,
+          Manifest.permission.ACCESS_FINE_LOCATION,
+          Manifest.permission.POST_NOTIFICATIONS,
+          Manifest.permission.CAMERA)
 
-        //From now on, we just check that everything is correctly displayed according to the feedback given by the coach, which is gonna be a not detected
-        composeTestRule.onNodeWithTag("coachFeedBackScreen").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("coachImage").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithTag("rankCircle").performScrollTo().assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag("rankText", useUnmergedTree = true)
-            .performScrollTo()
-            .assertIsDisplayed()
-            .assertTextEquals("X")
-        composeTestRule.onNodeWithTag("exerciseCard").performScrollTo().assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag("exerciseName")
-            .performScrollTo()
-            .assertIsDisplayed()
-            .assertTextEquals("Plank")
-        composeTestRule
-            .onNodeWithTag("exerciseDuration")
-            .performScrollTo()
-            .assertIsDisplayed()
-            .assertTextContains("0 s", substring = true)
-        composeTestRule
-            .onNodeWithTag("doneButton")
-            .performScrollTo()
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        // Test the info dialogue
-        composeTestRule
-            .onNodeWithTag("rankButton")
-            .performScrollTo()
-            .assertHasClickAction()
-            .assertIsDisplayed()
-            .performClick()
-        composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
+  @Before
+  fun setUp() {
+    val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
+    intent.putExtra("START_DESTINATION", Route.MAIN)
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    context.startActivity(intent)
+    mockCameraViewModel = mock()
+    `when`(mockCameraViewModel.feedback)
+        .thenReturn(
+            listOf(
+                CoachFeedback(
+                    emptySet(),
+                    100f,
+                    10,
+                    ExerciseFeedBackUnit.SECONDS,
+                    true,
+                    PlankExerciseCriterions)))
+  }
+  /** This test is an end-to-end test that tests the ML flow of the app. */
+  @OptIn(ExperimentalTestApi::class)
+  @Test
+  fun mlEndToEndTest() {
+    // Starting from the main screen, go to the learnings screen
+    composeTestRule.onNodeWithTag("Video").assertIsDisplayed().performClick()
+    // We need to wait for the video to load and animation to end
+    composeTestRule.waitUntilExactlyOneExists(
+        matcher = hasTestTag("coachText"), timeoutMillis = 5000)
+    // Check if the coach text and button are displayed
+    composeTestRule.onNodeWithTag("coachText").assertIsDisplayed()
+    // Go to the ML screen
+    composeTestRule.onNodeWithTag("coachButton").assertIsDisplayed().performClick()
+    // Plank is selected by default, so we can just press the start button
+    composeTestRule.onNodeWithTag("saveButton").assertIsDisplayed().performClick()
+    // Press the record button twice to simulate a good plank
+    composeTestRule
+        .onNodeWithTag("recordButton")
+        .assertIsDisplayed()
+        .performClick()
+        .performClick()
+        .performClick()
 
-
-
-    }
+    // From now on, we just check that everything is correctly displayed according to the feedback
+    // given by the coach, which is gonna be a not detected
+    composeTestRule.onNodeWithTag("coachFeedBackScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("coachImage").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("rankCircle").performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("rankText", useUnmergedTree = true)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("X")
+    composeTestRule.onNodeWithTag("exerciseCard").performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("exerciseName")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("Plank")
+    composeTestRule
+        .onNodeWithTag("exerciseDuration")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextContains("0 s", substring = true)
+    composeTestRule
+        .onNodeWithTag("doneButton")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertHasClickAction()
+    // Test the info dialogue
+    composeTestRule
+        .onNodeWithTag("rankButton")
+        .performScrollTo()
+        .assertHasClickAction()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag("infoDialogue").assertIsDisplayed()
+  }
 }
