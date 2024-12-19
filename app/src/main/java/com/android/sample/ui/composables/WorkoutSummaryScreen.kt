@@ -223,6 +223,12 @@ fun WorkoutSummaryScreen(
   Spacer(Modifier.size(15.dp))
 }
 
+/**
+ * Switch for the user to choose whether or not to save the workout in done documents
+ *
+ * @param saveOption the state of the switch
+ * @param onSaveSwitch the function to call when the user click on the switch
+ */
 @Composable
 fun SaveSwitch(saveOption: Boolean, onSaveSwitch: (Boolean) -> Unit) {
   Card(

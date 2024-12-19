@@ -73,6 +73,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
 
   private val mainDocumentName = "AllWorkouts"
   private val doneDocumentName = "DoneWorkouts"
+  private val doneTag = "DoneWorkoutRepositoryFirestore"
 
   /**
    * Generates a new unique ID for a workout document in the Firestore.
@@ -333,11 +334,20 @@ open class WorkoutRepositoryFirestore<T : Workout>(
                             .collection(documentName)
                             .document(id)
                             .set(dataMapWorkoutID)
-                            .addOnFailureListener { e -> onFailure(e) }
+                            .addOnFailureListener { e ->
+                              Log.e(doneTag, "Error while adding the workout id to the user list")
+                              onFailure(e)
+                            }
                       }
-                      .addOnFailureListener { onFailure(it) }
+                      .addOnFailureListener {
+                        Log.e(doneTag, "Error while deleting the id from the user done list ids")
+                        onFailure(it)
+                      }
                 }
-                .addOnFailureListener { onFailure(it) }
+                .addOnFailureListener {
+                  Log.e(doneTag, "Error while adding the document to allworkouts")
+                  onFailure(it)
+                }
           } else {
             onFailure(Exception("Document with ID $id does not exist in done"))
           }
@@ -379,8 +389,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
                         workout.let { workouts.add(workout) }
                       }
                       .addOnFailureListener { e ->
-                        Log.e(
-                            "WorkoutRepositoryFirestore", "Error getting done workout document", e)
+                        Log.e(doneTag, "Error getting done workout document", e)
                         onFailure(e)
                       }
               tasks.add(task)
@@ -392,7 +401,7 @@ open class WorkoutRepositoryFirestore<T : Workout>(
                 .addOnFailureListener { e -> onFailure(e) }
           } else {
             task.exception?.let { e ->
-              Log.e("WorkoutRepositoryFirestore", "Error getting workout IDs Document", e)
+              Log.e(doneTag, "Error getting workout IDs Document", e)
               onFailure(e)
             }
           }
