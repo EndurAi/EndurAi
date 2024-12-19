@@ -108,7 +108,7 @@ class CameraFeedBack {
           val poseLandmarks = cameraViewModel.getPoseLandMarks()
           val DURATION_OF_ANALYSIS =
               2000L // duration in ms the sample should represent for the live feedback -> this
-                    // avoids blinkings of the drawn skeleton
+          // avoids blinkings of the drawn skeleton
 
           if (poseLandmarks.isNotEmpty()) {
             // take the last pose by averaging the last 3 poses -> this avoids noise in the
