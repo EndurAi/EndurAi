@@ -35,7 +35,7 @@ fun CaloriesDisplay(
                   text = calories.toString(),
                   fontSize = 80.sp,
                   fontFamily = OpenSans,
-                  fontWeight = FontWeight.SemiBold,
+                  fontWeight = FontWeight.Bold,
                   color = Black)
 
               Text(

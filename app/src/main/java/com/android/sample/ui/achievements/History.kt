@@ -61,7 +61,7 @@ fun InfiniteCalendar(statistics: Statistics, padding: PaddingValues) {
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    Spacer(Modifier.weight(1f))
+    Spacer(Modifier.weight(0.2f))
 
     Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(fraction = 0.88f)) {
       LazyColumn(
@@ -71,7 +71,7 @@ fun InfiniteCalendar(statistics: Statistics, padding: PaddingValues) {
         itemsIndexed(months) { _, yearMonth -> MonthView(yearMonth, statistics) }
       }
     }
-    Spacer(Modifier.weight(0.4f))
+
   }
 }
 
