@@ -112,11 +112,12 @@ fun WorkoutList(navigationActions: NavigationActions, workoutViewModel: WorkoutV
   val doneWorkouts = workoutViewModel.doneWorkouts.collectAsState().value
 
   if (doneWorkouts.isEmpty()) {
+    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
     Text(
         text = stringResource(id = R.string.NoDoneWorkout),
         fontSize = SubtitleFontSize,
         fontFamily = OpenSans)
-  } else {}
+  }
   LazyColumn(
       modifier = Modifier.padding(vertical = 20.dp).testTag("DoneWorkoutList").fillMaxHeight()) {
         items(doneWorkouts) { workoutItem ->
