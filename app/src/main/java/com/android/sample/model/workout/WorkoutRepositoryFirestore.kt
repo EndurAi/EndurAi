@@ -14,6 +14,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
+import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dev.zacsweers.moshix.sealed.reflect.MoshiSealedJsonAdapterFactory
 import java.time.LocalDateTime
@@ -294,9 +295,9 @@ open class WorkoutRepositoryFirestore<T : Workout>(
     val workoutById = WorkoutID(workoutid = id)
     val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
 
-    val dataMapWorkoutID: Map<String, Any> =
-        (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId) as Map<String, Any>?)!!
-
+    val mapType = Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java)
+    val mapAdapter = moshi.adapter<Map<String, Any>>(mapType)
+    val dataMapWorkoutID: Map<String, Any> = mapAdapter.fromJson(jsonWorkoutId)!!
     // Get document from all workout
     db.collection(mainDocumentName)
         .document(id)
@@ -366,9 +367,13 @@ open class WorkoutRepositoryFirestore<T : Workout>(
                         val workoutById = WorkoutID(workoutid = id)
                         val jsonWorkoutId = adapterWorkoutID.toJson(workoutById)
 
+                        val mapType =
+                            Types.newParameterizedType(
+                                Map::class.java, String::class.java, Any::class.java)
+                        val mapAdapter = moshi.adapter<Map<String, Any>>(mapType)
                         val dataMapWorkoutID: Map<String, Any> =
-                            (moshi.adapter(Map::class.java).fromJson(jsonWorkoutId)
-                                as Map<String, Any>?)!!
+                            mapAdapter.fromJson(jsonWorkoutId)!!
+
                         CoroutineScope(Dispatchers.IO).launch { localCache.clearWorkouts() }
                         // Add the id to the user workout list
                         db.collection(collectionPath)
