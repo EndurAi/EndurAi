@@ -6,6 +6,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.preferences.PreferencesLocalCache
+import com.android.sample.model.preferences.PreferencesRepository
+import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutLocalCache
@@ -27,6 +30,8 @@ import org.mockito.Mockito.`when`
 
 class SettingsScreenTest {
   private lateinit var userAccountViewModel: UserAccountViewModel
+  private lateinit var mockPreferencesRepository: PreferencesRepository
+  private lateinit var preferencesViewModel: PreferencesViewModel
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockContext: Context
   private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
@@ -39,13 +44,18 @@ class SettingsScreenTest {
 
   @Before
   fun setUp() {
+
+    // Get application context for testing
+    val context = ApplicationProvider.getApplicationContext<Context>()
+
+    val preferencesLocalCache = PreferencesLocalCache(context)
+    mockPreferencesRepository = mock(PreferencesRepository::class.java)
+
+    preferencesViewModel = PreferencesViewModel(mockPreferencesRepository, preferencesLocalCache)
+
     navigationActions = mock(NavigationActions::class.java)
     userAccountViewModel = mock(UserAccountViewModel::class.java)
     mockContext = mock(Context::class.java)
-
-    // Mock the workout view models
-    // Get application context for testing
-    val context = ApplicationProvider.getApplicationContext<Context>()
 
     // Use a real WorkoutLocalCache with a real Context
     // This ensures no NullPointerException from null context.
@@ -67,7 +77,12 @@ class SettingsScreenTest {
   fun displayAllComponents() {
     // Set up the SettingsScreen for testing
     composeTestRule.setContent {
-      SettingsScreen(navigationActions, bodyWeightViewModel, yogaViewModel, userAccountViewModel)
+      SettingsScreen(
+          navigationActions,
+          preferencesViewModel,
+          bodyWeightViewModel,
+          yogaViewModel,
+          userAccountViewModel)
     }
 
     // Verify all essential components are displayed
@@ -83,9 +98,8 @@ class SettingsScreenTest {
     reset(navigationActions)
 
     composeTestRule.setContent {
-      SettingsScreen(navigationActions, bodyWeightViewModel, yogaViewModel)
+      SettingsScreen(navigationActions, preferencesViewModel, bodyWeightViewModel, yogaViewModel)
     }
-
     // Perform click on the logout button
     composeTestRule.onNodeWithTag("logoutButton").performClick()
 
@@ -103,7 +117,12 @@ class SettingsScreenTest {
 
     // Set up the SettingsScreen for testing
     composeTestRule.setContent {
-      SettingsScreen(navigationActions, bodyWeightViewModel, yogaViewModel, userAccountViewModel)
+      SettingsScreen(
+          navigationActions,
+          preferencesViewModel,
+          bodyWeightViewModel,
+          yogaViewModel,
+          userAccountViewModel)
     }
 
     // Perform click on the delete account button

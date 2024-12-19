@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.R
+import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.WorkoutViewModel
@@ -50,6 +51,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun SettingsScreen(
     navigationActions: NavigationActions,
+    preferencesViewModel: PreferencesViewModel,
     bodyweightViewModel: WorkoutViewModel<BodyWeightWorkout>,
     yogaViewModel: WorkoutViewModel<YogaWorkout>,
     userAccountViewModel: UserAccountViewModel =
@@ -98,6 +100,8 @@ fun SettingsScreen(
                     RedButton(
                         onClick = {
                           userAccountViewModel.clearCacheOnLogout() // Clear local cache on logout
+                          preferencesViewModel
+                              .clearCacheOnLogout() // Clear cached preferences on logout
                           bodyweightViewModel.clearCache()
                           yogaViewModel.clearCache()
                           signOut(context)
@@ -128,6 +132,7 @@ fun SettingsScreen(
                         context, "Failed to delete account: ${error.message}", Toast.LENGTH_LONG)
                     .show()
               })
+          preferencesViewModel.clearCacheOnLogout()
           showDeleteConfirmation = false
         },
         onDismiss = { showDeleteConfirmation = false })

@@ -1,12 +1,15 @@
 package com.android.sample.screen
 
+import android.content.Context
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.preferences.Preferences
+import com.android.sample.model.preferences.PreferencesLocalCache
 import com.android.sample.model.preferences.PreferencesRepository
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.preferences.UnitsSystem
@@ -32,10 +35,15 @@ class PreferencesScreenTest {
   @Before
   fun setUp() {
 
+    // Get application context for testing
+    val context = ApplicationProvider.getApplicationContext<Context>()
+
+    val preferencesLocalCache = PreferencesLocalCache(context)
+
     // Mock the ViewModel and Preferences
     mockPreferencesRepository = mock(PreferencesRepository::class.java)
     mockNavHostController = mock(NavigationActions::class.java)
-    preferencesViewModel = PreferencesViewModel(mockPreferencesRepository)
+    preferencesViewModel = PreferencesViewModel(mockPreferencesRepository, preferencesLocalCache)
   }
 
   @Test

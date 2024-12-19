@@ -26,6 +26,7 @@ import com.android.sample.model.achievements.StatisticsRepositoryFirestore
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.camera.CameraViewModel
+import com.android.sample.model.preferences.PreferencesLocalCache
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
@@ -104,13 +105,15 @@ fun MainApp(startDestination: String = Route.AUTH) {
   val navigationActions = NavigationActions(navController)
 
   val context = LocalContext.current
+  val preferencesLocalCache = PreferencesLocalCache(context)
 
   val workoutLocalCache = WorkoutLocalCache(context)
 
   val userAccountViewModel: UserAccountViewModel =
-      viewModel(factory = UserAccountViewModel.provideFactory(context))
-  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
-  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+      viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
+  val preferenceRepository =
+      PreferencesRepositoryFirestore(Firebase.firestore, preferencesLocalCache)
+  val preferencesViewModel = PreferencesViewModel(preferenceRepository, preferencesLocalCache)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
@@ -204,6 +207,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
       composable(Screen.SETTINGS) {
         SettingsScreen(
             navigationActions,
+            preferencesViewModel,
             bodyweightWorkoutViewModel,
             yogaWorkoutViewModel,
             userAccountViewModel)
