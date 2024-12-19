@@ -40,7 +40,7 @@ class AchievementsScreenTest {
 
     mockStatisticsViewModel = mock()
     mockPreferencesRepository = mock()
-    mockPreferencesViewModel = PreferencesViewModel(mockPreferencesRepository)
+    mockPreferencesViewModel = mock()
   }
 
   /** Test to verify that all components in the stats screen are displayed correctly. */
