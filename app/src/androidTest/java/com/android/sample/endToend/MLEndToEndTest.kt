@@ -81,8 +81,7 @@ class MLEndToEndTest {
         .performClick()
         .performClick()
 
-    // From now on, we just check that everything is correctly displayed according to the feedback
-    // given by the coach, which is gonna be a not detected
+    // Check that everything is displayed in the feedback screen
     composeTestRule.onNodeWithTag("coachFeedBackScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("coachImage").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag("animatedText").performScrollTo().assertIsDisplayed()
@@ -91,7 +90,7 @@ class MLEndToEndTest {
         .onNodeWithTag("rankText", useUnmergedTree = true)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals("X")
+        .assertTextEquals("X") // Rank should be X, since nothing was detected
     composeTestRule.onNodeWithTag("exerciseCard").performScrollTo().assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("exerciseName")
@@ -102,7 +101,8 @@ class MLEndToEndTest {
         .onNodeWithTag("exerciseDuration")
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextContains("0 s", substring = true)
+        .assertTextContains(
+            "0 s", substring = true) // Duration should be 0s since nothing was detected
     composeTestRule
         .onNodeWithTag("doneButton")
         .performScrollTo()
