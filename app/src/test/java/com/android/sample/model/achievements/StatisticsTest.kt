@@ -17,17 +17,20 @@ class StatisticsTest {
               id = "1",
               date = LocalDateTime.of(2024, 12, 1, 10, 0),
               caloriesBurnt = 200,
-              type = WorkoutType.BODY_WEIGHT),
+              type = WorkoutType.BODY_WEIGHT,
+              distance = 0.0),
           WorkoutStatistics(
               id = "2",
               date = LocalDateTime.of(2024, 12, 3, 15, 30),
               caloriesBurnt = 300,
-              type = WorkoutType.RUNNING),
+              type = WorkoutType.RUNNING,
+              distance = 0.0),
           WorkoutStatistics(
               id = "3",
               date = LocalDateTime.of(2024, 12, 5, 18, 0),
               caloriesBurnt = 400,
-              type = WorkoutType.YOGA))
+              type = WorkoutType.YOGA,
+              distance = 0.0))
 
   /** Sets up the test environment by initializing the `Statistics` instance with mock data. */
   @Before
