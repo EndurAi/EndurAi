@@ -3,11 +3,14 @@ package com.android.sample.model.achievements
 import androidx.lifecycle.ViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.Workout
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.composables.Calories.computeCalories
+import com.android.sample.ui.googlemap.calculateDistance
 import com.android.sample.ui.workout.ExerciseState
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -58,12 +61,21 @@ class StatisticsViewModel(private val repository: StatisticsRepository) : ViewMo
           is YogaWorkout -> WorkoutType.YOGA
           else -> WorkoutType.RUNNING
         }
+      var distance = 0.0
+
+      if(workoutType == WorkoutType.RUNNING) {
+          val workout = workout as RunningWorkout
+          distance = calculateDistance(workout.path.map { latLng ->
+              LatLng(latLng.latitude, latLng.longitude)
+          })
+      }
 
     // Construct the WorkoutStatistics object
     return WorkoutStatistics(
         id = workout.workoutId,
         date = workout.date,
         caloriesBurnt = caloriesBurnt,
-        type = workoutType)
+        type = workoutType,
+        distance = distance)
   }
 }

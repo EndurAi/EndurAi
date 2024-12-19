@@ -13,5 +13,6 @@ class WorkoutStatistics(
     val date: LocalDateTime,
     val duration: Int = 0, // Not implemented for the moment
     val caloriesBurnt: Int,
-    val type: WorkoutType
+    val type: WorkoutType,
+    val distance: Double
 )
