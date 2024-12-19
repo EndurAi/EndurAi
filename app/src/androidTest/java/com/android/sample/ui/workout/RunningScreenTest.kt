@@ -10,6 +10,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.rule.GrantPermissionRule
+import com.android.sample.model.achievements.StatisticsViewModel
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
@@ -27,6 +29,9 @@ class RunningScreenTest {
   private lateinit var mockRunningWorkoutViewModel: WorkoutViewModel<RunningWorkout>
   private lateinit var mockNavHostController: NavigationActions
   private lateinit var mockRunningWorkoutRepository: WorkoutRepository<RunningWorkout>
+
+  private lateinit var mockStatisticsViewModel: StatisticsViewModel
+  private lateinit var mockUserAccountViewModel: UserAccountViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule
@@ -53,6 +58,9 @@ class RunningScreenTest {
             mockRunningWorkoutRepository, workoutLocalCache, RunningWorkout::class.java)
     mockNavHostController = mock(NavigationActions::class.java)
 
+    mockStatisticsViewModel = mock()
+    mockUserAccountViewModel = mock()
+
     `when`(mockRunningWorkoutViewModel.getNewUid()).thenReturn("mocked-running-uid")
   }
 
@@ -61,7 +69,9 @@ class RunningScreenTest {
     composeTestRule.setContent {
       RunningScreen(
           navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
@@ -71,8 +81,10 @@ class RunningScreenTest {
   fun startButton_clickStartsRunning() {
     composeTestRule.setContent {
       RunningScreen(
-          navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -84,8 +96,10 @@ class RunningScreenTest {
   fun pauseButton_clickPausesRunning() {
     composeTestRule.setContent {
       RunningScreen(
-          navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -98,8 +112,10 @@ class RunningScreenTest {
   fun resumeButton_clickResumesRunning() {
     composeTestRule.setContent {
       RunningScreen(
-          navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -108,57 +124,14 @@ class RunningScreenTest {
     composeTestRule.onNodeWithTag("PauseButton").assertIsDisplayed()
   }
 
-  //  @Test
-  //  fun finishButton_clickFinishesRunning() {
-  //    composeTestRule.setContent {
-  //      RunningScreen(
-  //          navigationActions = mockNavHostController,
-  //          runningWorkoutViewModel = mockRunningWorkoutViewModel)
-  //    }
-  //
-  //    composeTestRule.onNodeWithTag("StartButton").performClick()
-  //    composeTestRule.onNodeWithTag("PauseButton").performClick()
-  //    composeTestRule.onNodeWithTag("FinishButton").performClick()
-  //    composeTestRule.onNodeWithTag("FinishButton").assertExists()
-  //  }
-
-  //  @Test
-  //  fun saveToggleButton_isDisplayedWhenSaving() {
-  //    composeTestRule.setContent {
-  //      RunningScreen(
-  //          navigationActions = mockNavHostController,
-  //          runningWorkoutViewModel = mockRunningWorkoutViewModel)
-  //    }
-  //
-  //    composeTestRule.onNodeWithTag("StartButton").performClick()
-  //    composeTestRule.onNodeWithTag("PauseButton").performClick()
-  //    composeTestRule.onNodeWithTag("FinishButton").performClick()
-  //
-  //    composeTestRule.onNodeWithTag("Save Running switchToggle").assertExists()
-  //  }
-
-  //  @Test
-  //  fun saveButton_isDisplayedWhenToggleClicked() {
-  //    composeTestRule.setContent {
-  //      RunningScreen(
-  //          navigationActions = mockNavHostController,
-  //          runningWorkoutViewModel = mockRunningWorkoutViewModel)
-  //    }
-  //
-  //    composeTestRule.onNodeWithTag("StartButton").performClick()
-  //    composeTestRule.onNodeWithTag("PauseButton").performClick()
-  //    composeTestRule.onNodeWithTag("FinishButton").performClick()
-  //    composeTestRule.onNodeWithTag("Save Running switchToggle").performScrollTo().performClick()
-  //
-  //    composeTestRule.onNodeWithTag("SaveButton").assertExists()
-  //  }
-
   @Test
   fun descriptionTextFieldAndNameTextField_isDisplayedWhenSaving() {
     composeTestRule.setContent {
       RunningScreen(
-          navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -173,8 +146,10 @@ class RunningScreenTest {
   fun locationButton_clickDisplayStats() {
     composeTestRule.setContent {
       RunningScreen(
-          navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -191,8 +166,10 @@ class RunningScreenTest {
   fun statsScreenBottomBarWorks() {
     composeTestRule.setContent {
       RunningScreen(
-          navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -207,8 +184,10 @@ class RunningScreenTest {
   fun locationButtonCanSwitchScreen() {
     composeTestRule.setContent {
       RunningScreen(
-          navigationActions = mockNavHostController,
-          runningWorkoutViewModel = mockRunningWorkoutViewModel)
+        navigationActions = mockNavHostController,
+        runningWorkoutViewModel = mockRunningWorkoutViewModel,
+        statisticsViewModel = mockStatisticsViewModel,
+        userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()

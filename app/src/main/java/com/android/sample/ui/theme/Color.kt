@@ -70,6 +70,7 @@ val WorkoutCardStrong = Color(0xFFBBDEFB)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
+val VerticalBlueGradient = Brush.verticalGradient(colors = listOf(TitleBlue, LegendRunning))
 val greenGradient =
     Brush.horizontalGradient(
         colors = listOf(Color(0xFF367F4E), Color(0xFF09CE9B)) // Green gradient colors

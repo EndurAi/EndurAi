@@ -75,7 +75,8 @@ class FriendsStatsScreenTest {
                 date = LocalDateTime.now(),
                 duration = 1000,
                 caloriesBurnt = 1000,
-                type = WorkoutType.RUNNING),
+                type = WorkoutType.RUNNING,
+                distance = 0.0),
         )
     whenever(statisticsRepository.getFriendStatistics(any(), any(), any())).doAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<WorkoutStatistics>) -> Unit>(1)

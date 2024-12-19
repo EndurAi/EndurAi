@@ -1,6 +1,7 @@
 [versions]
 agp = "8.3.0"
 coilCompose = "2.1.0"
+composeCharts = "0.1.0"
 datastorePreferences = "1.1.1"
 gson = "2.10.1"
 kotlin = "1.9.0"
@@ -33,7 +34,6 @@ sonar = "4.4.1.3373"
 gms = "4.4.2"
 mockk = "1.13.5"
 moshi = "1.14.0"
-coil = "2.4.0"
 
 # Firebase
 firebaseAuth = "23.0.0"
@@ -55,12 +55,14 @@ cameraVideo = "1.4.0"
 foundationLayoutAndroid = "1.7.2"
 poseDetectionCommon = "17.0.0"
 datastoreCoreAndroid = "1.1.1"
+uiViewbinding = "1.7.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+compose-charts = { module = "io.github.ehsannarmani:compose-charts", version.ref = "composeCharts" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -124,6 +126,9 @@ pose-detection-common = { group = "com.google.mlkit", name = "pose-detection-com
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+androidx-ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding", version.ref = "uiViewbinding" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
