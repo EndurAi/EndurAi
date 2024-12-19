@@ -8,12 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.rule.GrantPermissionRule
-import com.android.sample.model.achievements.StatisticsRepository
 import com.android.sample.model.achievements.StatisticsViewModel
-import com.android.sample.model.preferences.PreferencesRepository
-import com.android.sample.model.preferences.PreferencesViewModel
-import com.android.sample.model.userAccount.UserAccountLocalCache
-import com.android.sample.model.userAccount.UserAccountRepository
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutRepository
@@ -35,10 +30,6 @@ class RunningScreenTest {
   private lateinit var mockStatisticsViewModel: StatisticsViewModel
   private lateinit var mockUserAccountViewModel: UserAccountViewModel
 
-
-
-
-
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule
   val grantPermissionRule: GrantPermissionRule =
@@ -59,7 +50,6 @@ class RunningScreenTest {
     mockStatisticsViewModel = mock()
     mockUserAccountViewModel = mock()
 
-
     `when`(mockRunningWorkoutViewModel.getNewUid()).thenReturn("mocked-running-uid")
   }
 
@@ -70,8 +60,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
@@ -84,8 +73,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -100,8 +88,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -117,8 +104,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -134,8 +120,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -153,8 +138,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -174,8 +158,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -193,8 +176,7 @@ class RunningScreenTest {
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
           statisticsViewModel = mockStatisticsViewModel,
-          userAccountViewModel = mockUserAccountViewModel
-      )
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()

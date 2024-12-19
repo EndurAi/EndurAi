@@ -21,9 +21,9 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 /**
- * Test class for `AchievementsScreen`.
- * This class contains tests to verify that all components in the achievements screen
- * are displayed correctly and that the toggle button between stats and history screens works as expected.
+ * Test class for `AchievementsScreen`. This class contains tests to verify that all components in
+ * the achievements screen are displayed correctly and that the toggle button between stats and
+ * history screens works as expected.
  */
 class AchievementsScreenTest {
   private lateinit var navigationActions: NavigationActions
@@ -41,17 +41,14 @@ class AchievementsScreenTest {
     mockStatisticsViewModel = mock()
     mockPreferencesRepository = mock()
     mockPreferencesViewModel = PreferencesViewModel(mockPreferencesRepository)
-
-
-
   }
 
-  /**
-   * Test to verify that all components in the stats screen are displayed correctly.
-   */
+  /** Test to verify that all components in the stats screen are displayed correctly. */
   @Test
   fun displayAllComponentsInStatsScreen() {
-    composeTestRule.setContent { AchievementsScreen(navigationActions,mockStatisticsViewModel,mockPreferencesViewModel) }
+    composeTestRule.setContent {
+      AchievementsScreen(navigationActions, mockStatisticsViewModel, mockPreferencesViewModel)
+    }
 
     // Verify that the screen and toggleButton is displayed
     composeTestRule.onNodeWithTag("AchievementsScreen").assertIsDisplayed()
@@ -75,16 +72,17 @@ class AchievementsScreenTest {
     // Verify the pie chart
     composeTestRule.onNodeWithText(text = "Type exercise repartition").assertIsDisplayed()
     composeTestRule.onNodeWithTag("PieChart").assertIsDisplayed()
-
   }
 
   /**
-   * Test to verify that all components in the history screen are displayed correctly
-   * after navigating from the stats screen.
+   * Test to verify that all components in the history screen are displayed correctly after
+   * navigating from the stats screen.
    */
   @Test
   fun displayAllComponentsInHistoryScreen() {
-    composeTestRule.setContent { AchievementsScreen(navigationActions,mockStatisticsViewModel,mockPreferencesViewModel) }
+    composeTestRule.setContent {
+      AchievementsScreen(navigationActions, mockStatisticsViewModel, mockPreferencesViewModel)
+    }
 
     // Verify that the screen and toggleButton is displayed
     composeTestRule.onNodeWithTag("AchievementsScreen").assertIsDisplayed()
@@ -104,16 +102,17 @@ class AchievementsScreenTest {
     // Verify that at least one month is displayed
     val nbrOfDay = composeTestRule.onAllNodesWithTag("DayView").fetchSemanticsNodes().size
     assert(nbrOfDay > 30)
-
   }
 
   /**
-   * Test to verify that the toggle button transition between stats and history screens works correctly.
-   * This test checks that clicking the buttons transitions to the appropriate screen.
+   * Test to verify that the toggle button transition between stats and history screens works
+   * correctly. This test checks that clicking the buttons transitions to the appropriate screen.
    */
   @Test
   fun verifyToggleButtonTransitionWorks() {
-    composeTestRule.setContent { AchievementsScreen(navigationActions,mockStatisticsViewModel,mockPreferencesViewModel) }
+    composeTestRule.setContent {
+      AchievementsScreen(navigationActions, mockStatisticsViewModel, mockPreferencesViewModel)
+    }
 
     // Verify that we are in the StatsScreen screen
     composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
@@ -146,8 +145,4 @@ class AchievementsScreenTest {
     // Verify that we are finally in the StatsScreen screen
     composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
   }
-
-
-
-
 }

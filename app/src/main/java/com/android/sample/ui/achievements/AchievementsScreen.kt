@@ -48,10 +48,10 @@ fun AchievementsScreen(
     statisticsViewModel: StatisticsViewModel,
     preferencesViewModel: PreferencesViewModel
 ) {
-    val workoutStatistics = statisticsViewModel.workoutStatistics
-    val emptyListFlow: StateFlow<List<WorkoutStatistics>> = MutableStateFlow(emptyList())
-  val statistics = Statistics(if(workoutStatistics != null) workoutStatistics else emptyListFlow )
-    val preferences = preferencesViewModel.preferences.collectAsState().value
+  val workoutStatistics = statisticsViewModel.workoutStatistics
+  val emptyListFlow: StateFlow<List<WorkoutStatistics>> = MutableStateFlow(emptyList())
+  val statistics = Statistics(if (workoutStatistics != null) workoutStatistics else emptyListFlow)
+  val preferences = preferencesViewModel.preferences.collectAsState().value
 
   var isStatsSelected by remember { mutableStateOf(true) }
 
@@ -76,58 +76,47 @@ fun AchievementsScreen(
 
           Spacer(Modifier.weight(0.07f))
 
-        Row(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+          Row(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+              Charts(
+                  data = statistics.getCaloriesOfTheWeekToList(),
+                  labelTitle = stringResource(R.string.caloriesLabel))
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally) {
-
-                Charts(data = statistics.getCaloriesOfTheWeekToList(), labelTitle = stringResource(R.string.caloriesLabel))
-
-                Spacer(Modifier.height(4.dp))
-
+              Spacer(Modifier.height(4.dp))
             }
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+              Charts(
+                  data =
+                      statistics.getDistanceOfTheWeekPerDay(
+                          isInMile =
+                              (preferences?.unitsSystem ?: UnitsSystem.METRIC) ==
+                                  UnitsSystem.IMPERIAL),
+                  labelTitle =
+                      stringResource(R.string.distanceWithoutUnit) +
+                          if ((preferences?.unitsSystem ?: UnitsSystem.METRIC) ==
+                              UnitsSystem.IMPERIAL) {
+                            stringResource(R.string.mileWithParentheses)
+                          } else stringResource(R.string.kmWithParentheses))
 
-                Charts(data = statistics.getDistanceOfTheWeekPerDay(isInMile = (preferences?.unitsSystem
-                    ?: UnitsSystem.METRIC) == UnitsSystem.IMPERIAL
-                ), labelTitle = stringResource(R.string.distanceWithoutUnit) + if((preferences?.unitsSystem
-                        ?: UnitsSystem.METRIC) == UnitsSystem.IMPERIAL
-                ){
-                    stringResource(R.string.mileWithParentheses)
-                } else stringResource(R.string.kmWithParentheses))
-
-                Spacer(Modifier.height(2.dp))
-
+              Spacer(Modifier.height(2.dp))
             }
+          }
 
+          Spacer(Modifier.weight(0.02f))
 
+          Text(
+              text = stringResource(R.string.typeRepartition),
+              fontSize = 28.sp,
+              fontFamily = OpenSans,
+              fontWeight = FontWeight.SemiBold,
+              color = Black)
 
-        }
+          Spacer(Modifier.weight(0.03f))
 
-        Spacer(Modifier.weight(0.02f))
+          PieChartWorkoutType(frequency = statistics.getWorkoutTypeFrequency())
 
-
-            Text(
-                text = stringResource(R.string.typeRepartition),
-                fontSize = 28.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.SemiBold,
-                color = Black
-            )
-
-        Spacer(Modifier.weight(0.03f))
-
-
-
-
-        PieChartWorkoutType(frequency = statistics.getWorkoutTypeFrequency())
-
-        Spacer(Modifier.weight(0.1f))
-
-
-
+          Spacer(Modifier.weight(0.1f))
         }
   }
 
@@ -140,10 +129,7 @@ fun AchievementsScreen(
             horizontalAlignment = Alignment.CenterHorizontally) {
               Spacer(Modifier.weight(0.5f))
 
-              ToggleButtonAchievements(
-                  onClick = {
-                    isStatsSelected = !isStatsSelected
-                  })
+              ToggleButtonAchievements(onClick = { isStatsSelected = !isStatsSelected })
 
               Spacer(Modifier.weight(0.5f))
             }

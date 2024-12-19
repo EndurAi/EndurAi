@@ -61,52 +61,64 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
     val caloriesPerDay = MutableList(7) { 0.0 }
 
     val statsOfTheWeek =
-      workoutStatisticsFlow.value.filter { stats ->
-        stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
-                stats.date.isBefore(today.plusWeeks(1))
-      }
-    statsOfTheWeek.forEach { stats -> caloriesPerDay[stats.date.dayOfWeek.value - 1] += stats.caloriesBurnt.toDouble() }
+        workoutStatisticsFlow.value.filter { stats ->
+          stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
+              stats.date.isBefore(today.plusWeeks(1))
+        }
+    statsOfTheWeek.forEach { stats ->
+      caloriesPerDay[stats.date.dayOfWeek.value - 1] += stats.caloriesBurnt.toDouble()
+    }
 
     return caloriesPerDay
   }
 
-  /** Get the frequency of each workout type  */
+  /** Get the frequency of each workout type */
   fun getWorkoutTypeFrequency(): Map<WorkoutType, Double> {
 
-
-    val numberOfBodyweight = workoutStatisticsFlow.value.filter { stats -> stats.type == WorkoutType.BODY_WEIGHT }.size.toDouble()
-    val numberOfYoga = workoutStatisticsFlow.value.filter { stats -> stats.type == WorkoutType.YOGA }.size.toDouble()
-    val numberOfRunning = workoutStatisticsFlow.value.filter { stats -> stats.type == WorkoutType.RUNNING }.size.toDouble()
-
-
-
+    val numberOfBodyweight =
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.BODY_WEIGHT }
+            .size
+            .toDouble()
+    val numberOfYoga =
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.YOGA }
+            .size
+            .toDouble()
+    val numberOfRunning =
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.RUNNING }
+            .size
+            .toDouble()
 
     return listOf(
-      FrequencyWithWorkoutType(type = WorkoutType.BODY_WEIGHT, frequency = numberOfBodyweight),
-      FrequencyWithWorkoutType(type = WorkoutType.YOGA, frequency = numberOfYoga),
-      FrequencyWithWorkoutType(type = WorkoutType.RUNNING, frequency = numberOfRunning)).associate { it.type to it.frequency }
+            FrequencyWithWorkoutType(
+                type = WorkoutType.BODY_WEIGHT, frequency = numberOfBodyweight),
+            FrequencyWithWorkoutType(type = WorkoutType.YOGA, frequency = numberOfYoga),
+            FrequencyWithWorkoutType(type = WorkoutType.RUNNING, frequency = numberOfRunning))
+        .associate { it.type to it.frequency }
   }
 
-  /** Get the distance of the week per day  */
-  fun getDistanceOfTheWeekPerDay(isInMile : Boolean): List<Double> {
-
+  /** Get the distance of the week per day */
+  fun getDistanceOfTheWeekPerDay(isInMile: Boolean): List<Double> {
 
     val mondayOfTheWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
     val distancePerDay = MutableList(7) { 0.0 }
 
     val statsOfTheWeek =
-      workoutStatisticsFlow.value.filter{stats -> stats.type == WorkoutType.RUNNING}.filter { stats ->
-        stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
-                stats.date.isBefore(today.plusWeeks(1))
-      }
-    statsOfTheWeek.forEach { stats -> distancePerDay[stats.date.dayOfWeek.value - 1] += stats.distance }
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.RUNNING }
+            .filter { stats ->
+              stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
+                  stats.date.isBefore(today.plusWeeks(1))
+            }
+    statsOfTheWeek.forEach { stats ->
+      distancePerDay[stats.date.dayOfWeek.value - 1] += stats.distance
+    }
 
-
-    return if(isInMile) distancePerDay.map { d -> d * convertionFactor } else distancePerDay
+    return if (isInMile) distancePerDay.map { d -> d * convertionFactor } else distancePerDay
   }
-
-
-
 }
-data class FrequencyWithWorkoutType( val type: WorkoutType, val frequency : Double )
+
+data class FrequencyWithWorkoutType(val type: WorkoutType, val frequency: Double)

@@ -75,7 +75,6 @@ fun InfiniteCalendar(statistics: Statistics, padding: PaddingValues) {
         itemsIndexed(months) { _, yearMonth -> MonthView(yearMonth, statistics) }
       }
     }
-
   }
 }
 
@@ -116,16 +115,25 @@ fun MonthView(yearMonth: YearMonth, statistics: Statistics) {
 
     // Weekdays row
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-      listOf(stringResource(R.string.mon, stringResource(R.string.tue), stringResource(R.string.wed), stringResource(R.string.thu), stringResource(R.string.fri), stringResource(R.string.sat), stringResource(R.string.son))).forEach {
-        Text(
-            text = it,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center,
-            fontFamily = OpenSans,
-            fontWeight = FontWeight.Light,
-            color = NeutralGrey,
-            modifier = Modifier.weight(1f))
-      }
+      listOf(
+              stringResource(
+                  R.string.mon,
+                  stringResource(R.string.tue),
+                  stringResource(R.string.wed),
+                  stringResource(R.string.thu),
+                  stringResource(R.string.fri),
+                  stringResource(R.string.sat),
+                  stringResource(R.string.son)))
+          .forEach {
+            Text(
+                text = it,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                fontFamily = OpenSans,
+                fontWeight = FontWeight.Light,
+                color = NeutralGrey,
+                modifier = Modifier.weight(1f))
+          }
     }
 
     // Days grid
@@ -158,7 +166,8 @@ fun DayView(day: String, yearMonth: YearMonth, statisticsDates: List<LocalDate>)
   Box(
       modifier =
           if (day.isEmpty()) {
-            Modifier.size(50.dp).testTag("DayView")
+            Modifier.size(50.dp)
+                .testTag("DayView")
                 .shadow(elevation = if (day.isNotEmpty()) 8.dp else 0.dp, shape = CircleShape)
                 .background(Transparent, shape = CircleShape)
                 .border(
@@ -167,7 +176,8 @@ fun DayView(day: String, yearMonth: YearMonth, statisticsDates: List<LocalDate>)
                     shape = CircleShape)
           } else {
             if (isWorkoutDay) {
-              Modifier.size(50.dp).testTag("DayView")
+              Modifier.size(50.dp)
+                  .testTag("DayView")
                   .shadow(elevation = if (day.isNotEmpty()) 8.dp else 0.dp, shape = CircleShape)
                   .background(BlueGradient, shape = CircleShape)
                   .border(
@@ -175,7 +185,8 @@ fun DayView(day: String, yearMonth: YearMonth, statisticsDates: List<LocalDate>)
                       color = if (day.isNotEmpty()) Black else Transparent,
                       shape = CircleShape)
             } else {
-              Modifier.size(50.dp).testTag("DayView")
+              Modifier.size(50.dp)
+                  .testTag("DayView")
                   .shadow(elevation = if (day.isNotEmpty()) 8.dp else 0.dp, shape = CircleShape)
                   .background(White, shape = CircleShape)
                   .border(

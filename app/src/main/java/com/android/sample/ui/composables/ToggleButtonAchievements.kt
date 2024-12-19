@@ -64,13 +64,14 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                 // Stats Text
                 Box(
                     modifier =
-                        Modifier.fillMaxHeight().testTag("StatsButton")
+                        Modifier.fillMaxHeight()
+                            .testTag("StatsButton")
                             .width(100.dp)
                             .clip(RoundedCornerShape(25.dp))
                             .clickable {
-                                if(!selected){
-                                    onClick()
-                                }
+                              if (!selected) {
+                                onClick()
+                              }
                               selected = true
                             },
                     contentAlignment = Alignment.Center) {
@@ -85,13 +86,14 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                 // History Text
                 Box(
                     modifier =
-                        Modifier.fillMaxHeight().testTag("HistoryButton")
+                        Modifier.fillMaxHeight()
+                            .testTag("HistoryButton")
                             .width(100.dp)
                             .clip(RoundedCornerShape(25.dp))
                             .clickable {
-                                if(selected){
-                                    onClick()
-                                }
+                              if (selected) {
+                                onClick()
+                              }
                               selected = false
                             },
                     contentAlignment = Alignment.Center) {

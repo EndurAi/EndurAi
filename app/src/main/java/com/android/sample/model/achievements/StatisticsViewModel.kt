@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 open class StatisticsViewModel(private val repository: StatisticsRepository) : ViewModel() {
 
   private val workoutStatistics_ = MutableStateFlow<List<WorkoutStatistics>>(emptyList())
-    val workoutStatistics: StateFlow<List<WorkoutStatistics>>
-        get() = workoutStatistics_
+  val workoutStatistics: StateFlow<List<WorkoutStatistics>>
+    get() = workoutStatistics_
 
   init {
     // Initialize by fetching all statistics
@@ -62,14 +62,14 @@ open class StatisticsViewModel(private val repository: StatisticsRepository) : V
           is YogaWorkout -> WorkoutType.YOGA
           else -> WorkoutType.RUNNING
         }
-      var distance = 0.0
+    var distance = 0.0
 
-      if(workoutType == WorkoutType.RUNNING) {
-          val workout = workout as RunningWorkout
-          distance = calculateDistance(workout.path.map { latLng ->
-              LatLng(latLng.latitude, latLng.longitude)
-          })
-      }
+    if (workoutType == WorkoutType.RUNNING) {
+      val workout = workout as RunningWorkout
+      distance =
+          calculateDistance(
+              workout.path.map { latLng -> LatLng(latLng.latitude, latLng.longitude) })
+    }
 
     // Construct the WorkoutStatistics object
     return WorkoutStatistics(
