@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.android.sample.R
 import com.android.sample.model.userAccount.UserAccount
@@ -146,7 +147,7 @@ fun ProfileSection(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()) {
               Image(
-                  painter = rememberImagePainter(data = account?.profileImageUrl ?: ""),
+                  painter = rememberAsyncImagePainter(model = account?.profileImageUrl ?: ""),
                   contentDescription = "Profile",
                   contentScale = ContentScale.Crop,
                   modifier =
