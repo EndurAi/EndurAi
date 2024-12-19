@@ -70,8 +70,8 @@ class RunningScreenTest {
       RunningScreen(
           navigationActions = mockNavHostController,
           runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").assertIsDisplayed()
@@ -81,10 +81,10 @@ class RunningScreenTest {
   fun startButton_clickStartsRunning() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -96,10 +96,10 @@ class RunningScreenTest {
   fun pauseButton_clickPausesRunning() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -112,10 +112,10 @@ class RunningScreenTest {
   fun resumeButton_clickResumesRunning() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -128,10 +128,10 @@ class RunningScreenTest {
   fun descriptionTextFieldAndNameTextField_isDisplayedWhenSaving() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -146,10 +146,10 @@ class RunningScreenTest {
   fun locationButton_clickDisplayStats() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -166,10 +166,10 @@ class RunningScreenTest {
   fun statsScreenBottomBarWorks() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()
@@ -184,10 +184,10 @@ class RunningScreenTest {
   fun locationButtonCanSwitchScreen() {
     composeTestRule.setContent {
       RunningScreen(
-        navigationActions = mockNavHostController,
-        runningWorkoutViewModel = mockRunningWorkoutViewModel,
-        statisticsViewModel = mockStatisticsViewModel,
-        userAccountViewModel = mockUserAccountViewModel)
+          navigationActions = mockNavHostController,
+          runningWorkoutViewModel = mockRunningWorkoutViewModel,
+          statisticsViewModel = mockStatisticsViewModel,
+          userAccountViewModel = mockUserAccountViewModel)
     }
 
     composeTestRule.onNodeWithTag("StartButton").performClick()

@@ -24,87 +24,87 @@ import com.android.sample.ui.theme.White
 
 @Composable
 fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    var selected by remember { mutableStateOf(true) }
+  var selected by remember { mutableStateOf(true) }
 
-    val offsetX by animateFloatAsState(targetValue = if (selected) 0f else 1f)
+  val offsetX by animateFloatAsState(targetValue = if (selected) 0f else 1f)
 
+  Box(
+      modifier =
+          Modifier.height(40.dp)
+              .width(250.dp)
+              .padding(horizontal = 16.dp)
+              .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), clip = false)
+              .background(color = White, shape = RoundedCornerShape(30.dp))
+              .testTag("BottomBar"),
+      contentAlignment = Alignment.Center,
+  ) {
     Box(
         modifier =
-        Modifier.height(40.dp)
-            .width(250.dp)
-            .padding(horizontal = 16.dp)
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), clip = false)
-            .background(color = White, shape = RoundedCornerShape(30.dp))
-            .testTag("BottomBar"),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier =
             modifier
                 .width(200.dp)
                 .height(30.dp)
                 .clip(RoundedCornerShape(25.dp))
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), clip = false)
                 .background(Color(0xFFE0E0E0)),
-            contentAlignment = Alignment.CenterStart) {
-            // Animated circle for selection
-            Box(
-                modifier =
-                Modifier.offset(x = 100.dp * offsetX) // Moves between 0 and 100 dp
-                    .fillMaxHeight()
-                    .width(100.dp)
-                    .clip(RoundedCornerShape(25.dp))
-                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), clip = false)
-                    .background(BlueGradient))
+        contentAlignment = Alignment.CenterStart) {
+          // Animated circle for selection
+          Box(
+              modifier =
+                  Modifier.offset(x = 100.dp * offsetX) // Moves between 0 and 100 dp
+                      .fillMaxHeight()
+                      .width(100.dp)
+                      .clip(RoundedCornerShape(25.dp))
+                      .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), clip = false)
+                      .background(BlueGradient))
 
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
+          Row(
+              modifier = Modifier.fillMaxSize(),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically) {
                 // Stats Text
                 Box(
                     modifier =
-                    Modifier.fillMaxHeight()
-                        .testTag("StatsButton")
-                        .width(100.dp)
-                        .clip(RoundedCornerShape(25.dp))
-                        .clickable {
-                            if (!selected) {
+                        Modifier.fillMaxHeight()
+                            .testTag("StatsButton")
+                            .width(100.dp)
+                            .clip(RoundedCornerShape(25.dp))
+                            .clickable {
+                              if (!selected) {
                                 onClick()
-                            }
-                            selected = true
-                        },
+                              }
+                              selected = true
+                            },
                     contentAlignment = Alignment.Center) {
-                    Text(
-                        text = stringResource(R.string.stats),
-                        fontSize = 18.sp,
-                        fontFamily = OpenSans,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (selected) Color.White else Color(0xFF1E50A0))
-                }
+                      Text(
+                          text = stringResource(R.string.stats),
+                          fontSize = 18.sp,
+                          fontFamily = OpenSans,
+                          fontWeight = FontWeight.SemiBold,
+                          color = if (selected) Color.White else Color(0xFF1E50A0))
+                    }
 
                 // History Text
                 Box(
                     modifier =
-                    Modifier.fillMaxHeight()
-                        .testTag("HistoryButton")
-                        .width(100.dp)
-                        .clip(RoundedCornerShape(25.dp))
-                        .clickable {
-                            if (selected) {
+                        Modifier.fillMaxHeight()
+                            .testTag("HistoryButton")
+                            .width(100.dp)
+                            .clip(RoundedCornerShape(25.dp))
+                            .clickable {
+                              if (selected) {
                                 onClick()
-                            }
-                            selected = false
-                        },
+                              }
+                              selected = false
+                            },
                     contentAlignment = Alignment.Center) {
-                    Text(
-                        text = stringResource(R.string.history),
-                        fontSize = 18.sp,
-                        fontFamily = OpenSans,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (!selected) Color.White else Color(0xFF1E50A0))
-                }
-            }
+                      Text(
+                          text = stringResource(R.string.history),
+                          fontSize = 18.sp,
+                          fontFamily = OpenSans,
+                          fontWeight = FontWeight.SemiBold,
+                          color = if (!selected) Color.White else Color(0xFF1E50A0))
+                    }
+              }
         }
-    }
+  }
 }

@@ -339,14 +339,14 @@ fun RunningScreen(
                                   },
                               timeMs = elapsedTime)
 
-                        val stats =
-                            statisticsViewModel.computeWorkoutStatistics(
-                                workout = runningWorkout,
-                                exerciseList = emptyList(),
-                                userAccountViewModel = userAccountViewModel)
-                        statisticsViewModel.addWorkoutStatistics(stats)
+                      val stats =
+                          statisticsViewModel.computeWorkoutStatistics(
+                              workout = runningWorkout,
+                              exerciseList = emptyList(),
+                              userAccountViewModel = userAccountViewModel)
+                      statisticsViewModel.addWorkoutStatistics(stats)
 
-                        runningWorkoutViewModel.addWorkout(runningWorkout)
+                      runningWorkoutViewModel.addWorkout(runningWorkout)
                       LocationServiceManager.stopAndResetLocationService(context)
 
                       navigationActions.navigateTo(Screen.MAIN)
@@ -416,27 +416,27 @@ fun RunningScreen(
                       isPaused = false
                       isFinished = false
 
-                        val runningWorkout =
-                            RunningWorkout(
-                                runningWorkoutViewModel.getNewUid(),
-                                name,
-                                description,
-                                date = LocalDateTime.now(),
-                                path =
-                                pathPoints.value.map { loc ->
+                      val runningWorkout =
+                          RunningWorkout(
+                              runningWorkoutViewModel.getNewUid(),
+                              name,
+                              description,
+                              date = LocalDateTime.now(),
+                              path =
+                                  pathPoints.value.map { loc ->
                                     com.google.type.LatLng.newBuilder()
                                         .setLongitude(loc.longitude)
                                         .setLatitude(loc.latitude)
                                         .build()
-                                },
-                                timeMs = elapsedTime)
+                                  },
+                              timeMs = elapsedTime)
 
-                        val stats =
-                            statisticsViewModel.computeWorkoutStatistics(
-                                workout = runningWorkout,
-                                exerciseList = emptyList(),
-                                userAccountViewModel = userAccountViewModel)
-                        statisticsViewModel.addWorkoutStatistics(stats)
+                      val stats =
+                          statisticsViewModel.computeWorkoutStatistics(
+                              workout = runningWorkout,
+                              exerciseList = emptyList(),
+                              userAccountViewModel = userAccountViewModel)
+                      statisticsViewModel.addWorkoutStatistics(stats)
 
                       navigationActions.navigateTo(Screen.MAIN)
                     },

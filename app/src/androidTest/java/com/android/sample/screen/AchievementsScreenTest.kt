@@ -8,7 +8,6 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.android.sample.model.achievements.StatisticsRepositoryFirestore
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.preferences.PreferencesRepository
 import com.android.sample.model.preferences.PreferencesViewModel

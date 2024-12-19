@@ -23,31 +23,30 @@ import com.android.sample.ui.theme.White
 fun CaloriesDisplay(
     calories: Int,
 ) {
-    Surface(
-        modifier =
-        Modifier.width(300.dp)
-            .height(150.dp)
-            .shadow(elevation = 10.dp, shape = RoundedCornerShape(8.dp)),
-        color = White,
-        shape = RoundedCornerShape(8.dp)) {
+  Surface(
+      modifier =
+          Modifier.width(300.dp)
+              .height(150.dp)
+              .shadow(elevation = 10.dp, shape = RoundedCornerShape(8.dp)),
+      color = White,
+      shape = RoundedCornerShape(8.dp)) {
         Column(
             modifier = Modifier.fillMaxSize().testTag("KcalCard"),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = calories.toString(),
-                fontSize = 80.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.Bold,
-                color = Black)
+              Text(
+                  text = calories.toString(),
+                  fontSize = 80.sp,
+                  fontFamily = OpenSans,
+                  fontWeight = FontWeight.Bold,
+                  color = Black)
 
-            Text(
-                text = stringResource(R.string.Kcal),
-                fontSize = 18.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.SemiBold,
-                color = NeutralGrey)
-        }
-    }
+              Text(
+                  text = stringResource(R.string.Kcal),
+                  fontSize = 18.sp,
+                  fontFamily = OpenSans,
+                  fontWeight = FontWeight.SemiBold,
+                  color = NeutralGrey)
+            }
+      }
 }
-

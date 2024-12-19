@@ -60,14 +60,14 @@ fun Legend() {
 /** Displays a row of workout type legends but small (e.g., Bodyweight, Yoga, Running). */
 @Composable
 fun SmallLegend() {
-    Row(
-        modifier = Modifier.fillMaxWidth().height(30.dp).testTag("Categories"),
-        horizontalArrangement =
-        Arrangement.spacedBy(space = 20.dp, alignment = Alignment.CenterHorizontally)) {
+  Row(
+      modifier = Modifier.fillMaxWidth().height(30.dp).testTag("Categories"),
+      horizontalArrangement =
+          Arrangement.spacedBy(space = 20.dp, alignment = Alignment.CenterHorizontally)) {
         SmallLegendItem(LegendBodyweight, stringResource(R.string.TitleTabBody))
         SmallLegendItem(LegendYoga, stringResource(R.string.TitleTabYoga))
         SmallLegendItem(LegendRunning, stringResource(R.string.TitleTabRunning))
-    }
+      }
 }
 
 /**
@@ -78,14 +78,14 @@ fun SmallLegend() {
  */
 @Composable
 fun SmallLegendItem(color: Color, text: String) {
-    val shape =
-        RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
-    Box(
-        modifier =
-        Modifier.testTag("legendItem")
-            .shadow(4.dp, shape = shape)
-            .background(color, shape = shape)
-            .padding(horizontal = 8.dp)) {
+  val shape =
+      RoundedCornerShape(topStart = 15.dp, topEnd = 5.dp, bottomStart = 5.dp, bottomEnd = 15.dp)
+  Box(
+      modifier =
+          Modifier.testTag("legendItem")
+              .shadow(4.dp, shape = shape)
+              .background(color, shape = shape)
+              .padding(horizontal = 8.dp)) {
         Text(text = text, color = Color.Black, fontSize = 14.sp, fontFamily = OpenSans)
-    }
+      }
 }

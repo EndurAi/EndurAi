@@ -48,8 +48,8 @@ class StatisticsRepositoryFirestoreTest {
           id = "test",
           date = LocalDateTime.now(),
           caloriesBurnt = 10,
-        type = WorkoutType.BODY_WEIGHT,
-        distance = 0.0)
+          type = WorkoutType.BODY_WEIGHT,
+          distance = 0.0)
 
   @Before
   fun setUp() {

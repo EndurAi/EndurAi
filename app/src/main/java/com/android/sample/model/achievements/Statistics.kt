@@ -44,10 +44,10 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
     val mondayOfTheWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
     val statsOfTheWeek =
-      workoutStatisticsFlow.value.filter { stats ->
-        stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
-                stats.date.isBefore(today.plusWeeks(1))
-      }
+        workoutStatisticsFlow.value.filter { stats ->
+          stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
+              stats.date.isBefore(today.plusWeeks(1))
+        }
 
     return statsOfTheWeek.sumOf { it.caloriesBurnt }
   }
@@ -60,10 +60,10 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
     val caloriesPerDay = MutableList(7) { 0.0 }
 
     val statsOfTheWeek =
-      workoutStatisticsFlow.value.filter { stats ->
-        stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
-                stats.date.isBefore(today.plusWeeks(1))
-      }
+        workoutStatisticsFlow.value.filter { stats ->
+          stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
+              stats.date.isBefore(today.plusWeeks(1))
+        }
     statsOfTheWeek.forEach { stats ->
       caloriesPerDay[stats.date.dayOfWeek.value - 1] += stats.caloriesBurnt.toDouble()
     }
@@ -75,27 +75,27 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
   fun getWorkoutTypeFrequency(): Map<WorkoutType, Double> {
 
     val numberOfBodyweight =
-      workoutStatisticsFlow.value
-        .filter { stats -> stats.type == WorkoutType.BODY_WEIGHT }
-        .size
-        .toDouble()
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.BODY_WEIGHT }
+            .size
+            .toDouble()
     val numberOfYoga =
-      workoutStatisticsFlow.value
-        .filter { stats -> stats.type == WorkoutType.YOGA }
-        .size
-        .toDouble()
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.YOGA }
+            .size
+            .toDouble()
     val numberOfRunning =
-      workoutStatisticsFlow.value
-        .filter { stats -> stats.type == WorkoutType.RUNNING }
-        .size
-        .toDouble()
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.RUNNING }
+            .size
+            .toDouble()
 
     return listOf(
-      FrequencyWithWorkoutType(
-        type = WorkoutType.BODY_WEIGHT, frequency = numberOfBodyweight),
-      FrequencyWithWorkoutType(type = WorkoutType.YOGA, frequency = numberOfYoga),
-      FrequencyWithWorkoutType(type = WorkoutType.RUNNING, frequency = numberOfRunning))
-      .associate { it.type to it.frequency }
+            FrequencyWithWorkoutType(
+                type = WorkoutType.BODY_WEIGHT, frequency = numberOfBodyweight),
+            FrequencyWithWorkoutType(type = WorkoutType.YOGA, frequency = numberOfYoga),
+            FrequencyWithWorkoutType(type = WorkoutType.RUNNING, frequency = numberOfRunning))
+        .associate { it.type to it.frequency }
   }
 
   /** Get the distance of the week per day */
@@ -106,12 +106,12 @@ class Statistics(private val workoutStatisticsFlow: StateFlow<List<WorkoutStatis
     val distancePerDay = MutableList(7) { 0.0 }
 
     val statsOfTheWeek =
-      workoutStatisticsFlow.value
-        .filter { stats -> stats.type == WorkoutType.RUNNING }
-        .filter { stats ->
-          stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
+        workoutStatisticsFlow.value
+            .filter { stats -> stats.type == WorkoutType.RUNNING }
+            .filter { stats ->
+              stats.date.isAfter(mondayOfTheWeek.minusDays(1)) &&
                   stats.date.isBefore(today.plusWeeks(1))
-        }
+            }
     statsOfTheWeek.forEach { stats ->
       distancePerDay[stats.date.dayOfWeek.value - 1] += stats.distance
     }

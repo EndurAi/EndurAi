@@ -50,98 +50,98 @@ fun AchievementsScreen(
     statisticsViewModel: StatisticsViewModel,
     preferencesViewModel: PreferencesViewModel
 ) {
-    val workoutStatistics = statisticsViewModel.workoutStatistics
-    val preferencesState = preferencesViewModel.preferences
-    val basicPreferences = Preferences(UnitsSystem.METRIC, WeightUnit.KG)
-    val emptyListFlow: StateFlow<List<WorkoutStatistics>> = MutableStateFlow(emptyList())
-    val statistics = Statistics(if (workoutStatistics != null) workoutStatistics else emptyListFlow)
-    val preferences =
-        if (preferencesState != null) preferencesState.collectAsState().value else basicPreferences
+  val workoutStatistics = statisticsViewModel.workoutStatistics
+  val preferencesState = preferencesViewModel.preferences
+  val basicPreferences = Preferences(UnitsSystem.METRIC, WeightUnit.KG)
+  val emptyListFlow: StateFlow<List<WorkoutStatistics>> = MutableStateFlow(emptyList())
+  val statistics = Statistics(if (workoutStatistics != null) workoutStatistics else emptyListFlow)
+  val preferences =
+      if (preferencesState != null) preferencesState.collectAsState().value else basicPreferences
 
-    var isStatsSelected by remember { mutableStateOf(true) }
+  var isStatsSelected by remember { mutableStateOf(true) }
 
-    @Composable
-    fun StatisticsScreen(padding: PaddingValues) {
-        Column(
-            modifier = Modifier.fillMaxSize().testTag("StatsScreen"),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.weight(0.50f))
+  @Composable
+  fun StatisticsScreen(padding: PaddingValues) {
+    Column(
+        modifier = Modifier.fillMaxSize().testTag("StatsScreen"),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+          Spacer(Modifier.weight(0.50f))
 
-            Text(
-                text = stringResource(R.string.weeklyCalories),
-                fontSize = 28.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.SemiBold,
-                color = Black)
+          Text(
+              text = stringResource(R.string.weeklyCalories),
+              fontSize = 28.sp,
+              fontFamily = OpenSans,
+              fontWeight = FontWeight.SemiBold,
+              color = Black)
 
-            Spacer(Modifier.weight(0.03f))
+          Spacer(Modifier.weight(0.03f))
 
-            CaloriesDisplay(calories = statistics.getCaloriesOfTheWeek())
+          CaloriesDisplay(calories = statistics.getCaloriesOfTheWeek())
 
-            Spacer(Modifier.weight(0.07f))
+          Spacer(Modifier.weight(0.07f))
 
-            Row(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Charts(
-                        data = statistics.getCaloriesOfTheWeekToList(),
-                        labelTitle = stringResource(R.string.caloriesLabel))
+          Row(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+              Charts(
+                  data = statistics.getCaloriesOfTheWeekToList(),
+                  labelTitle = stringResource(R.string.caloriesLabel))
 
-                    Spacer(Modifier.height(4.dp))
-                }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Charts(
-                        data =
-                        statistics.getDistanceOfTheWeekPerDay(
-                            isInMile =
-                            (preferences?.unitsSystem ?: UnitsSystem.METRIC) ==
-                                    UnitsSystem.IMPERIAL),
-                        labelTitle =
-                        stringResource(R.string.distanceWithoutUnit) +
-                                if ((preferences?.unitsSystem ?: UnitsSystem.METRIC) ==
-                                    UnitsSystem.IMPERIAL) {
-                                    stringResource(R.string.mileWithParentheses)
-                                } else stringResource(R.string.kmWithParentheses))
-
-                    Spacer(Modifier.height(2.dp))
-                }
+              Spacer(Modifier.height(4.dp))
             }
 
-            Spacer(Modifier.weight(0.02f))
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+              Charts(
+                  data =
+                      statistics.getDistanceOfTheWeekPerDay(
+                          isInMile =
+                              (preferences?.unitsSystem ?: UnitsSystem.METRIC) ==
+                                  UnitsSystem.IMPERIAL),
+                  labelTitle =
+                      stringResource(R.string.distanceWithoutUnit) +
+                          if ((preferences?.unitsSystem ?: UnitsSystem.METRIC) ==
+                              UnitsSystem.IMPERIAL) {
+                            stringResource(R.string.mileWithParentheses)
+                          } else stringResource(R.string.kmWithParentheses))
 
-            Text(
-                text = stringResource(R.string.typeRepartition),
-                fontSize = 28.sp,
-                fontFamily = OpenSans,
-                fontWeight = FontWeight.SemiBold,
-                color = Black)
+              Spacer(Modifier.height(2.dp))
+            }
+          }
 
-            Spacer(Modifier.weight(0.03f))
+          Spacer(Modifier.weight(0.02f))
 
-            PieChartWorkoutType(frequency = statistics.getWorkoutTypeFrequency())
+          Text(
+              text = stringResource(R.string.typeRepartition),
+              fontSize = 28.sp,
+              fontFamily = OpenSans,
+              fontWeight = FontWeight.SemiBold,
+              color = Black)
 
-            Spacer(Modifier.weight(0.1f))
+          Spacer(Modifier.weight(0.03f))
+
+          PieChartWorkoutType(frequency = statistics.getWorkoutTypeFrequency())
+
+          Spacer(Modifier.weight(0.1f))
         }
-    }
+  }
 
-    Scaffold(
-        modifier = Modifier.testTag("AchievementsScreen"),
-        topBar = { TopBar(navigationActions, R.string.achievements) }) { padding ->
+  Scaffold(
+      modifier = Modifier.testTag("AchievementsScreen"),
+      topBar = { TopBar(navigationActions, R.string.achievements) }) { padding ->
         Column(
             modifier = Modifier.fillMaxHeight(fraction = 0.2f).fillMaxWidth().padding(padding),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.weight(0.5f))
+              Spacer(Modifier.weight(0.5f))
 
-            ToggleButtonAchievements(onClick = { isStatsSelected = !isStatsSelected })
+              ToggleButtonAchievements(onClick = { isStatsSelected = !isStatsSelected })
 
-            Spacer(Modifier.weight(0.5f))
-        }
+              Spacer(Modifier.weight(0.5f))
+            }
 
         when (isStatsSelected) {
-            true -> StatisticsScreen(padding = padding)
-            false -> InfiniteCalendar(statistics, padding)
+          true -> StatisticsScreen(padding = padding)
+          false -> InfiniteCalendar(statistics, padding)
         }
-    }
+      }
 }
