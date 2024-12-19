@@ -24,7 +24,7 @@ import org.mockito.kotlin.verify
 
 class ImportScreenTest {
   private lateinit var bodyWeightRepo: WorkoutRepository<BodyWeightWorkout>
-    private lateinit var workoutLocalCache: WorkoutLocalCache
+  private lateinit var workoutLocalCache: WorkoutLocalCache
   private lateinit var bodyWeightViewModel: WorkoutViewModel<BodyWeightWorkout>
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -54,12 +54,12 @@ class ImportScreenTest {
       it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(mockDoneWorkouts)
     }
 
-      val context = ApplicationProvider.getApplicationContext<Context>()
-      // Use a real WorkoutLocalCache with a real Context
-      // This ensures no NullPointerException from null context.
-      workoutLocalCache = WorkoutLocalCache(context)
-      bodyWeightViewModel =
-          WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    // Use a real WorkoutLocalCache with a real Context
+    // This ensures no NullPointerException from null context.
+    workoutLocalCache = WorkoutLocalCache(context)
+    bodyWeightViewModel =
+        WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
 
     // Launch the composable
     composeTestRule.setContent {

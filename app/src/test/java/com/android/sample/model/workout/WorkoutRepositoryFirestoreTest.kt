@@ -99,7 +99,6 @@ class WorkoutRepositoryFirestoreTest {
     `when`(mockAuth.currentUser).thenReturn(mockUser)
     `when`(mockUser.uid).thenReturn("mocked-uid")
 
-
     `when`(mockFirestore.collection(collectionPath)).thenReturn(mockCollectionPath)
 
     // Mock main document name and its behavior
