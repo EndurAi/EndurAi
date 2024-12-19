@@ -44,3 +44,6 @@ cached workouts. They can also still use the ML feature.
 
 # Figma 
 We have a Figma project for the app design and navigation as well as the architecture diagram. Here is the [link](https://www.figma.com/design/rZgylXKE9PmQgKigHpzMtr/Sport-Companion?node-id=0-1&m=dev&t=RZbHJEZFt2Uhlm2P-1) to the project.
+
+# Architecture Diagram
+Here is the link to the architecture diagram of the app. [link](https://github.com/EndurAi/EndurAi/wiki/Architecture-Diagram)
