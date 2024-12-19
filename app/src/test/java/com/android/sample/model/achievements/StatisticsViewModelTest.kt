@@ -84,6 +84,10 @@ class StatisticsViewModelTest {
       val onSuccess = invocation.arguments[0] as (List<WorkoutStatistics>) -> Unit
       onSuccess(workoutsStats)
     }
+    `when`(repository.getFriendStatistics(eq("friendId"), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<WorkoutStatistics>) -> Unit
+      onSuccess(workoutsStats)
+    }
 
     `when`(repository.addWorkoutStatistics(eq(workoutStats), any(), any())).thenAnswer { invocation
       ->
@@ -111,6 +115,27 @@ class StatisticsViewModelTest {
   fun workoutStatisticsFlowShouldStartWithCorrectList() = runBlocking {
     statisticsViewModel.getWorkoutStatistics()
     val workoutStatistics = statisticsViewModel.workoutStatistics.value
+    assert(workoutStatistics == workoutsStats)
+  }
+
+  /**
+   * Tests if the `getFriendWorkoutStatistics` method calls the repository's `getStatistics` method.
+   */
+  @Test
+  fun getFriendWorkoutStatisticsCallsRepository() = runBlocking {
+    statisticsViewModel.getFriendWorkoutStatistics("friendId")
+    verify(repository).getFriendStatistics(any(), any(), any())
+  }
+
+  /**
+   * Tests if the `friendWorkoutStatistics` flow is initialized with the correct list of statistics.
+   */
+  @Test
+  fun friendWorkoutStatisticsFlowShouldStartWithCorrectList() = runBlocking {
+    // Call the actual method with a raw value
+    statisticsViewModel.getFriendWorkoutStatistics("friendId")
+    // Assert the flow's value
+    val workoutStatistics = statisticsViewModel.friendWorkoutStatistics.value
     assert(workoutStatistics == workoutsStats)
   }
 

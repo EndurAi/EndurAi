@@ -1,5 +1,6 @@
 package com.android.sample.ui.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -15,7 +16,17 @@ object Dimensions {
 object FontSizes {
   val BigTitleFontSize = 45.sp
   val TitleFontSize = 20.sp
+  val MediumBigTitleFontSize = 30.sp
   val MediumTitleFontSize = 18.sp
   val SubtitleFontSize = 16.sp
   val ButtonFontSize = 14.sp
+}
+
+object Shape {
+  val buttonShape =
+      RoundedCornerShape(topStart = 40.dp, topEnd = 15.dp, bottomStart = 15.dp, bottomEnd = 40.dp)
+  val roundButtonShape = RoundedCornerShape(30.dp)
+  val roundFieldShape = RoundedCornerShape(10.dp)
+  val smallButtonShape =
+      RoundedCornerShape(topStart = 30.dp, topEnd = 9.dp, bottomStart = 9.dp, bottomEnd = 30.dp)
 }

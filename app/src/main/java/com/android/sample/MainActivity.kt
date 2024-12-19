@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
@@ -22,6 +26,7 @@ import com.android.sample.model.achievements.StatisticsRepositoryFirestore
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.calendar.CalendarViewModel
 import com.android.sample.model.camera.CameraViewModel
+import com.android.sample.model.preferences.PreferencesLocalCache
 import com.android.sample.model.preferences.PreferencesRepositoryFirestore
 import com.android.sample.model.preferences.PreferencesViewModel
 import com.android.sample.model.userAccount.UserAccountViewModel
@@ -30,6 +35,7 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WarmUp
 import com.android.sample.model.workout.WarmUpViewModel
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
@@ -41,10 +47,13 @@ import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.calendar.CalendarScreen
 import com.android.sample.ui.calendar.DayCalendarScreen
 import com.android.sample.ui.friends.AddFriendScreen
+import com.android.sample.ui.friends.FriendStatisticsScreen
 import com.android.sample.ui.friends.FriendsScreen
 import com.android.sample.ui.googlemap.RunningScreen
 import com.android.sample.ui.mainscreen.MainScreen
 import com.android.sample.ui.mainscreen.ViewAllScreen
+import com.android.sample.ui.mlFeedback.CoachCaptureScreen
+import com.android.sample.ui.mlFeedback.CoachFeedbackScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -54,8 +63,8 @@ import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.video.VideoLibraryScreen
 import com.android.sample.ui.video.VideoScreen
 import com.android.sample.ui.workout.ImportOrCreateScreen
+import com.android.sample.ui.workout.ImportScreen
 import com.android.sample.ui.workout.RunningSelectionScreen
-import com.android.sample.ui.workout.SessionSelectionScreen
 import com.android.sample.ui.workout.WorkoutCreationScreen
 import com.android.sample.ui.workout.WorkoutOverviewScreen
 import com.android.sample.ui.workout.WorkoutScreen
@@ -95,29 +104,45 @@ class MainActivity : ComponentActivity() {
 fun MainApp(startDestination: String = Route.AUTH) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+
+  val context = LocalContext.current
+  val preferencesLocalCache = PreferencesLocalCache(context)
+
+  val workoutLocalCache = WorkoutLocalCache(context)
+
   val userAccountViewModel: UserAccountViewModel =
       viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
-  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
-  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
+  val preferenceRepository =
+      PreferencesRepositoryFirestore(Firebase.firestore, preferencesLocalCache)
+  val preferencesViewModel = PreferencesViewModel(preferenceRepository, preferencesLocalCache)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
-  val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = BodyWeightWorkout::class.java)
+  val bodyweightWorkoutViewModel =
+      WorkoutViewModel(
+          bodyweightWorkoutRepository, workoutLocalCache, BodyWeightWorkout::class.java)
   val yogaWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
-  val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = YogaWorkout::class.java)
+  val yogaWorkoutViewModel =
+      WorkoutViewModel(yogaWorkoutRepository, workoutLocalCache, YogaWorkout::class.java)
 
-  val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
-  val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+  val warmUpRepository =
+      WorkoutRepositoryFirestore(Firebase.firestore, workoutLocalCache, clazz = WarmUp::class.java)
+  val warmUpViewModel = WarmUpViewModel(warmUpRepository, workoutLocalCache)
   val calendarViewModel = CalendarViewModel()
 
-  val cameraViewModel = CameraViewModel(context = LocalContext.current)
+  val cameraViewModel = CameraViewModel(context = context)
   val runningWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = RunningWorkout::class.java)
-  val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = RunningWorkout::class.java)
+  val runningWorkoutViewModel =
+      WorkoutViewModel(runningWorkoutRepository, workoutLocalCache, RunningWorkout::class.java)
   val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
   val statisticsViewModel = StatisticsViewModel(statisticsRepository)
+  val firstTimeInMlCoach = remember { mutableStateOf(true) }
 
   NavHost(navController = navController, startDestination = startDestination) {
 
@@ -148,8 +173,13 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Friends Screen
 
     navigation(startDestination = Screen.FRIENDS, route = Route.FRIENDS) {
-      composable(Screen.FRIENDS) { FriendsScreen(navigationActions, userAccountViewModel) }
+      composable(Screen.FRIENDS) {
+        FriendsScreen(navigationActions, userAccountViewModel, statisticsViewModel)
+      }
       composable(Screen.ADD_FRIEND) { AddFriendScreen(navigationActions, userAccountViewModel) }
+      composable(Screen.FRIEND_STATS) {
+        FriendStatisticsScreen(navigationActions, userAccountViewModel, statisticsViewModel)
+      }
     }
 
     // Video Screen
@@ -177,12 +207,14 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Settings Screen
     navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
-      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
-    }
-
-    // Session Selection Screen
-    navigation(startDestination = Screen.SESSIONSELECTION, route = Route.SESSIONSELECTION) {
-      composable(Screen.SESSIONSELECTION) { SessionSelectionScreen(navigationActions) }
+      composable(Screen.SETTINGS) {
+        SettingsScreen(
+            navigationActions,
+            preferencesViewModel,
+            bodyweightWorkoutViewModel,
+            yogaWorkoutViewModel,
+            userAccountViewModel)
+      }
     }
 
     // Import or Create Screen for body weight workout
@@ -192,12 +224,24 @@ fun MainApp(startDestination: String = Route.AUTH) {
           composable(Screen.IMPORTORCREATE_BODY_WEIGHT) {
             ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.BODY_WEIGHT)
           }
+          composable(Screen.IMPORT_SCREEN_BODYWEIGHT) {
+            ImportScreen(
+                navigationActions,
+                workoutViewModel = bodyweightWorkoutViewModel,
+                workoutType = WorkoutType.BODY_WEIGHT)
+          }
         }
 
     // Import or Create Screen for yoga workout
     navigation(startDestination = Screen.IMPORTORCREATE_YOGA, route = Route.IMPORTORCREATE_YOGA) {
       composable(Screen.IMPORTORCREATE_YOGA) {
         ImportOrCreateScreen(navigationActions, workoutType = WorkoutType.YOGA)
+      }
+      composable(Screen.IMPORT_SCREEN_YOGA) {
+        ImportScreen(
+            navigationActions,
+            workoutViewModel = yogaWorkoutViewModel,
+            workoutType = WorkoutType.YOGA)
       }
     }
 
@@ -368,6 +412,18 @@ fun MainApp(startDestination: String = Route.AUTH) {
         DayCalendarScreen(
             navigationActions, bodyweightWorkoutViewModel, yogaWorkoutViewModel, calendarViewModel)
       }
+    }
+
+    // Coach Capture Screen
+    navigation(startDestination = Screen.COACH_CAPTURE, route = Route.COACH_CAPTURE) {
+      composable(Screen.COACH_CAPTURE) {
+        CoachCaptureScreen(navigationActions, cameraViewModel, firstTime = firstTimeInMlCoach)
+      }
+    }
+
+    // Coach Feedback Screen
+    navigation(startDestination = Screen.COACH_FEEDBACK, route = Route.COACH_FEEDBACK) {
+      composable(Screen.COACH_FEEDBACK) { CoachFeedbackScreen(navigationActions, cameraViewModel) }
     }
   }
 }
