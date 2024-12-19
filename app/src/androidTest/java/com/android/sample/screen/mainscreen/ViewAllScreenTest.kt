@@ -1,13 +1,17 @@
 package com.android.sample.ui.mainscreen
 
+import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.workout.BodyWeightWorkout
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepository
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.model.workout.YogaWorkout
 import com.android.sample.ui.navigation.NavigationActions
 import java.time.LocalDateTime
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,43 +30,53 @@ class ViewAllScreenTest {
 
   @Before
   fun setUp() {
-    bodyWeightRepo = mock()
-    yogaRepo = mock()
+    runTest {
+      bodyWeightRepo = mock()
+      yogaRepo = mock()
 
-    val bodyWeightWorkouts =
-        listOf(
-            BodyWeightWorkout(
-                "1",
-                "NopainNogain",
-                "Do 20 push-ups",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 42)),
-            BodyWeightWorkout(
-                "2",
-                "NightSes",
-                "Hold for 60 seconds",
-                false,
-                date = LocalDateTime.of(2024, 11, 1, 0, 43)))
-    val yogaWorkouts: List<YogaWorkout> = listOf()
+      // Get application context for testing
+      val context = ApplicationProvider.getApplicationContext<Context>()
 
-    `when`(bodyWeightRepo.getDocuments(any(), any())).then {
-      it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
-    }
+      // Use a real WorkoutLocalCache with a real Context
+      // This ensures no NullPointerException from null context.
+      val workoutLocalCache = WorkoutLocalCache(context)
 
-    `when`(yogaRepo.getDocuments(any(), any())).then {
-      it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
-    }
+      val bodyWeightWorkouts =
+          listOf(
+              BodyWeightWorkout(
+                  "1",
+                  "NopainNogain",
+                  "Do 20 push-ups",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 42)),
+              BodyWeightWorkout(
+                  "2",
+                  "NightSes",
+                  "Hold for 60 seconds",
+                  false,
+                  date = LocalDateTime.of(2024, 11, 1, 0, 43)))
+      val yogaWorkouts: List<YogaWorkout> = listOf()
 
-    bodyWeightViewModel = WorkoutViewModel(bodyWeightRepo)
-    yogaViewModel = WorkoutViewModel(yogaRepo)
+      `when`(bodyWeightRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<BodyWeightWorkout>) -> Unit>(0)(bodyWeightWorkouts)
+      }
 
-    navigationActions = mock(NavigationActions::class.java)
+      `when`(yogaRepo.getDocuments(any(), any())).then {
+        it.getArgument<(List<YogaWorkout>) -> Unit>(0)(yogaWorkouts)
+      }
 
-    composeTestRule.setContent {
-      ViewAllScreen(
-          navigationActions = navigationActions,
-          bodyWeightViewModel = bodyWeightViewModel,
-          yogaViewModel = yogaViewModel)
+      bodyWeightViewModel =
+          WorkoutViewModel(bodyWeightRepo, workoutLocalCache, BodyWeightWorkout::class.java)
+      yogaViewModel = WorkoutViewModel(yogaRepo, workoutLocalCache, YogaWorkout::class.java)
+
+      navigationActions = mock(NavigationActions::class.java)
+
+      composeTestRule.setContent {
+        ViewAllScreen(
+            navigationActions = navigationActions,
+            bodyWeightViewModel = bodyWeightViewModel,
+            yogaViewModel = yogaViewModel)
+      }
     }
   }
 

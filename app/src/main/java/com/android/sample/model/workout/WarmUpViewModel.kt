@@ -1,7 +1,7 @@
 package com.android.sample.model.workout
 
-class WarmUpViewModel(val repository: WorkoutRepository<WarmUp>) :
-    WorkoutViewModel<WarmUp>(repository) {
+class WarmUpViewModel(val repository: WorkoutRepository<WarmUp>, localCache: WorkoutLocalCache) :
+    WorkoutViewModel<WarmUp>(repository, localCache, WarmUp::class.java) {
 
   private val default_exercise_id = "default"
   private val DEFAULT_WARM_UP_EXERCISES: MutableList<Exercise> =
@@ -25,7 +25,7 @@ class WarmUpViewModel(val repository: WorkoutRepository<WarmUp>) :
 
   init {
     repository.init { getWorkouts() }
-    if (workouts_.value.isEmpty()) {
+    if (_workouts.value.isEmpty()) {
       selectWorkout(DEFAULT_WARMUP)
     }
   }

@@ -20,6 +20,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Repository implementation for storing and managing `Workout` documents in Firebase Firestore.
@@ -31,6 +36,7 @@ import kotlin.reflect.full.companionObjectInstance
  */
 open class WorkoutRepositoryFirestore<T : Workout>(
     private val db: FirebaseFirestore,
+    private val localCache: WorkoutLocalCache,
     private val clazz: Class<T>
 ) : WorkoutRepository<T> {
 
@@ -124,7 +130,10 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .document(obj.workoutId)
         .set(dataMapWorkout)
         .addOnFailureListener { e -> onFailure(e) }
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener {
+          onSuccess()
+          saveWorkoutsToCache(listOf(obj)) // Save to cache
+        }
   }
 
   /**
@@ -133,7 +142,20 @@ open class WorkoutRepositoryFirestore<T : Workout>(
    * @param onSuccess Callback triggered with the list of workout documents on success.
    * @param onFailure Callback triggered with an exception on failure.
    */
-  override fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
+  override suspend fun getDocuments(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
+    // Fetch from cache first
+    withContext(Dispatchers.IO) {
+      val cachedWorkouts = localCache.getWorkouts().firstOrNull()
+      if (!cachedWorkouts.isNullOrEmpty()) {
+        onSuccess(cachedWorkouts.filterIsInstance(clazz))
+      } else {
+        // If no cache, fetch from Firestore
+        getDocumentsFirestore(onSuccess, onFailure)
+      }
+    }
+  }
+
+  private fun getDocumentsFirestore(onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
 
     // we first get document'ids from user document
     db.collection(collectionPath)
@@ -198,7 +220,10 @@ open class WorkoutRepositoryFirestore<T : Workout>(
     db.collection(mainDocumentName)
         .document(obj.workoutId)
         .set(dataMap)
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener {
+          onSuccess()
+          updateWorkoutInCache(obj) // Update in cache
+        }
         .addOnFailureListener { e -> onFailure(e) }
   }
 
@@ -226,7 +251,30 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .document(id)
         .delete()
         .addOnFailureListener { e -> onFailure(e) }
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener {
+          onSuccess()
+          removeWorkoutFromCache(id) // Remove from cache
+        }
+  }
+
+  private fun saveWorkoutsToCache(workouts: List<T>) {
+    CoroutineScope(Dispatchers.IO).launch { localCache.saveWorkouts(workouts) }
+  }
+
+  private fun updateWorkoutInCache(workout: T) {
+    CoroutineScope(Dispatchers.IO).launch {
+      val currentCache = localCache.getWorkouts().firstOrNull() ?: emptyList()
+      val updatedCache = currentCache.map { if (it.workoutId == workout.workoutId) workout else it }
+      localCache.saveWorkouts(updatedCache)
+    }
+  }
+
+  private fun removeWorkoutFromCache(workoutId: String) {
+    CoroutineScope(Dispatchers.IO).launch {
+      val currentCache = localCache.getWorkouts().firstOrNull() ?: emptyList()
+      val updatedCache = currentCache.filterNot { it.workoutId == workoutId }
+      localCache.saveWorkouts(updatedCache)
+    }
   }
 
   /**

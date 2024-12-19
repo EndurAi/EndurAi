@@ -35,6 +35,7 @@ import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WarmUp
 import com.android.sample.model.workout.WarmUpViewModel
+import com.android.sample.model.workout.WorkoutLocalCache
 import com.android.sample.model.workout.WorkoutRepositoryFirestore
 import com.android.sample.model.workout.WorkoutType
 import com.android.sample.model.workout.WorkoutViewModel
@@ -105,28 +106,44 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
   val context = LocalContext.current
   val preferencesLocalCache = PreferencesLocalCache(context)
+
+  val context = LocalContext.current
+
+  val workoutLocalCache = WorkoutLocalCache(context)
+
   val userAccountViewModel: UserAccountViewModel =
       viewModel(factory = UserAccountViewModel.provideFactory(LocalContext.current))
   val preferenceRepository =
       PreferencesRepositoryFirestore(Firebase.firestore, preferencesLocalCache)
   val preferencesViewModel = PreferencesViewModel(preferenceRepository, preferencesLocalCache)
+      viewModel(factory = UserAccountViewModel.provideFactory(context))
+  val preferenceRepository = PreferencesRepositoryFirestore(Firebase.firestore)
+  val preferencesViewModel = PreferencesViewModel(preferenceRepository)
 
   val videoViewModel: VideoViewModel = viewModel(factory = VideoViewModel.Factory)
   val bodyweightWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = BodyWeightWorkout::class.java)
-  val bodyweightWorkoutViewModel = WorkoutViewModel(bodyweightWorkoutRepository)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = BodyWeightWorkout::class.java)
+  val bodyweightWorkoutViewModel =
+      WorkoutViewModel(
+          bodyweightWorkoutRepository, workoutLocalCache, BodyWeightWorkout::class.java)
   val yogaWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = YogaWorkout::class.java)
-  val yogaWorkoutViewModel = WorkoutViewModel(yogaWorkoutRepository)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = YogaWorkout::class.java)
+  val yogaWorkoutViewModel =
+      WorkoutViewModel(yogaWorkoutRepository, workoutLocalCache, YogaWorkout::class.java)
 
-  val warmUpRepository = WorkoutRepositoryFirestore(Firebase.firestore, clazz = WarmUp::class.java)
-  val warmUpViewModel = WarmUpViewModel(warmUpRepository)
+  val warmUpRepository =
+      WorkoutRepositoryFirestore(Firebase.firestore, workoutLocalCache, clazz = WarmUp::class.java)
+  val warmUpViewModel = WarmUpViewModel(warmUpRepository, workoutLocalCache)
   val calendarViewModel = CalendarViewModel()
 
-  val cameraViewModel = CameraViewModel(context = LocalContext.current)
+  val cameraViewModel = CameraViewModel(context = context)
   val runningWorkoutRepository =
-      WorkoutRepositoryFirestore(Firebase.firestore, clazz = RunningWorkout::class.java)
-  val runningWorkoutViewModel = WorkoutViewModel(runningWorkoutRepository)
+      WorkoutRepositoryFirestore(
+          Firebase.firestore, workoutLocalCache, clazz = RunningWorkout::class.java)
+  val runningWorkoutViewModel =
+      WorkoutViewModel(runningWorkoutRepository, workoutLocalCache, RunningWorkout::class.java)
   val statisticsRepository = StatisticsRepositoryFirestore(Firebase.firestore)
   val statisticsViewModel = StatisticsViewModel(statisticsRepository)
   val firstTimeInMlCoach = remember { mutableStateOf(true) }
@@ -192,7 +209,14 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Settings Screen
     navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
-      composable(Screen.SETTINGS) { SettingsScreen(navigationActions, preferencesViewModel) }
+      composable(Screen.SETTINGS) {
+        SettingsScreen(
+            navigationActions,
+            preferencesViewModel,
+            bodyweightWorkoutViewModel,
+            yogaWorkoutViewModel,
+            userAccountViewModel)
+      }
     }
 
     // Import or Create Screen for body weight workout
