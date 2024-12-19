@@ -8,10 +8,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.flowOf
 import org.junit.After
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -95,9 +98,6 @@ class WorkoutRepositoryFirestoreTest {
     `when`(FirebaseAuth.getInstance()).thenReturn(mockAuth)
     `when`(mockAuth.currentUser).thenReturn(mockUser)
     `when`(mockUser.uid).thenReturn("mocked-uid")
-
-    workoutRepositoryFirestore1 =
-        WorkoutRepositoryFirestore(mockFirestore, BodyWeightWorkout::class.java)
 
     `when`(mockFirestore.collection(collectionPath)).thenReturn(mockCollectionPath)
 
