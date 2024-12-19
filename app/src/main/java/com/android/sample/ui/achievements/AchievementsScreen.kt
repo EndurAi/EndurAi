@@ -51,11 +51,12 @@ fun AchievementsScreen(
     preferencesViewModel: PreferencesViewModel
 ) {
   val workoutStatistics = statisticsViewModel.workoutStatistics
-    val preferencesState = preferencesViewModel.preferences
-    val basicPreferences = Preferences(UnitsSystem.METRIC, WeightUnit.KG)
+  val preferencesState = preferencesViewModel.preferences
+  val basicPreferences = Preferences(UnitsSystem.METRIC, WeightUnit.KG)
   val emptyListFlow: StateFlow<List<WorkoutStatistics>> = MutableStateFlow(emptyList())
   val statistics = Statistics(if (workoutStatistics != null) workoutStatistics else emptyListFlow)
-  val preferences = if(preferencesState != null) preferencesState.collectAsState().value else basicPreferences
+  val preferences =
+      if (preferencesState != null) preferencesState.collectAsState().value else basicPreferences
 
   var isStatsSelected by remember { mutableStateOf(true) }
 
