@@ -47,6 +47,7 @@ import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.userAccount.WeightUnit
 import com.android.sample.model.workout.ExerciseDetail
 import com.android.sample.model.workout.ExerciseType
+import com.android.sample.model.workout.WorkoutMetValues
 import com.android.sample.ui.theme.Black
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.Dimensions
@@ -262,23 +263,6 @@ fun SaveSwitch(saveOption: Boolean, onSaveSwitch: (Boolean) -> Unit) {
         }
   }
 }
-/**
- * A map of MET (Metabolic Equivalent of Task) values for each type of exercise. These values define
- * the number of calories burned per kilogram of body weight per hour of exercise (kcal / hour *
- * kg).
- */
-private val metValues: Map<ExerciseType, Double> =
-    mapOf(
-        ExerciseType.PUSH_UPS to 4.0,
-        ExerciseType.SQUATS to 5.0,
-        ExerciseType.PLANK to 5.0,
-        ExerciseType.CHAIR to 4.5,
-
-        // Yoga exercises
-        ExerciseType.DOWNWARD_DOG to 2.5,
-        ExerciseType.TREE_POSE to 2.0,
-        ExerciseType.UPWARD_FACING_DOG to 3.5,
-        ExerciseType.WARRIOR_II to 2.8)
 
 /**
  * Object that calculates the number of calories burned during bodyweight exercises. It provides
@@ -348,7 +332,7 @@ object Calories {
       weight: Float,
       hour: Double
   ): Double {
-    return hour * weight * metValues.getOrDefault(exerciseType, 0.0)
+    return hour * weight * WorkoutMetValues.getMetValue(exerciseType)
   }
 
   /**
@@ -375,6 +359,6 @@ object Calories {
           else -> 0.0
         }
 
-    return factor * metValues.getOrDefault(exerciseType, 0.0)
+    return factor * WorkoutMetValues.getMetValue(exerciseType)
   }
 }
