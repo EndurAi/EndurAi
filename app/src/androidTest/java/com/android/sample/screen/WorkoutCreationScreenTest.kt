@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.android.sample.model.workout.BodyWeightWorkout
 import com.android.sample.model.workout.Exercise
 import com.android.sample.model.workout.ExerciseDetail
@@ -294,5 +295,28 @@ class WorkoutCreationScreenTest {
     composeTestRule.onNodeWithTag("saveButton").performClick()
     // Check that the updateWorkout function is called
     verify(mockBodyWeightWorkoutRepository).updateDocument(any(), any(), any())
+  }
+
+  @Test
+  fun testDeleteWorkoutCallsDeleteWorkout() {
+    // Set the content of the screen
+    mockBodyWeightWorkoutViewModel.selectWorkout(bodyWeightWorkouts[0])
+    composeTestRule.setContent {
+      WorkoutCreationScreen(
+          navigationActions = mockNavHostController,
+          workoutViewModel = mockBodyWeightWorkoutViewModel,
+          workoutType = WorkoutType.BODY_WEIGHT,
+          isImported = true,
+          editing = true)
+    }
+
+    composeTestRule
+        .onNodeWithTag("deleteButton")
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+    // Check that the deleteDocument function is called
+    verify(mockBodyWeightWorkoutRepository).deleteDocument(any(), any(), any())
   }
 }
