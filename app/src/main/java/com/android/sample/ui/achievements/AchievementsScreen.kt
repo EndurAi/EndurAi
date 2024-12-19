@@ -3,10 +3,12 @@ package com.android.sample.ui.achievements
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,13 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import co.yml.charts.common.model.Point
 import com.android.sample.R
 import com.android.sample.model.achievements.Statistics
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.ui.composables.CaloriesDisplay
 import com.android.sample.ui.composables.Charts
+import com.android.sample.ui.composables.PieChartWorkoutType
 import com.android.sample.ui.composables.ToggleButtonAchievements
 import com.android.sample.ui.composables.TopBar
 import com.android.sample.ui.navigation.NavigationActions
@@ -44,10 +47,10 @@ fun AchievementsScreen(
   @Composable
   fun StatisticsScreen(padding: PaddingValues) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(padding),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
-          Spacer(Modifier.weight(0.12f))
+          Spacer(Modifier.weight(0.50f))
 
           Text(
               text = "Calories of the week",
@@ -60,16 +63,54 @@ fun AchievementsScreen(
 
           CaloriesDisplay(calories = statistics.getCaloriesOfTheWeek())
 
-          val pointsData: List<Point> =
-              listOf(
-                  Point(0f, 562f),
-                  Point(1f, 1540f),
-                  Point(2f, 850f),
-                  Point(3f, 200f),
-                  Point(4f, 690f))
-          Charts()
+          Spacer(Modifier.weight(0.07f))
 
-          Spacer(Modifier.weight(0.85f))
+        Row(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Charts(data = statistics.getCaloriesOfTheWeekToList(), labelTitle = "calories (kcal)")
+
+                Spacer(Modifier.height(4.dp))
+
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Charts(data = statistics.getDistanceOfTheWeekPerDay(), labelTitle = "distance (km)")
+
+                Spacer(Modifier.height(2.dp))
+
+            }
+
+
+
+        }
+
+        Spacer(Modifier.weight(0.02f))
+
+
+            Text(
+                text = "Type exercise repartition",
+                fontSize = 28.sp,
+                fontFamily = OpenSans,
+                fontWeight = FontWeight.SemiBold,
+                color = Black
+            )
+
+        Spacer(Modifier.weight(0.03f))
+
+
+
+
+        PieChartWorkoutType(frequency = statistics.getWorkoutTypeFrequency())
+
+        Spacer(Modifier.weight(0.1f))
+
+
+
         }
   }
 
@@ -85,7 +126,6 @@ fun AchievementsScreen(
               ToggleButtonAchievements(
                   onClick = {
                     isStatsSelected = !isStatsSelected
-                    println("isStateSelected : " + isStatsSelected)
                   })
 
               Spacer(Modifier.weight(0.5f))
