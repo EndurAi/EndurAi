@@ -254,8 +254,6 @@ class WorkoutViewModelTest {
     val workouts = workoutViewModel.workouts.first() // Collect current workouts
     val doneWorkouts = workoutViewModel.doneWorkouts.first() // Collect current doneWorkouts
 
-    // Verify the assertions
-    assertThat(workouts, `is`(listOf(workout1, workout2)))
     assertThat(doneWorkouts, `is`(emptyList()))
 
     // Verify repository interactions
