@@ -160,7 +160,7 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Achievements Screen
     navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
-      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions, statisticsViewModel) }
+      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions, statisticsViewModel,preferencesViewModel) }
     }
 
     // Preferences Screen
