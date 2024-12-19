@@ -26,7 +26,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.location.LocationService
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.ChronoDisplay
@@ -54,7 +56,9 @@ import java.util.TimerTask
 @Composable
 fun RunningScreen(
     navigationActions: NavigationActions,
-    runningWorkoutViewModel: WorkoutViewModel<RunningWorkout>
+    runningWorkoutViewModel: WorkoutViewModel<RunningWorkout>,
+    statisticsViewModel: StatisticsViewModel,
+    userAccountViewModel: UserAccountViewModel
 ) {
 
   var finalPathPoints by remember { mutableStateOf(mutableListOf<LatLng>()) }
@@ -335,6 +339,13 @@ fun RunningScreen(
                                   },
                               timeMs = elapsedTime)
 
+                        val stats =
+                            statisticsViewModel.computeWorkoutStatistics(
+                                workout = runningWorkout,
+                                exerciseList = emptyList(),
+                                userAccountViewModel = userAccountViewModel)
+                        statisticsViewModel.addWorkoutStatistics(stats)
+
                       runningWorkoutViewModel.addWorkout(runningWorkout)
                       LocationServiceManager.stopAndResetLocationService(context)
 
@@ -405,7 +416,30 @@ fun RunningScreen(
                       isPaused = false
                       isFinished = false
 
+                        val runningWorkout =
+                            RunningWorkout(
+                                runningWorkoutViewModel.getNewUid(),
+                                name,
+                                description,
+                                date = LocalDateTime.now(),
+                                path =
+                                pathPoints.value.map { loc ->
+                                    com.google.type.LatLng.newBuilder()
+                                        .setLongitude(loc.longitude)
+                                        .setLatitude(loc.latitude)
+                                        .build()
+                                },
+                                timeMs = elapsedTime)
+
+                        val stats =
+                            statisticsViewModel.computeWorkoutStatistics(
+                                workout = runningWorkout,
+                                exerciseList = emptyList(),
+                                userAccountViewModel = userAccountViewModel)
+                        statisticsViewModel.addWorkoutStatistics(stats)
+
                       navigationActions.navigateTo(Screen.MAIN)
+
                     },
                     title = "Finish",
                     showIcon = false,
