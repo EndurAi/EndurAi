@@ -21,7 +21,11 @@ import androidx.compose.ui.unit.dp
 fun CustomSearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
   Box(
       modifier =
-          modifier.clip(RoundedCornerShape(24.dp)).background(Color(0xFFF0F0F0)).padding(8.dp).testTag("CustomSearchBar")) {
+          modifier
+              .clip(RoundedCornerShape(24.dp))
+              .background(Color(0xFFF0F0F0))
+              .padding(8.dp)
+              .testTag("CustomSearchBar")) {
         Row {
           Icon(
               imageVector = Icons.Default.Search,

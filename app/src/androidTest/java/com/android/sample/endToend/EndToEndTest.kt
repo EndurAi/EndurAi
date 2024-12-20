@@ -218,10 +218,7 @@ class EndToEndTest {
 
     // this confirms that we are on main screen
     mainScreenIsWellDisplayed()
-
   }
-
-
 
   private fun workoutCreationScreenIsWellDisplayed() {
     val testName = "workoutCreationScreenIsWellDisplayed"
@@ -516,6 +513,4 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("invitationsTabButton").assertIsDisplayed().assertHasClickAction()
     nodeControl("newConnectionsContent", testName)
   }
-
-
 }
