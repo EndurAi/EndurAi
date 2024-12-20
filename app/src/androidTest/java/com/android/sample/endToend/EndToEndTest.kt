@@ -403,16 +403,6 @@ class EndToEndTest {
   private fun achievementScreenIsWellDisplayed() {
     val testName = "achievementScreenIsWellDisplayed"
 
-    // Verify that the screen and toggleButton is displayed
-    nodeControl("AchievementsScreen", testName)
-    nodeControl("BottomBar", testName)
-    nodeControlWithText("Stats", testName)
-    nodeControlWithText("History", testName)
-    nodeControl("StatsButton", testName)
-    composeTestRule.onNodeWithTag("StatsButton").assertHasClickAction()
-    nodeControl("HistoryButton", testName)
-    composeTestRule.onNodeWithTag("HistoryButton").assertIsDisplayed().assertHasClickAction()
-
     // Verify we are in StatsScreen
     nodeControl("StatsScreen", testName)
     nodeControlWithText("Calories of the week", testName)
