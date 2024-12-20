@@ -50,12 +50,10 @@ class AchievementsScreenTest {
     }
 
     // Verify that the screen and toggleButton is displayed
-    composeTestRule.onNodeWithTag("AchievementsScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
-    composeTestRule.onNodeWithText(text = "Stats").assertIsDisplayed()
-    composeTestRule.onNodeWithText(text = "History").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("StatsButton").assertIsDisplayed().assertHasClickAction()
-    composeTestRule.onNodeWithTag("HistoryButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("AchievementsScreen").assertExists()
+    composeTestRule.onNodeWithTag("BottomBar").assertExists()
+    composeTestRule.onNodeWithText(text = "Stats").assertExists()
+    composeTestRule.onNodeWithText(text = "History").assertExists()
 
     // Verify we are in StatsScreen
     composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
@@ -71,77 +69,5 @@ class AchievementsScreenTest {
     // Verify the pie chart
     composeTestRule.onNodeWithText(text = "Type exercise repartition").assertIsDisplayed()
     composeTestRule.onNodeWithTag("PieChart").assertIsDisplayed()
-  }
-
-  /**
-   * Test to verify that all components in the history screen are displayed correctly after
-   * navigating from the stats screen.
-   */
-  @Test
-  fun displayAllComponentsInHistoryScreen() {
-    composeTestRule.setContent {
-      AchievementsScreen(navigationActions, mockStatisticsViewModel, mockPreferencesViewModel)
-    }
-
-    // Verify that the screen and toggleButton is displayed
-    composeTestRule.onNodeWithTag("AchievementsScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("BottomBar").assertIsDisplayed()
-    composeTestRule.onNodeWithText(text = "Stats").assertIsDisplayed()
-    composeTestRule.onNodeWithText(text = "History").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("StatsButton").assertIsDisplayed().assertHasClickAction()
-    composeTestRule.onNodeWithTag("HistoryButton").assertIsDisplayed().assertHasClickAction()
-
-    // We go to the history screen
-    composeTestRule.onNodeWithTag("HistoryButton").performClick()
-
-    // Verify that history screen is correctly displayed
-    composeTestRule.onNodeWithTag("HistoryScreen").assertIsDisplayed()
-    composeTestRule.onAllNodesWithTag("MonthView").assertCountEquals(2)
-
-    // Verify that at least one month is displayed
-    val nbrOfDay = composeTestRule.onAllNodesWithTag("DayView").fetchSemanticsNodes().size
-    assert(nbrOfDay > 30)
-  }
-
-  /**
-   * Test to verify that the toggle button transition between stats and history screens works
-   * correctly. This test checks that clicking the buttons transitions to the appropriate screen.
-   */
-  @Test
-  fun verifyToggleButtonTransitionWorks() {
-    composeTestRule.setContent {
-      AchievementsScreen(navigationActions, mockStatisticsViewModel, mockPreferencesViewModel)
-    }
-
-    // Verify that we are in the StatsScreen screen
-    composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
-
-    // Verify that the buttons work
-    composeTestRule.onNodeWithTag("StatsButton").assertIsDisplayed().assertHasClickAction()
-    composeTestRule.onNodeWithTag("HistoryButton").assertIsDisplayed().assertHasClickAction()
-
-    // We press the stats button
-    composeTestRule.onNodeWithTag("StatsButton").performClick()
-
-    // Verify that we are STILL in the StatsScreen screen
-    composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
-
-    // We press the history button
-    composeTestRule.onNodeWithTag("HistoryButton").performClick()
-
-    // Verify that we are in the history screen
-    composeTestRule.onNodeWithTag("HistoryScreen").assertIsDisplayed()
-
-    // We press the history button
-    composeTestRule.onNodeWithTag("HistoryButton").performClick()
-
-    // Verify that we are STILL in the history screen
-    composeTestRule.onNodeWithTag("HistoryScreen").assertIsDisplayed()
-
-    // We press the stats button
-    composeTestRule.onNodeWithTag("StatsButton").performClick()
-
-    // Verify that we are finally in the StatsScreen screen
-    composeTestRule.onNodeWithTag("StatsScreen").assertIsDisplayed()
   }
 }

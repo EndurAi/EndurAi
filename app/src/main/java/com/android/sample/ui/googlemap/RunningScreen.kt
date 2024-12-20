@@ -26,14 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import com.android.sample.R
 import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.location.LocationService
 import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutViewModel
-import com.android.sample.ui.composables.CameraFeedBack.Companion.CameraBody
 import com.android.sample.ui.composables.ChronoDisplay
 import com.android.sample.ui.composables.DistanceDisplay
 import com.android.sample.ui.composables.PaceDisplay
@@ -67,18 +65,18 @@ fun RunningScreen(
     statisticsViewModel: StatisticsViewModel,
     userAccountViewModel: UserAccountViewModel
 ) {
-    val locationPermissionState: PermissionState =
-        rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
-    val notifPermissionState: PermissionState =
-        rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+  val locationPermissionState: PermissionState =
+      rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+  val notifPermissionState: PermissionState =
+      rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
 
-    if (!locationPermissionState.status.isGranted ) {
-        LaunchedEffect(Unit) { locationPermissionState.launchPermissionRequest() }
-    }
+  if (!locationPermissionState.status.isGranted) {
+    LaunchedEffect(Unit) { locationPermissionState.launchPermissionRequest() }
+  }
 
-    if (!notifPermissionState.status.isGranted) {
-        LaunchedEffect(Unit) { notifPermissionState.launchPermissionRequest() }
-    }
+  if (!notifPermissionState.status.isGranted) {
+    LaunchedEffect(Unit) { notifPermissionState.launchPermissionRequest() }
+  }
 
   var finalPathPoints by remember { mutableStateOf(mutableListOf<LatLng>()) }
 
