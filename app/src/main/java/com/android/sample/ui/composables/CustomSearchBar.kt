@@ -14,13 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomSearchBar(query: String, onQueryChange: (String) -> Unit, modifier: Modifier = Modifier) {
   Box(
       modifier =
-          modifier.clip(RoundedCornerShape(24.dp)).background(Color(0xFFF0F0F0)).padding(8.dp)) {
+          modifier.clip(RoundedCornerShape(24.dp)).background(Color(0xFFF0F0F0)).padding(8.dp).testTag("CustomSearchBar")) {
         Row {
           Icon(
               imageVector = Icons.Default.Search,

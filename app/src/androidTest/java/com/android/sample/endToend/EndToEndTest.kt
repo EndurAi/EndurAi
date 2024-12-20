@@ -185,6 +185,44 @@ class EndToEndTest {
     mainScreenIsWellDisplayed()
   }
 
+  @Test
+  fun testEndToEnd3() {
+    // test begins at the main screen
+    // check that everything is displayed
+
+    mainScreenIsWellDisplayed()
+
+    // go to the social screen
+    composeTestRule.onNodeWithTag("FriendsButton").performClick()
+
+    // verify that the friend screen is correctly displayed
+    friendsScreenIsWellDisplayed()
+
+    // go to the add friend screen
+    composeTestRule.onNodeWithTag("addFriendButton").performClick()
+
+    // verify that the add friend screen is correctly displayed
+    addFriendScreenIsWellDisplayed()
+
+    composeTestRule.onNodeWithTag("CustomSearchBar").assertIsDisplayed()
+
+    // go to the invitation friend section
+    composeTestRule.onNodeWithTag("invitationsTabButton").performClick()
+
+    // we check that this string is correctly displayed
+    composeTestRule.onNodeWithText("Oh no! You have no invitations.").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+
+    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
+
+    // this confirms that we are on main screen
+    mainScreenIsWellDisplayed()
+
+  }
+
+
+
   private fun workoutCreationScreenIsWellDisplayed() {
     val testName = "workoutCreationScreenIsWellDisplayed"
 
@@ -456,4 +494,28 @@ class EndToEndTest {
 
     nodeControl("sessionCard_Running", testName)
   }
+
+  private fun friendsScreenIsWellDisplayed() {
+    val testName = "friendsScreenIsWellDisplayed"
+
+    nodeControl("friendsScreen", testName)
+    nodeControl("searchBarRow", testName)
+    nodeControl("searchBar", testName)
+    nodeControl("addFriendButton", testName)
+    composeTestRule.onNodeWithTag("addFriendButton").assertHasClickAction()
+  }
+
+  private fun addFriendScreenIsWellDisplayed() {
+    val testName = "addFriendScreenIsWellDisplayed"
+
+    nodeControl("addFriendScreen", testName)
+    nodeControl("tabButtons", testName)
+    nodeControl("newConnectionsTabButton", testName)
+    composeTestRule.onNodeWithTag("newConnectionsTabButton").assertHasClickAction()
+    nodeControl("invitationsTabButton", testName)
+    composeTestRule.onNodeWithTag("invitationsTabButton").assertIsDisplayed().assertHasClickAction()
+    nodeControl("newConnectionsContent", testName)
+  }
+
+
 }
