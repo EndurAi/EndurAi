@@ -55,7 +55,8 @@ class StatisticsViewModelTest {
           id = "1",
           date = LocalDateTime.of(2024, 12, 8, 7, 30),
           caloriesBurnt = 3,
-          type = WorkoutType.BODY_WEIGHT)
+          type = WorkoutType.BODY_WEIGHT,
+          distance = 0.0)
 
   // List of sample workout statistics used to simulate the repository's response.
   private val workoutsStats =
@@ -65,7 +66,8 @@ class StatisticsViewModelTest {
               id = "2",
               date = LocalDateTime.of(2024, 12, 7, 18, 0),
               caloriesBurnt = 4,
-              type = WorkoutType.RUNNING))
+              type = WorkoutType.RUNNING,
+              distance = 0.0))
 
   // Sample user account data used for testing account-related logic.
   private val account =

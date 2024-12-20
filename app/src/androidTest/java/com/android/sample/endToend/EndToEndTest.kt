@@ -52,6 +52,12 @@ class EndToEndTest {
     }
   }
 
+  private fun nodeControlWithText(text: String, testName: String) {
+    if (composeTestRule.onNodeWithText(text).isNotDisplayed()) {
+      throw Exception("Node with text :{$text} not displayed in $testName")
+    }
+  }
+
   private fun nodeControlWithScroll(testTag: String, testName: String) {
     if (composeTestRule.onNodeWithTag(testTag).performScrollTo().isNotDisplayed()) {
       throw Exception("$testTag not displayed in $testName")
@@ -67,7 +73,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("AchievementButton").performScrollTo().performClick()
     achievementScreenIsWellDisplayed()
     // go back to the main screen
-    composeTestRule.onNodeWithTag("Main").performClick()
+    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
     // composeTestRule.onNodeWithTag("mainScreen").assertIsDisplayed()
     // go to the video screen
     //    composeTestRule.onNodeWithTag("Video").performClick()
@@ -104,7 +110,7 @@ class EndToEndTest {
     achievementScreenIsWellDisplayed()
 
     // go back to the main screen
-    composeTestRule.onNodeWithTag("Main").performClick()
+    composeTestRule.onNodeWithTag("ArrowBackButton").performClick()
 
     // go to the setting Screen
     composeTestRule.onNodeWithTag("profile").performClick()
@@ -397,7 +403,20 @@ class EndToEndTest {
   private fun achievementScreenIsWellDisplayed() {
     val testName = "achievementScreenIsWellDisplayed"
 
-    nodeControl("achievementsScreen", testName)
+    // Verify we are in StatsScreen
+    nodeControl("StatsScreen", testName)
+    nodeControlWithText("Calories of the week", testName)
+    nodeControl("KcalCard", testName)
+    nodeControlWithText("Kcal", testName)
+
+    // Verify we have 2 charts and are displayed
+    val charts = composeTestRule.onAllNodesWithTag("Chart").assertCountEquals(2)
+    charts[0].assertIsDisplayed()
+    charts[1].assertIsDisplayed()
+
+    // Verify the pie chart
+    nodeControlWithText("Type exercise repartition", testName)
+    nodeControl("PieChart", testName)
   }
 
   private fun preferencesScreenIsWellDisplayed() {

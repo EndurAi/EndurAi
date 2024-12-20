@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PreferencesViewModel(
+open class PreferencesViewModel(
     private val repository: PreferencesRepository,
     private val localCache: PreferencesLocalCache
 ) : ViewModel() {

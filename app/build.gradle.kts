@@ -165,6 +165,7 @@ dependencies {
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.pose.detection.common)
     implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.ui.viewbinding)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     globalTestImplementation(libs.androidx.junit)
@@ -207,6 +208,10 @@ dependencies {
     // ----------       Robolectric     ------------
     testImplementation(libs.robolectric)
 
+    // ----------       Graphs dependency     ------------
+    implementation (libs.compose.charts)
+
+
     // --------- Moshi dependencies ----------
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
@@ -216,7 +221,6 @@ dependencies {
 
     // --------- Coil dependencies ----------
     implementation(libs.coil.compose)
-//    implementation(libs.coil.core)
 
     val camerax_version = "1.3.0-alpha07"
     //// CAMERA STUFF ////

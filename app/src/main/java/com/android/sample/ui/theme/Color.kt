@@ -67,9 +67,12 @@ val ProfileBlue = Color(0xFFADD8E6)
 val AddPurple = Color(0xFF6C63FF)
 val WorkoutCardLight = Color(0xFFE3F2FD)
 val WorkoutCardStrong = Color(0xFFBBDEFB)
+val AchievementToggleVeryLightGrey = Color(0xFFE0E0E0)
+val AchievementToggleBlue = Color(0xFF1E50A0)
 
 // Gradients
 val BlueGradient = Brush.horizontalGradient(colors = listOf(TitleBlue, TopBarBlue))
+val VerticalBlueGradient = Brush.verticalGradient(colors = listOf(TitleBlue, LegendRunning))
 val greenGradient =
     Brush.horizontalGradient(
         colors = listOf(Color(0xFF367F4E), Color(0xFF09CE9B)) // Green gradient colors

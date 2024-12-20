@@ -1,6 +1,5 @@
 package com.android.sample
 
-import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -75,16 +73,6 @@ import com.google.firebase.firestore.firestore
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    ActivityCompat.requestPermissions(
-        this,
-        arrayOf(
-            // Permission for not precise location
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            // Permission for precise location
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            // Permission to post location
-            Manifest.permission.POST_NOTIFICATIONS),
-        0)
 
     setContent {
       SampleAppTheme {
@@ -190,7 +178,9 @@ fun MainApp(startDestination: String = Route.AUTH) {
 
     // Achievements Screen
     navigation(startDestination = Screen.ACHIEVEMENTS, route = Route.ACHIEVEMENTS) {
-      composable(Screen.ACHIEVEMENTS) { AchievementsScreen(navigationActions, statisticsViewModel) }
+      composable(Screen.ACHIEVEMENTS) {
+        AchievementsScreen(navigationActions, statisticsViewModel, preferencesViewModel)
+      }
     }
 
     // Preferences Screen
@@ -303,7 +293,11 @@ fun MainApp(startDestination: String = Route.AUTH) {
     // Running Screen
     navigation(startDestination = Screen.RUNNING_SCREEN, route = Route.RUNNING_SCREEN) {
       composable(Screen.RUNNING_SCREEN) {
-        RunningScreen(navigationActions, runningWorkoutViewModel)
+        RunningScreen(
+            navigationActions,
+            runningWorkoutViewModel,
+            statisticsViewModel = statisticsViewModel,
+            userAccountViewModel = userAccountViewModel)
       }
     }
 

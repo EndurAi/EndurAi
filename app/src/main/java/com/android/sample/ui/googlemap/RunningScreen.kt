@@ -1,5 +1,6 @@
 package com.android.sample.ui.googlemap
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -26,7 +27,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.achievements.StatisticsViewModel
 import com.android.sample.model.location.LocationService
+import com.android.sample.model.userAccount.UserAccountViewModel
 import com.android.sample.model.workout.RunningWorkout
 import com.android.sample.model.workout.WorkoutViewModel
 import com.android.sample.ui.composables.ChronoDisplay
@@ -42,6 +45,10 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.LightGrey
 import com.android.sample.ui.theme.White
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Polyline
@@ -50,12 +57,26 @@ import java.util.Timer
 import java.util.TimerTask
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun RunningScreen(
     navigationActions: NavigationActions,
-    runningWorkoutViewModel: WorkoutViewModel<RunningWorkout>
+    runningWorkoutViewModel: WorkoutViewModel<RunningWorkout>,
+    statisticsViewModel: StatisticsViewModel,
+    userAccountViewModel: UserAccountViewModel
 ) {
+  val locationPermissionState: PermissionState =
+      rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+  val notifPermissionState: PermissionState =
+      rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+
+  if (!locationPermissionState.status.isGranted) {
+    LaunchedEffect(Unit) { locationPermissionState.launchPermissionRequest() }
+  }
+
+  if (!notifPermissionState.status.isGranted) {
+    LaunchedEffect(Unit) { notifPermissionState.launchPermissionRequest() }
+  }
 
   var finalPathPoints by remember { mutableStateOf(mutableListOf<LatLng>()) }
 
@@ -335,6 +356,13 @@ fun RunningScreen(
                                   },
                               timeMs = elapsedTime)
 
+                      val stats =
+                          statisticsViewModel.computeWorkoutStatistics(
+                              workout = runningWorkout,
+                              exerciseList = emptyList(),
+                              userAccountViewModel = userAccountViewModel)
+                      statisticsViewModel.addWorkoutStatistics(stats)
+
                       runningWorkoutViewModel.addWorkout(runningWorkout)
                       LocationServiceManager.stopAndResetLocationService(context)
 
@@ -404,6 +432,28 @@ fun RunningScreen(
                       isFirstTime = true
                       isPaused = false
                       isFinished = false
+
+                      val runningWorkout =
+                          RunningWorkout(
+                              runningWorkoutViewModel.getNewUid(),
+                              name,
+                              description,
+                              date = LocalDateTime.now(),
+                              path =
+                                  pathPoints.value.map { loc ->
+                                    com.google.type.LatLng.newBuilder()
+                                        .setLongitude(loc.longitude)
+                                        .setLatitude(loc.latitude)
+                                        .build()
+                                  },
+                              timeMs = elapsedTime)
+
+                      val stats =
+                          statisticsViewModel.computeWorkoutStatistics(
+                              workout = runningWorkout,
+                              exerciseList = emptyList(),
+                              userAccountViewModel = userAccountViewModel)
+                      statisticsViewModel.addWorkoutStatistics(stats)
 
                       navigationActions.navigateTo(Screen.MAIN)
                     },
