@@ -86,6 +86,6 @@ fun SmallLegendItem(color: Color, text: String) {
               .shadow(4.dp, shape = shape)
               .background(color, shape = shape)
               .padding(horizontal = 8.dp)) {
-        Text(text = text, color = Color.Black, fontSize = 14.sp, fontFamily = OpenSans)
+        Text(text = text, color = Black, fontSize = 14.sp, fontFamily = OpenSans)
       }
 }

@@ -75,16 +75,6 @@ import com.google.firebase.firestore.firestore
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    ActivityCompat.requestPermissions(
-        this,
-        arrayOf(
-            // Permission for not precise location
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            // Permission for precise location
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            // Permission to post location
-            Manifest.permission.POST_NOTIFICATIONS),
-        0)
 
     setContent {
       SampleAppTheme {

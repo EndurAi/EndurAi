@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.ui.theme.AchievementToggleBlue
+import com.android.sample.ui.theme.AchievementToggleVeryLightGrey
 import com.android.sample.ui.theme.BlueGradient
 import com.android.sample.ui.theme.OpenSans
 import com.android.sample.ui.theme.White
@@ -45,7 +47,7 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                 .height(30.dp)
                 .clip(RoundedCornerShape(25.dp))
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), clip = false)
-                .background(Color(0xFFE0E0E0)),
+                .background(AchievementToggleVeryLightGrey),
         contentAlignment = Alignment.CenterStart) {
           // Animated circle for selection
           Box(
@@ -80,7 +82,7 @@ fun ToggleButtonAchievements(modifier: Modifier = Modifier, onClick: () -> Unit)
                           fontSize = 18.sp,
                           fontFamily = OpenSans,
                           fontWeight = FontWeight.SemiBold,
-                          color = if (selected) Color.White else Color(0xFF1E50A0))
+                          color = if (selected) White else AchievementToggleBlue)
                     }
 
                 // History Text
