@@ -134,11 +134,10 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .set(dataMapWorkout)
         .addOnFailureListener { e -> onFailure(e) }
         .addOnSuccessListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                localCache.clearWorkouts() // Save to cache
-                onSuccess()
-            }
-
+          CoroutineScope(Dispatchers.IO).launch {
+            localCache.clearWorkouts() // Save to cache
+            onSuccess()
+          }
         }
   }
 
@@ -227,10 +226,10 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .document(obj.workoutId)
         .set(dataMap)
         .addOnSuccessListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                localCache.clearWorkouts()// Update in cache
-                onSuccess()
-            }
+          CoroutineScope(Dispatchers.IO).launch {
+            localCache.clearWorkouts() // Update in cache
+            onSuccess()
+          }
         }
         .addOnFailureListener { e -> onFailure(e) }
   }
@@ -260,10 +259,10 @@ open class WorkoutRepositoryFirestore<T : Workout>(
         .delete()
         .addOnFailureListener { e -> onFailure(e) }
         .addOnSuccessListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                localCache.clearWorkouts() // Remove from cache
-                onSuccess()
-            }
+          CoroutineScope(Dispatchers.IO).launch {
+            localCache.clearWorkouts() // Remove from cache
+            onSuccess()
+          }
         }
   }
 
