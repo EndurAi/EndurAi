@@ -43,6 +43,7 @@ class AchievementsScreenTest {
   }
 
   /** Test to verify that all components in the stats screen are displayed correctly. */
+  @Test
   fun displayAllComponentsInStatsScreen() {
     composeTestRule.setContent {
       AchievementsScreen(navigationActions, mockStatisticsViewModel, mockPreferencesViewModel)
